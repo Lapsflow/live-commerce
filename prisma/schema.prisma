@@ -2,8 +2,7 @@
 // 6 Core Models + RateLimit
 
 generator client {
-  provider = "prisma-client"
-  output   = "../lib/generated/prisma/client"
+  provider = "prisma-client-js"
 }
 
 datasource db {
