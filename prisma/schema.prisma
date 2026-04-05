@@ -1,0 +1,169 @@
+// Prisma Schema for Live-Commerce
+// 6 Core Models + RateLimit
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ──────────────────────── User Management ────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  phone        String?
+  role         Role     @default(SELLER)
+  adminId      String?
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Self-referential relation: Admin → Sellers
+  admin    User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
+  sellers  User[] @relation("AdminSellers")
+
+  // Relations
+  orders     Order[]
+  broadcasts Broadcast[]
+  sales      Sale[]
+}
+
+enum Role {
+  MASTER
+  SUB_MASTER
+  ADMIN
+  SELLER
+}
+
+// ──────────────────────── Product Management ────────────────────────
+
+model Product {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  barcode     String   @unique
+  sellPrice   Int
+  supplyPrice Int
+  totalStock  Int      @default(0)
+  stockMujin  Int      @default(0)
+  stock1      Int      @default(0)
+  stock2      Int      @default(0)
+  stock3      Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  orderItems OrderItem[]
+  sales      Sale[]
+}
+
+// ──────────────────────── Order Management ────────────────────────
+
+model Order {
+  id          String      @id @default(cuid())
+  orderNo     String      @unique
+  sellerId    String
+  adminId     String?
+  status      OrderStatus @default(PENDING)
+  totalAmount Int         @default(0)
+  memo        String?
+  uploadedAt  DateTime    @default(now())
+  approvedAt  DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  seller User        @relation(fields: [sellerId], references: [id])
+  items  OrderItem[]
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  productId  String
+  quantity   Int
+  unitPrice  Int
+  totalPrice Int
+  createdAt  DateTime @default(now())
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+}
+
+// ──────────────────────── Broadcast Management ────────────────────────
+
+model Broadcast {
+  id          String            @id @default(cuid())
+  code        String            @unique
+  sellerId    String
+  platform    BroadcastPlatform
+  scheduledAt DateTime
+  startedAt   DateTime?
+  endedAt     DateTime?
+  status      BroadcastStatus   @default(SCHEDULED)
+  memo        String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // Relations
+  seller User   @relation(fields: [sellerId], references: [id])
+  sales  Sale[]
+}
+
+enum BroadcastPlatform {
+  GRIP
+  CLME
+  YOUTUBE
+  TIKTOK
+  BAND
+  OTHER
+}
+
+enum BroadcastStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+  CANCELED
+}
+
+// ──────────────────────── Sales Management ────────────────────────
+
+model Sale {
+  id          String    @id @default(cuid())
+  saleNo      String    @unique
+  sellerId    String
+  productId   String
+  broadcastId String?
+  quantity    Int
+  unitPrice   Int
+  totalPrice  Int
+  saleDate    DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  seller    User       @relation(fields: [sellerId], references: [id])
+  product   Product    @relation(fields: [productId], references: [id])
+  broadcast Broadcast? @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
+}
+
+// ──────────────────────── Rate Limiting ────────────────────────
+
+model RateLimit {
+  key         String   @id
+  count       Int
+  windowStart DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

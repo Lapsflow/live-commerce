@@ -1,0 +1,34 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-04-05T11:31:25.159Z",
+  "activeFeatures": [
+    "live-commerce-migration"
+  ],
+  "primaryFeature": "live-commerce-migration",
+  "features": {
+    "live-commerce-migration": {
+      "phase": "plan",
+      "matchRate": 0,
+      "iterationCount": 0,
+      "startedAt": "2026-04-05T18:35:00Z",
+      "lastUpdated": "2026-04-05T18:35:00Z",
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-05T18:35:00Z",
+        "lastUpdated": "2026-04-05T11:31:25.158Z"
+      }
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-04-05T11:31:25.159Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-04-05T11:31:25.159Z"
+  },
+  "history": []
+}

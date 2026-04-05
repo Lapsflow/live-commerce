@@ -1,0 +1,101 @@
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/db/prisma";
+import { securityLogger } from "@/lib/logger";
+
+declare module "next-auth" {
+  interface User {
+    role?: string;
+    adminId?: string;
+  }
+  interface Session {
+    user: User & {
+      userId?: string;
+      role?: string;
+      adminId?: string;
+    };
+  }
+  interface JWT {
+    userId?: string;
+    role?: string;
+    adminId?: string;
+  }
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
+  providers: [
+    Credentials({
+      credentials: {
+        email: { label: "이메일", type: "email" },
+        password: { label: "비밀번호", type: "password" },
+      },
+      authorize: async (credentials) => {
+        const email = credentials?.email as string | undefined;
+        if (!email || !credentials?.password) {
+          securityLogger.authFailed({ reason: "missing_credentials" });
+          return null;
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (!user) {
+          securityLogger.authFailed({ reason: "user_not_found", email });
+          return null;
+        }
+
+        // 비밀번호 검증 — DEV_AUTH_BYPASS=true일 때만 스킵 (production 차단)
+        const bypassEnabled =
+          process.env.DEV_AUTH_BYPASS === "true" &&
+          process.env.NODE_ENV !== "production";
+        if (!bypassEnabled) {
+          if (!user.passwordHash) {
+            securityLogger.authFailed({ reason: "no_password_set", email });
+            return null;
+          }
+          const isValid = await bcrypt.compare(
+            credentials.password as string,
+            user.passwordHash
+          );
+          if (!isValid) {
+            securityLogger.authFailed({ reason: "invalid_password", email });
+            return null;
+          }
+        }
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          adminId: user.adminId ?? undefined,
+        };
+      },
+    }),
+  ],
+  session: { strategy: "jwt", maxAge: 8 * 60 * 60 },
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) {
+        token.userId = user.id;
+        token.role = user.role;
+        token.adminId = user.adminId;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user) {
+        session.user.userId = token.userId as string;
+        session.user.role = token.role as string;
+        session.user.adminId = token.adminId as string | undefined;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/login",
+  },
+});
