@@ -32,8 +32,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "비밀번호", type: "password" },
       },
       authorize: async (credentials) => {
+        console.log("[AUTH DEBUG] Login attempt:", {
+          hasEmail: !!credentials?.email,
+          hasPassword: !!credentials?.password,
+          email: credentials?.email,
+          passwordLength: credentials?.password
+            ? String(credentials.password).length
+            : 0,
+        });
+
         const email = credentials?.email as string | undefined;
         if (!email || !credentials?.password) {
+          console.log("[AUTH DEBUG] Missing credentials");
           securityLogger.authFailed({ reason: "missing_credentials" });
           return null;
         }
@@ -43,9 +53,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (!user) {
+          console.log("[AUTH DEBUG] User not found:", email);
           securityLogger.authFailed({ reason: "user_not_found", email });
           return null;
         }
+
+        console.log("[AUTH DEBUG] User found:", {
+          email,
+          hasPasswordHash: !!user.passwordHash,
+          passwordHashLength: user.passwordHash?.length || 0,
+        });
 
         // 비밀번호 검증 — DEV_AUTH_BYPASS=true일 때만 스킵 (production 차단)
         const bypassEnabled =
@@ -53,6 +70,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           process.env.NODE_ENV !== "production";
         if (!bypassEnabled) {
           if (!user.passwordHash) {
+            console.log("[AUTH DEBUG] No password hash set");
             securityLogger.authFailed({ reason: "no_password_set", email });
             return null;
           }
@@ -60,6 +78,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             credentials.password as string,
             user.passwordHash
           );
+          console.log("[AUTH DEBUG] Password comparison result:", {
+            isValid,
+            inputPassword: String(credentials.password).substring(0, 3) + "***",
+            hashPrefix: user.passwordHash.substring(0, 20),
+          });
           if (!isValid) {
             securityLogger.authFailed({ reason: "invalid_password", email });
             return null;
