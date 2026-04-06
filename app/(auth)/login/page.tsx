@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
-  const [id, setId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export default function LoginPage() {
     setError(null);
 
     const result = await signIn("credentials", {
-      id,
+      email,
       password,
       redirect: false,
     });
@@ -42,12 +42,12 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">아이디</label>
+            <label className="block text-sm font-medium mb-2">이메일</label>
             <Input
-              type="text"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-              placeholder="아이디를 입력하세요"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="이메일을 입력하세요"
               required
             />
           </div>
