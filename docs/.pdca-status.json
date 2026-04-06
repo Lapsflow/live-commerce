@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-04-06T09:08:24.321Z",
+  "lastUpdated": "2026-04-06T09:58:06.876Z",
   "activeFeatures": [
     "live-commerce-migration",
     "db",
@@ -30,7 +30,9 @@
     "confirm",
     "cancel",
     "proposals",
-    "users"
+    "users",
+    "e2e",
+    "providers"
   ],
   "primaryFeature": "live-commerce-migration",
   "features": {
@@ -121,9 +123,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-05T23:38:46.838Z",
-        "lastUpdated": "2026-04-06T08:44:33.981Z"
+        "lastUpdated": "2026-04-06T09:58:06.876Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/page.tsx"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/layout.tsx"
     },
     "status": {
       "phase": "do",
@@ -410,6 +412,32 @@
         "lastUpdated": "2026-04-06T09:08:24.321Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/users/user-edit-dialog.tsx"
+    },
+    "e2e": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-06T09:30:34.163Z",
+        "lastUpdated": "2026-04-06T09:44:48.599Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/e2e/complete-system.spec.ts"
+    },
+    "providers": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-06T09:57:57.029Z",
+        "lastUpdated": "2026-04-06T09:57:57.029Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/providers/session-provider.tsx"
     }
   },
   "pipeline": {
@@ -420,7 +448,7 @@
   "session": {
     "startedAt": "2026-04-05T11:31:25.159Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-04-06T09:08:24.321Z"
+    "lastActivity": "2026-04-06T09:58:06.876Z"
   },
   "history": [
     {
@@ -930,6 +958,84 @@
     {
       "timestamp": "2026-04-06T09:08:24.321Z",
       "feature": "users",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:29:54.597Z",
+      "feature": "live-commerce",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:30:34.163Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:37:15.897Z",
+      "feature": "live-commerce",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:37:22.522Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:38:12.861Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:38:27.431Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:38:32.134Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:38:35.476Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:44:48.508Z",
+      "feature": "live-commerce",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:44:48.599Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:57:57.029Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:58:01.337Z",
+      "feature": "live-commerce",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-06T09:58:06.876Z",
+      "feature": "live-commerce",
       "phase": "do",
       "action": "updated"
     }
