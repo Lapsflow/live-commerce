@@ -22,14 +22,20 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // ✨ Seller Profile Fields
+  channels String[] @default([]) // 활동 채널 (예: ["GRIP", "CLME", "YOUTUBE"])
+  avgSales Int?                  // 평균 매출 (월간 평균)
+
   // Self-referential relation: Admin → Sellers
   admin    User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
   sellers  User[] @relation("AdminSellers")
 
   // Relations
-  orders     Order[]
-  broadcasts Broadcast[]
-  sales      Sale[]
+  orders      Order[]     @relation
+  adminOrders Order[]     @relation("AdminOrders")
+  broadcasts  Broadcast[]
+  sales       Sale[]
+  proposals   Proposal[]
 }
 
 enum Role {
@@ -76,9 +82,27 @@ model Order {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
+  // ✨ 수령자 정보 (Excel 업로드용)
+  recipient String? // 수령자
+  phone     String? // 연락처
+  address   String? // 주소
+
+  // ✨ 금액 정보
+  totalMargin Int @default(0) // 총 마진
+
+  // ✨ 입금/출고 상태 추적
+  paymentStatus  PaymentStatus  @default(UNPAID)
+  shippingStatus ShippingStatus @default(PENDING)
+
   // Relations
   seller User        @relation(fields: [sellerId], references: [id])
+  admin  User?       @relation("AdminOrders", fields: [adminId], references: [id])
   items  OrderItem[]
+
+  // Indexes
+  @@index([sellerId, uploadedAt])
+  @@index([orderNo])
+  @@index([paymentStatus, shippingStatus])
 }
 
 enum OrderStatus {
@@ -87,18 +111,39 @@ enum OrderStatus {
   REJECTED
 }
 
+enum PaymentStatus {
+  UNPAID    // 입금확인전
+  PAID      // 입금완료
+}
+
+enum ShippingStatus {
+  PENDING    // 대기
+  PREPARING  // 발송준비
+  SHIPPED    // 출고완료
+  PARTIAL    // 부분출고
+}
+
 model OrderItem {
   id         String   @id @default(cuid())
   orderId    String
   productId  String
   quantity   Int
-  unitPrice  Int
-  totalPrice Int
   createdAt  DateTime @default(now())
+
+  // ✨ Excel 업로드용 스냅샷 필드
+  barcode     String // 바코드
+  productName String // 상품명
+  supplyPrice Int    // 공급가 (개당)
+  totalSupply Int    // 공급가 합계 = supplyPrice × quantity
+  margin      Int    // 마진 = (입금액 / 수량) - supplyPrice
 
   // Relations
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
+
+  // Indexes
+  @@index([orderId])
+  @@index([productId])
 }
 
 // ──────────────────────── Broadcast Management ────────────────────────
@@ -155,6 +200,33 @@ model Sale {
   seller    User       @relation(fields: [sellerId], references: [id])
   product   Product    @relation(fields: [productId], references: [id])
   broadcast Broadcast? @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
+}
+
+// ──────────────────────── Proposal Management ────────────────────────
+
+model Proposal {
+  id          String         @id @default(cuid())
+  companyName String
+  contact     String
+  phone       String
+  productName String
+  category    String
+  description String
+  status      ProposalStatus @default(PENDING)
+  submittedBy String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user User @relation(fields: [submittedBy], references: [id])
+
+  @@index([status])
+  @@index([submittedBy])
+}
+
+enum ProposalStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 // ──────────────────────── Rate Limiting ────────────────────────

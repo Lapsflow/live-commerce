@@ -16,6 +16,7 @@ import { logger, sanitizeError } from "@/lib/logger";
 import { stripBlockedFields, extractIdFromUrl, filterFields, handlePrismaError } from "./crud-utils";
 import { isRateLimitedDb } from "./rate-limit-db";
 import { prisma } from "@/lib/db/prisma";
+import { getRoleBasedFilter } from "./role-filter";
 
 type PrismaModel = "product" | "user" | "order" | "orderItem" | "broadcast" | "sale";
 
@@ -143,10 +144,31 @@ export function createCrudHandler<TData = Record<string, unknown>>(
   // ──────────────────────── Handlers ────────────────────────
 
   /** GET — 목록 조회 */
-  const list = withRole(roles.read, async (req: NextRequest) => {
+  const list = withRole(roles.read, async (req: NextRequest, user?: AuthUser) => {
     const params = parseListParams(req);
 
-    const where = buildSearchWhere(params.search, searchFields);
+    // ✨ 역할 기반 필터 적용
+    let roleFilter = {};
+    if (user && (model === "order" || model === "broadcast" || model === "sale")) {
+      try {
+        // Create a minimal session object for getRoleBasedFilter
+        const session = {
+          user: {
+            id: user.userId,
+            role: user.role,
+          },
+        };
+        roleFilter = getRoleBasedFilter(session as any, model as "order" | "broadcast" | "sale");
+      } catch (err) {
+        logger.warn("role_filter_error", { model, userId: user.userId, error: String(err) });
+      }
+    }
+
+    const searchWhere = buildSearchWhere(params.search, searchFields);
+    const where = Object.keys(roleFilter).length > 0
+      ? { AND: [roleFilter, searchWhere] }
+      : searchWhere;
+
     const orderBy = buildOrderBy(params.sort, sortableFields);
 
     try {

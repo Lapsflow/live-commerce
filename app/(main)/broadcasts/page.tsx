@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, PlayCircle, StopCircle } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const platformLabels = {
   GRIP: "그립",
@@ -33,66 +35,142 @@ const statusLabels = {
   CANCELED: "취소",
 } as const;
 
-const columns: ColumnDef<Broadcast>[] = [
-  {
-    accessorKey: "code",
-    header: "방송코드",
-  },
-  {
-    accessorKey: "seller",
-    header: "판매자",
-    cell: ({ row }) => row.original.seller?.name ?? "-",
-  },
-  {
-    accessorKey: "platform",
-    header: "플랫폼",
-    cell: ({ row }) => platformLabels[row.original.platform],
-  },
-  {
-    accessorKey: "status",
-    header: "상태",
-    cell: ({ row }) => {
-      const status = row.original.status;
-      return (
-        <Badge variant="outline" className={statusColors[status]}>
-          {statusLabels[status]}
-        </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: "scheduledAt",
-    header: "예정시간",
-    cell: ({ row }) => new Date(row.original.scheduledAt).toLocaleString(),
-  },
-  {
-    id: "actions",
-    header: "액션",
-    cell: ({ row }) => {
-      const status = row.original.status;
-      if (status === "SCHEDULED") {
-        return (
-          <Button variant="outline" size="sm">
-            <PlayCircle className="mr-2 h-4 w-4" />
-            시작
-          </Button>
-        );
-      }
-      if (status === "LIVE") {
-        return (
-          <Button variant="destructive" size="sm">
-            <StopCircle className="mr-2 h-4 w-4" />
-            종료
-          </Button>
-        );
-      }
-      return null;
-    },
-  },
-];
+// 컬럼 정의는 컴포넌트 내부로 이동됨 (액션 핸들러 사용)
 
 export default function BroadcastsPage() {
-  const { dataSource } = useApiCrud<Broadcast>("/api/broadcasts");
+  const { dataSource, refresh } = useApiCrud<Broadcast>("/api/broadcasts");
+  const { toast } = useToast();
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  const handleStart = async (id: string) => {
+    setLoadingId(id);
+    try {
+      const res = await fetch(`/api/broadcasts/${id}/start`, {
+        method: "PUT",
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error?.message || "방송 시작 실패");
+      }
+
+      toast({
+        title: "방송 시작",
+        description: "방송이 시작되었습니다.",
+      });
+
+      refresh();
+    } catch (err: any) {
+      toast({
+        title: "오류",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  const handleEnd = async (id: string) => {
+    setLoadingId(id);
+    try {
+      const res = await fetch(`/api/broadcasts/${id}/end`, {
+        method: "PUT",
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error?.message || "방송 종료 실패");
+      }
+
+      toast({
+        title: "방송 종료",
+        description: "방송이 종료되었습니다.",
+      });
+
+      refresh();
+    } catch (err: any) {
+      toast({
+        title: "오류",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  // 컬럼 정의를 컴포넌트 내부로 이동 (handleStart, handleEnd 사용)
+  const columnsWithActions: ColumnDef<Broadcast>[] = [
+    {
+      accessorKey: "code",
+      header: "방송코드",
+    },
+    {
+      accessorKey: "seller",
+      header: "판매자",
+      cell: ({ row }) => row.original.seller?.name ?? "-",
+    },
+    {
+      accessorKey: "platform",
+      header: "플랫폼",
+      cell: ({ row }) => platformLabels[row.original.platform],
+    },
+    {
+      accessorKey: "status",
+      header: "상태",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        return (
+          <Badge variant="outline" className={statusColors[status]}>
+            {statusLabels[status]}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "scheduledAt",
+      header: "예정시간",
+      cell: ({ row }) => new Date(row.original.scheduledAt).toLocaleString(),
+    },
+    {
+      id: "actions",
+      header: "액션",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        const id = row.original.id;
+        const isLoading = loadingId === id;
+
+        if (status === "SCHEDULED") {
+          return (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleStart(id)}
+              disabled={isLoading}
+            >
+              <PlayCircle className="mr-2 h-4 w-4" />
+              {isLoading ? "처리 중..." : "시작"}
+            </Button>
+          );
+        }
+        if (status === "LIVE") {
+          return (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => handleEnd(id)}
+              disabled={isLoading}
+            >
+              <StopCircle className="mr-2 h-4 w-4" />
+              {isLoading ? "처리 중..." : "종료"}
+            </Button>
+          );
+        }
+        return null;
+      },
+    },
+  ];
 
   return (
     <div className="container mx-auto py-6">
@@ -106,7 +184,11 @@ export default function BroadcastsPage() {
         </Link>
       </div>
 
-      <DataTable columns={columns} dataSource={dataSource} enableRowSelection={false} />
+      <DataTable
+        columns={columnsWithActions}
+        dataSource={dataSource}
+        enableRowSelection={false}
+      />
     </div>
   );
 }

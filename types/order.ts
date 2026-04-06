@@ -1,6 +1,8 @@
 import type { User } from "./user";
 
 export type OrderStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type PaymentStatus = "UNPAID" | "PAID";
+export type ShippingStatus = "PENDING" | "PREPARING" | "SHIPPED" | "PARTIAL";
 
 export interface OrderItem {
   id: string;
@@ -19,6 +21,8 @@ export interface Order {
   seller?: User;
   adminId: string | null;
   status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  shippingStatus: ShippingStatus;
   totalAmount: number;
   memo: string | null;
   uploadedAt: Date;

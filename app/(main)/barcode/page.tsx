@@ -6,6 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import type { Product } from "@/types/product";
+import { normBarcode } from "@/lib/utils/barcode";
+
+// 마진율 계산 함수
+function calculateMarginRate(sellPrice: number, supplyPrice: number): number {
+  if (sellPrice === 0) return 0;
+  return Math.round(((sellPrice - supplyPrice) / sellPrice) * 100);
+}
 
 export default function BarcodePage() {
   const [barcode, setBarcode] = useState("");
@@ -23,7 +30,9 @@ export default function BarcodePage() {
     setError(null);
 
     try {
-      const res = await fetch(`/api/products?search=${encodeURIComponent(barcode)}`);
+      // Normalize barcode before search
+      const normalizedBarcode = normBarcode(barcode);
+      const res = await fetch(`/api/products?search=${encodeURIComponent(normalizedBarcode)}`);
       if (!res.ok) throw new Error("상품을 찾을 수 없습니다");
 
       const data = await res.json();
@@ -86,6 +95,18 @@ export default function BarcodePage() {
             <div>
               <p className="text-sm text-muted-foreground">공급가</p>
               <p className="font-medium">{product.supplyPrice.toLocaleString()}원</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">마진율</p>
+              <p className="font-medium text-lg text-green-600">
+                {calculateMarginRate(product.sellPrice, product.supplyPrice)}%
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">마진액</p>
+              <p className="font-medium text-green-600">
+                {(product.sellPrice - product.supplyPrice).toLocaleString()}원
+              </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">총재고</p>
