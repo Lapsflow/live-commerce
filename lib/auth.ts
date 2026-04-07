@@ -107,6 +107,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.role = user.role;
         token.adminId = user.adminId;
       }
+      console.log("[JWT Callback] token.role:", token.role, "token.userId:", token.userId);
       return token;
     },
     session({ session, token }) {
@@ -115,6 +116,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.role = token.role as string;
         session.user.adminId = token.adminId as string | undefined;
       }
+      console.log("[Session Callback] session.user.role:", session.user?.role, "session.user.userId:", session.user?.userId);
       return session;
     },
   },

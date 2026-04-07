@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { getRoleBasedFilter } from "@/lib/api/role-filter";
@@ -40,6 +40,12 @@ export async function GET(req: NextRequest) {
       : new Date(toDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     // 역할 기반 필터 적용
+    console.log("[Dashboard API] Session before role filter:", {
+      hasSession: !!session,
+      hasUser: !!session?.user,
+      role: session?.user?.role,
+      userId: session?.user?.userId,
+    });
     const roleFilter = getRoleBasedFilter(session as any, "sale");
 
     // 날짜 범위 필터 추가
@@ -153,7 +159,19 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (err: any) {
-    console.error("Dashboard stats error:", err);
+    console.error("[Dashboard API] Error:", {
+      message: err.message,
+      stack: err.stack,
+    });
+
+    // 권한 에러인 경우 401, 그 외는 500
+    if (err.message?.includes("권한") || err.message?.includes("역할") || err.message?.includes("인증")) {
+      return NextResponse.json(
+        { error: err.message || "권한이 없습니다. 다시 로그인해주세요." },
+        { status: 401 }
+      );
+    }
+
     return errors.internal(err.message);
   }
 }

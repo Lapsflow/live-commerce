@@ -61,7 +61,7 @@ export function withAuth(handler: AuthHandler): NextHandler {
         { status: 401 }
       );
     }
-    const authUser = toAuthUser(session.user as Record<string, unknown>);
+    const authUser = toAuthUser(session.user as unknown as Record<string, unknown>);
     if (!authUser) {
       return NextResponse.json(
         { error: { code: "UNAUTHORIZED", message: "세션 정보 불완전" } },

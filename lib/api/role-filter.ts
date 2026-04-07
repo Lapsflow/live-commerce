@@ -12,11 +12,25 @@ export function getRoleBasedFilter(
   session: Session | null,
   model: "order" | "broadcast" | "sale"
 ): any {
+  console.log("[Role Filter] Received session:", {
+    hasSession: !!session,
+    hasUser: !!session?.user,
+    role: session?.user?.role,
+    userId: session?.user?.userId,
+  });
+
   if (!session?.user) {
+    console.error("[Role Filter] No session or user");
     throw new Error("인증되지 않은 사용자");
   }
 
   const { user } = session;
+
+  // 방어 로직: role이 없으면 명확한 에러 메시지
+  if (!user.role) {
+    console.error("[Role Filter] Missing role in session. User:", user);
+    throw new Error("권한 정보가 없습니다. 다시 로그인해주세요.");
+  }
 
   // 마스터, 부마스터: 전체 조회
   if (user.role === "MASTER" || user.role === "SUB_MASTER") {
