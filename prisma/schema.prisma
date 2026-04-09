@@ -24,11 +24,11 @@ model User {
 
   // ✨ Seller Profile Fields
   channels String[] @default([]) // 활동 채널 (예: ["GRIP", "CLME", "YOUTUBE"])
-  avgSales Int?                  // 평균 매출 (월간 평균)
+  avgSales Int? // 평균 매출 (월간 평균)
 
   // Self-referential relation: Admin → Sellers
-  admin    User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
-  sellers  User[] @relation("AdminSellers")
+  admin   User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
+  sellers User[] @relation("AdminSellers")
 
   // Relations
   orders      Order[]     @relation
@@ -62,9 +62,14 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // ✨ ONEWMS Integration Fields
+  onewmsCode    String? @unique // ONEWMS 상품코드
+  onewmsBarcode String? // ONEWMS 바코드
+
   // Relations
-  orderItems OrderItem[]
-  sales      Sale[]
+  orderItems   OrderItem[]
+  sales        Sale[]
+  onewmsStocks OnewmsStockSync[]
 }
 
 // ──────────────────────── Order Management ────────────────────────
@@ -95,9 +100,11 @@ model Order {
   shippingStatus ShippingStatus @default(PENDING)
 
   // Relations
-  seller User        @relation(fields: [sellerId], references: [id])
-  admin  User?       @relation("AdminOrders", fields: [adminId], references: [id])
-  items  OrderItem[]
+  seller             User                @relation(fields: [sellerId], references: [id])
+  admin              User?               @relation("AdminOrders", fields: [adminId], references: [id])
+  items              OrderItem[]
+  onewmsMapping      OnewmsOrderMapping?
+  onewmsDeliveryLogs OnewmsDeliveryLog[]
 
   // Indexes
   @@index([sellerId, uploadedAt])
@@ -112,30 +119,30 @@ enum OrderStatus {
 }
 
 enum PaymentStatus {
-  UNPAID    // 입금확인전
-  PAID      // 입금완료
+  UNPAID // 입금확인전
+  PAID // 입금완료
 }
 
 enum ShippingStatus {
-  PENDING    // 대기
-  PREPARING  // 발송준비
-  SHIPPED    // 출고완료
-  PARTIAL    // 부분출고
+  PENDING // 대기
+  PREPARING // 발송준비
+  SHIPPED // 출고완료
+  PARTIAL // 부분출고
 }
 
 model OrderItem {
-  id         String   @id @default(cuid())
-  orderId    String
-  productId  String
-  quantity   Int
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  createdAt DateTime @default(now())
 
   // ✨ Excel 업로드용 스냅샷 필드
   barcode     String // 바코드
   productName String // 상품명
-  supplyPrice Int    // 공급가 (개당)
-  totalSupply Int    // 공급가 합계 = supplyPrice × quantity
-  margin      Int    // 마진 = (입금액 / 수량) - supplyPrice
+  supplyPrice Int // 공급가 (개당)
+  totalSupply Int // 공급가 합계 = supplyPrice × quantity
+  margin      Int // 마진 = (입금액 / 수량) - supplyPrice
 
   // Relations
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -185,16 +192,16 @@ enum BroadcastStatus {
 // ──────────────────────── Sales Management ────────────────────────
 
 model Sale {
-  id          String    @id @default(cuid())
-  saleNo      String    @unique
+  id          String   @id @default(cuid())
+  saleNo      String   @unique
   sellerId    String
   productId   String
   broadcastId String?
   quantity    Int
   unitPrice   Int
   totalPrice  Int
-  saleDate    DateTime  @default(now())
-  createdAt   DateTime  @default(now())
+  saleDate    DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   // Relations
   seller    User       @relation(fields: [sellerId], references: [id])
@@ -227,6 +234,68 @@ enum ProposalStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+// ──────────────────────── ONEWMS Integration ────────────────────────
+
+model OnewmsOrderMapping {
+  id      String @id @default(cuid())
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  onewmsOrderNo String  @unique // ONEWMS 주문번호
+  transNo       String? // 송장번호
+
+  status     String @default("pending") // pending, sent, shipped, failed
+  csStatus   Int    @default(0) // ONEWMS CS상태
+  holdStatus Int    @default(0) // ONEWMS 보류상태
+
+  sentAt       DateTime? // ONEWMS 전송 시각
+  lastSyncAt   DateTime? // 마지막 동기화 시각
+  errorMessage String? // 에러 메시지
+  retryCount   Int       @default(0) // 재시도 횟수
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([onewmsOrderNo])
+  @@index([status])
+  @@index([sentAt])
+}
+
+model OnewmsStockSync {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  productCode  String // ONEWMS 상품코드
+  availableQty Int // ONEWMS 가용재고
+  totalQty     Int // ONEWMS 총재고
+  localQty     Int // 플랫폼 재고
+
+  difference Int // 차이 (ONEWMS - Local)
+  syncStatus String @default("synced") // synced, conflict, failed
+
+  syncedAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([syncedAt])
+}
+
+model OnewmsDeliveryLog {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  oldStatus String? // 이전 배송 상태
+  newStatus String // 새로운 배송 상태
+  transNo   String? // 송장번호
+
+  changedAt  DateTime @default(now())
+  syncedFrom String   @default("onewms") // onewms, manual, system
+
+  @@index([orderId])
+  @@index([changedAt])
 }
 
 // ──────────────────────── Rate Limiting ────────────────────────
