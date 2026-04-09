@@ -3,7 +3,7 @@
  * Handles order sync to ONEWMS warehouse with retry logic and transaction management
  */
 
-import { prisma } from '@/lib/db';
+import { prisma } from '@/lib/db/prisma';
 import { createOnewmsClient } from '@/lib/onewms';
 import type { CreateOrderRequest } from '@/lib/onewms/types';
 

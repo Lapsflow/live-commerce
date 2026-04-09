@@ -4,21 +4,21 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+
+import { auth } from '@/lib/auth';
 import { retryFailedOrders } from '@/lib/services/onewms/orderSync';
 
 export async function POST(req: NextRequest) {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Only ADMIN, SUB_MASTER, or MASTER can retry orders
     const allowedRoles = ['ADMIN', 'SUB_MASTER', 'MASTER'];
-    if (!allowedRoles.includes(session.user.role)) {
+    if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }

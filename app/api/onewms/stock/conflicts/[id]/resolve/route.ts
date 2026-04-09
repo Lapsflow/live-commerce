@@ -4,31 +4,31 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+
+import { auth } from '@/lib/auth';
 import { resolveConflict } from '@/lib/services/onewms/stockSync';
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Only ADMIN, SUB_MASTER, or MASTER can resolve conflicts
     const allowedRoles = ['ADMIN', 'SUB_MASTER', 'MASTER'];
-    if (!allowedRoles.includes(session.user.role)) {
+    if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
     const { resolution } = body;
 

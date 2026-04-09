@@ -3,7 +3,7 @@
  * Polls ONEWMS for delivery status updates and triggers notifications
  */
 
-import { prisma } from '@/lib/db';
+import { prisma } from '@/lib/db/prisma';
 import { createOnewmsClient } from '@/lib/onewms';
 import type { OrderStatus as OnewmsOrderStatus } from '@/lib/onewms/types';
 import { sendNotification } from './notifications';
@@ -82,7 +82,7 @@ async function syncOrderDeliveryStatus(orderId: string): Promise<{
     const client = createOnewmsClient();
     const orderInfo = await client.getOrderInfo(mapping.onewmsOrderNo);
 
-    const onewmsStatus = orderInfo.status || 0;
+    const onewmsStatus = typeof orderInfo.status === 'number' ? orderInfo.status : 0;
     const transNo = orderInfo.trans_no || null;
     const csStatus = orderInfo.cs_status || 0;
     const holdStatus = orderInfo.hold_status || 0;

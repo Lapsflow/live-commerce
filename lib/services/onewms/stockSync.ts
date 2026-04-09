@@ -3,7 +3,7 @@
  * Handles automatic stock sync with conflict detection and resolution
  */
 
-import { prisma } from '@/lib/db';
+import { prisma } from '@/lib/db/prisma';
 import { createOnewmsClient } from '@/lib/onewms';
 
 interface SyncStatsResult {

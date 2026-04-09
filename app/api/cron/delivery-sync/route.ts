@@ -1,7 +1,7 @@
 /**
  * Vercel Cron: Delivery Status Synchronization
  * Runs every hour to sync delivery statuses with ONEWMS
- * Schedule: 0 * * * * (every hour)
+ * Schedule: 0 star star star star (every hour)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
