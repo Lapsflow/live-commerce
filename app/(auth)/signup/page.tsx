@@ -64,6 +64,7 @@ export default function SignupPage() {
       setError(data.error?.message || "회원가입 실패");
       setLoading(false);
     } else {
+      setLoading(false);
       router.push("/login?signup=success");
     }
   };
