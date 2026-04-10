@@ -66,10 +66,15 @@ model Product {
   onewmsCode    String? @unique // ONEWMS 상품코드
   onewmsBarcode String? // ONEWMS 바코드
 
+  // ✨ Multi-Warehouse Fields
+  masterBarcodeId String? // 공식 바코드 마스터 ID
+
   // Relations
-  orderItems   OrderItem[]
-  sales        Sale[]
-  onewmsStocks OnewmsStockSync[]
+  orderItems           OrderItem[]
+  sales                Sale[]
+  onewmsStocks         OnewmsStockSync[]
+  warehouseInventories WarehouseInventory[]
+  stockMovements       StockMovement[]
 }
 
 // ──────────────────────── Order Management ────────────────────────
@@ -296,6 +301,89 @@ model OnewmsDeliveryLog {
 
   @@index([orderId])
   @@index([changedAt])
+}
+
+// ──────────────────────── Multi-Warehouse System ────────────────────────
+
+model Warehouse {
+  id            String    @id @default(cuid())
+  code          String    @unique // 한국무진, 쓰리백, 거래처2, etc.
+  name          String // Display name
+  type          String // OWNED, PARTNER, EXTERNAL
+  spreadsheetId String? // Google Spreadsheet ID
+  sheetName     String? // Sheet name in spreadsheet
+  syncEnabled   Boolean   @default(true)
+  lastSyncAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  inventories       WarehouseInventory[]
+  stockMovementsFrom StockMovement[] @relation("FromWarehouse")
+  stockMovementsTo   StockMovement[] @relation("ToWarehouse")
+
+  @@index([code])
+}
+
+model BarcodeMaster {
+  id             String   @id @default(cuid())
+  barcode        String   @unique
+  standardName   String // Official product name
+  category       String?
+  manufacturer   String?
+  specifications String? // JSON string for specs
+  isActive       Boolean  @default(true)
+  registeredBy   String // userId who registered
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  inventories WarehouseInventory[]
+
+  @@index([barcode])
+  @@index([isActive])
+}
+
+model WarehouseInventory {
+  id          String   @id @default(cuid())
+  warehouseId String
+  productId   String
+  barcode     String // Denormalized for quick lookup
+  quantity    Int      @default(0)
+  location    String? // 무진, 1층, 2층, 3층, etc.
+  lastUpdated DateTime @default(now())
+  syncedFrom  String? // Source: SPREADSHEET, API, MANUAL
+
+  warehouse     Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  barcodeMaster BarcodeMaster? @relation(fields: [barcode], references: [barcode], onDelete: SetNull)
+
+  @@unique([warehouseId, productId])
+  @@index([barcode])
+  @@index([warehouseId])
+  @@index([productId])
+}
+
+model StockMovement {
+  id              String   @id @default(cuid())
+  type            String // IN, OUT, TRANSFER, ADJUSTMENT
+  productId       String
+  barcode         String
+  fromWarehouseId String?
+  toWarehouseId   String?
+  quantity        Int
+  reason          String?
+  reference       String? // Order ID, adjustment ID, etc.
+  processedBy     String // userId
+  processedAt     DateTime @default(now())
+
+  product       Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  fromWarehouse Warehouse? @relation("FromWarehouse", fields: [fromWarehouseId], references: [id], onDelete: SetNull)
+  toWarehouse   Warehouse? @relation("ToWarehouse", fields: [toWarehouseId], references: [id], onDelete: SetNull)
+
+  @@index([barcode])
+  @@index([productId])
+  @@index([processedAt])
 }
 
 // ──────────────────────── Rate Limiting ────────────────────────
