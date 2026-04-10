@@ -13,6 +13,7 @@
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test --grep @smoke",
     "test:e2e:integration": "playwright test --grep @integration",
+    "test:e2e:post-deploy": "playwright test --grep @post-deploy",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug"
   },

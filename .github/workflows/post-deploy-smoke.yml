@@ -1,0 +1,103 @@
+name: Post-Deployment Smoke Tests
+
+on:
+  # Trigger via repository_dispatch from Vercel deployment webhook
+  repository_dispatch:
+    types: [deployment]
+
+  # Also allow manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: 'Deployment URL to test'
+        required: false
+        default: 'https://live-commerce-opal.vercel.app'
+
+jobs:
+  smoke-tests:
+    name: Run Smoke Tests on Deployed App
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Use the commit SHA from the deployment event if available
+          ref: ${{ github.event.client_payload.sha || github.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run smoke tests
+        run: npm run test:e2e:smoke
+        env:
+          # Use deployment URL from event or fallback to production
+          BASE_URL: ${{ github.event.client_payload.deployment_url || inputs.deployment_url || 'https://live-commerce-opal.vercel.app' }}
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-report-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-results-${{ github.run_number }}
+          path: test-results/
+          retention-days: 7
+
+      - name: Notify Slack on failure
+        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "🚨 Deployment Smoke Tests Failed",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🚨 Deployment Smoke Tests Failed"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Deployment:*\n${{ github.event.client_payload.deployment_url || 'https://live-commerce-opal.vercel.app' }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n${{ github.event.head_commit.message || 'Manual trigger' }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${{ github.ref_name }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
