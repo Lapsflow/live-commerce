@@ -1,8 +1,66 @@
 # ONEWMS-FMS API 통합 설계서
 
 **작성일**: 2026-04-09
+**최종 수정**: 2026-04-10
 **프로젝트**: Live Commerce Platform
 **기능**: ONEWMS-FMS API Integration
+
+---
+
+## 🎯 구현 현황 요약 (2026-04-10 기준)
+
+### ✅ 완료된 구현
+
+**데이터베이스 & 스키마**
+- ✅ OnewmsOrderMapping, OnewmsStockSync, OnewmsDeliveryLog 모델
+- ✅ Product 모델 ONEWMS 필드 (onewmsCode, onewmsBarcode)
+- ✅ 다중 창고 시스템 통합 (Warehouse, BarcodeMaster, WarehouseInventory, StockMovement)
+
+**백엔드 서비스 & Cron**
+- ✅ `lib/services/onewms/stockSync.ts` - 재고 동기화 서비스
+  - syncAllStocks(), syncProductStock(), getStockConflicts(), resolveConflict()
+  - 배치 처리 (5개씩 병렬), 자동 충돌 해결 (차이 < 5)
+- ✅ `lib/services/onewms/orderSync.ts` - 주문 동기화 서비스 (존재)
+- ✅ `lib/services/onewms/deliverySync.ts` - 배송 동기화 서비스 (존재)
+- ✅ `lib/services/onewms/notifications.ts` - 알림 서비스 (존재)
+- ✅ `app/api/cron/stock-sync/route.ts` - 재고 동기화 Cron (6시간마다)
+- ✅ `app/api/cron/delivery-sync/route.ts` - 배송 동기화 Cron
+- ✅ `app/api/cron/warehouse-sync/route.ts` - 다중 창고 동기화 Cron (매일 09:00 KST)
+
+### 🔄 구현 필요 (Phase 2-5)
+
+**REST API 엔드포인트** (우선순위 높음)
+- [ ] POST /api/onewms/orders - 주문 전송
+- [ ] GET /api/onewms/orders/:orderId - 주문 정보 조회
+- [ ] POST /api/onewms/stock/sync - 수동 재고 동기화
+- [ ] GET /api/onewms/stock/:productId - 개별 상품 재고
+- [ ] GET /api/onewms/stock/conflicts - 재고 충돌 목록
+- [ ] POST /api/onewms/stock/conflicts/:id/resolve - 충돌 해결
+- [ ] POST /api/onewms/delivery/update - 배송 상태 수동 업데이트
+- [ ] GET /api/onewms/delivery/invoice/:transNo - 송장 이미지
+- [ ] GET /api/admin/onewms/status - 관리자 상태 대시보드
+- [ ] POST /api/admin/onewms/retry-failed - 실패 주문 재시도
+
+**관리자 UI** (우선순위 중간)
+- [ ] `app/(main)/admin/dashboard/components/onewms-status-widget.tsx` - ONEWMS 상태 위젯
+- [ ] `app/(main)/orders/[id]/components/onewms-info.tsx` - 주문 상세 ONEWMS 정보
+- [ ] `app/(main)/products/components/stock-sync-button.tsx` - 재고 동기화 버튼
+
+**Queue & 고급 기능** (우선순위 낮음)
+- [ ] Queue 시스템 (대량 주문 처리)
+- [ ] 실시간 알림 통합
+- [ ] 고객 배송 알림 발송
+
+### 📊 진행률
+
+- **데이터베이스**: 100% (완료)
+- **백엔드 서비스**: 70% (핵심 로직 완료, API 엔드포인트 필요)
+- **Cron Jobs**: 100% (완료)
+- **REST API**: 0% (미착수)
+- **관리자 UI**: 0% (미착수)
+- **테스트**: 0% (E2E 테스트 필요)
+
+**전체 진행률**: ~40%
 
 ---
 
@@ -363,7 +421,9 @@ ONEWMS 연동 상태 조회
 
 **파일**: `lib/cron/stock-sync.ts`
 
-**스케줄**: `*/5 * * * *` (5분마다)
+**스케줄**: `0 */6 * * *` (6시간마다)
+
+**Note**: 설계서 초안에서는 5분마다 동기화로 계획했으나, 실제 구현에서는 ONEWMS API 부하 및 실제 재고 변동 주기를 고려하여 6시간 주기로 변경되었습니다.
 
 **로직**:
 ```typescript
@@ -1106,26 +1166,40 @@ async function sendAlert(type: AlertType, data: any) {
 ## 13. 구현 체크리스트
 
 ### Phase 1: DB 스키마
-- [ ] Prisma 스키마 업데이트
-- [ ] 마이그레이션 파일 생성
-- [ ] 마이그레이션 실행 및 검증
+- [x] Prisma 스키마 업데이트
+  - OnewmsOrderMapping, OnewmsStockSync, OnewmsDeliveryLog 완료
+  - Product 모델에 onewmsCode, onewmsBarcode 필드 추가
+- [x] 마이그레이션 파일 생성 및 실행
+- [x] 다중 창고 시스템 통합 (Warehouse, BarcodeMaster, WarehouseInventory, StockMovement)
 
 ### Phase 2: 주문 통합
-- [ ] POST /api/onewms/orders 구현
-- [ ] 주문 전송 헬퍼 구현
-- [ ] Queue 시스템 구현
-- [ ] 에러 핸들링
+- [x] lib/services/onewms/orderSync.ts 서비스 레이어 존재
+- [ ] POST /api/onewms/orders (ONEWMS 주문 전송 API) 구현
+- [ ] GET /api/onewms/orders/:orderId (주문 정보 조회 API) 구현
+- [ ] 주문 전송 헬퍼 통합 및 검증
+- [ ] Queue 시스템 구현 (대량 주문 처리용)
+- [ ] 에러 핸들링 및 재시도 로직 강화
 
 ### Phase 3: 재고 동기화
-- [ ] POST /api/onewms/stock/sync 구현
-- [ ] 크론 작업 구현
-- [ ] 재고 충돌 처리
-- [ ] 알림 시스템
+- [x] lib/services/onewms/stockSync.ts 서비스 레이어 구현
+  - syncAllStocks(), syncProductStock(), getStockConflicts(), resolveConflict() 완료
+  - 배치 처리 (5개씩 병렬) 및 자동 충돌 해결 (차이 < 5) 구현
+- [x] app/api/cron/stock-sync/route.ts 크론 작업 구현
+  - 스케줄: */6 * * * * (6시간마다, 설계서는 5분이었으나 실제 구현은 6시간)
+- [x] 재고 충돌 감지 및 로깅
+- [ ] POST /api/onewms/stock/sync (수동 동기화 API)
+- [ ] GET /api/onewms/stock/:productId (개별 상품 재고 조회)
+- [ ] GET /api/onewms/stock/conflicts (충돌 목록 조회 API)
+- [ ] POST /api/onewms/stock/conflicts/:id/resolve (충돌 해결 API)
+- [ ] 알림 시스템 (lib/services/onewms/notifications.ts 존재하나 통합 필요)
 
 ### Phase 4: 배송 추적
-- [ ] 배송 상태 업데이트 크론
-- [ ] 송장 이미지 조회 API
-- [ ] 고객 알림 발송
+- [x] lib/services/onewms/deliverySync.ts 서비스 레이어 존재
+- [x] app/api/cron/delivery-sync/route.ts 크론 작업 존재
+- [ ] 배송 상태 업데이트 로직 검증 필요
+- [ ] POST /api/onewms/delivery/update (수동 배송 상태 업데이트)
+- [ ] GET /api/onewms/delivery/invoice/:transNo (송장 이미지 URL 조회)
+- [ ] 고객 알림 발송 통합
 
 ### Phase 5: 관리자 UI
 - [ ] ONEWMS 상태 위젯
@@ -1141,7 +1215,128 @@ async function sendAlert(type: AlertType, data: any) {
 
 ---
 
-## 14. 참고 자료
+## 14. 다중 창고 바코드 시스템 통합
+
+### 14.1 통합 아키텍처
+
+ONEWMS 시스템과 다중 창고 바코드 시스템은 공통 재고 관리 기반 위에서 통합됩니다:
+
+```
+┌────────────────────────────────────────────────────────────┐
+│             Live Commerce Inventory System                 │
+├────────────────────────────────────────────────────────────┤
+│                                                              │
+│   ┌──────────────────┐          ┌──────────────────┐       │
+│   │  ONEWMS System   │          │ Multi-Warehouse  │       │
+│   │  (Single WMS)    │          │  Barcode System  │       │
+│   └────────┬─────────┘          └────────┬─────────┘       │
+│            │                              │                  │
+│            ├─ OnewmsStockSync            ├─ WarehouseInventory
+│            ├─ OnewmsOrderMapping         ├─ BarcodeMaster  │
+│            └─ OnewmsDeliveryLog          └─ StockMovement  │
+│                      │                          │            │
+│                      ▼                          ▼            │
+│              ┌────────────────────────────────────┐         │
+│              │      Product (통합 재고)          │         │
+│              │  - totalStock (총재고)            │         │
+│              │  - onewmsCode (ONEWMS 상품코드)   │         │
+│              │  - masterBarcodeId (공식 바코드)  │         │
+│              └────────────────────────────────────┘         │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 14.2 재고 동기화 전략
+
+#### ONEWMS 재고 (단일 WMS)
+- **주기**: 6시간마다 자동 동기화
+- **소스**: ONEWMS API (`api.onewms.co.kr`)
+- **대상**: Product.totalStock
+- **충돌 처리**: OnewmsStockSync에 로그 저장, 차이 < 5는 자동 해결
+
+#### 다중 창고 재고 (6개 창고)
+- **주기**: 매일 09:00 KST (00:00 UTC)
+- **소스**: Google Spreadsheet (각 창고별)
+- **대상**: WarehouseInventory (창고별 재고)
+- **통합**: 모든 창고 재고 합계
+
+#### 재고 우선순위
+1. **공식 바코드 마스터** (BarcodeMaster): 한국무진 독점 관리, 표준 상품 정보
+2. **ONEWMS 재고**: 실시간 WMS 재고 (한국무진 통합 WMS)
+3. **다중 창고 재고**: 6개 창고 개별 재고의 합계
+
+**재고 불일치 해결 전략**:
+- ONEWMS와 다중 창고 시스템이 동시에 존재하는 경우, 관리자 대시보드에서 수동 조정
+- WarehouseInventory의 합계와 Product.totalStock 비교
+- OnewmsStockSync로 ONEWMS와 Product.totalStock 비교
+
+### 14.3 바코드 매핑
+
+```typescript
+// Product 모델의 바코드 관련 필드
+interface ProductBarcodes {
+  barcode: string;          // 플랫폼 기본 바코드 (unique)
+  onewmsBarcode?: string;   // ONEWMS 바코드
+  onewmsCode?: string;      // ONEWMS 상품코드 (unique)
+  masterBarcodeId?: string; // 공식 바코드 마스터 참조
+}
+```
+
+**바코드 검색 우선순위**:
+1. BarcodeMaster.barcode (공식 바코드)
+2. Product.barcode (플랫폼 바코드)
+3. Product.onewmsBarcode (ONEWMS 바코드)
+
+### 14.4 Cron Jobs 통합
+
+| Cron Job | 스케줄 | 목적 | 파일 |
+|----------|--------|------|------|
+| warehouse-sync | `0 0 * * *` (매일 09:00 KST) | 6개 창고 Google Sheets 동기화 | `app/api/cron/warehouse-sync/route.ts` |
+| stock-sync | `0 */6 * * *` (6시간마다) | ONEWMS 재고 동기화 | `app/api/cron/stock-sync/route.ts` |
+| delivery-sync | `*/10 * * * *` (10분마다) | ONEWMS 배송 상태 동기화 | `app/api/cron/delivery-sync/route.ts` |
+
+**권장 실행 순서**:
+1. `warehouse-sync` (매일 09:00) - 창고 재고 최신화
+2. `stock-sync` (6시간마다) - ONEWMS 재고 동기화
+3. `delivery-sync` (10분마다) - 배송 상태 실시간 추적
+
+### 14.5 관리자 대시보드 통합
+
+관리자 대시보드에 두 시스템 상태를 통합 표시:
+
+```tsx
+<DashboardLayout>
+  {/* ONEWMS 연동 상태 */}
+  <OnewmsStatusWidget
+    stats={{
+      pendingOrders: number,
+      failedOrders: number,
+      lastStockSync: Date,
+      conflicts: number
+    }}
+  />
+
+  {/* 다중 창고 바코드 상태 */}
+  <WarehouseStatusWidget
+    stats={{
+      totalWarehouses: 6,
+      lastSync: Date,
+      totalInventory: number,
+      lowStockProducts: number
+    }}
+  />
+
+  {/* 재고 통합 대시보드 */}
+  <InventoryConsolidationWidget
+    onewmsTotal: number,
+    warehouseTotal: number,
+    difference: number
+  />
+</DashboardLayout>
+```
+
+---
+
+## 15. 참고 자료
 
 - ONEWMS API 문서: https://jiansoft.notion.site/ONEWMS-FMS-API-63a2365265a34261b785ad5c58c72b4f
 - 클라이언트 라이브러리: `/lib/onewms/`
