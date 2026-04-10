@@ -1,12 +1,27 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { decodeJwt } from "jose";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Check if user has auth cookie
   const authCookie = req.cookies.get("authjs.session-token") || req.cookies.get("__Secure-authjs.session-token");
-  const isLoggedIn = !!authCookie;
+
+  // Validate JWT token expiration
+  let isLoggedIn = false;
+  if (authCookie?.value) {
+    try {
+      const decoded = decodeJwt(authCookie.value);
+      // Check if token is expired (exp is in seconds, Date.now() is in milliseconds)
+      const currentTime = Math.floor(Date.now() / 1000);
+      isLoggedIn = !!decoded.exp && decoded.exp > currentTime;
+    } catch (error) {
+      // Invalid token format
+      console.error("[Middleware] Invalid JWT token:", error);
+      isLoggedIn = false;
+    }
+  }
 
   // Public routes (로그인 없이 접근 가능)
   const publicRoutes = ["/login", "/signup"];
