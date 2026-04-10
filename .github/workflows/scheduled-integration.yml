@@ -174,7 +174,8 @@ ${failureDetails}
             }
 
       - name: Notify Slack on failure
-        if: steps.integration_tests.outcome == 'failure' && secrets.SLACK_WEBHOOK_URL != ''
+        if: steps.integration_tests.outcome == 'failure'
+        continue-on-error: true
         uses: slackapi/slack-github-action@v1
         with:
           payload: |
