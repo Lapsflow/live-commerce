@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: '0 */6 * * *'
 
-  # Allow manual trigger
+  # Allow manual trigger via GitHub Actions UI
   workflow_dispatch:
 
 jobs:
