@@ -84,13 +84,44 @@ export default function OnewmsStatusWidget({
       {stock.lastSync && (
         <div className="col-span-full bg-gray-50 p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">마지막 재고 동기화</span>
-            <span className="text-sm font-medium text-gray-900">
-              {new Date(stock.lastSync).toLocaleString('ko-KR')}
-            </span>
+            <div>
+              <span className="text-sm text-gray-600">마지막 재고 동기화</span>
+              <p className="text-xs text-gray-500 mt-1">
+                ⏰ 자동 동기화: 5분마다 실행
+              </p>
+            </div>
+            <div className="text-right">
+              <span className="text-sm font-medium text-gray-900 block">
+                {getRelativeTime(stock.lastSync)}
+              </span>
+              <span className="text-xs text-gray-500">
+                {new Date(stock.lastSync).toLocaleString('ko-KR')}
+              </span>
+            </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Helper function for relative time
+function getRelativeTime(dateString: string): string {
+  const now = new Date();
+  const past = new Date(dateString);
+  const diffMs = now.getTime() - past.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+
+  if (diffMins < 1) return '방금 전';
+  if (diffMins < 5) return `${diffMins}분 전`;
+  if (diffMins < 60) return `${diffMins}분 전`;
+
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}시간 전`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays}일 전`;
+}
     </div>
   );
 }
