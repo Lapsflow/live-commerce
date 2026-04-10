@@ -9,7 +9,12 @@
     "lint": "eslint",
     "format": "prettier --check \"**/*.{ts,tsx}\"",
     "format:fix": "prettier --write \"**/*.{ts,tsx}\"",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test --grep @smoke",
+    "test:e2e:integration": "playwright test --grep @integration",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"

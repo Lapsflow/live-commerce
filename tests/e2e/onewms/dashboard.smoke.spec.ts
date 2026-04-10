@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { mockOnewmsAPIs } from './helpers/mock-routes';
 
-test.describe('ONEWMS Dashboard - Smoke Tests', () => {
+test.describe('ONEWMS Dashboard - Smoke Tests @smoke', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
 
   test.beforeEach(async ({ page }) => {
