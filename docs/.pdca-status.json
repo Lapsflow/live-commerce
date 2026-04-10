@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-04-09T07:46:24.634Z",
+  "lastUpdated": "2026-04-10T05:46:25.906Z",
   "activeFeatures": [
     "live-commerce-migration",
     "db",
@@ -40,7 +40,9 @@
     "conflicts",
     "resolve",
     "delivery-sync",
-    "stats"
+    "stats",
+    "tests",
+    "helpers"
   ],
   "primaryFeature": "live-commerce-migration",
   "features": {
@@ -131,9 +133,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-05T23:38:46.838Z",
-        "lastUpdated": "2026-04-07T08:36:19.192Z"
+        "lastUpdated": "2026-04-10T05:46:25.906Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/auth.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/middleware.ts"
     },
     "status": {
       "phase": "do",
@@ -430,9 +432,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-06T09:30:34.163Z",
-        "lastUpdated": "2026-04-06T09:44:48.599Z"
+        "lastUpdated": "2026-04-09T12:44:58.077Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/e2e/complete-system.spec.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/auth.setup.ts"
     },
     "providers": {
       "phase": "do",
@@ -456,9 +458,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-09T06:14:28.654Z",
-        "lastUpdated": "2026-04-09T07:46:24.633Z"
+        "lastUpdated": "2026-04-10T04:16:05.057Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/dashboard/onewms/page.tsx"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/onewms/dashboard.smoke.spec.ts"
     },
     "sync": {
       "phase": "do",
@@ -550,6 +552,32 @@
         "lastUpdated": "2026-04-09T07:45:36.403Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/onewms/stats/route.ts"
+    },
+    "tests": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-09T12:43:13.976Z",
+        "lastUpdated": "2026-04-09T12:43:13.976Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/auth.setup.ts"
+    },
+    "helpers": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-09T12:43:19.285Z",
+        "lastUpdated": "2026-04-09T12:43:19.285Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/onewms/helpers/mock-routes.ts"
     }
   },
   "pipeline": {
@@ -560,7 +588,7 @@
   "session": {
     "startedAt": "2026-04-05T11:31:25.159Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-04-09T07:46:24.634Z"
+    "lastActivity": "2026-04-10T05:46:25.906Z"
   },
   "history": [
     {
@@ -1466,6 +1494,126 @@
     {
       "timestamp": "2026-04-09T07:46:24.633Z",
       "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-09T12:43:11.499Z",
+      "feature": "live-commerce",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-09T12:43:13.976Z",
+      "feature": "tests",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-09T12:43:19.285Z",
+      "feature": "helpers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-09T12:43:33.676Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-09T12:44:58.077Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:11:06.040Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:11:09.656Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:11:42.563Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:12:31.933Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:12:38.064Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:13:19.648Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:13:25.649Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:14:08.658Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:15:23.729Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:15:25.270Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:15:26.659Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:15:59.181Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:16:02.959Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T04:16:05.057Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-10T05:46:25.906Z",
+      "feature": "live-commerce",
       "phase": "do",
       "action": "updated"
     }
