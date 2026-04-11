@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-04-10T08:03:33.753Z",
+  "timestamp": "2026-04-11T02:50:07.672Z",
   "reason": "compaction",
   "status": {
     "version": "2.0",
-    "lastUpdated": "2026-04-10T08:03:22.704Z",
+    "lastUpdated": "2026-04-11T02:28:36.467Z",
     "activeFeatures": [
       "live-commerce-migration",
       "db",
@@ -45,7 +45,18 @@
       "delivery-sync",
       "stats",
       "tests",
-      "helpers"
+      "helpers",
+      "post-deploy",
+      "google-sheets",
+      "warehouse",
+      "warehouse-sync",
+      "search",
+      "barcode-master",
+      "prisma",
+      "[productId]",
+      "update",
+      "[transNo]",
+      "products"
     ],
     "primaryFeature": "live-commerce-migration",
     "features": {
@@ -136,9 +147,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-05T23:38:46.838Z",
-          "lastUpdated": "2026-04-10T06:37:52.919Z"
+          "lastUpdated": "2026-04-11T02:28:36.467Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/middleware.ts"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/compare-onewms-ui.js"
       },
       "status": {
         "phase": "do",
@@ -162,9 +173,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-05T23:53:47.560Z",
-          "lastUpdated": "2026-04-07T08:37:30.641Z"
+          "lastUpdated": "2026-04-11T02:09:10.545Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/stats/dashboard/route.ts"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/admin/dashboard/components/onewms-status-widget.tsx"
       },
       "start": {
         "phase": "do",
@@ -214,7 +225,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T00:09:48.059Z",
-          "lastUpdated": "2026-04-06T08:53:34.079Z"
+          "lastUpdated": "2026-04-10T10:07:24.241Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/barcode/page.tsx"
       },
@@ -279,9 +290,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T01:17:44.874Z",
-          "lastUpdated": "2026-04-06T01:22:09.849Z"
+          "lastUpdated": "2026-04-11T01:43:04.211Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/stats/seller/[id]/route.ts"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/orders/[id]/page.tsx"
       },
       "analytics": {
         "phase": "do",
@@ -448,9 +459,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T09:57:57.029Z",
-          "lastUpdated": "2026-04-06T09:57:57.029Z"
+          "lastUpdated": "2026-04-11T02:26:40.016Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/providers/session-provider.tsx"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/providers/query-provider.tsx"
       },
       "onewms": {
         "phase": "do",
@@ -461,9 +472,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-09T06:14:28.654Z",
-          "lastUpdated": "2026-04-10T08:03:22.704Z"
+          "lastUpdated": "2026-04-10T14:00:49.252Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/onewms/dashboard.smoke.spec.ts"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/onewms/OnewmsStatusWidget.tsx"
       },
       "sync": {
         "phase": "do",
@@ -581,6 +592,149 @@
           "lastUpdated": "2026-04-10T08:01:08.547Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/onewms/helpers/db-helpers.ts"
+      },
+      "post-deploy": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T08:25:49.889Z",
+          "lastUpdated": "2026-04-10T08:25:49.889Z"
+        },
+        "lastFile": "tests/e2e/post-deploy/health-check.spec.ts"
+      },
+      "google-sheets": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T10:05:13.437Z",
+          "lastUpdated": "2026-04-10T10:05:13.437Z"
+        },
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/google-sheets/client.ts"
+      },
+      "warehouse": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T10:05:35.256Z",
+          "lastUpdated": "2026-04-10T10:05:35.256Z"
+        },
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/warehouse/sync.ts"
+      },
+      "warehouse-sync": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T10:05:51.925Z",
+          "lastUpdated": "2026-04-10T10:05:51.925Z"
+        },
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/cron/warehouse-sync/route.ts"
+      },
+      "search": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T10:06:44.200Z",
+          "lastUpdated": "2026-04-10T10:06:44.200Z"
+        },
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/barcode/search/route.ts"
+      },
+      "barcode-master": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T10:08:03.826Z",
+          "lastUpdated": "2026-04-10T10:08:42.091Z"
+        },
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/admin/barcode-master/page.tsx"
+      },
+      "prisma": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T10:09:08.094Z",
+          "lastUpdated": "2026-04-10T10:09:08.094Z"
+        },
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/prisma/seed-warehouses.ts"
+      },
+      "[productId]": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T13:35:59.380Z",
+          "lastUpdated": "2026-04-10T13:35:59.380Z"
+        },
+        "lastFile": "app/api/onewms/stock/[productId]/route.ts"
+      },
+      "update": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T13:36:12.148Z",
+          "lastUpdated": "2026-04-10T13:36:12.148Z"
+        },
+        "lastFile": "app/api/onewms/delivery/update/route.ts"
+      },
+      "[transNo]": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T13:42:53.381Z",
+          "lastUpdated": "2026-04-10T13:42:53.381Z"
+        },
+        "lastFile": "app/api/onewms/delivery/invoice/[transNo]/route.ts"
+      },
+      "products": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-10T14:10:02.501Z",
+          "lastUpdated": "2026-04-11T01:43:48.071Z"
+        },
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/products/components/stock-sync-button.tsx"
       }
     },
     "pipeline": {
@@ -591,7 +745,7 @@
     "session": {
       "startedAt": "2026-04-05T11:31:25.159Z",
       "onboardingCompleted": false,
-      "lastActivity": "2026-04-10T08:03:22.704Z"
+      "lastActivity": "2026-04-11T02:28:36.467Z"
     },
     "history": [
       {
@@ -1695,6 +1849,324 @@
       {
         "timestamp": "2026-04-10T08:03:22.704Z",
         "feature": "onewms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T08:25:49.889Z",
+        "feature": "post-deploy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T10:05:13.437Z",
+        "feature": "google-sheets",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T10:05:35.256Z",
+        "feature": "warehouse",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T10:05:51.925Z",
+        "feature": "warehouse-sync",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T10:06:44.200Z",
+        "feature": "search",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T10:07:24.241Z",
+        "feature": "barcode",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T10:08:03.826Z",
+        "feature": "barcode-master",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T10:08:42.091Z",
+        "feature": "barcode-master",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T10:09:08.094Z",
+        "feature": "prisma",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T13:26:17.882Z",
+        "feature": "onewms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T13:35:59.380Z",
+        "feature": "[productId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T13:36:12.148Z",
+        "feature": "update",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T13:42:53.381Z",
+        "feature": "[transNo]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:00:49.252Z",
+        "feature": "onewms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:01:16.080Z",
+        "feature": "dashboard",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:01:21.182Z",
+        "feature": "dashboard",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:01:31.286Z",
+        "feature": "dashboard",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:09:07.353Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:09:16.714Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:09:21.433Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:09:28.032Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-10T14:10:02.501Z",
+        "feature": "products",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:34:55.711Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:41:44.226Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:43:47.147Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:44:59.419Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:46:41.249Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:47:13.474Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:51:00.779Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:51:46.606Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:54:45.267Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:55:52.716Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:56:32.102Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T00:56:51.802Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:41:21.942Z",
+        "feature": "dashboard",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:41:37.498Z",
+        "feature": "dashboard",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:42:38.141Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:43:04.211Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:43:48.071Z",
+        "feature": "products",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:44:13.108Z",
+        "feature": "dashboard",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:48:09.534Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:48:32.032Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:49:30.141Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:50:52.764Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T01:51:15.013Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T02:08:52.309Z",
+        "feature": "dashboard",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T02:09:10.545Z",
+        "feature": "dashboard",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T02:26:40.016Z",
+        "feature": "providers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T02:26:44.943Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T02:26:49.570Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T02:28:23.546Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T02:28:32.516Z",
+        "feature": "live-commerce",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-11T02:28:36.467Z",
+        "feature": "live-commerce",
         "phase": "do",
         "action": "updated"
       }
