@@ -165,12 +165,14 @@ export async function syncOrderDeliveryStatus(orderId: string): Promise<{
     }
 
     return { success: true, updated: statusChanged };
-  } catch (error: any) {
+  } catch (error) {
     console.error(`Delivery sync failed for order ${orderId}:`, error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+
     return {
       success: false,
       updated: false,
-      error: error.message || 'Unknown error',
+      error: message,
     };
   }
 }

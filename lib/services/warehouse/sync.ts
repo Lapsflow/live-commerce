@@ -123,12 +123,14 @@ export async function syncWarehouseInventory(
       recordsProcessed,
     };
   } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+
     return {
       warehouseId,
       warehouseName: 'Unknown',
       success: false,
       recordsProcessed: 0,
-      error: error.message,
+      error: message,
     };
   }
 }

@@ -156,11 +156,13 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
     });
 
     return result;
-  } catch (error: any) {
+  } catch (error) {
     console.error(`Order sync failed for ${orderId}:`, error);
+    const message = error instanceof Error ? error.message : 'Failed to sync order to ONEWMS';
+
     return {
       success: false,
-      error: error.message || 'Failed to sync order to ONEWMS',
+      error: message,
     };
   }
 }

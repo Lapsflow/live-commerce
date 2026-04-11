@@ -43,7 +43,8 @@ export class GoogleSheetsClient {
       return response.data.values || [];
     } catch (error) {
       console.error('Error fetching sheet data:', error);
-      throw new Error(`Failed to fetch sheet data: ${error.message}`);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch sheet data: ${message}`);
     }
   }
 

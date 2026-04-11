@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-04-11T04:11:40.168Z",
+  "lastUpdated": "2026-04-11T04:14:57.119Z",
   "activeFeatures": [
     "live-commerce-migration",
     "db",
@@ -469,9 +469,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-09T06:14:28.654Z",
-        "lastUpdated": "2026-04-10T14:00:49.252Z"
+        "lastUpdated": "2026-04-11T04:14:57.118Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/onewms/OnewmsStatusWidget.tsx"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/onewms/stockSync.ts"
     },
     "sync": {
       "phase": "do",
@@ -612,7 +612,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-10T10:05:13.437Z",
-        "lastUpdated": "2026-04-10T10:05:13.437Z"
+        "lastUpdated": "2026-04-11T04:14:46.785Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/google-sheets/client.ts"
     },
@@ -625,7 +625,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-10T10:05:35.256Z",
-        "lastUpdated": "2026-04-10T10:05:35.256Z"
+        "lastUpdated": "2026-04-11T04:14:51.755Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/warehouse/sync.ts"
     },
@@ -742,7 +742,7 @@
   "session": {
     "startedAt": "2026-04-05T11:31:25.159Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-04-11T04:11:40.168Z"
+    "lastActivity": "2026-04-11T04:14:57.119Z"
   },
   "history": [
     {
@@ -2254,6 +2254,42 @@
     {
       "timestamp": "2026-04-11T04:11:40.168Z",
       "feature": "resolve",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-11T04:14:46.785Z",
+      "feature": "google-sheets",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-11T04:14:48.783Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-11T04:14:51.755Z",
+      "feature": "warehouse",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-11T04:14:55.126Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-11T04:14:56.159Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-11T04:14:57.118Z",
+      "feature": "onewms",
       "phase": "do",
       "action": "updated"
     }

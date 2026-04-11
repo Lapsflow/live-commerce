@@ -113,12 +113,14 @@ async function syncProductStock(productId: string): Promise<{
     }
 
     return { success: true, conflict: false };
-  } catch (error: any) {
+  } catch (error) {
     console.error(`Stock sync failed for product ${productId}:`, error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+
     return {
       success: false,
       conflict: false,
-      error: error.message || 'Unknown error',
+      error: message,
     };
   }
 }
@@ -307,11 +309,13 @@ export async function resolveConflict(
     );
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to resolve conflict:', error);
+    const message = error instanceof Error ? error.message : 'Failed to resolve conflict';
+
     return {
       success: false,
-      error: error.message || 'Failed to resolve conflict',
+      error: message,
     };
   }
 }
