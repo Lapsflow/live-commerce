@@ -1,0 +1,114 @@
+/**
+ * Stock Sync Button Component
+ * Manual stock synchronization for individual products
+ */
+
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { RefreshCwIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
+
+interface StockSyncButtonProps {
+  productId: string;
+  productName?: string;
+  onSyncComplete?: (success: boolean) => void;
+  variant?: 'default' | 'outline' | 'ghost';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  showLabel?: boolean;
+}
+
+export default function StockSyncButton({
+  productId,
+  productName,
+  onSyncComplete,
+  variant = 'outline',
+  size = 'sm',
+  showLabel = true,
+}: StockSyncButtonProps) {
+  const [syncing, setSyncing] = useState(false);
+  const [lastResult, setLastResult] = useState<'success' | 'error' | null>(null);
+
+  const handleSync = async () => {
+    if (!confirm(
+      productName
+        ? `"${productName}" 상품의 재고를 ONEWMS와 동기화하시겠습니까?`
+        : '이 상품의 재고를 ONEWMS와 동기화하시겠습니까?'
+    )) {
+      return;
+    }
+
+    setSyncing(true);
+    setLastResult(null);
+
+    try {
+      const res = await fetch('/api/onewms/stock/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.data) {
+        setLastResult('success');
+
+        // Show result
+        const { syncedCount, conflicts } = data.data;
+        if (conflicts && conflicts.length > 0) {
+          const conflict = conflicts[0];
+          alert(
+            `⚠️ 재고 충돌 감지\n\n` +
+            `플랫폼 재고: ${conflict.localQty}개\n` +
+            `ONEWMS 재고: ${conflict.onewmsQty}개\n` +
+            `차이: ${conflict.difference}개\n\n` +
+            `관리자 대시보드에서 수동으로 조정하세요.`
+          );
+        } else {
+          alert(`✅ 재고 동기화 완료\n동기화된 상품: ${syncedCount}개`);
+        }
+
+        onSyncComplete?.(true);
+      } else {
+        throw new Error(data.error?.message || '동기화 실패');
+      }
+    } catch (error: any) {
+      setLastResult('error');
+      alert(`❌ 재고 동기화 실패\n\n${error.message}`);
+      onSyncComplete?.(false);
+    } finally {
+      setSyncing(false);
+
+      // Clear result after 3 seconds
+      setTimeout(() => {
+        setLastResult(null);
+      }, 3000);
+    }
+  };
+
+  return (
+    <Button
+      variant={variant}
+      size={size}
+      onClick={handleSync}
+      disabled={syncing}
+      className="relative"
+    >
+      {syncing ? (
+        <RefreshCwIcon className="h-4 w-4 animate-spin" />
+      ) : lastResult === 'success' ? (
+        <CheckCircleIcon className="h-4 w-4 text-green-600" />
+      ) : lastResult === 'error' ? (
+        <XCircleIcon className="h-4 w-4 text-red-600" />
+      ) : (
+        <RefreshCwIcon className="h-4 w-4" />
+      )}
+
+      {showLabel && (
+        <span className="ml-2">
+          {syncing ? '동기화 중...' : lastResult === 'success' ? '완료' : lastResult === 'error' ? '실패' : '재고 동기화'}
+        </span>
+      )}
+    </Button>
+  );
+}

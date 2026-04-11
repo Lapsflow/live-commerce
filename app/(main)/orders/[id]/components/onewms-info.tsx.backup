@@ -1,0 +1,198 @@
+/**
+ * ONEWMS Info Component
+ * Display ONEWMS integration status for an order
+ */
+
+'use client';
+
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { PackageIcon, TruckIcon, RefreshCwIcon, ExternalLinkIcon } from 'lucide-react';
+
+interface OnewmsInfoProps {
+  orderId: string;
+  mapping?: {
+    id: string;
+    onewmsOrderNo: string;
+    transNo: string | null;
+    status: string;
+    csStatus: number;
+    holdStatus: number;
+    lastSyncAt: string | null;
+  } | null;
+}
+
+const statusLabels: Record<string, string> = {
+  pending: '전송 대기',
+  sent: '전송 완료',
+  shipped: '출고 완료',
+  failed: '전송 실패',
+  manual_intervention: '수동 처리 필요',
+};
+
+const statusColors: Record<string, string> = {
+  pending: 'bg-gray-100 text-gray-800',
+  sent: 'bg-blue-100 text-blue-800',
+  shipped: 'bg-green-100 text-green-800',
+  failed: 'bg-red-100 text-red-800',
+  manual_intervention: 'bg-yellow-100 text-yellow-800',
+};
+
+export default function OnewmsInfo({ orderId, mapping }: OnewmsInfoProps) {
+  const [syncing, setSyncing] = useState(false);
+  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+  const [loadingInvoice, setLoadingInvoice] = useState(false);
+
+  // Manual sync handler
+  const handleSync = async () => {
+    if (!confirm('이 주문의 배송 상태를 ONEWMS에서 다시 가져오시겠습니까?')) {
+      return;
+    }
+
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/onewms/delivery/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.data) {
+        alert(`동기화 완료: ${data.data.message}`);
+        window.location.reload();
+      } else {
+        throw new Error(data.error?.message || '동기화 실패');
+      }
+    } catch (error: any) {
+      alert(`동기화 실패: ${error.message}`);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Load invoice image
+  const handleViewInvoice = async () => {
+    if (!mapping?.transNo) return;
+
+    setLoadingInvoice(true);
+    try {
+      const res = await fetch(`/api/onewms/delivery/invoice/${mapping.transNo}`);
+      const data = await res.json();
+
+      if (res.ok && data.data?.invoiceUrl) {
+        setInvoiceUrl(data.data.invoiceUrl);
+        window.open(data.data.invoiceUrl, '_blank');
+      } else {
+        throw new Error(data.error?.message || '송장 이미지를 불러올 수 없습니다');
+      }
+    } catch (error: any) {
+      alert(`송장 조회 실패: ${error.message}`);
+    } finally {
+      setLoadingInvoice(false);
+    }
+  };
+
+  // No ONEWMS mapping
+  if (!mapping) {
+    return (
+      <Card className="p-6 border-gray-200 bg-gray-50">
+        <div className="flex items-center gap-2 mb-2">
+          <PackageIcon className="h-5 w-5 text-gray-500" />
+          <h3 className="text-lg font-semibold text-gray-700">ONEWMS 연동</h3>
+        </div>
+        <p className="text-sm text-gray-600">
+          이 주문은 아직 ONEWMS에 전송되지 않았습니다.
+        </p>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="p-6 border-blue-200 bg-blue-50/30">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <PackageIcon className="h-5 w-5 text-blue-600" />
+          <h3 className="text-lg font-semibold text-blue-900">ONEWMS 연동 정보</h3>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleSync}
+          disabled={syncing}
+          className="flex items-center gap-1"
+        >
+          <RefreshCwIcon className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
+          {syncing ? '동기화 중...' : '상태 동기화'}
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* ONEWMS Order Number */}
+        <div>
+          <p className="text-sm text-gray-600 mb-1">ONEWMS 주문번호</p>
+          <p className="font-medium text-gray-900">{mapping.onewmsOrderNo}</p>
+        </div>
+
+        {/* Status */}
+        <div>
+          <p className="text-sm text-gray-600 mb-1">연동 상태</p>
+          <span
+            className={`inline-block px-3 py-1 text-sm rounded-md ${
+              statusColors[mapping.status] || 'bg-gray-100 text-gray-800'
+            }`}
+          >
+            {statusLabels[mapping.status] || mapping.status}
+          </span>
+        </div>
+
+        {/* Tracking Number */}
+        {mapping.transNo && (
+          <div>
+            <p className="text-sm text-gray-600 mb-1">
+              <TruckIcon className="h-4 w-4 inline mr-1" />
+              송장번호
+            </p>
+            <div className="flex items-center gap-2">
+              <p className="font-medium text-gray-900">{mapping.transNo}</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleViewInvoice}
+                disabled={loadingInvoice}
+                className="h-7 px-2 text-blue-600 hover:text-blue-700"
+              >
+                <ExternalLinkIcon className="h-3 w-3 mr-1" />
+                {loadingInvoice ? '로딩...' : '이미지'}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Last Sync */}
+        {mapping.lastSyncAt && (
+          <div>
+            <p className="text-sm text-gray-600 mb-1">마지막 동기화</p>
+            <p className="text-sm font-medium text-gray-900">
+              {new Date(mapping.lastSyncAt).toLocaleString('ko-KR')}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* CS Status Warning */}
+      {(mapping.csStatus > 0 || mapping.holdStatus > 0) && (
+        <div className="mt-4 p-3 bg-yellow-100 border border-yellow-300 rounded-lg">
+          <p className="text-sm text-yellow-800 font-medium">
+            ⚠️ 고객 서비스 상태 확인 필요
+          </p>
+          <p className="text-xs text-yellow-700 mt-1">
+            CS 상태: {mapping.csStatus} | 보류 상태: {mapping.holdStatus}
+          </p>
+        </div>
+      )}
+    </Card>
+  );
+}

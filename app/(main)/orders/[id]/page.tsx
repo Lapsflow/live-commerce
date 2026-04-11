@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Package, Truck, CreditCard } from "lucide-react";
+import OnewmsInfo from "./components/onewms-info";
 
 type OrderItem = {
   id: string;
@@ -48,6 +49,15 @@ type Order = {
     email: string;
   } | null;
   items: OrderItem[];
+  onewmsMapping?: {
+    id: string;
+    onewmsOrderNo: string;
+    transNo: string | null;
+    status: string;
+    csStatus: number;
+    holdStatus: number;
+    lastSyncAt: string | null;
+  } | null;
 };
 
 const statusLabels: Record<string, string> = {
@@ -230,6 +240,9 @@ export default function OrderDetailPage() {
           </div>
         </Card>
       )}
+
+      {/* ONEWMS Info Card */}
+      <OnewmsInfo orderId={order.id} />
 
       {/* Order Items Card */}
       <Card className="p-6">
