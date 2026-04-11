@@ -44,6 +44,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts", label: "방송", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/proposals", label: "상품 제안", icon: FileText },
+    { href: "/barcode", label: "바코드", icon: Barcode },
   ],
   MASTER: [
     { href: "/dashboard", label: "전체 통계", icon: BarChart },
@@ -53,6 +54,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/products", label: "상품 관리", icon: Package },
     { href: "/proposals", label: "상품 제안", icon: FileText },
+    { href: "/barcode", label: "바코드", icon: Barcode },
   ],
   SUB_MASTER: [
     { href: "/dashboard", label: "전체 통계", icon: BarChart },
@@ -61,6 +63,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts", label: "방송 관리", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/proposals", label: "상품 제안", icon: FileText },
+    { href: "/barcode", label: "바코드", icon: Barcode },
   ],
 };
 
