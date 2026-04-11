@@ -12,7 +12,8 @@ const path = require('path');
 // 설정
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyrpVxyabmqsBj1l6pQOLLfXAJXi_oztal3SKFngnZtL_Y0O7lGuHZDDM6FmUmBwWCk8A/exec';
 const NEXTJS_URL = process.env.NEXTJS_URL || 'http://localhost:3001'; // 로컬 또는 배포 URL (기존 dev 서버)
-const CREDENTIALS = { id: 'master', password: '1234' };
+const GAS_CREDENTIALS = { id: 'master', password: '1234' };
+const NEXTJS_CREDENTIALS = { email: 'admin1@live-commerce.com', password: 'admin1234' };
 const SCREENSHOTS_DIR = '/tmp/onewms-comparison';
 
 // 검증 결과 저장
@@ -83,8 +84,8 @@ async function compareOnewmsUI() {
 
     const gasInputs = await gasLoginFrame.locator('input').all();
     if (gasInputs.length >= 2) {
-      await gasInputs[0].fill(CREDENTIALS.id);
-      await gasInputs[1].fill(CREDENTIALS.password);
+      await gasInputs[0].fill(GAS_CREDENTIALS.id);
+      await gasInputs[1].fill(GAS_CREDENTIALS.password);
       const loginBtn = await gasLoginFrame.locator('button').first();
       await loginBtn.click();
       await gasPage.waitForTimeout(4000);
@@ -164,8 +165,8 @@ async function compareOnewmsUI() {
 
     try {
       // type과 placeholder로 input 필드 찾기
-      await nextPage.fill('input[type="email"]', CREDENTIALS.id);
-      await nextPage.fill('input[type="password"]', CREDENTIALS.password);
+      await nextPage.fill('input[type="email"]', NEXTJS_CREDENTIALS.email);
+      await nextPage.fill('input[type="password"]', NEXTJS_CREDENTIALS.password);
       await nextPage.click('button[type="submit"]');
       await nextPage.waitForTimeout(3000);
       console.log('✅ Next.js 로그인 완료\n');
