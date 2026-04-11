@@ -38,12 +38,14 @@ export async function POST(req: NextRequest) {
       },
       errors: result.errors.length > 0 ? result.errors : undefined,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Order retry API error:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Internal server error',
+        error: message,
       },
       { status: 500 }
     );

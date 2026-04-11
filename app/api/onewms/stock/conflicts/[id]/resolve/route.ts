@@ -56,12 +56,14 @@ export async function POST(
       success: true,
       message: 'Conflict resolved successfully',
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to resolve conflict:', error);
+    const message = error instanceof Error ? error.message : 'Failed to resolve conflict';
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to resolve conflict',
+        error: message,
       },
       { status: 500 }
     );

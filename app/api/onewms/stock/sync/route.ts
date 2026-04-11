@@ -36,12 +36,14 @@ export async function POST(req: NextRequest) {
       stats,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Manual stock sync failed:', error);
+    const message = error instanceof Error ? error.message : 'Stock sync failed';
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Stock sync failed',
+        error: message,
       },
       { status: 500 }
     );

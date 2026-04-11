@@ -60,11 +60,12 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error('[Warehouse Sync] Fatal error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
+        error: message,
         timestamp: new Date().toISOString(),
       },
       { status: 500 }

@@ -42,12 +42,14 @@ export async function GET(req: NextRequest) {
       stats,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Cron stock sync failed:', error);
+    const message = error instanceof Error ? error.message : 'Stock sync failed';
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Stock sync failed',
+        error: message,
         timestamp: new Date().toISOString(),
       },
       { status: 500 }

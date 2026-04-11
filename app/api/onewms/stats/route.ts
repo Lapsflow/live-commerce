@@ -91,12 +91,14 @@ export async function GET(req: NextRequest) {
         timestamp: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to fetch ONEWMS stats:', error);
+    const message = error instanceof Error ? error.message : 'Failed to fetch statistics';
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to fetch statistics',
+        error: message,
       },
       { status: 500 }
     );

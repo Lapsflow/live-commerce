@@ -108,9 +108,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ product: result });
   } catch (error) {
     console.error('[Barcode Search] Error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
     return NextResponse.json(
-      { error: 'Internal server error', message: error.message },
+      { error: 'Internal server error', message },
       { status: 500 }
     );
   }

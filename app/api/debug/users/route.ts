@@ -67,13 +67,17 @@ export async function GET(request: Request) {
         createdAt: u.createdAt.toISOString(),
       })),
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    const code = error && typeof error === 'object' && 'code' in error ? (error as any).code : undefined;
+    const stack = error instanceof Error ? error.stack : undefined;
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
-        code: error.code,
-        stack: error.stack,
+        error: message,
+        code,
+        stack,
       },
       { status: 500 }
     );

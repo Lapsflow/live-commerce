@@ -35,12 +35,14 @@ export async function GET(
       success: true,
       data: status,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Order status API error:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Internal server error',
+        error: message,
       },
       { status: 500 }
     );

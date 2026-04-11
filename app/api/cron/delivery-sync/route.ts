@@ -39,12 +39,14 @@ export async function GET(req: NextRequest) {
       result,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Cron delivery sync failed:', error);
+    const message = error instanceof Error ? error.message : 'Delivery sync failed';
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Delivery sync failed',
+        error: message,
         timestamp: new Date().toISOString(),
       },
       { status: 500 }

@@ -24,12 +24,14 @@ export async function GET(req: NextRequest) {
       data: conflicts,
       count: conflicts.length,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to fetch stock conflicts:', error);
+    const message = error instanceof Error ? error.message : 'Failed to fetch conflicts';
+
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to fetch conflicts',
+        error: message,
       },
       { status: 500 }
     );
