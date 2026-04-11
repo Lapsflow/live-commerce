@@ -122,6 +122,3 @@ function getRelativeTime(dateString: string): string {
   const diffDays = Math.floor(diffHours / 24);
   return `${diffDays}일 전`;
 }
-    </div>
-  );
-}

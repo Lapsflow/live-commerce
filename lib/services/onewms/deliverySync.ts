@@ -40,7 +40,7 @@ function mapOnewmsStatusToShippingStatus(
 /**
  * Sync delivery status for a single order
  */
-async function syncOrderDeliveryStatus(orderId: string): Promise<{
+export async function syncOrderDeliveryStatus(orderId: string): Promise<{
   success: boolean;
   updated: boolean;
   error?: string;

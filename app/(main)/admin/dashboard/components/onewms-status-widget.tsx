@@ -9,18 +9,26 @@ import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 interface OnewmsStats {
-  isConnected: boolean;
-  lastSyncAt: string;
-  stats: {
-    pendingOrders: number;
-    failedOrders: number;
-    conflictCount: number;
+  success: boolean;
+  data: {
+    orders: {
+      total: number;
+      pending: number;
+      failed: number;
+      shipped: number;
+      successRate: number;
+    };
+    stock: {
+      conflicts: number;
+      lastSync: string | null;
+    };
+    timestamp: string;
   };
 }
 
 export function OnewmsStatusWidget() {
   // 1. API 호출 (30초마다 자동 갱신)
-  const { data, isLoading, refetch } = useQuery({
+  const { data: response, isLoading, refetch } = useQuery({
     queryKey: ['onewms-stats'],
     queryFn: async () => {
       const res = await fetch('/api/onewms/stats');
@@ -29,6 +37,8 @@ export function OnewmsStatusWidget() {
     },
     refetchInterval: 30000,
   });
+
+  const data = response?.data;
 
   // 2. 재고 동기화 Mutation
   const syncStockMutation = useMutation({
@@ -66,12 +76,15 @@ export function OnewmsStatusWidget() {
     return <Card className="animate-pulse h-[200px]" />;
   }
 
+  // 연결 상태는 데이터 유무로 판단
+  const isConnected = !!response?.success && !!data;
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>ONEWMS 연동 상태</CardTitle>
-        <Badge variant={data?.isConnected ? 'default' : 'destructive'}>
-          {data?.isConnected ? '연결됨' : '연결 끊김'}
+        <Badge variant={isConnected ? 'default' : 'destructive'}>
+          {isConnected ? '연결됨' : '연결 끊김'}
         </Badge>
       </CardHeader>
       <CardContent>
@@ -79,28 +92,28 @@ export function OnewmsStatusWidget() {
           {/* 통계 */}
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold">{data?.stats.pendingOrders || 0}</div>
+              <div className="text-2xl font-bold">{data?.orders.pending || 0}</div>
               <div className="text-sm text-muted-foreground">대기 주문</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-destructive">
-                {data?.stats.failedOrders || 0}
+                {data?.orders.failed || 0}
               </div>
               <div className="text-sm text-muted-foreground">실패 주문</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-yellow-600">
-                {data?.stats.conflictCount || 0}
+                {data?.stock.conflicts || 0}
               </div>
               <div className="text-sm text-muted-foreground">재고 충돌</div>
             </div>
           </div>
 
           {/* 마지막 동기화 */}
-          {data?.lastSyncAt && (
+          {data?.stock.lastSync && (
             <div className="text-sm text-muted-foreground">
               마지막 동기화:{' '}
-              {formatDistanceToNow(new Date(data.lastSyncAt), {
+              {formatDistanceToNow(new Date(data.stock.lastSync), {
                 addSuffix: true,
                 locale: ko,
               })}
@@ -118,7 +131,7 @@ export function OnewmsStatusWidget() {
             </Button>
             <Button
               onClick={() => retryFailedMutation.mutate()}
-              disabled={retryFailedMutation.isPending || (data?.stats.failedOrders === 0)}
+              disabled={retryFailedMutation.isPending || (data?.orders.failed === 0)}
               variant="outline"
               size="sm"
             >

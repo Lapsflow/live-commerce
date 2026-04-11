@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { SalesChart } from "@/components/dashboard/sales-chart";
 import { RankingTable } from "@/components/dashboard/ranking-table";
@@ -10,6 +12,8 @@ import {
   ShoppingCartIcon,
   DollarSignIcon,
   PercentIcon,
+  PackageIcon,
+  AlertTriangleIcon,
 } from "lucide-react";
 
 interface DashboardStats {
@@ -28,23 +32,35 @@ interface DashboardStats {
   }>;
 }
 
+interface OnewmsStats {
+  orders: {
+    failed: number;
+  };
+  stock: {
+    conflicts: number;
+  };
+}
+
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [onewmsStats, setOnewmsStats] = useState<OnewmsStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/stats/dashboard")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch dashboard stats");
-        return res.json();
-      })
-      .then((data) => {
-        setStats(data.data);
+    Promise.all([
+      fetch("/api/stats/dashboard").then((res) => res.ok ? res.json() : Promise.reject()),
+      fetch("/api/onewms/stats").then((res) => res.ok ? res.json() : Promise.reject()).catch(() => null)
+    ])
+      .then(([dashboardData, onewmsData]) => {
+        setStats(dashboardData.data);
+        if (onewmsData?.data) {
+          setOnewmsStats(onewmsData.data);
+        }
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
+        setError(err.message || "Failed to fetch dashboard stats");
         setLoading(false);
       });
   }, []);
@@ -118,6 +134,49 @@ export default function DashboardPage() {
         <h2 className="text-xl font-bold mb-4">셀러 랭킹 (Top 10)</h2>
         <RankingTable data={stats.sellerRanking} />
       </Card>
+
+      {/* ONEWMS 연동 상태 */}
+      {onewmsStats && (
+        <Card className="p-6 border-blue-200 bg-blue-50/50">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <PackageIcon className="h-6 w-6 text-blue-600" />
+              <h2 className="text-xl font-bold text-blue-900">ONEWMS 연동 상태</h2>
+            </div>
+            <Link href="/dashboard/onewms">
+              <Button variant="outline" size="sm">
+                전체 보기
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
+              <AlertTriangleIcon className={`h-8 w-8 ${onewmsStats.orders.failed > 0 ? 'text-red-500' : 'text-gray-300'}`} />
+              <div>
+                <p className="text-sm text-gray-600">실패 주문</p>
+                <p className="text-2xl font-bold text-gray-900">{onewmsStats.orders.failed}건</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
+              <AlertTriangleIcon className={`h-8 w-8 ${onewmsStats.stock.conflicts > 0 ? 'text-yellow-500' : 'text-gray-300'}`} />
+              <div>
+                <p className="text-sm text-gray-600">재고 충돌</p>
+                <p className="text-2xl font-bold text-gray-900">{onewmsStats.stock.conflicts}건</p>
+              </div>
+            </div>
+          </div>
+
+          {(onewmsStats.orders.failed > 0 || onewmsStats.stock.conflicts > 0) && (
+            <div className="mt-4 p-3 bg-yellow-100 border border-yellow-300 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                ⚠️ 주의가 필요한 항목이 있습니다. ONEWMS 대시보드에서 확인하세요.
+              </p>
+            </div>
+          )}
+        </Card>
+      )}
     </div>
   );
 }
