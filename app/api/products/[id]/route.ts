@@ -128,8 +128,23 @@ export async function PUT(
     if (data.code !== undefined) updateData.code = data.code;
     if (data.name !== undefined) updateData.name = data.name;
     if (data.barcode !== undefined) updateData.barcode = data.barcode;
-    if (data.sellPrice !== undefined) updateData.sellPrice = data.sellPrice;
-    if (data.supplyPrice !== undefined) updateData.supplyPrice = data.supplyPrice;
+
+    // Phase 2: WMS products have read-only pricing (API-level enforcement)
+    if (existingProduct.productType === "HEADQUARTERS") {
+      // Block price changes for WMS products
+      if (data.sellPrice !== undefined || data.supplyPrice !== undefined) {
+        return error(
+          "FORBIDDEN",
+          "본사(WMS) 상품은 가격을 수정할 수 없습니다.",
+          403
+        );
+      }
+    } else {
+      // CENTER products: allow price updates
+      if (data.sellPrice !== undefined) updateData.sellPrice = data.sellPrice;
+      if (data.supplyPrice !== undefined) updateData.supplyPrice = data.supplyPrice;
+    }
+
     if (data.totalStock !== undefined) updateData.totalStock = data.totalStock;
     if (data.stockMujin !== undefined) updateData.stockMujin = data.stockMujin;
     if (data.stock1 !== undefined) updateData.stock1 = data.stock1;

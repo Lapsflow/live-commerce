@@ -7,7 +7,7 @@ import type { Order } from "@/types/order";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, Plus } from "lucide-react";
+import { Download, Plus, FileSpreadsheet } from "lucide-react";
 import Link from "next/link";
 
 const statusColors = {
@@ -107,11 +107,27 @@ const columns: ColumnDef<Order>[] = [
 export default function OrdersPage() {
   const { dataSource } = useApiCrud<Order>("/api/orders");
 
+  const handleExportWMS = () => {
+    window.open("/api/orders/export?type=wms", "_blank");
+  };
+
+  const handleExportCenter = () => {
+    window.open("/api/orders/export?type=center", "_blank");
+  };
+
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">발주 관리</h1>
         <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExportWMS}>
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            슈퍼무진 주문서
+          </Button>
+          <Button variant="outline" onClick={handleExportCenter}>
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            자사몰 주문서
+          </Button>
           <Link href="/orders/upload">
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
