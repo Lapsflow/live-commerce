@@ -13,13 +13,15 @@ import { prisma } from '@/lib/db/prisma';
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
     if (!session) {
       return errors.unauthorized();
     }
+
+    const { id } = await params;
 
     const allowedRoles = ['MASTER', 'SUB_MASTER', 'ADMIN', 'SELLER'];
     if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
@@ -28,7 +30,7 @@ export async function GET(
 
     // Verify center exists
     const center = await prisma.center.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     if (!center) {
@@ -43,7 +45,7 @@ export async function GET(
     // Get products with center stock
     const centerStocks = await prisma.productCenterStock.findMany({
       where: {
-        centerId: params.id,
+        centerId: id,
         ...(minStock ? { stock: { gte: parseInt(minStock) } } : {}),
         product: search
           ? {

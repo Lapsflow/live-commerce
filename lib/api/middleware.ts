@@ -14,8 +14,8 @@ export interface AuthUser {
   adminId?: string;
 }
 
-type NextHandler = (req: NextRequest) => Promise<NextResponse>;
-type AuthHandler = (req: NextRequest, user: AuthUser) => Promise<NextResponse>;
+type NextHandler = (req: NextRequest, context?: any) => Promise<NextResponse>;
+type AuthHandler = (req: NextRequest, user: AuthUser, context?: any) => Promise<NextResponse>;
 
 function toAuthUser(user: Record<string, unknown>): AuthUser | null {
   const { userId, name, email, role, adminId } = user;
@@ -45,7 +45,7 @@ function verifyCsrf(req: NextRequest): boolean {
 
 /** JWT 검증 + CSRF 검증 + 사용자 정보 주입 */
 export function withAuth(handler: AuthHandler): NextHandler {
-  return async (req: NextRequest) => {
+  return async (req: NextRequest, context?: any) => {
     // CSRF 검증
     if (!verifyCsrf(req)) {
       return NextResponse.json(
@@ -68,7 +68,7 @@ export function withAuth(handler: AuthHandler): NextHandler {
         { status: 401 }
       );
     }
-    return handler(req, authUser);
+    return handler(req, authUser, context);
   };
 }
 
@@ -77,7 +77,7 @@ export function withRole(
   allowedRoles: Role[],
   handler: AuthHandler
 ): NextHandler {
-  return withAuth(async (req, user) => {
+  return withAuth(async (req, user, context) => {
     if (!allowedRoles.includes(user.role)) {
       securityLogger.authzFailed({
         userId: user.userId,
@@ -90,15 +90,15 @@ export function withRole(
         { status: 403 }
       );
     }
-    return handler(req, user);
+    return handler(req, user, context);
   });
 }
 
 /** 에러 핸들러 래퍼 — withRole/withAuth 감싸서 사용 */
 export function withErrorHandler(handler: NextHandler): NextHandler {
-  return async (req: NextRequest) => {
+  return async (req: NextRequest, context?: any) => {
     try {
-      return await handler(req);
+      return await handler(req, context);
     } catch (err) {
       const requestId = req.headers.get("x-request-id") ?? "unknown";
       logger.error("API error", { requestId, method: req.method, url: req.url, error: sanitizeError(err) });

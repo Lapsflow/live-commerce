@@ -13,7 +13,7 @@ import { getCenterStats } from '@/lib/services/center/centerService';
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -21,12 +21,14 @@ export async function GET(
       return errors.unauthorized();
     }
 
+    const { id } = await params;
+
     const allowedRoles = ['MASTER', 'SUB_MASTER', 'ADMIN'];
     if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
       return errors.forbidden('센터 통계 조회 권한이 없습니다');
     }
 
-    const result = await getCenterStats(params.id);
+    const result = await getCenterStats(id);
 
     return ok(result);
   } catch (error) {

@@ -10,9 +10,7 @@ import { resolveConflict } from '@/lib/services/onewms/stockSync';
 import { ok, errors } from '@/lib/api/response';
 
 const resolveConflictSchema = z.object({
-  resolution: z.enum(['onewms', 'local', 'ignore'], {
-    errorMap: () => ({ message: 'resolution must be: onewms, local, or ignore' }),
-  }),
+  resolution: z.enum(['onewms', 'local', 'ignore']),
 });
 
 export const POST = withRole(

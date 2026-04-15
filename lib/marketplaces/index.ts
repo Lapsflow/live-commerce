@@ -2,5 +2,5 @@
  * Marketplace API Clients
  */
 
-export * from './naver';
-export * from './coupang';
+export * as Naver from './naver';
+export * as Coupang from './coupang';

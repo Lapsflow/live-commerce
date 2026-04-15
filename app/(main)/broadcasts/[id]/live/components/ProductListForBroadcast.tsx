@@ -17,9 +17,10 @@ interface ProductWithCenterStock extends Product {
 
 interface ProductListForBroadcastProps {
   products: ProductWithCenterStock[];
+  centerId: string;
 }
 
-export function ProductListForBroadcast({ products }: ProductListForBroadcastProps) {
+export function ProductListForBroadcast({ products, centerId }: ProductListForBroadcastProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Filter products by search query
@@ -57,7 +58,7 @@ export function ProductListForBroadcast({ products }: ProductListForBroadcastPro
           </div>
         ) : (
           filteredProducts.map((product) => {
-            const centerStock = product.centerStocks?.[0];
+            const centerStock = product.centerStocks?.find(cs => cs.centerId === centerId);
             const isHqProduct = product.productType === "HEADQUARTERS";
             const stock = isHqProduct ? product.totalStock : (centerStock?.stock || 0);
 

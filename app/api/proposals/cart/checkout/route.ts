@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
               category: "샘플",
               description: `샘플 요청 - 수량: ${item.quantity}개, 가격: ${item.samplePrice}원`,
               status: "PENDING",
-              submittedBy: session.user.id,
+              submittedBy: session.user.id!,
             },
           })
         )

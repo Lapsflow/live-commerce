@@ -83,7 +83,7 @@ export default function CentersPage() {
       {/* Centers DataTable */}
       <DataTable
         columns={centerColumns}
-        dataSource={async () => ({ data: centers, total: centers.length })}
+        dataSource={{ mode: "client", fetchAll: () => centers }}
         title="센터 목록"
         searchPlaceholder="센터명 또는 센터코드로 검색..."
         filterableColumns={[

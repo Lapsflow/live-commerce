@@ -1,6 +1,8 @@
-"use client";
+// components/broadcasts/StartBroadcastDialog.tsx
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -8,186 +10,207 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, CheckCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Loader2, CheckCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
-interface CenterInfo {
+interface Center {
   id: string;
   code: string;
   name: string;
-  region: string;
-  productCount: number;
+  regionName: string;
+  _count: {
+    users: number;
+    centerStocks: number;
+    broadcasts: number;
+  };
 }
 
 interface StartBroadcastDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   broadcastId: string;
-  onSuccess: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSuccess?: (centerId: string) => void;
+  onStartSuccess?: (centerId: string) => void;
 }
 
 export function StartBroadcastDialog({
-  open,
-  onOpenChange,
   broadcastId,
+  open: controlledOpen,
+  onOpenChange,
   onSuccess,
+  onStartSuccess,
 }: StartBroadcastDialogProps) {
-  const { toast } = useToast();
-  const [centerCode, setCenterCode] = useState("");
+  const router = useRouter();
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = onOpenChange || setInternalOpen;
+  const [centerCode, setCenterCode] = useState('');
   const [isValidating, setIsValidating] = useState(false);
-  const [isStarting, setIsStarting] = useState(false);
-  const [center, setCenter] = useState<CenterInfo | null>(null);
+  const [center, setCenter] = useState<Center | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const validateCenterCode = async () => {
     if (!centerCode.trim()) {
-      setError("센터코드를 입력하세요");
+      setError('센터코드를 입력해주세요');
       return;
     }
 
     setIsValidating(true);
     setError(null);
-    setCenter(null);
 
     try {
-      const res = await fetch("/api/broadcasts/lookup-center", {
-        method: "POST",
+      const res = await fetch('/api/centers/validate-code', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: centerCode.trim() }),
+        body: JSON.stringify({ code: centerCode }),
       });
 
       const data = await res.json();
 
-      if (res.ok && data.data) {
-        setCenter(data.data);
+      if (data.error) {
+        setError(data.error.message || '센터코드 검증에 실패했습니다');
+        setCenter(null);
+        return;
+      }
+
+      const validation = data.data;
+
+      if (!validation.valid) {
+        setError(validation.message);
+        setCenter(null);
+        return;
+      }
+
+      if (!validation.available) {
+        // Code exists - use the center
+        setCenter(validation.center);
+        setError(null);
       } else {
-        const errorMessage = data.error?.message || "유효하지 않은 센터코드입니다";
-        setError(errorMessage);
+        // Code is available but doesn't exist
+        setError('존재하지 않는 센터코드입니다');
+        setCenter(null);
       }
     } catch (err) {
-      console.error("Failed to validate center code:", err);
-      setError("센터코드 검증 중 오류가 발생했습니다");
+      console.error('Failed to validate center code:', err);
+      setError('센터코드 검증 중 오류가 발생했습니다');
+      setCenter(null);
     } finally {
       setIsValidating(false);
     }
   };
 
-  const handleStartBroadcast = async () => {
-    if (!center) {
-      setError("센터 정보를 먼저 확인하세요");
-      return;
-    }
-
-    setIsStarting(true);
+  const startBroadcast = async () => {
+    if (!center) return;
 
     try {
       const res = await fetch(`/api/broadcasts/${broadcastId}/start`, {
-        method: "PUT",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ centerId: center.id }),
       });
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error?.message || "방송 시작 실패");
+      const data = await res.json();
+
+      if (data.error) {
+        toast.error(data.error.message || '방송 시작에 실패했습니다');
+        return;
       }
 
-      toast({
-        title: "방송 시작",
-        description: `${center.name} 센터와 연결되어 방송이 시작되었습니다.`,
-      });
+      toast.success('방송이 시작되었습니다');
+      setOpen(false);
 
-      // Reset state
-      setCenterCode("");
-      setCenter(null);
-      setError(null);
+      // Navigate to live broadcast page
+      router.push(`/broadcasts/${broadcastId}/live?centerId=${center.id}`);
 
-      // Close dialog and notify parent
-      onOpenChange(false);
-      onSuccess();
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsStarting(false);
+      // Call success callbacks
+      if (onSuccess) {
+        onSuccess(center.id);
+      }
+      if (onStartSuccess) {
+        onStartSuccess(center.id);
+      }
+    } catch (err) {
+      console.error('Failed to start broadcast:', err);
+      toast.error('방송 시작 중 오류가 발생했습니다');
     }
   };
 
   const handleClose = () => {
-    if (!isStarting && !isValidating) {
-      setCenterCode("");
-      setCenter(null);
-      setError(null);
-      onOpenChange(false);
-    }
+    setOpen(false);
+    setCenterCode('');
+    setCenter(null);
+    setError(null);
   };
 
+  const isControlled = controlledOpen !== undefined;
+
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={open} onOpenChange={setOpen}>
+      {!isControlled && (
+        <DialogTrigger>
+          <Button>방송 시작</Button>
+        </DialogTrigger>
+      )}
+
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>방송 시작</DialogTitle>
           <DialogDescription>
-            연결할 센터의 센터코드를 입력하세요 (예: 01-4213)
+            연결할 센터의 센터코드를 입력하세요
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Center Code Input */}
+        <div className="space-y-4 py-4">
           <div className="flex gap-2">
             <Input
-              placeholder="센터코드 입력 (예: 01-4213)"
+              placeholder="예: 01-4213"
               value={centerCode}
               onChange={(e) => setCenterCode(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && validateCenterCode()}
-              disabled={isValidating || isStarting}
-              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  validateCenterCode();
+                }
+              }}
+              disabled={isValidating}
             />
-            <Button
-              onClick={validateCenterCode}
-              disabled={isValidating || isStarting || !centerCode.trim()}
-            >
+            <Button onClick={validateCenterCode} disabled={isValidating}>
               {isValidating ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                "확인"
+                '확인'
               )}
             </Button>
           </div>
 
-          {/* Error Alert */}
           {error && (
             <Alert variant="destructive">
-              <AlertTitle>오류</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
-          {/* Center Info */}
           {center && (
             <Alert>
-              <CheckCircle className="w-4 h-4" />
+              <CheckCircle className="h-4 w-4" />
               <AlertTitle>센터 확인됨</AlertTitle>
               <AlertDescription>
                 <div className="mt-2 space-y-1 text-sm">
                   <div>
-                    <strong>센터코드:</strong> {center.code}
-                  </div>
-                  <div>
                     <strong>센터명:</strong> {center.name}
                   </div>
                   <div>
-                    <strong>지역:</strong> {center.region}
+                    <strong>지역:</strong> {center.regionName}
                   </div>
                   <div>
-                    <strong>상품 수:</strong> {center.productCount.toLocaleString()}개
+                    <strong>상품 수:</strong> {center._count.centerStocks}개
                   </div>
                 </div>
               </AlertDescription>
@@ -196,21 +219,11 @@ export function StartBroadcastDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose} disabled={isStarting}>
+          <Button variant="outline" onClick={handleClose}>
             취소
           </Button>
-          <Button
-            onClick={handleStartBroadcast}
-            disabled={!center || isStarting}
-          >
-            {isStarting ? (
-              <>
-                <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-                시작 중...
-              </>
-            ) : (
-              "방송 시작"
-            )}
+          <Button onClick={startBroadcast} disabled={!center}>
+            방송 시작
           </Button>
         </DialogFooter>
       </DialogContent>

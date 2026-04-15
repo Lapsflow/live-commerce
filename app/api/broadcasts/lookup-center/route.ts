@@ -30,11 +30,13 @@ export async function POST(req: NextRequest) {
         code: true,
         name: true,
         regionCode: true,
-        region: true,
+        regionName: true,
         isActive: true,
         _count: {
           select: {
-            products: true,
+            centerStocks: true,
+            users: true,
+            broadcasts: true,
           },
         },
       },
@@ -52,8 +54,8 @@ export async function POST(req: NextRequest) {
       id: center.id,
       code: center.code,
       name: center.name,
-      region: center.region,
-      productCount: center._count.products,
+      regionName: center.regionName,
+      productCount: center._count.centerStocks,
     });
   } catch (error) {
     console.error('[Broadcast] Failed to lookup center:', error);

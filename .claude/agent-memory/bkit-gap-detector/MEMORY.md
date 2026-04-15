@@ -76,6 +76,43 @@
 - Role-based access: seller=own, admin=team, master=all
 - 14 Prisma models: User, Product, Order, OrderItem, Broadcast, Sale, Proposal, RateLimit + OnewmsOrderMapping, OnewmsStockSync, OnewmsDeliveryLog, Warehouse, BarcodeMaster, WarehouseInventory, StockMovement
 
+## Phase 4 Broadcast Calendar Analysis (2026-04-15, v2 PASS)
+
+### Match Rate: 91% (PASS) -- up from 82% in v1
+- Report: `docs/03-analysis/phase-4-broadcast-calendar.analysis.md` (v2)
+- Design doc: `docs/02-design/features/phase-4-broadcast-calendar.design.md`
+
+### ALL P1 Issues RESOLVED (Phase A & B)
+- P1-1: `data.success` -> `data.error` check in StartBroadcastDialog (v2)
+- P1-2: BroadcastSalesTracker API connected, field names aligned (v2)
+- P1-3: ProductListForBroadcast `centerId` prop added (v2)
+- P1-4: Dead code removed (4 files + 1 directory) (v2)
+- Bonus: validate-code route type error fixed (v2)
+
+### Key Reclassifications
+- HQ `active: true` filter: Product model has no `active` field -- design doc error
+- Response `{success, data}`: ok() returns `{data}` only -- design doc error
+- Stats endpoint: Sale.broadcastId relation EXISTS (TODO comment was wrong)
+
+### Category Scores
+| Category | v1 | v2 | Change |
+|---|---|---|---|
+| API Endpoints | 69% | 75% | +6% |
+| Service Layer | 75% | 75% | -- |
+| UI Components | 70% | 86% | +16% |
+| Data Queries | 65% | 78% | +13% |
+| Architecture | 78% | 85% | +7% |
+| Convention | 85% | 85% | -- |
+
+### Remaining P2/P3 Items
+- P2: withRole() not on center routes (validate-code, check-available)
+- P2: broadcastService.startBroadcast() exists but unused by route
+- P2: Broadcast ID via URL splitting instead of params
+- P2: getCenterByCode() missing _count include
+- P2: No Zod validation on POST endpoints
+- P3: Stats returns zeros (Sale model aggregation not wired)
+- P3: Stylistic layout differences (flat vs Card-based)
+
 ## Lessons
 - CRUD factory covers basic CRUD; stats/analytics/bulk ops need custom routes
 - Weekly comparison was correctly merged into seller/analytics (avoid endpoint fragmentation)
@@ -97,3 +134,15 @@
 - Convention refactoring is best verified by grep: `NextResponse` should return 0 matches, `withRole` should match all routes
 - AuthHandler type with 2 params works at runtime when handler receives 3 args (JS ignores extras), but is a TS type imprecision
 - Zod validation is N/A for POST endpoints with no request body (e.g., retry-all patterns)
+- Design docs may specify `{success, data}` response format but project ok() returns `{data}` only -- always verify response shape consistency
+- When components exist in multiple locations (design location vs actual import), check which one the page actually imports
+- Dead code copies matching design exactly can inflate perceived compliance -- always trace actual imports
+- Service files can exist but be unused by their intended route (inline Prisma in route handler instead)
+- URL string splitting for param extraction (`req.url.split("/")`) is fragile -- always use Next.js params pattern
+- Broadcast stats endpoints need Broadcast-Order schema relation to return real data
+- Always verify Prisma schema for field existence before scoring design-impl gaps (e.g., `active` field may not exist)
+- Sale.broadcastId provides Broadcast-Sale relation -- stats can use Sale model, not Order
+- `data.error` is the correct client-side check pattern for ok()/errors.* response convention
+- When reclassifying design doc errors, the implementation score should increase (not count as impl gap)
+- Phase A/B fixes can produce +9% improvement when all P1 items are addressed simultaneously
+- TODO comments in code can be factually wrong (e.g., "no relation exists" when it does) -- always verify schema

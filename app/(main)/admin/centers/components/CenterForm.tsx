@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -194,7 +194,7 @@ export function CenterForm({
             <Label htmlFor="regionCode">지역 선택 *</Label>
             <Select
               value={watch("regionCode")}
-              onValueChange={(value) => setValue("regionCode", value)}
+              onValueChange={(value) => value && setValue("regionCode", value)}
               disabled={isEditMode}
             >
               <SelectTrigger id="regionCode">
@@ -353,7 +353,7 @@ export function CenterForm({
         )}
         <Button
           type="submit"
-          disabled={loading || (generatedCode && !codeAvailable)}
+          disabled={loading || (!!generatedCode && !codeAvailable)}
         >
           {loading ? (
             <>

@@ -26,7 +26,7 @@ export default async function SampleDetailPage({ params }: SampleDetailPageProps
               id: true,
               code: true,
               name: true,
-              region: true,
+              regionName: true,
             },
           },
         },
@@ -127,7 +127,7 @@ export default async function SampleDetailPage({ params }: SampleDetailPageProps
                       <div>
                         <div className="font-medium">{centerStock.center.name}</div>
                         <div className="text-sm text-muted-foreground">
-                          {centerStock.center.code} • {centerStock.center.region}
+                          {centerStock.center.code} • {centerStock.center.regionName}
                         </div>
                       </div>
                       <div

@@ -7,10 +7,11 @@ import { ShoppingCart, TrendingUp, Package, DollarSign } from "lucide-react";
 
 interface SalesStats {
   totalOrders: number;
-  totalRevenue: number;
-  totalItems: number;
+  totalSales: number;
+  totalQuantity: number;
   topProducts: Array<{
-    productName: string;
+    name?: string;
+    productName?: string;
     quantity: number;
     revenue: number;
   }>;
@@ -23,8 +24,8 @@ interface BroadcastSalesTrackerProps {
 export function BroadcastSalesTracker({ broadcastId }: BroadcastSalesTrackerProps) {
   const [stats, setStats] = useState<SalesStats>({
     totalOrders: 0,
-    totalRevenue: 0,
-    totalItems: 0,
+    totalSales: 0,
+    totalQuantity: 0,
     topProducts: [],
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -34,20 +35,29 @@ export function BroadcastSalesTracker({ broadcastId }: BroadcastSalesTrackerProp
     const fetchStats = async () => {
       try {
         setIsLoading(true);
-        // TODO: Implement actual API endpoint for broadcast sales stats
-        // const response = await fetch(`/api/broadcasts/${broadcastId}/stats`);
-        // const data = await response.json();
-        // setStats(data.data);
+        const response = await fetch(`/api/broadcasts/${broadcastId}/stats`);
+        const data = await response.json();
 
-        // For now, use placeholder data
-        setStats({
-          totalOrders: 0,
-          totalRevenue: 0,
-          totalItems: 0,
-          topProducts: [],
-        });
+        if (data.data) {
+          setStats(data.data);
+        } else {
+          // Fallback to empty stats if no data
+          setStats({
+            totalOrders: 0,
+            totalSales: 0,
+            totalQuantity: 0,
+            topProducts: [],
+          });
+        }
       } catch (error) {
         console.error("Failed to fetch broadcast stats:", error);
+        // On error, set empty stats
+        setStats({
+          totalOrders: 0,
+          totalSales: 0,
+          totalQuantity: 0,
+          topProducts: [],
+        });
       } finally {
         setIsLoading(false);
       }
@@ -94,7 +104,7 @@ export function BroadcastSalesTracker({ broadcastId }: BroadcastSalesTrackerProp
         <div className="flex-1">
           <div className="text-sm text-muted-foreground">총 매출액</div>
           <div className="text-2xl font-bold">
-            {stats.totalRevenue.toLocaleString()}원
+            {stats.totalSales.toLocaleString()}원
           </div>
         </div>
       </div>
@@ -108,7 +118,7 @@ export function BroadcastSalesTracker({ broadcastId }: BroadcastSalesTrackerProp
         </div>
         <div className="flex-1">
           <div className="text-sm text-muted-foreground">판매 상품 수</div>
-          <div className="text-2xl font-bold">{stats.totalItems}개</div>
+          <div className="text-2xl font-bold">{stats.totalQuantity}개</div>
         </div>
       </div>
 
@@ -131,7 +141,7 @@ export function BroadcastSalesTracker({ broadcastId }: BroadcastSalesTrackerProp
                     <Badge variant="outline" className="shrink-0">
                       {index + 1}위
                     </Badge>
-                    <span className="text-sm truncate">{product.productName}</span>
+                    <span className="text-sm truncate">{product.name || product.productName}</span>
                   </div>
                   <div className="text-right ml-2">
                     <div className="text-sm font-semibold">

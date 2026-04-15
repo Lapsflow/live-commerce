@@ -6,10 +6,10 @@
  */
 
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { getRedisClient } from "./cache/redis";
 
-// Redis 클라이언트 (이미 구현된 것 재사용)
-import { redis } from "./cache/redis";
+// Redis 클라이언트
+const redis = getRedisClient();
 
 /**
  * 로그인 시도 제한

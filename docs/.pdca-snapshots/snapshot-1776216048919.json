@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-04-14T13:02:39.225Z",
+  "timestamp": "2026-04-15T01:20:48.918Z",
   "reason": "compaction",
   "status": {
     "version": "2.0",
-    "lastUpdated": "2026-04-14T12:55:46.201Z",
+    "lastUpdated": "2026-04-15T01:20:20.733Z",
     "activeFeatures": [
       "live-commerce-migration",
       "db",
@@ -190,7 +190,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-05T23:48:31.050Z",
-          "lastUpdated": "2026-04-11T04:11:34.200Z"
+          "lastUpdated": "2026-04-14T23:49:03.565Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/onewms/orders/[id]/status/route.ts"
       },
@@ -255,9 +255,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T00:09:48.059Z",
-          "lastUpdated": "2026-04-14T12:50:13.366Z"
+          "lastUpdated": "2026-04-15T00:51:53.538Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/barcode/barcode-search.spec.ts"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/barcode/components/OrderInputCard.tsx"
       },
       "bulk": {
         "phase": "do",
@@ -320,9 +320,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T01:17:44.874Z",
-          "lastUpdated": "2026-04-14T12:14:17.242Z"
+          "lastUpdated": "2026-04-15T01:20:20.733Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/samples/[id]/page.tsx"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/centers/[id]/route.ts"
       },
       "analytics": {
         "phase": "do",
@@ -372,9 +372,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T01:20:44.916Z",
-          "lastUpdated": "2026-04-13T07:51:56.636Z"
+          "lastUpdated": "2026-04-15T01:17:48.575Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/ui/tabs.tsx"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/ui/collapsible.tsx"
       },
       "profile": {
         "phase": "do",
@@ -463,7 +463,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T09:06:51.265Z",
-          "lastUpdated": "2026-04-13T02:56:57.899Z"
+          "lastUpdated": "2026-04-15T01:19:57.978Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/centers/[id]/users/route.ts"
       },
@@ -502,7 +502,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-09T06:14:28.654Z",
-          "lastUpdated": "2026-04-12T11:47:11.992Z"
+          "lastUpdated": "2026-04-15T00:52:36.742Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/onewms/notifications.ts"
       },
@@ -515,7 +515,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-09T07:02:57.148Z",
-          "lastUpdated": "2026-04-12T11:43:58.276Z"
+          "lastUpdated": "2026-04-14T23:49:37.311Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/onewms/stock/sync/route.ts"
       },
@@ -528,7 +528,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-09T07:02:57.548Z",
-          "lastUpdated": "2026-04-11T04:11:29.828Z"
+          "lastUpdated": "2026-04-14T23:48:56.149Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/onewms/orders/retry/route.ts"
       },
@@ -554,7 +554,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-09T07:04:01.511Z",
-          "lastUpdated": "2026-04-11T04:11:38.342Z"
+          "lastUpdated": "2026-04-14T23:48:21.566Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/onewms/stock/conflicts/route.ts"
       },
@@ -567,7 +567,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-09T07:04:06.988Z",
-          "lastUpdated": "2026-04-11T04:11:40.168Z"
+          "lastUpdated": "2026-04-14T23:48:39.796Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/onewms/stock/conflicts/[id]/resolve/route.ts"
       },
@@ -593,9 +593,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-09T07:05:45.379Z",
-          "lastUpdated": "2026-04-13T07:58:35.002Z"
+          "lastUpdated": "2026-04-15T01:19:54.193Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/admin/centers/[id]/stats/page.tsx"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/centers/[id]/stats/route.ts"
       },
       "tests": {
         "phase": "do",
@@ -723,9 +723,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-10T13:35:59.380Z",
-          "lastUpdated": "2026-04-10T13:35:59.380Z"
+          "lastUpdated": "2026-04-14T23:48:14.412Z"
         },
-        "lastFile": "app/api/onewms/stock/[productId]/route.ts"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/onewms/stock/[productId]/route.ts"
       },
       "update": {
         "phase": "do",
@@ -749,9 +749,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-10T13:42:53.381Z",
-          "lastUpdated": "2026-04-10T13:42:53.381Z"
+          "lastUpdated": "2026-04-14T23:49:17.887Z"
         },
-        "lastFile": "app/api/onewms/delivery/invoice/[transNo]/route.ts"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/onewms/delivery/invoice/[transNo]/route.ts"
       },
       "products": {
         "phase": "do",
@@ -762,7 +762,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-10T14:10:02.501Z",
-          "lastUpdated": "2026-04-13T02:57:22.019Z"
+          "lastUpdated": "2026-04-15T01:18:36.500Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/centers/[id]/products/route.ts"
       },
@@ -801,7 +801,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-13T02:54:35.768Z",
-          "lastUpdated": "2026-04-13T07:50:50.119Z"
+          "lastUpdated": "2026-04-15T01:17:02.976Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/admin/centers/components/CenterForm.tsx"
       },
@@ -814,9 +814,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-13T03:06:36.700Z",
-          "lastUpdated": "2026-04-13T03:06:36.700Z"
+          "lastUpdated": "2026-04-15T00:03:13.065Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/scripts/update-pdca-status.js"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/scripts/verify-center-data.ts"
       },
       "onewms-integration": {
         "phase": "completed",
@@ -976,9 +976,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-13T08:05:34.294Z",
-          "lastUpdated": "2026-04-13T08:06:34.353Z"
+          "lastUpdated": "2026-04-15T00:51:46.011Z"
         },
-        "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/ai/claude/prompts.ts"
+        "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/ai/claude/types.ts"
       },
       "ai": {
         "phase": "do",
@@ -989,7 +989,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-13T08:08:07.958Z",
-          "lastUpdated": "2026-04-13T08:08:07.958Z"
+          "lastUpdated": "2026-04-15T00:51:50.717Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/ai/analysis.ts"
       },
@@ -1028,7 +1028,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-14T11:37:25.998Z",
-          "lastUpdated": "2026-04-14T11:37:25.998Z"
+          "lastUpdated": "2026-04-15T00:56:03.421Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/payments/create-virtual-account/route.ts"
       },
@@ -1041,7 +1041,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-14T11:37:48.421Z",
-          "lastUpdated": "2026-04-14T11:39:00.030Z"
+          "lastUpdated": "2026-04-15T00:54:52.389Z"
         },
         "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/webhooks/toss/virtual-account/route.ts"
       },
@@ -1171,7 +1171,7 @@
     "session": {
       "startedAt": "2026-04-05T11:31:25.159Z",
       "onboardingCompleted": false,
-      "lastActivity": "2026-04-14T12:55:46.201Z"
+      "lastActivity": "2026-04-15T01:20:20.733Z"
     },
     "history": [
       {
@@ -3458,6 +3458,276 @@
       {
         "timestamp": "2026-04-14T12:55:46.201Z",
         "feature": "security",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:39:40.207Z",
+        "feature": "onewms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:39:54.855Z",
+        "feature": "sync",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:40:08.972Z",
+        "feature": "onewms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:47:57.004Z",
+        "feature": "stats",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:48:01.300Z",
+        "feature": "stats",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:48:10.243Z",
+        "feature": "[productId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:48:14.412Z",
+        "feature": "[productId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:48:21.566Z",
+        "feature": "conflicts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:48:39.796Z",
+        "feature": "resolve",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:48:47.761Z",
+        "feature": "sync",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:48:56.149Z",
+        "feature": "retry",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:49:03.565Z",
+        "feature": "status",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:49:12.860Z",
+        "feature": "[transNo]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:49:17.887Z",
+        "feature": "[transNo]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:49:30.631Z",
+        "feature": "sync",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-14T23:49:37.311Z",
+        "feature": "sync",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:02:56.862Z",
+        "feature": "scripts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:03:13.065Z",
+        "feature": "scripts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:51:46.011Z",
+        "feature": "claude",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:51:50.717Z",
+        "feature": "ai",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:51:53.538Z",
+        "feature": "barcode",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:52:04.616Z",
+        "feature": "onewms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:52:28.090Z",
+        "feature": "onewms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:52:36.742Z",
+        "feature": "onewms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:52:47.699Z",
+        "feature": "create-virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:52:54.192Z",
+        "feature": "create-virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:53:06.393Z",
+        "feature": "virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:53:13.914Z",
+        "feature": "virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:53:17.915Z",
+        "feature": "virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:54:46.749Z",
+        "feature": "create-virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:54:49.719Z",
+        "feature": "virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:54:52.389Z",
+        "feature": "virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:55:00.504Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:55:37.210Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T00:56:03.421Z",
+        "feature": "create-virtual-account",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:17:02.976Z",
+        "feature": "centers",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:17:38.212Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:17:48.575Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:18:24.312Z",
+        "feature": "products",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:18:36.500Z",
+        "feature": "products",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:19:54.193Z",
+        "feature": "stats",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:19:57.978Z",
+        "feature": "users",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:20:17.344Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:20:19.736Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-15T01:20:20.733Z",
+        "feature": "[id]",
         "phase": "do",
         "action": "updated"
       }

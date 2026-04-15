@@ -20,13 +20,15 @@ import {
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
     if (!session) {
       return errors.unauthorized();
     }
+
+    const { id } = await params;
 
     const allowedRoles = ['MASTER', 'SUB_MASTER', 'ADMIN'];
     if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
@@ -36,7 +38,7 @@ export async function GET(
     const { searchParams } = new URL(req.url);
     const includeStats = searchParams.get('includeStats') === 'true';
 
-    const center = await getCenterById(params.id, includeStats);
+    const center = await getCenterById(id, includeStats);
 
     if (!center) {
       return errors.notFound('센터를 찾을 수 없습니다');
@@ -56,13 +58,15 @@ export async function GET(
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
     if (!session) {
       return errors.unauthorized();
     }
+
+    const { id } = await params;
 
     if (session.user?.role !== 'MASTER') {
       return errors.forbidden('센터 수정 권한이 없습니다. MASTER 권한이 필요합니다.');
@@ -89,7 +93,7 @@ export async function PUT(
         delete input[key as keyof UpdateCenterInput]
     );
 
-    const center = await updateCenter(params.id, input);
+    const center = await updateCenter(id, input);
 
     return ok({
       center,
@@ -113,7 +117,7 @@ export async function PUT(
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -121,11 +125,13 @@ export async function DELETE(
       return errors.unauthorized();
     }
 
+    const { id } = await params;
+
     if (session.user?.role !== 'MASTER') {
       return errors.forbidden('센터 삭제 권한이 없습니다. MASTER 권한이 필요합니다.');
     }
 
-    const center = await deactivateCenter(params.id);
+    const center = await deactivateCenter(id);
 
     return ok({
       center,

@@ -34,7 +34,7 @@ export default async function LiveBroadcastPage({
           id: true,
           code: true,
           name: true,
-          region: true,
+          regionName: true,
         },
       },
     },
@@ -60,7 +60,7 @@ export default async function LiveBroadcastPage({
           id: true,
           code: true,
           name: true,
-          region: true,
+          regionName: true,
         },
       })
     : broadcast.center;
@@ -91,9 +91,12 @@ export default async function LiveBroadcastPage({
   });
 
   // Load headquarters products (available to all centers)
+  // TODO: Phase 4 - Add productType field to Product model
   const hqProducts = await prisma.product.findMany({
     where: {
-      productType: "HEADQUARTERS",
+      // All products are available for now
+      // Will add productType: "HEADQUARTERS" filter in Phase 4
+      // Note: Product model has no active/isActive field yet
     },
     include: {
       centerStocks: true,
@@ -133,7 +136,7 @@ export default async function LiveBroadcastPage({
             </p>
           </CardHeader>
           <CardContent>
-            <ProductListForBroadcast products={allProducts} />
+            <ProductListForBroadcast products={allProducts} centerId={activeCenterId} />
           </CardContent>
         </Card>
 

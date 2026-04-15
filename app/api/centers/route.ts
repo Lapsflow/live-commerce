@@ -5,7 +5,7 @@
 
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
-import { ok, errors } from '@/lib/api/response';
+import { ok, created, errors } from '@/lib/api/response';
 import {
   getCenters,
   createCenter,
@@ -103,13 +103,10 @@ export async function POST(req: NextRequest) {
 
     const center = await createCenter(input);
 
-    return ok(
-      {
-        center,
-        message: '센터가 성공적으로 생성되었습니다',
-      },
-      { status: 201 }
-    );
+    return created({
+      center,
+      message: '센터가 성공적으로 생성되었습니다',
+    });
   } catch (error) {
     console.error('Failed to create center:', error);
     const message = error instanceof Error ? error.message : 'Failed to create center';
