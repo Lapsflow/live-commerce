@@ -159,7 +159,7 @@ export default function BroadcastsPage() {
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">방송 일정</h1>
-        <Link href="/broadcasts/new">
+        <Link href="/broadcasts/calendar">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             방송 등록

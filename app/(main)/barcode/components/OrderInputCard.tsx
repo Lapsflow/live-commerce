@@ -158,10 +158,10 @@ export function OrderInputCard({ product, center }: OrderInputCardProps) {
       return;
     }
 
-    // Navigate to broadcast creation with order data
+    // Navigate to broadcast calendar with order data
     const params = new URLSearchParams();
     params.set("products", JSON.stringify(orders));
-    router.push(`/broadcasts/new?${params.toString()}`);
+    router.push(`/broadcasts/calendar?${params.toString()}`);
   };
 
   return (

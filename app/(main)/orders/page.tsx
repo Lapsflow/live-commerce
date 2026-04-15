@@ -134,7 +134,7 @@ export default function OrdersPage() {
               엑셀 업로드
             </Button>
           </Link>
-          <Link href="/orders/new">
+          <Link href="/orders/upload">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               신규 발주
