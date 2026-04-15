@@ -24,6 +24,25 @@ const columns: ColumnDef<Product>[] = [
     header: "바코드",
   },
   {
+    accessorKey: "productType",
+    header: "상품 유형",
+    cell: ({ row }) => {
+      const type = row.original.productType;
+      return (
+        <Badge
+          variant="outline"
+          className={
+            type === "HEADQUARTERS"
+              ? "bg-blue-500/10 text-blue-700 dark:text-blue-400"
+              : "bg-purple-500/10 text-purple-700 dark:text-purple-400"
+          }
+        >
+          {type === "HEADQUARTERS" ? "본사 WMS" : "센터 자사몰"}
+        </Badge>
+      );
+    },
+  },
+  {
     accessorKey: "sellPrice",
     header: "판매가",
     cell: ({ row }) => `${row.original.sellPrice.toLocaleString()}원`,
