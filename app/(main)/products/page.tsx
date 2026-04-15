@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Package } from "lucide-react";
 import Link from "next/link";
 import { StockSyncButton } from "./components/stock-sync-button";
+import { useState } from "react";
 
 const columns: ColumnDef<Product>[] = [
   {
@@ -88,7 +89,11 @@ const columns: ColumnDef<Product>[] = [
 ];
 
 export default function ProductsPage() {
-  const { dataSource, refresh } = useApiCrud<Product>("/api/products");
+  const [productTypeFilter, setProductTypeFilter] = useState<"ALL" | "HEADQUARTERS" | "CENTER">("ALL");
+  const apiPath = productTypeFilter === "ALL"
+    ? "/api/products"
+    : `/api/products?productType=${productTypeFilter}`;
+  const { dataSource, refresh } = useApiCrud<Product>(apiPath);
 
   return (
     <div className="flex flex-col gap-4">
@@ -108,6 +113,31 @@ export default function ProductsPage() {
             </Button>
           </Link>
         </div>
+      </div>
+
+      {/* Product Type Filter */}
+      <div className="flex gap-2">
+        <Button
+          variant={productTypeFilter === "ALL" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setProductTypeFilter("ALL")}
+        >
+          전체
+        </Button>
+        <Button
+          variant={productTypeFilter === "HEADQUARTERS" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setProductTypeFilter("HEADQUARTERS")}
+        >
+          본사 WMS
+        </Button>
+        <Button
+          variant={productTypeFilter === "CENTER" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setProductTypeFilter("CENTER")}
+        >
+          센터 자사몰
+        </Button>
       </div>
 
       {/* Data Table */}

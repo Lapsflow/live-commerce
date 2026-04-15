@@ -141,9 +141,19 @@ export async function POST(req: NextRequest) {
     ) => {
       const orderNo = `${data.orderNo}${suffix}`;
 
-      // Calculate totals
+      // Calculate totals for this group
       const totalSupply = items.reduce((sum, item) => sum + (item.supplyPrice * item.quantity), 0);
-      const totalMargin = data.totalAmount - totalSupply;
+
+      // Calculate total items across all groups for proportional split
+      const allItemsQuantity = itemsWithProducts.reduce((sum, i) => sum + i.quantity, 0);
+      const thisGroupQuantity = items.reduce((sum, i) => sum + i.quantity, 0);
+
+      // Proportional totalAmount based on item quantity ratio
+      const proportionalTotalAmount = suffix
+        ? Math.round((data.totalAmount * thisGroupQuantity) / allItemsQuantity)
+        : data.totalAmount;
+
+      const totalMargin = proportionalTotalAmount - totalSupply;
 
       const order = await prisma.order.create({
         data: {
@@ -151,7 +161,7 @@ export async function POST(req: NextRequest) {
           sellerId,
           adminId: data.adminId,
           status: data.status || "PENDING",
-          totalAmount: data.totalAmount,
+          totalAmount: proportionalTotalAmount,
           totalMargin,
           memo: data.memo,
           recipient: data.recipient,
@@ -166,7 +176,7 @@ export async function POST(req: NextRequest) {
               productName: item.productName,
               supplyPrice: item.supplyPrice,
               totalSupply: item.supplyPrice * item.quantity,
-              margin: (data.totalAmount / items.reduce((sum, i) => sum + i.quantity, 0)) - item.supplyPrice,
+              margin: (proportionalTotalAmount / thisGroupQuantity) - item.supplyPrice,
               productType, // Phase 2: Set product type on item
             })),
           },
@@ -181,9 +191,11 @@ export async function POST(req: NextRequest) {
 
     // Phase 2: Create separate orders if mixed types
     if (wmsItems.length > 0 && centerItems.length > 0) {
-      // Mixed types: create 2 orders with suffixes
-      const wmsOrder = await createOrderWithItems(wmsItems, "HEADQUARTERS", "-WMS");
-      const centerOrder = await createOrderWithItems(centerItems, "CENTER", "-CENTER");
+      // Mixed types: create 2 orders with suffixes wrapped in transaction
+      const [wmsOrder, centerOrder] = await prisma.$transaction([
+        createOrderWithItems(wmsItems, "HEADQUARTERS", "-WMS"),
+        createOrderWithItems(centerItems, "CENTER", "-CENTER"),
+      ]);
 
       createdOrders.push(wmsOrder, centerOrder);
 

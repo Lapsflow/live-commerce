@@ -42,19 +42,26 @@ export async function GET(req: NextRequest) {
     }
 
     // Filter by search (code, name, barcode)
-    if (search) {
-      where.OR = [
+    const searchFilter = search ? {
+      OR: [
         { code: { contains: search, mode: "insensitive" } },
         { name: { contains: search, mode: "insensitive" } },
         { barcode: { contains: search, mode: "insensitive" } },
-      ];
-    }
+      ],
+    } : {};
 
     // Authorization: SELLER can only see CENTER products from their center
-    if (session.user.role === "SELLER") {
-      where.OR = [
-        { productType: "CENTER", managedBy: session.user.centerId },
-      ];
+    const authFilter = session.user.role === "SELLER" ? {
+      productType: "CENTER",
+      managedBy: session.user.centerId,
+    } : {};
+
+    // Combine filters with AND
+    if (Object.keys(searchFilter).length > 0 || Object.keys(authFilter).length > 0) {
+      where.AND = [
+        searchFilter,
+        authFilter,
+      ].filter(f => Object.keys(f).length > 0);
     }
 
     const [products, total] = await Promise.all([
