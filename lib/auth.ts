@@ -89,6 +89,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
         }
 
+        // Check contract approval status for SELLER role (Phase 1)
+        if (user.role === "SELLER" && user.contractStatus === "PENDING") {
+          console.log("[AUTH DEBUG] Contract approval pending:", email);
+          securityLogger.authFailed({
+            reason: "contract_pending",
+            email,
+            contractStatus: user.contractStatus,
+          });
+          return null;
+        }
+
+        if (user.role === "SELLER" && user.contractStatus === "REJECTED") {
+          console.log("[AUTH DEBUG] Contract rejected:", email);
+          securityLogger.authFailed({
+            reason: "contract_rejected",
+            email,
+            contractStatus: user.contractStatus,
+          });
+          return null;
+        }
+
         return {
           id: user.id,
           name: user.name,

@@ -143,6 +143,15 @@ export namespace $Enums {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
+export const ContractStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type ContractStatus = (typeof ContractStatus)[keyof typeof ContractStatus]
+
+
 export const OrderStatus: {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -214,6 +223,10 @@ export type ScanType = (typeof ScanType)[keyof typeof ScanType]
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
+
+export type ContractStatus = $Enums.ContractStatus
+
+export const ContractStatus: typeof $Enums.ContractStatus
 
 export type OrderStatus = $Enums.OrderStatus
 
@@ -3455,6 +3468,10 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     avgSales: number | null
+    contractStatus: $Enums.ContractStatus | null
+    contractApprovedAt: Date | null
+    contractApprovedBy: string | null
+    contractRejectionReason: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -3469,6 +3486,10 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     avgSales: number | null
+    contractStatus: $Enums.ContractStatus | null
+    contractApprovedAt: Date | null
+    contractApprovedBy: string | null
+    contractRejectionReason: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -3484,6 +3505,10 @@ export namespace Prisma {
     updatedAt: number
     channels: number
     avgSales: number
+    contractStatus: number
+    contractApprovedAt: number
+    contractApprovedBy: number
+    contractRejectionReason: number
     _all: number
   }
 
@@ -3508,6 +3533,10 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     avgSales?: true
+    contractStatus?: true
+    contractApprovedAt?: true
+    contractApprovedBy?: true
+    contractRejectionReason?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -3522,6 +3551,10 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     avgSales?: true
+    contractStatus?: true
+    contractApprovedAt?: true
+    contractApprovedBy?: true
+    contractRejectionReason?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -3537,6 +3570,10 @@ export namespace Prisma {
     updatedAt?: true
     channels?: true
     avgSales?: true
+    contractStatus?: true
+    contractApprovedAt?: true
+    contractApprovedBy?: true
+    contractRejectionReason?: true
     _all?: true
   }
 
@@ -3639,6 +3676,10 @@ export namespace Prisma {
     updatedAt: Date
     channels: string[]
     avgSales: number | null
+    contractStatus: $Enums.ContractStatus
+    contractApprovedAt: Date | null
+    contractApprovedBy: string | null
+    contractRejectionReason: string | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -3673,6 +3714,10 @@ export namespace Prisma {
     updatedAt?: boolean
     channels?: boolean
     avgSales?: boolean
+    contractStatus?: boolean
+    contractApprovedAt?: boolean
+    contractApprovedBy?: boolean
+    contractRejectionReason?: boolean
     admin?: boolean | User$adminArgs<ExtArgs>
     sellers?: boolean | User$sellersArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
@@ -3700,6 +3745,10 @@ export namespace Prisma {
     updatedAt?: boolean
     channels?: boolean
     avgSales?: boolean
+    contractStatus?: boolean
+    contractApprovedAt?: boolean
+    contractApprovedBy?: boolean
+    contractRejectionReason?: boolean
     admin?: boolean | User$adminArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -3717,6 +3766,10 @@ export namespace Prisma {
     updatedAt?: boolean
     channels?: boolean
     avgSales?: boolean
+    contractStatus?: boolean
+    contractApprovedAt?: boolean
+    contractApprovedBy?: boolean
+    contractRejectionReason?: boolean
     admin?: boolean | User$adminArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -3734,9 +3787,13 @@ export namespace Prisma {
     updatedAt?: boolean
     channels?: boolean
     avgSales?: boolean
+    contractStatus?: boolean
+    contractApprovedAt?: boolean
+    contractApprovedBy?: boolean
+    contractRejectionReason?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "phone" | "role" | "adminId" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "phone" | "role" | "adminId" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | User$adminArgs<ExtArgs>
     sellers?: boolean | User$sellersArgs<ExtArgs>
@@ -3788,6 +3845,10 @@ export namespace Prisma {
       updatedAt: Date
       channels: string[]
       avgSales: number | null
+      contractStatus: $Enums.ContractStatus
+      contractApprovedAt: Date | null
+      contractApprovedBy: string | null
+      contractRejectionReason: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -4234,6 +4295,10 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly channels: FieldRef<"User", 'String[]'>
     readonly avgSales: FieldRef<"User", 'Int'>
+    readonly contractStatus: FieldRef<"User", 'ContractStatus'>
+    readonly contractApprovedAt: FieldRef<"User", 'DateTime'>
+    readonly contractApprovedBy: FieldRef<"User", 'String'>
+    readonly contractRejectionReason: FieldRef<"User", 'String'>
   }
     
 
@@ -31253,7 +31318,11 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     channels: 'channels',
-    avgSales: 'avgSales'
+    avgSales: 'avgSales',
+    contractStatus: 'contractStatus',
+    contractApprovedAt: 'contractApprovedAt',
+    contractApprovedBy: 'contractApprovedBy',
+    contractRejectionReason: 'contractRejectionReason'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -31732,6 +31801,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ContractStatus'
+   */
+  export type EnumContractStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContractStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ContractStatus[]'
+   */
+  export type ListEnumContractStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContractStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -31883,6 +31966,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     channels?: StringNullableListFilter<"User">
     avgSales?: IntNullableFilter<"User"> | number | null
+    contractStatus?: EnumContractStatusFilter<"User"> | $Enums.ContractStatus
+    contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    contractApprovedBy?: StringNullableFilter<"User"> | string | null
+    contractRejectionReason?: StringNullableFilter<"User"> | string | null
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     sellers?: UserListRelationFilter
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
@@ -31909,6 +31996,10 @@ export namespace Prisma {
     updatedAt?: SortOrder
     channels?: SortOrder
     avgSales?: SortOrderInput | SortOrder
+    contractStatus?: SortOrder
+    contractApprovedAt?: SortOrderInput | SortOrder
+    contractApprovedBy?: SortOrderInput | SortOrder
+    contractRejectionReason?: SortOrderInput | SortOrder
     admin?: UserOrderByWithRelationInput
     sellers?: UserOrderByRelationAggregateInput
     center?: CenterOrderByWithRelationInput
@@ -31938,6 +32029,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     channels?: StringNullableListFilter<"User">
     avgSales?: IntNullableFilter<"User"> | number | null
+    contractStatus?: EnumContractStatusFilter<"User"> | $Enums.ContractStatus
+    contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    contractApprovedBy?: StringNullableFilter<"User"> | string | null
+    contractRejectionReason?: StringNullableFilter<"User"> | string | null
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     sellers?: UserListRelationFilter
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
@@ -31964,6 +32059,10 @@ export namespace Prisma {
     updatedAt?: SortOrder
     channels?: SortOrder
     avgSales?: SortOrderInput | SortOrder
+    contractStatus?: SortOrder
+    contractApprovedAt?: SortOrderInput | SortOrder
+    contractApprovedBy?: SortOrderInput | SortOrder
+    contractRejectionReason?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -31987,6 +32086,10 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     channels?: StringNullableListFilter<"User">
     avgSales?: IntNullableWithAggregatesFilter<"User"> | number | null
+    contractStatus?: EnumContractStatusWithAggregatesFilter<"User"> | $Enums.ContractStatus
+    contractApprovedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    contractApprovedBy?: StringNullableWithAggregatesFilter<"User"> | string | null
+    contractRejectionReason?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type ProductWhereInput = {
@@ -33950,6 +34053,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -33976,6 +34083,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -33998,6 +34109,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -34024,6 +34139,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -34048,6 +34167,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -34061,6 +34184,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -34076,6 +34203,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductCreateInput = {
@@ -36289,6 +36420,24 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type EnumContractStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ContractStatus | EnumContractStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ContractStatus[] | ListEnumContractStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ContractStatus[] | ListEnumContractStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumContractStatusFilter<$PrismaModel> | $Enums.ContractStatus
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -36397,6 +36546,10 @@ export namespace Prisma {
     updatedAt?: SortOrder
     channels?: SortOrder
     avgSales?: SortOrder
+    contractStatus?: SortOrder
+    contractApprovedAt?: SortOrder
+    contractApprovedBy?: SortOrder
+    contractRejectionReason?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -36415,6 +36568,10 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avgSales?: SortOrder
+    contractStatus?: SortOrder
+    contractApprovedAt?: SortOrder
+    contractApprovedBy?: SortOrder
+    contractRejectionReason?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -36429,6 +36586,10 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avgSales?: SortOrder
+    contractStatus?: SortOrder
+    contractApprovedAt?: SortOrder
+    contractApprovedBy?: SortOrder
+    contractRejectionReason?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -36509,6 +36670,30 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type EnumContractStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ContractStatus | EnumContractStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ContractStatus[] | ListEnumContractStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ContractStatus[] | ListEnumContractStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumContractStatusWithAggregatesFilter<$PrismaModel> | $Enums.ContractStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumContractStatusFilter<$PrismaModel>
+    _max?: NestedEnumContractStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -36675,17 +36860,6 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -36743,20 +36917,6 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -38200,6 +38360,14 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type EnumContractStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ContractStatus
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type UserUpdateOneWithoutSellersNestedInput = {
     create?: XOR<UserCreateWithoutSellersInput, UserUncheckedCreateWithoutSellersInput>
     connectOrCreate?: UserCreateOrConnectWithoutSellersInput
@@ -38968,10 +39136,6 @@ export namespace Prisma {
     connectOrCreate?: ScanLogCreateOrConnectWithoutCenterInput | ScanLogCreateOrConnectWithoutCenterInput[]
     createMany?: ScanLogCreateManyCenterInputEnvelope
     connect?: ScanLogWhereUniqueInput | ScanLogWhereUniqueInput[]
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -40031,6 +40195,24 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumContractStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ContractStatus | EnumContractStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ContractStatus[] | ListEnumContractStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ContractStatus[] | ListEnumContractStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumContractStatusFilter<$PrismaModel> | $Enums.ContractStatus
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -40127,6 +40309,30 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumContractStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ContractStatus | EnumContractStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ContractStatus[] | ListEnumContractStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ContractStatus[] | ListEnumContractStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumContractStatusWithAggregatesFilter<$PrismaModel> | $Enums.ContractStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumContractStatusFilter<$PrismaModel>
+    _max?: NestedEnumContractStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -40154,34 +40360,9 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -40384,6 +40565,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
@@ -40409,6 +40594,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
@@ -40435,6 +40624,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
@@ -40459,6 +40652,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -40893,6 +41090,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
@@ -40918,6 +41119,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
@@ -40960,6 +41165,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     channels?: StringNullableListFilter<"User">
     avgSales?: IntNullableFilter<"User"> | number | null
+    contractStatus?: EnumContractStatusFilter<"User"> | $Enums.ContractStatus
+    contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    contractApprovedBy?: StringNullableFilter<"User"> | string | null
+    contractRejectionReason?: StringNullableFilter<"User"> | string | null
   }
 
   export type CenterUpsertWithoutUsersInput = {
@@ -41864,6 +42073,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     orders?: OrderCreateNestedManyWithoutSellerInput
@@ -41888,6 +42101,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -42459,6 +42676,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -42484,6 +42705,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -42649,6 +42874,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -42674,6 +42903,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -42762,6 +42995,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -42787,6 +43024,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
@@ -42813,6 +43054,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -42838,6 +43083,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
@@ -43061,6 +43310,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -43086,6 +43339,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
@@ -43118,6 +43375,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -43143,6 +43404,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
@@ -43577,6 +43842,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -43602,6 +43871,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -43722,6 +43995,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -43747,6 +44024,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -43839,6 +44120,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -43864,6 +44149,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -43997,6 +44286,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -44022,6 +44315,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -44151,6 +44448,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -44176,6 +44477,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -44213,6 +44518,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -44238,6 +44547,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -44259,6 +44572,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -44284,6 +44601,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -44382,6 +44703,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -44407,6 +44732,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -45755,6 +46084,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -45780,6 +46113,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -45927,6 +46264,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -45952,6 +46293,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -46096,6 +46441,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
   }
 
   export type OrderCreateManySellerInput = {
@@ -46231,6 +46580,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
@@ -46255,6 +46608,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -46278,6 +46635,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUpdateWithoutSellerInput = {
@@ -47136,6 +47497,10 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
   }
 
   export type ProductCenterStockCreateManyCenterInput = {
@@ -47207,6 +47572,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
@@ -47231,6 +47600,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -47254,6 +47627,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductCenterStockUpdateWithoutCenterInput = {

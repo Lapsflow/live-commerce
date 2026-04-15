@@ -28,6 +28,12 @@ model User {
   channels String[] @default([]) // 활동 채널 (예: ["GRIP", "CLME", "YOUTUBE"])
   avgSales Int? // 평균 매출 (월간 평균)
 
+  // ✨ Contract Approval Fields (Phase 1)
+  contractStatus          ContractStatus @default(PENDING)
+  contractApprovedAt      DateTime?
+  contractApprovedBy      String? // Admin user ID
+  contractRejectionReason String?
+
   // Self-referential relation: Admin → Sellers
   admin   User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
   sellers User[] @relation("AdminSellers")
@@ -51,6 +57,12 @@ enum Role {
   SUB_MASTER
   ADMIN
   SELLER
+}
+
+enum ContractStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 // ──────────────────────── Product Management ────────────────────────
@@ -594,6 +606,7 @@ model ScanLog {
   @@index([userId, scannedAt])
   @@index([barcode])
   @@index([productId])
+  @@index([centerId, scannedAt(sort: Desc)])
 }
 
 enum ScanType {

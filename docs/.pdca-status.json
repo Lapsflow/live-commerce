@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-04-15T09:22:22.249Z",
+  "lastUpdated": "2026-04-15T09:57:11.247Z",
   "activeFeatures": [
     "live-commerce-migration",
     "db",
@@ -86,7 +86,12 @@
     "security",
     "[code]",
     "scan",
-    "scan-history"
+    "scan-history",
+    "approve",
+    "reject",
+    "contracts",
+    "tmp",
+    "reset-master-password"
   ],
   "primaryFeature": "live-commerce-migration",
   "features": {
@@ -138,7 +143,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-05T23:37:09.066Z",
-        "lastUpdated": "2026-04-10T06:10:44.541Z"
+        "lastUpdated": "2026-04-15T09:49:48.787Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(auth)/signup/page.tsx"
     },
@@ -177,9 +182,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-05T23:38:46.838Z",
-        "lastUpdated": "2026-04-15T05:53:35.918Z"
+        "lastUpdated": "2026-04-15T09:48:15.911Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/playwright.config.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/auth.ts"
     },
     "status": {
       "phase": "do",
@@ -814,9 +819,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-13T03:06:36.700Z",
-        "lastUpdated": "2026-04-15T00:03:13.065Z"
+        "lastUpdated": "2026-04-15T09:57:11.247Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/scripts/verify-center-data.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/scripts/reset-master.js"
     },
     "onewms-integration": {
       "phase": "completed",
@@ -1204,6 +1209,71 @@
     "barcode-ui": {
       "phase": "do",
       "doStartedAt": "2026-04-15T06:28:21.000Z"
+    },
+    "approve": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-15T09:48:40.700Z",
+        "lastUpdated": "2026-04-15T09:48:40.700Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/admin/contracts/[userId]/approve/route.ts"
+    },
+    "reject": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-15T09:48:49.929Z",
+        "lastUpdated": "2026-04-15T09:48:49.929Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/admin/contracts/[userId]/reject/route.ts"
+    },
+    "contracts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-15T09:50:21.809Z",
+        "lastUpdated": "2026-04-15T09:50:21.809Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/admin/contracts/page.tsx"
+    },
+    "tmp": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-15T09:54:39.199Z",
+        "lastUpdated": "2026-04-15T09:54:39.199Z"
+      },
+      "lastFile": "/tmp/reset-master-password.ts"
+    },
+    "reset-master-password": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-15T09:56:52.490Z",
+        "lastUpdated": "2026-04-15T09:56:52.490Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/debug/reset-master-password/route.ts"
     }
   },
   "pipeline": {
@@ -1214,7 +1284,7 @@
   "session": {
     "startedAt": "2026-04-05T11:31:25.159Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-04-15T09:22:22.249Z"
+    "lastActivity": "2026-04-15T09:57:11.247Z"
   },
   "history": [
     {
@@ -4462,6 +4532,114 @@
     {
       "timestamp": "2026-04-15T09:22:22.249Z",
       "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:47:37.256Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:47:46.987Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:48:15.911Z",
+      "feature": "live-commerce",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:48:40.700Z",
+      "feature": "approve",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:48:49.929Z",
+      "feature": "reject",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:49:04.960Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:49:08.634Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:49:11.971Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:49:18.748Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:49:28.566Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:49:40.240Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:49:44.974Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:49:48.787Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:50:21.809Z",
+      "feature": "contracts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:54:39.199Z",
+      "feature": "tmp",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:54:48.881Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:56:52.490Z",
+      "feature": "reset-master-password",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:57:11.247Z",
+      "feature": "scripts",
       "phase": "do",
       "action": "updated"
     }
