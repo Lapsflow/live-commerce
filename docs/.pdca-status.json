@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-04-15T09:57:11.247Z",
+  "lastUpdated": "2026-04-15T10:18:59.101Z",
   "activeFeatures": [
     "live-commerce-migration",
     "db",
@@ -91,7 +91,8 @@
     "reject",
     "contracts",
     "tmp",
-    "reset-master-password"
+    "reset-master-password",
+    "export"
   ],
   "primaryFeature": "live-commerce-migration",
   "features": {
@@ -169,9 +170,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-05T23:38:26.754Z",
-        "lastUpdated": "2026-04-05T23:38:30.698Z"
+        "lastUpdated": "2026-04-15T10:18:13.384Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/orders/page.tsx"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/route.ts"
     },
     "live-commerce": {
       "phase": "do",
@@ -325,9 +326,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-06T01:17:44.874Z",
-        "lastUpdated": "2026-04-15T01:30:56.679Z"
+        "lastUpdated": "2026-04-15T10:17:25.233Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/centers/[id]/route.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/products/[id]/route.ts"
     },
     "analytics": {
       "phase": "do",
@@ -767,9 +768,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-10T14:10:02.501Z",
-        "lastUpdated": "2026-04-15T01:18:36.500Z"
+        "lastUpdated": "2026-04-15T10:06:30.712Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/centers/[id]/products/route.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/products/route.ts"
     },
     "migrations": {
       "phase": "do",
@@ -1274,6 +1275,19 @@
         "lastUpdated": "2026-04-15T09:56:52.490Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/debug/reset-master-password/route.ts"
+    },
+    "export": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-15T10:18:59.101Z",
+        "lastUpdated": "2026-04-15T10:18:59.101Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/export/route.ts"
     }
   },
   "pipeline": {
@@ -1284,7 +1298,7 @@
   "session": {
     "startedAt": "2026-04-05T11:31:25.159Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-04-15T09:57:11.247Z"
+    "lastActivity": "2026-04-15T10:18:59.101Z"
   },
   "history": [
     {
@@ -4640,6 +4654,30 @@
     {
       "timestamp": "2026-04-15T09:57:11.247Z",
       "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T10:06:30.712Z",
+      "feature": "products",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T10:17:25.233Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T10:18:13.384Z",
+      "feature": "orders",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T10:18:59.101Z",
+      "feature": "export",
       "phase": "do",
       "action": "updated"
     }

@@ -89,6 +89,11 @@ model Product {
   // ✨ Multi-Warehouse Fields
   masterBarcodeId String? // 공식 바코드 마스터 ID
 
+  // ✨ Phase 2: Product Type Separation
+  productType  ProductType @default(HEADQUARTERS) // WMS(본사) vs CENTER(센터)
+  managedBy    String? // centerId for CENTER products, null for HEADQUARTERS
+  isWmsProduct Boolean     @default(true) // true for HEADQUARTERS, false for CENTER
+
   // Relations
   orderItems           OrderItem[]
   sales                Sale[]
@@ -100,6 +105,14 @@ model Product {
   aiAnalyses           AIAnalysis[] // ✨ AI Analysis results
   proposalCarts        ProposalCart[]
   scanLogs             ScanLog[]
+
+  @@index([productType])
+  @@index([managedBy])
+}
+
+enum ProductType {
+  HEADQUARTERS // WMS 본사 관리 - 바코드 필수, 가격 읽기전용
+  CENTER // 센터 자사몰 - 바코드 선택, 가격 수정가능
 }
 
 // ──────────────────────── Center Management ────────────────────────
@@ -225,6 +238,9 @@ model Order {
   virtualAccountBank   String? // 은행명 (예: "KB", "신한")
   virtualAccountExpiry DateTime? // 가상계좌 만료 시각
 
+  // ✨ Phase 2: Product Type for Auto-Split
+  productType ProductType? // HEADQUARTERS or CENTER (null for mixed orders)
+
   // Relations
   seller             User                  @relation(fields: [sellerId], references: [id])
   admin              User?                 @relation("AdminOrders", fields: [adminId], references: [id])
@@ -238,6 +254,7 @@ model Order {
   @@index([sellerId, uploadedAt])
   @@index([orderNo])
   @@index([paymentStatus, shippingStatus])
+  @@index([productType])
 }
 
 enum OrderStatus {
@@ -272,6 +289,9 @@ model OrderItem {
   totalSupply Int // 공급가 합계 = supplyPrice × quantity
   margin      Int // 마진 = (입금액 / 수량) - supplyPrice
 
+  // ✨ Phase 2: Product Type Snapshot
+  productType ProductType @default(HEADQUARTERS) // Copied from product at creation
+
   // Relations
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
@@ -279,6 +299,7 @@ model OrderItem {
   // Indexes
   @@index([orderId])
   @@index([productId])
+  @@index([productType])
 }
 
 // ──────────────────────── Broadcast Management ────────────────────────
