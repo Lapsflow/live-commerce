@@ -4467,9 +4467,12 @@
     }
   ],
   "barcode-ui": {
-    "phase": "design",
+    "phase": "check",
     "startedAt": "2026-04-15T14:00:00.000Z",
-    "matchRate": 0,
-    "designedAt": "2026-04-15T14:30:00.000Z"
+    "designedAt": "2026-04-15T14:30:00.000Z",
+    "implementedAt": "2026-04-15T16:00:00.000Z",
+    "analyzedAt": "2026-04-15T09:23:07.464Z",
+    "matchRate": 100,
+    "iterationCount": 0
   }
 }
