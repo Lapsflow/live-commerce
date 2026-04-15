@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import type { Center, Prisma } from '@prisma/client';
+import type { Center, Prisma } from '@/lib/generated/prisma/client';
 
 export interface CreateCenterInput {
   code: string; // Format: "01-4213" (regionCode-phoneCode)

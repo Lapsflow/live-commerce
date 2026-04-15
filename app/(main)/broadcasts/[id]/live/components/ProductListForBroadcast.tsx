@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Package } from "lucide-react";
 import type { Product } from "@/types/product";
 
+// Phase 2: Updated to match new Product type
 interface ProductWithCenterStock extends Product {
   centerStocks?: Array<{
     id: string;
     centerId: string;
     stock: number;
   }>;
-  productType?: string;
 }
 
 interface ProductListForBroadcastProps {

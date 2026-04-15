@@ -2,6 +2,8 @@
  * POST /api/ai/analyze
  * Analyze product with AI (pricing + sales strategy)
  * Rate limit: 10 requests/hour per user
+ * Phase 2: withRole() middleware applied
+ * Phase 3: Zod validation added
  */
 
 import { NextRequest } from 'next/server';
@@ -9,19 +11,22 @@ import { auth } from '@/lib/auth';
 import { ok, errors } from '@/lib/api/response';
 import { analyzeProduct } from '@/lib/services/ai/analysis';
 import { getCounter, incrementCounter } from '@/lib/cache/redis';
+import { withRole, type AuthUser } from '@/lib/api/middleware';
+import { z } from 'zod';
 
 const RATE_LIMIT_PER_HOUR = 10;
 const RATE_LIMIT_WINDOW = 60 * 60; // 1 hour in seconds
 
-export async function POST(req: NextRequest) {
-  try {
-    const session = await auth();
-    if (!session?.user) {
-      return errors.unauthorized();
-    }
+// Phase 3: Zod validation schema
+const aiAnalyzeSchema = z.object({
+  barcode: z.string().min(1, "바코드가 필요합니다"),
+  skipCache: z.boolean().optional(),
+});
 
+export const POST = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+  try {
     // Rate limiting check
-    const userId = (session.user as any).id;
+    const userId = user.userId;
     const rateLimitKey = `ai:ratelimit:${userId}:${getHourKey()}`;
     const requestCount = await getCounter(rateLimitKey);
 
@@ -32,15 +37,14 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { barcode, skipCache } = body;
 
-    if (!barcode || typeof barcode !== 'string') {
-      return errors.badRequest('barcode 필드가 필요합니다');
+    // Phase 3: Validate input with Zod
+    const validationResult = aiAnalyzeSchema.safeParse(body);
+    if (!validationResult.success) {
+      return errors.badRequest(validationResult.error.issues[0].message);
     }
 
-    if (barcode.trim().length === 0) {
-      return errors.badRequest('바코드는 빈 값일 수 없습니다');
-    }
+    const { barcode, skipCache } = validationResult.data;
 
     // Increment rate limit counter
     await incrementCounter(rateLimitKey, RATE_LIMIT_WINDOW);
@@ -86,7 +90,7 @@ export async function POST(req: NextRequest) {
 
     return errors.internal('AI 분석 중 오류가 발생했습니다');
   }
-}
+});
 
 /**
  * Get current hour key for rate limiting

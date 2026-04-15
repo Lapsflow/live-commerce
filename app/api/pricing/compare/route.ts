@@ -1,19 +1,16 @@
 /**
  * GET /api/pricing/compare
  * Compare prices across marketplaces for a given barcode
+ * Phase 2: withRole() middleware applied
  */
 
 import { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth';
 import { ok, errors } from '@/lib/api/response';
 import { getPricing } from '@/lib/services/pricing/marketPricing';
+import { withRole, type AuthUser } from '@/lib/api/middleware';
 
-export async function GET(req: NextRequest) {
+export const GET = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
-    const session = await auth();
-    if (!session) {
-      return errors.unauthorized();
-    }
 
     const { searchParams } = new URL(req.url);
     const barcode = searchParams.get('barcode');
@@ -45,4 +42,4 @@ export async function GET(req: NextRequest) {
       error instanceof Error ? error.message : '가격 비교 중 오류가 발생했습니다';
     return errors.internal(message);
   }
-}
+});

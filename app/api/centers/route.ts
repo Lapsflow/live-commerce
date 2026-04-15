@@ -1,33 +1,25 @@
 /**
  * GET /api/centers - 센터 목록 조회
  * POST /api/centers - 센터 생성
+ * Phase 2: withRole() middleware applied (ADMIN only for now)
  */
 
 import { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth';
 import { ok, created, errors } from '@/lib/api/response';
 import {
   getCenters,
   createCenter,
   type CreateCenterInput,
 } from '@/lib/services/center/centerService';
+import { withRole } from '@/lib/middleware/withRole';
 
 /**
  * GET /api/centers
- * 센터 목록 조회 (MASTER, SUB_MASTER, ADMIN만 접근 가능)
+ * 센터 목록 조회 (ADMIN만 접근 가능)
+ * Phase 2: withRole() middleware applied
  */
-export async function GET(req: NextRequest) {
+export const GET = withRole("ADMIN")(async (req: NextRequest) => {
   try {
-    const session = await auth();
-    if (!session) {
-      return errors.unauthorized();
-    }
-
-    // Only MASTER, SUB_MASTER, ADMIN can view all centers
-    const allowedRoles = ['MASTER', 'SUB_MASTER', 'ADMIN'];
-    if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
-      return errors.forbidden('센터 목록 조회 권한이 없습니다');
-    }
 
     // Query parameters
     const { searchParams } = new URL(req.url);
@@ -50,23 +42,15 @@ export async function GET(req: NextRequest) {
     const message = error instanceof Error ? error.message : 'Failed to get centers';
     return errors.internal(message);
   }
-}
+});
 
 /**
  * POST /api/centers
- * 센터 생성 (MASTER만 가능)
+ * 센터 생성 (ADMIN만 가능)
+ * Phase 2: withRole() middleware applied
  */
-export async function POST(req: NextRequest) {
+export const POST = withRole("ADMIN")(async (req: NextRequest) => {
   try {
-    const session = await auth();
-    if (!session) {
-      return errors.unauthorized();
-    }
-
-    // Only MASTER can create centers
-    if (session.user?.role !== 'MASTER') {
-      return errors.forbidden('센터 생성 권한이 없습니다. MASTER 권한이 필요합니다.');
-    }
 
     const body = await req.json();
 
@@ -118,4 +102,4 @@ export async function POST(req: NextRequest) {
 
     return errors.internal(message);
   }
-}
+});

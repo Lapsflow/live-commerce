@@ -3,6 +3,7 @@ import { ok, error } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 
 // Phase 2: Product Update Schema (partial)
 const productUpdateSchema = z.object({
@@ -21,15 +22,13 @@ const productUpdateSchema = z.object({
 });
 
 // GET: Get single product
-export async function GET(
+// Phase 2: withRole() middleware applied
+export const GET = withRole(["ADMIN", "SELLER"], async (
   req: NextRequest,
+  user: AuthUser,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return error("UNAUTHORIZED", "로그인이 필요합니다.", 401);
-    }
 
     const { id } = await params;
 
@@ -49,10 +48,14 @@ export async function GET(
     }
 
     // Authorization: SELLER can only view CENTER products from their center
-    if (session.user.role === "SELLER") {
+    // Note: user.centerId comes from session (auth.ts includes centerId)
+    const session = await auth();
+    const centerId = session?.user?.centerId;
+
+    if (user.role === "SELLER") {
       if (
         product.productType !== "CENTER" ||
-        product.managedBy !== session.user.centerId
+        product.managedBy !== centerId
       ) {
         return error("FORBIDDEN", "권한이 없습니다.", 403);
       }
@@ -63,19 +66,16 @@ export async function GET(
     console.error("[PRODUCT GET ERROR]", err);
     return error("FETCH_FAILED", err.message, 500);
   }
-}
+});
 
 // PUT: Update product
-export async function PUT(
+// Phase 2: withRole() middleware applied
+export const PUT = withRole(["ADMIN", "SELLER"], async (
   req: NextRequest,
+  user: AuthUser,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return error("UNAUTHORIZED", "로그인이 필요합니다.", 401);
-    }
-
     const { id } = await params;
     const body = await req.json();
     const data = productUpdateSchema.parse(body);
@@ -89,8 +89,12 @@ export async function PUT(
       return error("NOT_FOUND", "상품을 찾을 수 없습니다.", 404);
     }
 
+    // Get centerId from session for SELLER authorization
+    const session = await auth();
+    const centerId = session?.user?.centerId;
+
     // Phase 2: Authorization check
-    if (session.user.role === "SELLER") {
+    if (user.role === "SELLER") {
       // SELLER can only edit CENTER products from their center
       if (existingProduct.productType === "HEADQUARTERS") {
         return error(
@@ -99,7 +103,7 @@ export async function PUT(
           403
         );
       }
-      if (existingProduct.managedBy !== session.user.centerId) {
+      if (existingProduct.managedBy !== centerId) {
         return error("FORBIDDEN", "다른 센터의 상품은 수정할 수 없습니다.", 403);
       }
       // SELLER cannot change productType
@@ -152,13 +156,13 @@ export async function PUT(
     if (data.stock3 !== undefined) updateData.stock3 = data.stock3;
 
     // Only ADMIN can change productType
-    if (data.productType && session.user.role !== "SELLER") {
+    if (data.productType && user.role !== "SELLER") {
       updateData.productType = data.productType;
       updateData.isWmsProduct = data.productType === "HEADQUARTERS";
     }
 
     // Only ADMIN can change managedBy
-    if (data.managedBy && session.user.role !== "SELLER") {
+    if (data.managedBy && user.role !== "SELLER") {
       updateData.managedBy = data.managedBy;
     }
 
@@ -175,24 +179,16 @@ export async function PUT(
     console.error("[PRODUCT UPDATE ERROR]", err);
     return error("UPDATE_FAILED", err.message, 500);
   }
-}
+});
 
 // DELETE: Delete product
-export async function DELETE(
+// Phase 2: withRole() middleware applied (ADMIN only)
+export const DELETE = withRole(["ADMIN"], async (
   req: NextRequest,
+  user: AuthUser,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return error("UNAUTHORIZED", "로그인이 필요합니다.", 401);
-    }
-
-    // Only ADMIN can delete products
-    if (session.user.role === "SELLER") {
-      return error("FORBIDDEN", "판매자는 상품을 삭제할 수 없습니다.", 403);
-    }
-
     const { id } = await params;
 
     await prisma.product.delete({
@@ -204,4 +200,4 @@ export async function DELETE(
     console.error("[PRODUCT DELETE ERROR]", err);
     return error("DELETE_FAILED", err.message, 500);
   }
-}
+});

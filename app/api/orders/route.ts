@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { ok, error } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { z } from "zod";
 
 // Phase 2: Order with Items Schema
@@ -27,13 +28,9 @@ const orderSchema = z.object({
 });
 
 // GET: List orders with filters
-export async function GET(req: NextRequest) {
+// Phase 2: withRole() middleware applied (ADMIN, SELLER)
+export const GET = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return error("UNAUTHORIZED", "로그인이 필요합니다.", 401);
-    }
-
     const { searchParams } = new URL(req.url);
     const productType = searchParams.get("productType") as "HEADQUARTERS" | "CENTER" | null;
     const search = searchParams.get("search");
@@ -53,8 +50,8 @@ export async function GET(req: NextRequest) {
     }
 
     // Authorization: SELLER can only see their own orders
-    if (session.user.role === "SELLER") {
-      where.sellerId = session.user.userId;
+    if (user.role === "SELLER") {
+      where.sellerId = user.userId;
     }
 
     const [orders, total] = await Promise.all([
@@ -92,21 +89,17 @@ export async function GET(req: NextRequest) {
     console.error("[ORDERS GET ERROR]", err);
     return error("FETCH_FAILED", err.message, 500);
   }
-}
+});
 
 // POST: Create order with auto-split by product type
-export async function POST(req: NextRequest) {
+// Phase 2: withRole() middleware applied (ADMIN, SELLER)
+export const POST = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return error("UNAUTHORIZED", "로그인이 필요합니다.", 401);
-    }
-
     const body = await req.json();
     const data = orderSchema.parse(body);
 
     // Default sellerId to current user
-    const sellerId = data.sellerId || session.user.userId;
+    const sellerId = data.sellerId || user.userId;
 
     // Phase 2: Group items by product type
     const itemsWithProducts = await Promise.all(
@@ -226,4 +219,4 @@ export async function POST(req: NextRequest) {
     console.error("[ORDER CREATE ERROR]", err);
     return error("CREATE_FAILED", err.message, 500);
   }
-}
+});

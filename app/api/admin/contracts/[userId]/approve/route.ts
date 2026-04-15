@@ -2,19 +2,16 @@ import { NextRequest } from "next/server";
 import { ok, error } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
+import { withRole } from "@/lib/middleware/withRole";
 
-export async function POST(
+// Phase 2: withRole() middleware applied (ADMIN only)
+export const POST = withRole("ADMIN")(async (
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
-) {
+) => {
   try {
     const session = await auth();
     const { userId } = await params;
-
-    // Only ADMIN can approve contracts
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return error("UNAUTHORIZED", "권한이 없습니다.", 403);
-    }
 
     // Find user
     const user = await prisma.user.findUnique({
@@ -56,4 +53,4 @@ export async function POST(
     console.error("[CONTRACT APPROVE ERROR]", err);
     return error("APPROVE_FAILED", err.message, 500);
   }
-}
+});

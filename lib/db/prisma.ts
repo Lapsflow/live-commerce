@@ -6,7 +6,7 @@
  * Dev 환경에서는 globalThis 캐시로 hot-reload 시 연결 누수 방지.
  * Transient 오류(Neon cold start, 연결 끊김) 시 최대 2회 자동 재시도.
  */
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/lib/generated/prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { getEnv } from "@/lib/env";
 
