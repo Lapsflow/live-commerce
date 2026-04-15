@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../lib/generated/prisma/client"
 }
 
 datasource db {
@@ -42,6 +43,7 @@ model User {
   proposals     Proposal[]
   proposalCarts ProposalCart[]
   sellerMatches OrderSellerMatching[]
+  scanLogs      ScanLog[]
 }
 
 enum Role {
@@ -85,6 +87,7 @@ model Product {
   sellerMatches        OrderSellerMatching[]
   aiAnalyses           AIAnalysis[] // ✨ AI Analysis results
   proposalCarts        ProposalCart[]
+  scanLogs             ScanLog[]
 }
 
 // ──────────────────────── Center Management ────────────────────────
@@ -119,6 +122,7 @@ model Center {
   centerStocks ProductCenterStock[]
   orders       Order[]
   broadcasts   Broadcast[]
+  scanLogs     ScanLog[]
 
   @@index([code])
   @@index([regionCode])
@@ -567,4 +571,34 @@ model MarketPricing {
 
   @@index([barcode, platform])
   @@index([fetchedAt])
+}
+
+// ──────────────────────── Barcode Scanner System ────────────────────────
+
+model ScanLog {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String?
+  barcode   String
+  scanType  ScanType
+  quantity  Int?
+  centerId  String?
+  scannedAt DateTime @default(now())
+  metadata  Json?
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  center  Center?  @relation(fields: [centerId], references: [id], onDelete: SetNull)
+
+  @@index([userId, scannedAt])
+  @@index([barcode])
+  @@index([productId])
+  @@index([centerId, scannedAt(sort: Desc)])
+}
+
+enum ScanType {
+  INBOUND
+  OUTBOUND
+  LOOKUP
 }

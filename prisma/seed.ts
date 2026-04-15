@@ -177,9 +177,13 @@ async function main() {
         "LIVE",
         "ENDED",
       ];
-      return prisma.broadcast.create({
-        data: {
-          code: `BC${new Date().getFullYear()}${(i + 1).toString().padStart(4, "0")}`,
+      const code = `BC${new Date().getFullYear()}${(i + 1).toString().padStart(4, "0")}`;
+
+      return prisma.broadcast.upsert({
+        where: { code },
+        update: {},
+        create: {
+          code,
           sellerId: seller.id,
           platform: platforms[i % platforms.length],
           scheduledAt: new Date(Date.now() + (i - 2) * 86400000), // i-2일 후

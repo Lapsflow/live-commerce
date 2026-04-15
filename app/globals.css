@@ -5,6 +5,23 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================
+   Barcode Scanner Animations
+   ============================================ */
+
+@keyframes scan-line {
+  0%, 100% {
+    top: 0;
+  }
+  50% {
+    top: 100%;
+  }
+}
+
+.animate-scan-line {
+  animation: scan-line 2s ease-in-out infinite;
+}
+
+/* ============================================
    Toss-inspired Design Tokens for Hyudo ERP
    + shadcn/ui CSS Variables
    ============================================ */

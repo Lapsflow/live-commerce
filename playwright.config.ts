@@ -1,4 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -28,12 +32,24 @@ export default defineConfig({
       testMatch: /auth\.setup\.ts/,
     },
     {
+      name: 'setup-seller',
+      testMatch: /auth-seller\.setup\.ts/,
+    },
+    {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/admin.json',
       },
       dependencies: ['setup'],
+    },
+    {
+      name: 'chromium-seller',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/seller.json',
+      },
+      dependencies: ['setup-seller'],
     },
   ],
 });

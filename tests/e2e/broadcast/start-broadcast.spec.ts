@@ -14,16 +14,7 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('방송 시작 플로우', () => {
-  test.beforeEach(async ({ page }) => {
-    // 로그인 (SELLER 계정)
-    await page.goto('/auth/signin');
-    await page.fill('input[name="email"]', process.env.TEST_SELLER_EMAIL || 'seller@test.com');
-    await page.fill('input[name="password"]', process.env.TEST_SELLER_PASSWORD || 'password123');
-    await page.click('button[type="submit"]');
-
-    // 로그인 완료 대기
-    await page.waitForURL('/dashboard', { timeout: 10000 });
-  });
+  test.use({ storageState: 'playwright/.auth/seller.json' });
 
   test('센터코드 입력하여 방송 시작 성공', async ({ page }) => {
     // 방송 목록 페이지로 이동

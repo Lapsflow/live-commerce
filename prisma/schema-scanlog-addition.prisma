@@ -1,0 +1,28 @@
+// ──────────────────────── Barcode Scanner System ────────────────────────
+
+model ScanLog {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String?
+  barcode   String
+  scanType  ScanType
+  quantity  Int?
+  centerId  String?
+  scannedAt DateTime @default(now())
+  metadata  Json?
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  center  Center?  @relation(fields: [centerId], references: [id], onDelete: SetNull)
+
+  @@index([userId, scannedAt])
+  @@index([barcode])
+  @@index([productId])
+}
+
+enum ScanType {
+  INBOUND
+  OUTBOUND
+  LOOKUP
+}

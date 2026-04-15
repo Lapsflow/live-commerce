@@ -113,6 +113,38 @@
 - P3: Stats returns zeros (Sale model aggregation not wired)
 - P3: Stylistic layout differences (flat vs Card-based)
 
+## Barcode Scanner UI Analysis (2026-04-15, v5 FINAL)
+
+### Match Rate: 96% (PASS) -- v1: 66%, v2: 88%, v3: 90%, v4: 94%, v5: 96%
+- Design doc: `docs/02-design/features/barcode-ui.design.md` (1460 lines)
+- Report: `docs/03-analysis/barcode-ui.analysis.md` (v5 FINAL)
+
+### Category Scores
+| Category | v1 | v4 | v5 | Change (v4-v5) |
+|---|---|---|---|---|
+| Database Schema | 88% | 95% | 95% | -- |
+| API Endpoints | 65% | 90% | 95% | +5% (P2-2 audit log) |
+| UI Components | 75% | 88% | 95% | +7% (P2-1 product link) |
+| Custom Hooks | 80% | 95% | 95% | -- |
+| Architecture Compliance | 40% | 95% | 95% | -- |
+| Convention Compliance | 45% | 98% | 100% | +2% (audit completeness) |
+
+### ALL P0, P1, P2 Issues RESOLVED
+- P0-1: useBarcodeScanner.ts `data.success` -> `data.data` (v4)
+- P0-2: useScanHistory.ts `data.success` -> `data.data` (v4)
+- P1-1..P1-4: ok/errors, withRole, Zod, shared Prisma (v2)
+- P2-1: Product detail Link + ExternalLink icon in LOOKUP mode (v5)
+- P2-2: Universal audit log for ALL scan modes when product not found (v5)
+
+### Remaining P3 only (5 items -- no functional impact)
+- limit max cap, userId+scannedAt DESC index, Server Component page, img vs Image, permission listener
+
+### Key Pattern: Convention fixes are highly effective
+- P1 convention fixes alone: +22% (66%->88%)
+- P0 client-side fix: +4% (90%->94%)
+- P2 final fixes: +2% (94%->96%)
+- 15 Prisma models (ScanLog + ScanType enum)
+
 ## Lessons
 - CRUD factory covers basic CRUD; stats/analytics/bulk ops need custom routes
 - Weekly comparison was correctly merged into seller/analytics (avoid endpoint fragmentation)
@@ -146,3 +178,28 @@
 - When reclassifying design doc errors, the implementation score should increase (not count as impl gap)
 - Phase A/B fixes can produce +9% improvement when all P1 items are addressed simultaneously
 - TODO comments in code can be factually wrong (e.g., "no relation exists" when it does) -- always verify schema
+- Inline PrismaClient instantiation per route file is a severe anti-pattern causing connection pool waste -- always check for shared singleton import
+- Design specifies `{success, data}` but project ok() returns `{data}` only -- barcode routes added `success: true` field inconsistently
+- When design specifies optional field (String?) but schema has required (String), verify if all records can satisfy the constraint
+- ScanType as Prisma enum is better than String type -- score as improvement over design
+- Transaction wrapping scan log + stock update is an improvement not in design -- score as "added"
+- New feature routes consistently skip conventions (3rd occurrence after ONEWMS and broadcast calendar)
+- Convention fix pattern is repeatable: withRole + ok/errors + Zod + shared Prisma = +20-55% architecture/convention score improvement
+- Barcode scanner v1->v2 confirms: P1 convention fixes alone produce +22% overall improvement (66%->88%)
+- All three feature analyses (ONEWMS, broadcast-calendar, barcode-ui) follow identical convention-fix trajectory
+- previousStock requires querying existing stock BEFORE the transaction, not after
+- centerId filter in scan-history is a simple where-clause addition but was missed in initial impl
+- Composite indexes with sort order (DESC) should be verified character-by-character in schema
+- Previous analysis reports can have false negatives -- always re-verify "missing" items against current code
+- `data.success` check is the #1 recurring client-side bug: design docs specify `{success, data}`, ok() returns `{data}` only
+- The `data.success` bug pattern: response.ok passes -> data.success is undefined -> product/data never set -> UI appears broken
+- Client-side correct pattern after ok(): check `data.data` or just use `data.data` directly (no success field exists)
+- Features reported as "missing" in v2 were actually implemented (FlashlightToggle, CameraFlip, centerName, product image) -- always read actual files, never trust prior report summaries
+- When design specifies separate components (FlashlightToggle, CameraFlip, ScanControls), implementation may integrate them into parent -- score as "acceptable" not "missing"
+- v3 discovered P0 bugs that v1 and v2 missed because prior analyses focused on server-side convention compliance, not client-side data flow
+- Always trace the full data path: API response shape -> hook parsing -> state setting -> component rendering
+- P2 fixes (product detail Link, audit log) are small code changes but measurably improve design compliance (+2%)
+- Universal audit logging requires the scanLog.create() to be BEFORE the error return, not after
+- Design specifies `/products/${id}` but actual route structure may differ (e.g., `/admin/products/${id}`) -- route path alignment is an acceptable difference
+- Barcode scanner v1->v5 complete trajectory: 66% -> 88% -> 90% -> 94% -> 96% over 5 iterations
+- All four feature analyses (ONEWMS, broadcast-calendar, barcode-ui, base migration) now have all P0/P1/P2 resolved

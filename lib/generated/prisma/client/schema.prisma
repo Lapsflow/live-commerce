@@ -1,0 +1,603 @@
+// Prisma Schema for Live-Commerce
+// 6 Core Models + Center System + RateLimit
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ──────────────────────── User Management ────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  phone        String?
+  role         Role     @default(SELLER)
+  adminId      String?
+  centerId     String? // ✨ Center assignment (nullable - MASTER has no center)
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // ✨ Seller Profile Fields
+  channels String[] @default([]) // 활동 채널 (예: ["GRIP", "CLME", "YOUTUBE"])
+  avgSales Int? // 평균 매출 (월간 평균)
+
+  // Self-referential relation: Admin → Sellers
+  admin   User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
+  sellers User[] @relation("AdminSellers")
+
+  // Center relation
+  center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
+
+  // Relations
+  orders        Order[]               @relation
+  adminOrders   Order[]               @relation("AdminOrders")
+  broadcasts    Broadcast[]
+  sales         Sale[]
+  proposals     Proposal[]
+  proposalCarts ProposalCart[]
+  sellerMatches OrderSellerMatching[]
+  scanLogs      ScanLog[]
+}
+
+enum Role {
+  MASTER
+  SUB_MASTER
+  ADMIN
+  SELLER
+}
+
+// ──────────────────────── Product Management ────────────────────────
+
+model Product {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  barcode     String   @unique
+  sellPrice   Int
+  supplyPrice Int
+  totalStock  Int      @default(0)
+  stockMujin  Int      @default(0)
+  stock1      Int      @default(0)
+  stock2      Int      @default(0)
+  stock3      Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // ✨ ONEWMS Integration Fields
+  onewmsCode    String? @unique // ONEWMS 상품코드
+  onewmsBarcode String? // ONEWMS 바코드
+
+  // ✨ Multi-Warehouse Fields
+  masterBarcodeId String? // 공식 바코드 마스터 ID
+
+  // Relations
+  orderItems           OrderItem[]
+  sales                Sale[]
+  onewmsStocks         OnewmsStockSync[]
+  warehouseInventories WarehouseInventory[]
+  stockMovements       StockMovement[]
+  centerStocks         ProductCenterStock[] // ✨ Center-based stock normalization
+  sellerMatches        OrderSellerMatching[]
+  aiAnalyses           AIAnalysis[] // ✨ AI Analysis results
+  proposalCarts        ProposalCart[]
+  scanLogs             ScanLog[]
+}
+
+// ──────────────────────── Center Management ────────────────────────
+
+model Center {
+  id         String @id @default(cuid())
+  code       String @unique // 센터코드 (예: "01-4213" = 지역코드-대표자폰번호뒷자리)
+  name       String // 센터명
+  regionCode String // 지역코드 ("01"~"17": 서울~제주)
+  regionName String // 지역명 (서울, 경기, 인천, etc.)
+
+  // 대표자 정보
+  representative      String // 대표자 이름
+  representativePhone String // 대표자 연락처
+
+  // 사업장 정보
+  address       String // 주소
+  addressDetail String? // 상세주소
+  businessNo    String? // 사업자등록번호
+
+  // 계약 정보
+  contractDate     DateTime? // 계약일
+  contractDocument String? // 계약서 파일 경로
+
+  // 상태
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users        User[]
+  centerStocks ProductCenterStock[]
+  orders       Order[]
+  broadcasts   Broadcast[]
+  scanLogs     ScanLog[]
+
+  @@index([code])
+  @@index([regionCode])
+  @@index([isActive])
+}
+
+model ProductCenterStock {
+  id        String   @id @default(cuid())
+  productId String
+  centerId  String
+  stock     Int      @default(0) // 센터별 재고
+  location  String? // 센터 내 위치 (예: "1층", "2층")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  center  Center  @relation(fields: [centerId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, centerId])
+  @@index([productId])
+  @@index([centerId])
+}
+
+model OrderSellerMatching {
+  id          String   @id @default(cuid())
+  orderId     String
+  sellerId    String
+  productId   String
+  matchedAt   DateTime @default(now())
+  matchReason String? // 매칭 이유 (예: "frequent_buyer", "first_time", etc.)
+
+  // RFM 데이터
+  orderCount    Int      @default(1) // 해당 상품 주문 횟수
+  totalQuantity Int      @default(0) // 총 주문 수량
+  totalRevenue  Int      @default(0) // 총 주문 금액
+  lastOrderAt   DateTime @default(now())
+
+  // 추천 스코어 (0-100)
+  recommendScore Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  seller  User    @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([sellerId, productId])
+  @@index([orderId])
+  @@index([sellerId])
+  @@index([productId])
+  @@index([recommendScore])
+}
+
+// ──────────────────────── Order Management ────────────────────────
+
+model Order {
+  id                 String      @id @default(cuid())
+  orderNo            String      @unique
+  sellerId           String
+  adminId            String?
+  processingCenterId String? // ✨ Center processing this order (nullable)
+  status             OrderStatus @default(PENDING)
+  totalAmount        Int         @default(0)
+  memo               String?
+  uploadedAt         DateTime    @default(now())
+  approvedAt         DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  // ✨ 수령자 정보 (Excel 업로드용)
+  recipient String? // 수령자
+  phone     String? // 연락처
+  address   String? // 주소
+
+  // ✨ 금액 정보
+  totalMargin Int @default(0) // 총 마진
+
+  // ✨ 입금/출고 상태 추적
+  paymentStatus  PaymentStatus  @default(UNPAID)
+  shippingStatus ShippingStatus @default(PENDING)
+  paidAt         DateTime? // 입금 완료 시각
+
+  // ✨ 가상계좌 정보 (Toss Payments)
+  virtualAccount       String? // 가상계좌 번호
+  virtualAccountBank   String? // 은행명 (예: "KB", "신한")
+  virtualAccountExpiry DateTime? // 가상계좌 만료 시각
+
+  // Relations
+  seller             User                  @relation(fields: [sellerId], references: [id])
+  admin              User?                 @relation("AdminOrders", fields: [adminId], references: [id])
+  processingCenter   Center?               @relation(fields: [processingCenterId], references: [id], onDelete: SetNull)
+  items              OrderItem[]
+  onewmsMapping      OnewmsOrderMapping?
+  onewmsDeliveryLogs OnewmsDeliveryLog[]
+  sellerMatches      OrderSellerMatching[]
+
+  // Indexes
+  @@index([sellerId, uploadedAt])
+  @@index([orderNo])
+  @@index([paymentStatus, shippingStatus])
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  UNPAID // 입금확인전
+  PAID // 입금완료
+}
+
+enum ShippingStatus {
+  PENDING // 대기
+  PREPARING // 발송준비
+  SHIPPED // 출고완료
+  PARTIAL // 부분출고
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  createdAt DateTime @default(now())
+
+  // ✨ Excel 업로드용 스냅샷 필드
+  barcode     String // 바코드
+  productName String // 상품명
+  supplyPrice Int // 공급가 (개당)
+  totalSupply Int // 공급가 합계 = supplyPrice × quantity
+  margin      Int // 마진 = (입금액 / 수량) - supplyPrice
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  // Indexes
+  @@index([orderId])
+  @@index([productId])
+}
+
+// ──────────────────────── Broadcast Management ────────────────────────
+
+model Broadcast {
+  id          String            @id @default(cuid())
+  code        String            @unique
+  sellerId    String
+  centerId    String? // ✨ Center for this broadcast (nullable)
+  platform    BroadcastPlatform
+  scheduledAt DateTime
+  startedAt   DateTime?
+  endedAt     DateTime?
+  status      BroadcastStatus   @default(SCHEDULED)
+  memo        String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // Relations
+  seller User    @relation(fields: [sellerId], references: [id])
+  center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
+  sales  Sale[]
+}
+
+enum BroadcastPlatform {
+  GRIP
+  CLME
+  YOUTUBE
+  TIKTOK
+  BAND
+  OTHER
+}
+
+enum BroadcastStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+  CANCELED
+}
+
+// ──────────────────────── Sales Management ────────────────────────
+
+model Sale {
+  id          String   @id @default(cuid())
+  saleNo      String   @unique
+  sellerId    String
+  productId   String
+  broadcastId String?
+  quantity    Int
+  unitPrice   Int
+  totalPrice  Int
+  saleDate    DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relations
+  seller    User       @relation(fields: [sellerId], references: [id])
+  product   Product    @relation(fields: [productId], references: [id])
+  broadcast Broadcast? @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
+}
+
+// ──────────────────────── Proposal Management ────────────────────────
+
+model Proposal {
+  id          String         @id @default(cuid())
+  companyName String
+  contact     String
+  phone       String
+  productName String
+  category    String
+  description String
+  status      ProposalStatus @default(PENDING)
+  submittedBy String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user User @relation(fields: [submittedBy], references: [id])
+
+  @@index([status])
+  @@index([submittedBy])
+}
+
+enum ProposalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ProposalCart {
+  id          String   @id @default(cuid())
+  userId      String
+  productId   String
+  quantity    Int      @default(1)
+  samplePrice Int      @default(0) // 샘플가 (무료=0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+// ──────────────────────── ONEWMS Integration ────────────────────────
+
+model OnewmsOrderMapping {
+  id      String @id @default(cuid())
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  onewmsOrderNo String  @unique // ONEWMS 주문번호
+  transNo       String? // 송장번호
+
+  status     String @default("pending") // pending, sent, shipped, failed
+  csStatus   Int    @default(0) // ONEWMS CS상태
+  holdStatus Int    @default(0) // ONEWMS 보류상태
+
+  sentAt       DateTime? // ONEWMS 전송 시각
+  lastSyncAt   DateTime? // 마지막 동기화 시각
+  errorMessage String? // 에러 메시지
+  retryCount   Int       @default(0) // 재시도 횟수
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([onewmsOrderNo])
+  @@index([status])
+  @@index([sentAt])
+}
+
+model OnewmsStockSync {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  productCode  String // ONEWMS 상품코드
+  availableQty Int // ONEWMS 가용재고
+  totalQty     Int // ONEWMS 총재고
+  localQty     Int // 플랫폼 재고
+
+  difference Int // 차이 (ONEWMS - Local)
+  syncStatus String @default("synced") // synced, conflict, failed
+
+  syncedAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([syncedAt])
+}
+
+model OnewmsDeliveryLog {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  oldStatus String? // 이전 배송 상태
+  newStatus String // 새로운 배송 상태
+  transNo   String? // 송장번호
+
+  changedAt  DateTime @default(now())
+  syncedFrom String   @default("onewms") // onewms, manual, system
+
+  @@index([orderId])
+  @@index([changedAt])
+}
+
+// ──────────────────────── Multi-Warehouse System ────────────────────────
+
+model Warehouse {
+  id            String    @id @default(cuid())
+  code          String    @unique // 한국무진, 쓰리백, 거래처2, etc.
+  name          String // Display name
+  type          String // OWNED, PARTNER, EXTERNAL
+  spreadsheetId String? // Google Spreadsheet ID
+  sheetName     String? // Sheet name in spreadsheet
+  syncEnabled   Boolean   @default(true)
+  lastSyncAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  inventories        WarehouseInventory[]
+  stockMovementsFrom StockMovement[]      @relation("FromWarehouse")
+  stockMovementsTo   StockMovement[]      @relation("ToWarehouse")
+
+  @@index([code])
+}
+
+model BarcodeMaster {
+  id             String   @id @default(cuid())
+  barcode        String   @unique
+  standardName   String // Official product name
+  category       String?
+  manufacturer   String?
+  specifications String? // JSON string for specs
+  isActive       Boolean  @default(true)
+  registeredBy   String // userId who registered
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  inventories WarehouseInventory[]
+
+  @@index([barcode])
+  @@index([isActive])
+}
+
+model WarehouseInventory {
+  id          String   @id @default(cuid())
+  warehouseId String
+  productId   String
+  barcode     String // Denormalized for quick lookup
+  quantity    Int      @default(0)
+  location    String? // 무진, 1층, 2층, 3층, etc.
+  lastUpdated DateTime @default(now())
+  syncedFrom  String? // Source: SPREADSHEET, API, MANUAL
+
+  warehouse     Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  barcodeMaster BarcodeMaster? @relation(fields: [barcode], references: [barcode], onDelete: SetNull)
+
+  @@unique([warehouseId, productId])
+  @@index([barcode])
+  @@index([warehouseId])
+  @@index([productId])
+}
+
+model StockMovement {
+  id              String   @id @default(cuid())
+  type            String // IN, OUT, TRANSFER, ADJUSTMENT
+  productId       String
+  barcode         String
+  fromWarehouseId String?
+  toWarehouseId   String?
+  quantity        Int
+  reason          String?
+  reference       String? // Order ID, adjustment ID, etc.
+  processedBy     String // userId
+  processedAt     DateTime @default(now())
+
+  product       Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  fromWarehouse Warehouse? @relation("FromWarehouse", fields: [fromWarehouseId], references: [id], onDelete: SetNull)
+  toWarehouse   Warehouse? @relation("ToWarehouse", fields: [toWarehouseId], references: [id], onDelete: SetNull)
+
+  @@index([barcode])
+  @@index([productId])
+  @@index([processedAt])
+}
+
+// ──────────────────────── AI Analysis ────────────────────────
+
+model AIAnalysis {
+  id            String   @id @default(cuid())
+  productId     String
+  barcode       String
+  analysisType  String // "pricing" | "sales"
+  prompt        String   @db.Text
+  response      String   @db.Text
+  parsedData    Json
+  tokensUsed    Int
+  estimatedCost Float // USD
+  modelVersion  String
+  createdAt     DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([barcode])
+  @@index([createdAt])
+}
+
+model AIUsageStats {
+  id            String   @id @default(cuid())
+  date          DateTime @unique @db.Date
+  totalRequests Int      @default(0)
+  totalTokens   Int      @default(0)
+  totalCost     Float    @default(0)
+}
+
+// ──────────────────────── Rate Limiting ────────────────────────
+
+model RateLimit {
+  key         String   @id
+  count       Int
+  windowStart DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ──────────────────────── Market Pricing ────────────────────────
+
+model MarketPricing {
+  id          String   @id @default(cuid())
+  barcode     String
+  platform    String // "naver" | "coupang"
+  productName String
+  productUrl  String?
+  minPrice    Int
+  maxPrice    Int
+  avgPrice    Int
+  priceCount  Int // Number of listings found
+  fetchedAt   DateTime @default(now())
+
+  @@index([barcode, platform])
+  @@index([fetchedAt])
+}
+
+// ──────────────────────── Barcode Scanner System ────────────────────────
+
+model ScanLog {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String?
+  barcode   String
+  scanType  ScanType
+  quantity  Int?
+  centerId  String?
+  scannedAt DateTime @default(now())
+  metadata  Json?
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  center  Center?  @relation(fields: [centerId], references: [id], onDelete: SetNull)
+
+  @@index([userId, scannedAt])
+  @@index([barcode])
+  @@index([productId])
+}
+
+enum ScanType {
+  INBOUND
+  OUTBOUND
+  LOOKUP
+}
