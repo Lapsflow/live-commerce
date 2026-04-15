@@ -19,7 +19,7 @@ type FormData = {
   name: string;
   phone: string;
   email: string;
-  role: "SELLER" | "ADMIN" | "STAFF";
+  role: "SELLER" | "ADMIN";
   adminId: string;
   centerId: string; // Phase 1: Required center selection
   channels: string[]; // Phase 1: Activity channels for SELLER
@@ -219,7 +219,7 @@ export default function SignupPage() {
             <Select
               value={formData.role}
               onValueChange={(value) =>
-                setFormData({ ...formData, role: value as "SELLER" | "ADMIN" | "STAFF" })
+                setFormData({ ...formData, role: value as "SELLER" | "ADMIN" })
               }
             >
               <SelectTrigger className="w-full">
@@ -228,7 +228,6 @@ export default function SignupPage() {
               <SelectContent>
                 <SelectItem value="SELLER">셀러</SelectItem>
                 <SelectItem value="ADMIN">관리자</SelectItem>
-                <SelectItem value="STAFF">직원</SelectItem>
               </SelectContent>
             </Select>
           </div>

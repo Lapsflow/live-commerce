@@ -10,7 +10,7 @@ const signupSchema = z.object({
   name: z.string().min(1),
   phone: z.string().optional(),
   email: z.string().email().optional(),
-  role: z.enum(["SELLER", "ADMIN", "STAFF"]),
+  role: z.enum(["SELLER", "ADMIN"]),
   adminId: z.string().optional(),
   centerId: z.string(), // Required - center assignment
   channels: z.array(z.string()).optional(), // Required if role=SELLER
