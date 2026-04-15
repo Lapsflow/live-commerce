@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Download, Mic, Plus, Minus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 interface OrderInputCardProps {
   product: {
@@ -113,51 +114,40 @@ export function OrderInputCard({ product }: OrderInputCardProps) {
     toast.success("장바구니가 비워졌습니다");
   };
 
-  const downloadExcel = async () => {
+  const downloadExcel = () => {
     if (orders.length === 0) {
       toast.error("주문 목록이 비어있습니다");
       return;
     }
 
     try {
-      // Generate CSV export (Excel format available via WMS integration)
       toast.success("엑셀 다운로드 준비 중...");
 
-      const csvContent = generateCSV(orders);
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `발주서_${new Date().toISOString().split("T")[0]}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
+      // Phase 3.2: XLSX export with columns matching Plan requirements
+      const data = orders.map((item) => ({
+        상품명: item.productName,
+        바코드: item.barcode,
+        수량: item.quantity,
+        단가: item.unitPrice,
+        합계: item.totalPrice,
+        센터명: "-", // Placeholder - center info not available in current context
+      }));
+
+      // Create worksheet from data
+      const ws = XLSX.utils.json_to_sheet(data);
+
+      // Create workbook and append worksheet
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "주문서");
+
+      // Generate and download Excel file
+      XLSX.writeFile(wb, `주문서_${new Date().toISOString().split("T")[0]}.xlsx`);
 
       toast.success("엑셀 파일이 다운로드되었습니다");
     } catch (error) {
       console.error("Excel download error:", error);
       toast.error("엑셀 다운로드 중 오류가 발생했습니다");
     }
-  };
-
-  const generateCSV = (items: OrderItem[]): string => {
-    const headers = ["상품명", "바코드", "수량", "단가", "합계"];
-    const rows = items.map((item) => [
-      item.productName,
-      item.barcode,
-      item.quantity.toString(),
-      item.unitPrice.toString(),
-      item.totalPrice.toString(),
-    ]);
-
-    const csv = [
-      headers.join(","),
-      ...rows.map((row) => row.join(",")),
-      "",
-      `총 수량,${totalQuantity}`,
-      `총 금액,${totalAmount}`,
-    ].join("\n");
-
-    return "\uFEFF" + csv; // Add BOM for Excel UTF-8 support
   };
 
   const startBroadcast = () => {
