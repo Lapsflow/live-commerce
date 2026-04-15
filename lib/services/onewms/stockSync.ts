@@ -28,7 +28,7 @@ interface ConflictInfo {
 /**
  * Sync stock for a single product
  */
-async function syncProductStock(productId: string): Promise<{
+export async function syncProductStock(productId: string): Promise<{
   success: boolean;
   conflict: boolean;
   error?: string;
@@ -75,8 +75,8 @@ async function syncProductStock(productId: string): Promise<{
       },
     });
 
-    // Auto-resolve if difference is small (< 5 units)
-    if (Math.abs(difference) < 5) {
+    // Auto-resolve if difference is small (<= 5 units)
+    if (Math.abs(difference) <= 5) {
       await prisma.product.update({
         where: { id: productId },
         data: {
@@ -88,11 +88,20 @@ async function syncProductStock(productId: string): Promise<{
         `Auto-resolved stock for ${product.code}: ${localQty} → ${onewmsAvailableQty}`
       );
 
+      // Low stock alert
+      if (onewmsAvailableQty < 10) {
+        console.warn(
+          `[LOW STOCK ALERT] Product ${product.code} (${product.name}) has low stock: ${onewmsAvailableQty} units`
+        );
+        // TODO: Send notification (email, Slack, etc.)
+        // await sendLowStockNotification(product, onewmsAvailableQty);
+      }
+
       return { success: true, conflict: false };
     }
 
     // Mark as conflict if difference is significant
-    if (Math.abs(difference) >= 5) {
+    if (Math.abs(difference) > 5) {
       await prisma.onewmsStockSync.updateMany({
         where: {
           productId,

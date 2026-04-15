@@ -1,5 +1,5 @@
 // Prisma Schema for Live-Commerce
-// 6 Core Models + RateLimit
+// 6 Core Models + Center System + RateLimit
 
 generator client {
   provider = "prisma-client-js"
@@ -18,6 +18,7 @@ model User {
   phone        String?
   role         Role     @default(SELLER)
   adminId      String?
+  centerId     String? // ✨ Center assignment (nullable - MASTER has no center)
   passwordHash String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -30,12 +31,17 @@ model User {
   admin   User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
   sellers User[] @relation("AdminSellers")
 
+  // Center relation
+  center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
+
   // Relations
-  orders      Order[]     @relation
-  adminOrders Order[]     @relation("AdminOrders")
-  broadcasts  Broadcast[]
-  sales       Sale[]
-  proposals   Proposal[]
+  orders        Order[]               @relation
+  adminOrders   Order[]               @relation("AdminOrders")
+  broadcasts    Broadcast[]
+  sales         Sale[]
+  proposals     Proposal[]
+  proposalCarts ProposalCart[]
+  sellerMatches OrderSellerMatching[]
 }
 
 enum Role {
@@ -75,22 +81,115 @@ model Product {
   onewmsStocks         OnewmsStockSync[]
   warehouseInventories WarehouseInventory[]
   stockMovements       StockMovement[]
+  centerStocks         ProductCenterStock[] // ✨ Center-based stock normalization
+  sellerMatches        OrderSellerMatching[]
+  aiAnalyses           AIAnalysis[] // ✨ AI Analysis results
+  proposalCarts        ProposalCart[]
+}
+
+// ──────────────────────── Center Management ────────────────────────
+
+model Center {
+  id         String @id @default(cuid())
+  code       String @unique // 센터코드 (예: "01-4213" = 지역코드-대표자폰번호뒷자리)
+  name       String // 센터명
+  regionCode String // 지역코드 ("01"~"17": 서울~제주)
+  regionName String // 지역명 (서울, 경기, 인천, etc.)
+
+  // 대표자 정보
+  representative      String // 대표자 이름
+  representativePhone String // 대표자 연락처
+
+  // 사업장 정보
+  address       String // 주소
+  addressDetail String? // 상세주소
+  businessNo    String? // 사업자등록번호
+
+  // 계약 정보
+  contractDate     DateTime? // 계약일
+  contractDocument String? // 계약서 파일 경로
+
+  // 상태
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users        User[]
+  centerStocks ProductCenterStock[]
+  orders       Order[]
+  broadcasts   Broadcast[]
+
+  @@index([code])
+  @@index([regionCode])
+  @@index([isActive])
+}
+
+model ProductCenterStock {
+  id        String   @id @default(cuid())
+  productId String
+  centerId  String
+  stock     Int      @default(0) // 센터별 재고
+  location  String? // 센터 내 위치 (예: "1층", "2층")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  center  Center  @relation(fields: [centerId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, centerId])
+  @@index([productId])
+  @@index([centerId])
+}
+
+model OrderSellerMatching {
+  id          String   @id @default(cuid())
+  orderId     String
+  sellerId    String
+  productId   String
+  matchedAt   DateTime @default(now())
+  matchReason String? // 매칭 이유 (예: "frequent_buyer", "first_time", etc.)
+
+  // RFM 데이터
+  orderCount    Int      @default(1) // 해당 상품 주문 횟수
+  totalQuantity Int      @default(0) // 총 주문 수량
+  totalRevenue  Int      @default(0) // 총 주문 금액
+  lastOrderAt   DateTime @default(now())
+
+  // 추천 스코어 (0-100)
+  recommendScore Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  seller  User    @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([sellerId, productId])
+  @@index([orderId])
+  @@index([sellerId])
+  @@index([productId])
+  @@index([recommendScore])
 }
 
 // ──────────────────────── Order Management ────────────────────────
 
 model Order {
-  id          String      @id @default(cuid())
-  orderNo     String      @unique
-  sellerId    String
-  adminId     String?
-  status      OrderStatus @default(PENDING)
-  totalAmount Int         @default(0)
-  memo        String?
-  uploadedAt  DateTime    @default(now())
-  approvedAt  DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id                 String      @id @default(cuid())
+  orderNo            String      @unique
+  sellerId           String
+  adminId            String?
+  processingCenterId String? // ✨ Center processing this order (nullable)
+  status             OrderStatus @default(PENDING)
+  totalAmount        Int         @default(0)
+  memo               String?
+  uploadedAt         DateTime    @default(now())
+  approvedAt         DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
   // ✨ 수령자 정보 (Excel 업로드용)
   recipient String? // 수령자
@@ -103,13 +202,21 @@ model Order {
   // ✨ 입금/출고 상태 추적
   paymentStatus  PaymentStatus  @default(UNPAID)
   shippingStatus ShippingStatus @default(PENDING)
+  paidAt         DateTime? // 입금 완료 시각
+
+  // ✨ 가상계좌 정보 (Toss Payments)
+  virtualAccount       String?   // 가상계좌 번호
+  virtualAccountBank   String?   // 은행명 (예: "KB", "신한")
+  virtualAccountExpiry DateTime? // 가상계좌 만료 시각
 
   // Relations
-  seller             User                @relation(fields: [sellerId], references: [id])
-  admin              User?               @relation("AdminOrders", fields: [adminId], references: [id])
+  seller             User                  @relation(fields: [sellerId], references: [id])
+  admin              User?                 @relation("AdminOrders", fields: [adminId], references: [id])
+  processingCenter   Center?               @relation(fields: [processingCenterId], references: [id], onDelete: SetNull)
   items              OrderItem[]
   onewmsMapping      OnewmsOrderMapping?
   onewmsDeliveryLogs OnewmsDeliveryLog[]
+  sellerMatches      OrderSellerMatching[]
 
   // Indexes
   @@index([sellerId, uploadedAt])
@@ -164,6 +271,7 @@ model Broadcast {
   id          String            @id @default(cuid())
   code        String            @unique
   sellerId    String
+  centerId    String? // ✨ Center for this broadcast (nullable)
   platform    BroadcastPlatform
   scheduledAt DateTime
   startedAt   DateTime?
@@ -174,7 +282,8 @@ model Broadcast {
   updatedAt   DateTime          @updatedAt
 
   // Relations
-  seller User   @relation(fields: [sellerId], references: [id])
+  seller User    @relation(fields: [sellerId], references: [id])
+  center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
   sales  Sale[]
 }
 
@@ -239,6 +348,22 @@ enum ProposalStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model ProposalCart {
+  id          String   @id @default(cuid())
+  userId      String
+  productId   String
+  quantity    Int      @default(1)
+  samplePrice Int      @default(0) // 샘플가 (무료=0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
 }
 
 // ──────────────────────── ONEWMS Integration ────────────────────────
@@ -318,9 +443,9 @@ model Warehouse {
   updatedAt     DateTime  @updatedAt
 
   // Relations
-  inventories       WarehouseInventory[]
-  stockMovementsFrom StockMovement[] @relation("FromWarehouse")
-  stockMovementsTo   StockMovement[] @relation("ToWarehouse")
+  inventories        WarehouseInventory[]
+  stockMovementsFrom StockMovement[]      @relation("FromWarehouse")
+  stockMovementsTo   StockMovement[]      @relation("ToWarehouse")
 
   @@index([code])
 }
@@ -386,6 +511,36 @@ model StockMovement {
   @@index([processedAt])
 }
 
+// ──────────────────────── AI Analysis ────────────────────────
+
+model AIAnalysis {
+  id            String   @id @default(cuid())
+  productId     String
+  barcode       String
+  analysisType  String // "pricing" | "sales"
+  prompt        String   @db.Text
+  response      String   @db.Text
+  parsedData    Json
+  tokensUsed    Int
+  estimatedCost Float // USD
+  modelVersion  String
+  createdAt     DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([barcode])
+  @@index([createdAt])
+}
+
+model AIUsageStats {
+  id            String   @id @default(cuid())
+  date          DateTime @unique @db.Date
+  totalRequests Int      @default(0)
+  totalTokens   Int      @default(0)
+  totalCost     Float    @default(0)
+}
+
 // ──────────────────────── Rate Limiting ────────────────────────
 
 model RateLimit {
@@ -394,4 +549,22 @@ model RateLimit {
   windowStart DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ──────────────────────── Market Pricing ────────────────────────
+
+model MarketPricing {
+  id          String   @id @default(cuid())
+  barcode     String
+  platform    String // "naver" | "coupang"
+  productName String
+  productUrl  String?
+  minPrice    Int
+  maxPrice    Int
+  avgPrice    Int
+  priceCount  Int // Number of listings found
+  fetchedAt   DateTime @default(now())
+
+  @@index([barcode, platform])
+  @@index([fetchedAt])
 }

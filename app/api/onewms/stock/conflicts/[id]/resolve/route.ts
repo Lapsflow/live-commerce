@@ -3,69 +3,55 @@
  * Resolve a stock conflict
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-
-import { auth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import { z } from 'zod';
+import { withRole } from '@/lib/api/middleware';
 import { resolveConflict } from '@/lib/services/onewms/stockSync';
+import { ok, errors } from '@/lib/api/response';
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+const resolveConflictSchema = z.object({
+  resolution: z.enum(['onewms', 'local', 'ignore'], {
+    errorMap: () => ({ message: 'resolution must be: onewms, local, or ignore' }),
+  }),
+});
+
+export const POST = withRole(
+  ['ADMIN', 'SUB_MASTER', 'MASTER'],
+  async (
+    req: NextRequest,
+    user,
+    { params }: { params: Promise<{ id: string }> }
+  ) => {
+    try {
+      const { id } = await params;
+
+      // Parse and validate request body
+      const body = await req.json();
+      const validation = resolveConflictSchema.safeParse(body);
+
+      if (!validation.success) {
+        return errors.badRequest(
+          '유효하지 않은 요청',
+          validation.error.format()
+        );
+      }
+
+      const { resolution } = validation.data;
+
+      // Resolve conflict
+      const result = await resolveConflict(id, resolution);
+
+      if (!result.success) {
+        return errors.badRequest(result.error || 'Conflict resolution failed');
+      }
+
+      return ok({
+        message: 'Conflict resolved successfully',
+      });
+    } catch (error) {
+      console.error('Failed to resolve conflict:', error);
+      const message = error instanceof Error ? error.message : 'Failed to resolve conflict';
+      return errors.internal(message);
     }
-
-    // Only ADMIN, SUB_MASTER, or MASTER can resolve conflicts
-    const allowedRoles = ['ADMIN', 'SUB_MASTER', 'MASTER'];
-    if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      );
-    }
-
-    const { id } = await params;
-    const body = await req.json();
-    const { resolution } = body;
-
-    if (!resolution || !['onewms', 'local', 'ignore'].includes(resolution)) {
-      return NextResponse.json(
-        { error: 'Invalid resolution. Must be: onewms, local, or ignore' },
-        { status: 400 }
-      );
-    }
-
-    // Resolve conflict
-    const result = await resolveConflict(
-      id,
-      resolution as 'onewms' | 'local' | 'ignore'
-    );
-
-    if (!result.success) {
-      return NextResponse.json(
-        { success: false, error: result.error },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Conflict resolved successfully',
-    });
-  } catch (error) {
-    console.error('Failed to resolve conflict:', error);
-    const message = error instanceof Error ? error.message : 'Failed to resolve conflict';
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: message,
-      },
-      { status: 500 }
-    );
   }
-}
+);

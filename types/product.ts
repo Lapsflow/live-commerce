@@ -10,6 +10,7 @@ export interface Product {
   stock1: number;
   stock2: number;
   stock3: number;
+  productType?: string;
   createdAt: Date;
   updatedAt: Date;
 }

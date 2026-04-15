@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Package } from "lucide-react";
 import { normBarcode } from "@/lib/utils/barcode";
+import { PricingInfoCard } from "./components/PricingInfoCard";
+import { AIAnalysisCard } from "./components/AIAnalysisCard";
+import { OrderInputCard } from "./components/OrderInputCard";
 
 interface WarehouseStock {
   warehouseId: string;
@@ -108,114 +111,129 @@ export default function BarcodePage() {
         )}
       </Card>
 
-      {/* Product Result */}
+      {/* Product Result - 2 Column Responsive Layout */}
       {product && (
-        <div className="space-y-6">
-          {/* Product Info Card */}
-          <Card className="p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 pb-2 border-b">{product.name}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">상품코드</p>
-                <p className="font-medium text-lg">{product.code}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Product Info Card */}
+            <Card className="p-6 shadow-lg">
+              <h2 className="text-2xl font-bold mb-4 pb-2 border-b">{product.name}</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">상품코드</p>
+                  <p className="font-medium text-lg">{product.code}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">바코드</p>
+                  <p className="font-medium text-lg font-mono">{product.barcode}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">총 재고</p>
+                  <p className="text-3xl font-bold text-blue-600">
+                    {product.totalStock.toLocaleString()}개
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">판매가</p>
+                  <p className="font-medium text-lg">
+                    {product.sellPrice.toLocaleString()}원
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">공급가</p>
+                  <p className="font-medium text-lg">
+                    {product.supplyPrice.toLocaleString()}원
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">마진율</p>
+                  <p className="font-medium text-2xl text-green-600">
+                    {calculateMarginRate(product.sellPrice, product.supplyPrice)}%
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">바코드</p>
-                <p className="font-medium text-lg font-mono">{product.barcode}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">총 재고</p>
-                <p className="text-3xl font-bold text-blue-600">
-                  {product.totalStock.toLocaleString()}개
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">판매가</p>
-                <p className="font-medium text-lg">
-                  {product.sellPrice.toLocaleString()}원
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">공급가</p>
-                <p className="font-medium text-lg">
-                  {product.supplyPrice.toLocaleString()}원
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">마진율</p>
-                <p className="font-medium text-2xl text-green-600">
-                  {calculateMarginRate(product.sellPrice, product.supplyPrice)}%
-                </p>
-              </div>
-            </div>
-          </Card>
+            </Card>
 
-          {/* Warehouse Inventory Table */}
-          <Card className="p-6 shadow-lg">
-            <h3 className="text-xl font-bold mb-4 pb-2 border-b">
-              창고별 재고 현황
-            </h3>
+            {/* Pricing Info Card - NEW */}
+            <PricingInfoCard barcode={product.barcode} ourPrice={product.sellPrice} />
 
-            {product.warehouses.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                등록된 창고 재고가 없습니다
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b-2">
-                      <th className="text-left py-3 px-4 font-semibold">창고명</th>
-                      <th className="text-left py-3 px-4 font-semibold">위치</th>
-                      <th className="text-right py-3 px-4 font-semibold">수량</th>
-                      <th className="text-right py-3 px-4 font-semibold">
-                        최종 업데이트
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {product.warehouses.map((wh) => (
-                      <tr key={wh.warehouseId} className="border-b hover:bg-muted/50">
-                        <td className="py-3 px-4 font-medium">{wh.warehouseName}</td>
-                        <td className="py-3 px-4 text-muted-foreground">
-                          {wh.location || "-"}
-                        </td>
-                        <td className="py-3 px-4 text-right font-semibold">
-                          {wh.quantity > 0 ? (
-                            <span className="text-green-600">
-                              {wh.quantity.toLocaleString()}개
-                            </span>
-                          ) : (
-                            <span className="text-red-600">재고없음</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-right text-sm text-muted-foreground">
-                          {new Date(wh.lastUpdated).toLocaleString("ko-KR", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </td>
+            {/* Warehouse Inventory Table */}
+            <Card className="p-6 shadow-lg">
+              <h3 className="text-xl font-bold mb-4 pb-2 border-b">
+                창고별 재고 현황
+              </h3>
+
+              {product.warehouses.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  등록된 창고 재고가 없습니다
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b-2">
+                        <th className="text-left py-3 px-4 font-semibold">창고명</th>
+                        <th className="text-left py-3 px-4 font-semibold">위치</th>
+                        <th className="text-right py-3 px-4 font-semibold">수량</th>
+                        <th className="text-right py-3 px-4 font-semibold">
+                          최종 업데이트
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className="border-t-2 bg-muted/30">
-                      <td colSpan={2} className="py-3 px-4 font-bold">
-                        전체 합계
-                      </td>
-                      <td className="py-3 px-4 text-right font-bold text-blue-600 text-lg">
-                        {product.totalStock.toLocaleString()}개
-                      </td>
-                      <td className="py-3 px-4"></td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            )}
-          </Card>
+                    </thead>
+                    <tbody>
+                      {product.warehouses.map((wh) => (
+                        <tr key={wh.warehouseId} className="border-b hover:bg-muted/50">
+                          <td className="py-3 px-4 font-medium">{wh.warehouseName}</td>
+                          <td className="py-3 px-4 text-muted-foreground">
+                            {wh.location || "-"}
+                          </td>
+                          <td className="py-3 px-4 text-right font-semibold">
+                            {wh.quantity > 0 ? (
+                              <span className="text-green-600">
+                                {wh.quantity.toLocaleString()}개
+                              </span>
+                            ) : (
+                              <span className="text-red-600">재고없음</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 text-right text-sm text-muted-foreground">
+                            {new Date(wh.lastUpdated).toLocaleString("ko-KR", {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t-2 bg-muted/30">
+                        <td colSpan={2} className="py-3 px-4 font-bold">
+                          전체 합계
+                        </td>
+                        <td className="py-3 px-4 text-right font-bold text-blue-600 text-lg">
+                          {product.totalStock.toLocaleString()}개
+                        </td>
+                        <td className="py-3 px-4"></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* AI Analysis Card - NEW */}
+            <AIAnalysisCard barcode={product.barcode} productName={product.name} />
+
+            {/* Order Input Card - NEW */}
+            <OrderInputCard product={product} />
+          </div>
         </div>
       )}
     </div>

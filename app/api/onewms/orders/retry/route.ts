@@ -3,51 +3,31 @@
  * Manually retry failed order synchronizations
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-
-import { auth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import { withRole } from '@/lib/api/middleware';
 import { retryFailedOrders } from '@/lib/services/onewms/orderSync';
+import { ok, errors } from '@/lib/api/response';
 
-export async function POST(req: NextRequest) {
-  try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export const POST = withRole(
+  ['ADMIN', 'SUB_MASTER', 'MASTER'],
+  async (req: NextRequest) => {
+    try {
+      // Retry failed orders
+      const result = await retryFailedOrders();
+
+      return ok({
+        message: `Processed ${result.processed} failed orders`,
+        statistics: {
+          processed: result.processed,
+          succeeded: result.succeeded,
+          failed: result.failed,
+        },
+        errors: result.errors.length > 0 ? result.errors : undefined,
+      });
+    } catch (error) {
+      console.error('Order retry API error:', error);
+      const message = error instanceof Error ? error.message : 'Internal server error';
+      return errors.internal(message);
     }
-
-    // Only ADMIN, SUB_MASTER, or MASTER can retry orders
-    const allowedRoles = ['ADMIN', 'SUB_MASTER', 'MASTER'];
-    if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      );
-    }
-
-    // Retry failed orders
-    const result = await retryFailedOrders();
-
-    return NextResponse.json({
-      success: true,
-      message: `Processed ${result.processed} failed orders`,
-      statistics: {
-        processed: result.processed,
-        succeeded: result.succeeded,
-        failed: result.failed,
-      },
-      errors: result.errors.length > 0 ? result.errors : undefined,
-    });
-  } catch (error) {
-    console.error('Order retry API error:', error);
-    const message = error instanceof Error ? error.message : 'Internal server error';
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: message,
-      },
-      { status: 500 }
-    );
   }
-}
+);

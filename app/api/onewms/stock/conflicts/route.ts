@@ -3,37 +3,26 @@
  * List all unresolved stock conflicts
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-
-import { auth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import { withRole } from '@/lib/api/middleware';
 import { getStockConflicts } from '@/lib/services/onewms/stockSync';
+import { ok, errors } from '@/lib/api/response';
 
-export async function GET(req: NextRequest) {
-  try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export const GET = withRole(
+  ['MASTER', 'SUB_MASTER', 'ADMIN'],
+  async (req: NextRequest) => {
+    try {
+      // Get all conflicts
+      const conflicts = await getStockConflicts();
+
+      return ok({
+        conflicts,
+        count: conflicts.length,
+      });
+    } catch (error) {
+      console.error('Failed to fetch stock conflicts:', error);
+      const message = error instanceof Error ? error.message : 'Failed to fetch conflicts';
+      return errors.internal(message);
     }
-
-    // Get all conflicts
-    const conflicts = await getStockConflicts();
-
-    return NextResponse.json({
-      success: true,
-      data: conflicts,
-      count: conflicts.length,
-    });
-  } catch (error) {
-    console.error('Failed to fetch stock conflicts:', error);
-    const message = error instanceof Error ? error.message : 'Failed to fetch conflicts';
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: message,
-      },
-      { status: 500 }
-    );
   }
-}
+);

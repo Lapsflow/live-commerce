@@ -12,15 +12,25 @@ interface StockSyncButtonProps {
 }
 
 interface ProductStockInfo {
-  productId: string;
-  productCode: string;
-  localQty: number;
-  onewmsQty: {
-    available: number;
-    total: number;
+  product: {
+    id: string;
+    code: string;
+    name: string;
+    totalStock: number;
+    onewmsCode: string | null;
   };
-  lastSyncAt?: string;
-  difference: number;
+  lastSync: {
+    syncedAt: Date;
+    onewmsAvailableQty: number;
+    onewmsTotalQty: number;
+    difference: number;
+    syncStatus: string;
+  } | null;
+  hasConflict: boolean;
+}
+
+interface StockApiResponse {
+  data: ProductStockInfo;
 }
 
 export function StockSyncButton({ productId }: StockSyncButtonProps) {
@@ -30,7 +40,8 @@ export function StockSyncButton({ productId }: StockSyncButtonProps) {
     queryFn: async () => {
       const res = await fetch(`/api/onewms/stock/${productId}`);
       if (!res.ok) throw new Error('Failed to fetch stock');
-      return res.json() as Promise<ProductStockInfo>;
+      const response = await res.json() as StockApiResponse;
+      return response.data;
     },
   });
 
@@ -58,11 +69,15 @@ export function StockSyncButton({ productId }: StockSyncButtonProps) {
     return <Button disabled size="sm">로딩 중...</Button>;
   }
 
-  if (!data) {
+  if (!data || !data.product.onewmsCode) {
     return <Button disabled size="sm">ONEWMS 코드 없음</Button>;
   }
 
-  const hasConflict = Math.abs(data.difference) > 5;
+  if (!data.lastSync) {
+    return <Button disabled size="sm">동기화 기록 없음</Button>;
+  }
+
+  const hasConflict = Math.abs(data.lastSync.difference) > 5;
 
   return (
     <div className="space-y-2">
@@ -70,15 +85,15 @@ export function StockSyncButton({ productId }: StockSyncButtonProps) {
       <div className="flex items-center gap-4 text-sm">
         <div>
           <span className="text-muted-foreground">플랫폼:</span>
-          <span className="ml-1 font-medium">{data.localQty}</span>
+          <span className="ml-1 font-medium">{data.product.totalStock}</span>
         </div>
         <div>
           <span className="text-muted-foreground">ONEWMS:</span>
-          <span className="ml-1 font-medium">{data.onewmsQty.available}</span>
+          <span className="ml-1 font-medium">{data.lastSync.onewmsAvailableQty}</span>
         </div>
-        {data.difference !== 0 && (
+        {data.lastSync.difference !== 0 && (
           <div className={hasConflict ? 'text-red-600 font-medium' : 'text-yellow-600'}>
-            차이: {data.difference > 0 ? '+' : ''}{data.difference}
+            차이: {data.lastSync.difference > 0 ? '+' : ''}{data.lastSync.difference}
           </div>
         )}
       </div>
@@ -103,10 +118,10 @@ export function StockSyncButton({ productId }: StockSyncButtonProps) {
       </Button>
 
       {/* 마지막 동기화 */}
-      {data.lastSyncAt && (
+      {data.lastSync.syncedAt && (
         <div className="text-xs text-muted-foreground">
           마지막 동기화:{' '}
-          {formatDistanceToNow(new Date(data.lastSyncAt), {
+          {formatDistanceToNow(new Date(data.lastSync.syncedAt), {
             addSuffix: true,
             locale: ko,
           })}

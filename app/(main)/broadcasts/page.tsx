@@ -11,6 +11,7 @@ import { Plus, PlayCircle, StopCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { StartBroadcastDialog } from "@/components/broadcasts/StartBroadcastDialog";
 
 const platformLabels = {
   GRIP: "그립",
@@ -41,34 +42,16 @@ export default function BroadcastsPage() {
   const { dataSource, refresh } = useApiCrud<Broadcast>("/api/broadcasts");
   const { toast } = useToast();
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedBroadcastId, setSelectedBroadcastId] = useState<string | null>(null);
 
-  const handleStart = async (id: string) => {
-    setLoadingId(id);
-    try {
-      const res = await fetch(`/api/broadcasts/${id}/start`, {
-        method: "PUT",
-      });
+  const handleStart = (id: string) => {
+    setSelectedBroadcastId(id);
+    setDialogOpen(true);
+  };
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error?.message || "방송 시작 실패");
-      }
-
-      toast({
-        title: "방송 시작",
-        description: "방송이 시작되었습니다.",
-      });
-
-      refresh();
-    } catch (err: any) {
-      toast({
-        title: "오류",
-        description: err.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoadingId(null);
-    }
+  const handleDialogSuccess = () => {
+    refresh();
   };
 
   const handleEnd = async (id: string) => {
@@ -189,6 +172,16 @@ export default function BroadcastsPage() {
         dataSource={dataSource}
         enableRowSelection={false}
       />
+
+      {/* Start Broadcast Dialog */}
+      {selectedBroadcastId && (
+        <StartBroadcastDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          broadcastId={selectedBroadcastId}
+          onSuccess={handleDialogSuccess}
+        />
+      )}
     </div>
   );
 }

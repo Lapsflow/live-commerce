@@ -1,3 +1,20 @@
 {
-  "crons": []
+  "crons": [
+    {
+      "path": "/api/cron/stock-sync",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/delivery-sync",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/warehouse-sync",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/order-auto-cancel",
+      "schedule": "*/10 * * * *"
+    }
+  ]
 }

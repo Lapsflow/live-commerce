@@ -3,17 +3,15 @@
  * Aggregated statistics for ONEWMS dashboard
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import { withRole } from '@/lib/api/middleware';
 import { prisma } from '@/lib/db/prisma';
+import { ok, errors } from '@/lib/api/response';
 
-export async function GET(req: NextRequest) {
-  try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+export const GET = withRole(
+  ['MASTER', 'SUB_MASTER', 'ADMIN', 'SELLER'],
+  async (req: NextRequest) => {
+    try {
 
     // Get statistics in parallel
     const [
@@ -74,9 +72,7 @@ export async function GET(req: NextRequest) {
     const lastStockSync =
       recentSyncs.length > 0 ? recentSyncs[0].syncedAt : null;
 
-    return NextResponse.json({
-      success: true,
-      data: {
+      return ok({
         orders: {
           total: totalSynced,
           pending: pendingOrders,
@@ -89,18 +85,11 @@ export async function GET(req: NextRequest) {
           lastSync: lastStockSync,
         },
         timestamp: new Date().toISOString(),
-      },
-    });
-  } catch (error) {
-    console.error('Failed to fetch ONEWMS stats:', error);
-    const message = error instanceof Error ? error.message : 'Failed to fetch statistics';
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: message,
-      },
-      { status: 500 }
-    );
+      });
+    } catch (error) {
+      console.error('Failed to fetch ONEWMS stats:', error);
+      const message = error instanceof Error ? error.message : 'Failed to fetch statistics';
+      return errors.internal(message);
+    }
   }
-}
+);

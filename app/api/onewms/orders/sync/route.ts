@@ -3,67 +3,48 @@
  * Manual trigger to sync an order to ONEWMS
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-
-import { auth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import { z } from 'zod';
+import { withRole } from '@/lib/api/middleware';
 import { syncOrderToOnewms } from '@/lib/services/onewms/orderSync';
+import { ok, errors } from '@/lib/api/response';
 
-export async function POST(req: NextRequest) {
-  try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+const orderSyncSchema = z.object({
+  orderId: z.string().min(1, 'orderId is required'),
+});
+
+export const POST = withRole(
+  ['ADMIN', 'SUB_MASTER', 'MASTER'],
+  async (req: NextRequest) => {
+    try {
+      // Parse and validate request body
+      const body = await req.json();
+      const validation = orderSyncSchema.safeParse(body);
+
+      if (!validation.success) {
+        return errors.badRequest(
+          '유효하지 않은 요청',
+          validation.error.format()
+        );
+      }
+
+      const { orderId } = validation.data;
+
+      // Sync order to ONEWMS
+      const result = await syncOrderToOnewms(orderId);
+
+      if (!result.success) {
+        return errors.badRequest(result.error || 'Order sync failed');
+      }
+
+      return ok({
+        message: 'Order successfully synced to ONEWMS',
+        onewmsOrderNo: result.onewmsOrderNo,
+      });
+    } catch (error) {
+      console.error('Order sync API error:', error);
+      const message = error instanceof Error ? error.message : 'Internal server error';
+      return errors.internal(message);
     }
-
-    // Only ADMIN, SUB_MASTER, or MASTER can sync orders
-    const allowedRoles = ['ADMIN', 'SUB_MASTER', 'MASTER'];
-    if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      );
-    }
-
-    // Parse request body
-    const body = await req.json();
-    const { orderId } = body;
-
-    if (!orderId) {
-      return NextResponse.json(
-        { error: 'orderId is required' },
-        { status: 400 }
-      );
-    }
-
-    // Sync order to ONEWMS
-    const result = await syncOrderToOnewms(orderId);
-
-    if (!result.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.error,
-        },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Order successfully synced to ONEWMS',
-      onewmsOrderNo: result.onewmsOrderNo,
-    });
-  } catch (error) {
-    console.error('Order sync API error:', error);
-    const message = error instanceof Error ? error.message : 'Internal server error';
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: message,
-      },
-      { status: 500 }
-    );
   }
-}
+);
