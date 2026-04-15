@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,10 @@ function calculateMarginRate(sellPrice: number, supplyPrice: number): number {
 }
 
 export default function BarcodePage() {
+  // Phase 3: Get session data for center information
+  const { data: session } = useSession();
+  const center = (session?.user as any)?.center;
+
   const [barcode, setBarcode] = useState("");
   const [product, setProduct] = useState<ProductWithInventory | null>(null);
   const [loading, setLoading] = useState(false);
@@ -232,7 +237,8 @@ export default function BarcodePage() {
             <AIAnalysisCard barcode={product.barcode} productName={product.name} />
 
             {/* Order Input Card - NEW */}
-            <OrderInputCard product={product} />
+            {/* Phase 3: Pass center data to OrderInputCard */}
+            <OrderInputCard product={product} center={center} />
           </div>
         </div>
       )}

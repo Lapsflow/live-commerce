@@ -10,6 +10,7 @@ import { Download, Mic, Plus, Minus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
+// Phase 3: Add center prop for center data propagation
 interface OrderInputCardProps {
   product: {
     id: string;
@@ -18,6 +19,7 @@ interface OrderInputCardProps {
     sellPrice: number;
     totalStock: number;
   };
+  center?: { id: string; name: string } | null;
 }
 
 interface OrderItem {
@@ -29,7 +31,7 @@ interface OrderItem {
   totalPrice: number;
 }
 
-export function OrderInputCard({ product }: OrderInputCardProps) {
+export function OrderInputCard({ product, center }: OrderInputCardProps) {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [orders, setOrders] = useState<OrderItem[]>([]);
@@ -123,14 +125,14 @@ export function OrderInputCard({ product }: OrderInputCardProps) {
     try {
       toast.success("엑셀 다운로드 준비 중...");
 
-      // Phase 3.2: XLSX export with columns matching Plan requirements
+      // Phase 3: XLSX export with real center data
       const data = orders.map((item) => ({
         상품명: item.productName,
         바코드: item.barcode,
         수량: item.quantity,
         단가: item.unitPrice,
         합계: item.totalPrice,
-        센터명: "-", // Placeholder - center info not available in current context
+        센터명: center?.name || "-", // Use real center name
       }));
 
       // Create worksheet from data
@@ -299,7 +301,7 @@ export function OrderInputCard({ product }: OrderInputCardProps) {
                 className="flex-1"
               >
                 <Download className="w-4 h-4 mr-2" />
-                엑셀 다운로드
+                주문서 다운로드
               </Button>
               <Button onClick={startBroadcast} className="flex-1">
                 <Mic className="w-4 h-4 mr-2" />
