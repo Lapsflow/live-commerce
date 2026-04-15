@@ -8,18 +8,24 @@ declare module "next-auth" {
   interface User {
     role?: string;
     adminId?: string;
+    centerId?: string;
+    center?: { id: string; name: string; code: string } | null;
   }
   interface Session {
     user: User & {
       userId?: string;
       role?: string;
       adminId?: string;
+      centerId?: string;
+      center?: { id: string; name: string; code: string } | null;
     };
   }
   interface JWT {
     userId?: string;
     role?: string;
     adminId?: string;
+    centerId?: string;
+    center?: { id: string; name: string; code: string } | null;
   }
 }
 
@@ -50,6 +56,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: { email },
+          include: {
+            center: {
+              select: {
+                id: true,
+                name: true,
+                code: true,
+              },
+            },
+          },
         });
 
         if (!user) {
@@ -72,7 +87,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (!user.passwordHash) {
             console.log("[AUTH DEBUG] No password hash set");
             securityLogger.authFailed({ reason: "no_password_set", email });
-            return null;
+            throw new Error("INVALID_CREDENTIALS");
           }
           const isValid = await bcrypt.compare(
             credentials.password as string,
@@ -85,29 +100,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
           if (!isValid) {
             securityLogger.authFailed({ reason: "invalid_password", email });
-            return null;
+            throw new Error("INVALID_CREDENTIALS");
           }
         }
 
-        // Check contract approval status for SELLER role (Phase 1)
-        if (user.role === "SELLER" && user.contractStatus === "PENDING") {
-          console.log("[AUTH DEBUG] Contract approval pending:", email);
-          securityLogger.authFailed({
-            reason: "contract_pending",
-            email,
-            contractStatus: user.contractStatus,
-          });
-          return null;
-        }
+        // Phase 1: Contract status validation for SELLER role
+        if (user.role === "SELLER") {
+          if (user.contractStatus === "PENDING") {
+            console.log("[AUTH DEBUG] Contract approval pending:", email);
+            securityLogger.authFailed({
+              reason: "contract_pending",
+              email,
+              contractStatus: user.contractStatus,
+            });
+            throw new Error("CONTRACT_PENDING");
+          }
 
-        if (user.role === "SELLER" && user.contractStatus === "REJECTED") {
-          console.log("[AUTH DEBUG] Contract rejected:", email);
-          securityLogger.authFailed({
-            reason: "contract_rejected",
-            email,
-            contractStatus: user.contractStatus,
-          });
-          return null;
+          if (user.contractStatus === "REJECTED") {
+            console.log("[AUTH DEBUG] Contract rejected:", email);
+            securityLogger.authFailed({
+              reason: "contract_rejected",
+              email,
+              contractStatus: user.contractStatus,
+            });
+            throw new Error("CONTRACT_REJECTED");
+          }
         }
 
         return {
@@ -116,6 +133,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           role: user.role,
           adminId: user.adminId ?? undefined,
+          centerId: user.centerId ?? undefined,
+          center: user.center ?? undefined,
         };
       },
     }),
@@ -127,6 +146,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.userId = user.id;
         token.role = user.role;
         token.adminId = user.adminId;
+        token.centerId = user.centerId;
+        token.center = user.center;
       }
       console.log("[JWT Callback] token.role:", token.role, "token.userId:", token.userId);
       return token;
@@ -136,6 +157,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.userId = token.userId as string;
         session.user.role = token.role as string;
         session.user.adminId = token.adminId as string | undefined;
+        session.user.centerId = token.centerId as string | undefined;
+        session.user.center = token.center as { id: string; name: string; code: string } | null | undefined;
       }
       console.log("[Session Callback] session.user.role:", session.user?.role, "session.user.userId:", session.user?.userId);
       return session;

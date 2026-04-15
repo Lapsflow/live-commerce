@@ -14,6 +14,14 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  // Phase 1: Error message mapping for contract status differentiation
+  const errorMessages: Record<string, string> = {
+    INVALID_CREDENTIALS: "아이디 또는 비밀번호가 올바르지 않습니다",
+    CONTRACT_PENDING: "계약 승인 대기 중입니다. 관리자 승인 후 로그인 가능합니다",
+    CONTRACT_REJECTED: "계약이 거절되었습니다. 관리자에게 문의하세요",
+    CredentialsSignin: "아이디 또는 비밀번호가 올바르지 않습니다",
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -26,7 +34,9 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError("아이디 또는 비밀번호가 올바르지 않습니다.");
+      // Map error type to user-friendly message
+      const errorMessage = errorMessages[result.error] || "로그인에 실패했습니다";
+      setError(errorMessage);
       setLoading(false);
     } else {
       setLoading(false);
