@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-04-15T08:34:13.542Z",
+  "lastUpdated": "2026-04-15T09:22:22.249Z",
   "activeFeatures": [
     "live-commerce-migration",
     "db",
@@ -255,9 +255,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-06T00:09:48.059Z",
-        "lastUpdated": "2026-04-15T08:34:08.535Z"
+        "lastUpdated": "2026-04-15T09:22:22.249Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/inventory/barcode/components/ProductDetailsModal.tsx"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/inventory/barcode/hooks/useAIAnalysis.ts"
     },
     "bulk": {
       "phase": "do",
@@ -489,9 +489,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-06T09:57:57.029Z",
-        "lastUpdated": "2026-04-11T02:26:40.016Z"
+        "lastUpdated": "2026-04-15T09:11:24.794Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/providers/query-provider.tsx"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/inventory/barcode/providers/QueryProvider.tsx"
     },
     "onewms": {
       "phase": "do",
@@ -710,7 +710,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-10T10:09:08.094Z",
-        "lastUpdated": "2026-04-15T05:55:45.102Z"
+        "lastUpdated": "2026-04-15T08:57:09.546Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/prisma/seed.ts"
     },
@@ -1214,7 +1214,7 @@
   "session": {
     "startedAt": "2026-04-05T11:31:25.159Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-04-15T08:34:13.542Z"
+    "lastActivity": "2026-04-15T09:22:22.249Z"
   },
   "history": [
     {
@@ -4354,6 +4354,114 @@
     {
       "timestamp": "2026-04-15T08:34:13.542Z",
       "feature": "scan",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T08:57:03.576Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T08:57:08.547Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T08:57:09.546Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:11:24.794Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:11:27.605Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:11:29.977Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:13:44.369Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:14:40.606Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:14:56.064Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:14:58.454Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:15:13.302Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:15:25.054Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:16:07.712Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:16:10.458Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:16:13.345Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:16:16.043Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:22:20.999Z",
+      "feature": "barcode",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-15T09:22:22.249Z",
+      "feature": "barcode",
       "phase": "do",
       "action": "updated"
     }

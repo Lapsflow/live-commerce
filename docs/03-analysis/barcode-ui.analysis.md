@@ -1,434 +1,347 @@
 # Barcode Scanner UI - Design-Implementation Gap Analysis Report
 
-> **Summary**: Final comprehensive gap analysis between barcode-ui.design.md and actual implementation
+> **Summary**: Gap analysis of AI Price Comparison & Sales Analysis UI integration (plan) vs actual implementation
 >
+> **Plan Document**: `.claude/plans/snoopy-purring-ritchie.md`
 > **Design Document**: `docs/02-design/features/barcode-ui.design.md`
 > **Analysis Date**: 2026-04-15
-> **Status**: v5 FINAL
-> **Previous Versions**: v1 (66%), v2 (88%), v3 (90%), v4 (94%)
+> **Status**: v6 (AI UI Integration)
+> **Previous Versions**: v1 (66%), v2 (88%), v3 (90%), v4 (94%), v5 (96%)
 
 ---
 
 ## Overall Scores
 
-| Category | v1 Score | v2 Score | v3 Score | v4 Score | v5 Score | Change (v4-v5) | Status |
-|----------|:--------:|:--------:|:--------:|:--------:|:--------:|:--------------:|:------:|
-| Database Schema | 88% | 95% | 95% | 95% | 95% | -- | PASS |
-| API Endpoints | 65% | 88% | 90% | 90% | 95% | +5% | PASS |
-| UI Components | 75% | 75% | 88% | 88% | 95% | +7% | PASS |
-| Custom Hooks | 80% | 80% | 78% | 95% | 95% | -- | PASS |
-| Architecture Compliance | 40% | 95% | 95% | 95% | 95% | -- | PASS |
-| Convention Compliance | 45% | 95% | 92% | 98% | 100% | +2% | PASS |
-| **Overall** | **66%** | **88%** | **90%** | **94%** | **96%** | **+2%** | **PASS** |
+| Category | v5 Score | v6 Score | Change | Status |
+|----------|:--------:|:--------:|:------:|:------:|
+| Database Schema | 95% | 95% | -- | PASS |
+| API Endpoints (barcode core) | 95% | 95% | -- | PASS |
+| API Endpoints (pricing/AI) | N/A | 85% | NEW | WARN |
+| UI Components (barcode core) | 95% | 95% | -- | PASS |
+| UI Components (pricing/AI) | N/A | 95% | NEW | PASS |
+| Custom Hooks (barcode core) | 95% | 95% | -- | PASS |
+| Custom Hooks (pricing/AI) | N/A | 70% | NEW | FAIL |
+| Architecture Compliance | 95% | 88% | -7% | WARN |
+| Convention Compliance | 100% | 90% | -10% | WARN |
+| **Overall (base barcode)** | **96%** | **96%** | **--** | **PASS** |
+| **Overall (incl. AI/pricing)** | N/A | **90%** | NEW | **PASS** |
 
 ---
 
-## P2 Fix Verification (v4 -> v5)
+## Scope of v6 Analysis
 
-### P2-1: Product Detail Link in LOOKUP Mode -- FIXED
+This v6 analysis focuses on the **AI Price Comparison & Sales Analysis UI Integration** described in the plan document (`.claude/plans/snoopy-purring-ritchie.md`). This plan specified creating 5 new files and modifying 2 existing files to surface existing backend AI/pricing services in the barcode scanner UI.
 
-**v4 Status**: MISSING -- "닫기" (close) button only, no navigation to product page
+### Files Analyzed
 
-**v5 Verification**:
-- File: `app/(main)/inventory/barcode/components/ProductDetailsModal.tsx`
-- Lines 267-276: LOOKUP mode now renders BOTH a "닫기" button and a `Link` to `/admin/products/${product.id}`
-- The Link wraps a `Button` with text "상세 정보 보기" and an `ExternalLink` icon (lucide-react)
-- Uses `next/link` import (line 4)
-- `ExternalLink` imported from lucide-react (line 15)
-
-**Evidence** (lines 267-276):
-```typescript
-{mode === "LOOKUP" && (
-  <div className="flex justify-end gap-2">
-    <Button onClick={onClose} variant="outline">닫기</Button>
-    <Link href={`/admin/products/${product.id}`}>
-      <Button>
-        상세 정보 보기
-        <ExternalLink className="ml-2 h-4 w-4" />
-      </Button>
-    </Link>
-  </div>
-)}
-```
-
-**Design Comparison** (design.md lines 394-400):
-```typescript
-// Design specifies:
-{mode === 'LOOKUP' && (
-  <Button asChild className="w-full">
-    <Link href={`/products/${product.id}`}>
-      상품 상세 보기
-    </Link>
-  </Button>
-)}
-```
-
-**Differences from design**:
-- Path: `/admin/products/${id}` instead of `/products/${id}` -- acceptable (matches actual route structure)
-- Layout: Side-by-side "닫기" + "상세 정보 보기" instead of single full-width button -- acceptable (better UX)
-- Icon: ExternalLink icon added -- enhancement beyond design
-- Button style: Not using `asChild` pattern -- functionally equivalent
-
-**Result**: RESOLVED. LOOKUP mode now provides navigation to product detail page.
+| # | File | Type | Plan Reference |
+|---|------|------|----------------|
+| 1 | `app/(main)/inventory/barcode/providers/QueryProvider.tsx` | New | Step 1.1 |
+| 2 | `app/(main)/inventory/barcode/hooks/usePriceComparison.ts` | New | Step 1.2 |
+| 3 | `app/(main)/inventory/barcode/hooks/useAIAnalysis.ts` | New | Step 1.3 |
+| 4 | `app/(main)/inventory/barcode/components/PriceComparisonCard.tsx` | New | Step 2 |
+| 5 | `app/(main)/inventory/barcode/components/AIInsightsCard.tsx` | New | Step 3 |
+| 6 | `app/(main)/inventory/barcode/components/ProductDetailsModal.tsx` | Modified | Step 4 |
+| 7 | `app/(main)/inventory/barcode/page.tsx` | Modified | Step 5 |
 
 ---
 
-### P2-2: Audit Log for Unknown Products in All Scan Modes -- FIXED
+## 1. QueryProvider Comparison
 
-**v4 Status**: MISSING -- Only LOOKUP mode created audit log for unknown products; INBOUND/OUTBOUND returned 404 without logging
+**Plan**: Step 1.1 (lines 80-105)
+**Implementation**: `app/(main)/inventory/barcode/providers/QueryProvider.tsx` (23 lines)
 
-**v5 Verification**:
-- File: `app/api/inventory/scan/route.ts`
-- Lines 41-60: After product lookup fails (`if (!product)`), a `scanLog.create()` is called unconditionally for ALL modes
-- The scanLog records: userId, barcode, scanType (any of LOOKUP/INBOUND/OUTBOUND), quantity (if applicable), centerId (if applicable)
-- Metadata includes `notFound: true` flag for identification
-- After logging, returns `errors.notFound("Product")`
+### Match Rate: 100%
 
-**Evidence** (lines 41-60):
+| Item | Plan | Implementation | Status |
+|------|------|----------------|--------|
+| File path | `providers/QueryProvider.tsx` | Same | Match |
+| "use client" directive | Yes | Yes | Match |
+| QueryClient import | `@tanstack/react-query` | Same | Match |
+| staleTime | `6 * 60 * 60 * 1000` (6 hours) | Same | Match |
+| retry | 2 | 2 | Match |
+| refetchOnWindowFocus | false | false | Match |
+| Export name | `BarcodeQueryProvider` | Same | Match |
+| Children prop | `{ children: ReactNode }` | Same | Match |
+| @tanstack/react-query installed | Required | `^5.96.2` in package.json | Match |
+
+**Assessment**: Exact match with plan specification. No differences found.
+
+---
+
+## 2. usePriceComparison Hook Comparison
+
+**Plan**: Step 1.2 (lines 109-133)
+**Implementation**: `app/(main)/inventory/barcode/hooks/usePriceComparison.ts` (23 lines)
+
+### Match Rate: 70% (P0 bug found)
+
+| Item | Plan | Implementation | Status |
+|------|------|----------------|--------|
+| Import | `useQuery` from `@tanstack/react-query` | Same | Match |
+| Function signature | `(barcode?: string, ourPrice?: number)` | Same | Match |
+| queryKey | `['priceComparison', barcode]` | Same | Match |
+| API endpoint | `/api/pricing/compare?${params}` | Same | Match |
+| URL params construction | `URLSearchParams` with barcode + price | Same | Match |
+| Error handling | `if (!response.ok) throw new Error(...)` | Same | Match |
+| enabled condition | `!!barcode` | Same | Match |
+| staleTime | `6 * 60 * 60 * 1000` | Same | Match |
+| **Response unwrapping** | `return response.json()` (no unwrap) | Same | **P0 BUG** |
+
+### P0-1: Response data not unwrapped from ok() envelope
+
+**Problem**: The hook returns `response.json()` directly. Since the backend uses `ok(pricing)` which wraps the response as `{ data: { naver, coupang, market, competitiveness, ... } }`, React Query's `data` will be `{ data: { naver, ... } }`.
+
+The `PriceComparisonCard` component accesses `data.naver`, `data.coupang`, `data.market`, `data.competitiveness`, `data.cached`, `data.timestamp` -- all of which will be `undefined` because the actual data is nested under `data.data`.
+
+**Evidence**:
+
+Backend response shape (`/api/pricing/compare/route.ts` line 41):
 ```typescript
-// Create scan log even if product not found (audit trail for all modes)
-if (!product) {
-  await prisma.scanLog.create({
-    data: {
-      userId: user.userId,
-      productId: null,
-      barcode,
-      scanType,
-      quantity: scanType === "LOOKUP" ? null : quantity,
-      centerId: scanType === "LOOKUP" ? null : centerId,
-      metadata: {
-        userName: user.name,
-        userRole: user.role,
-        notFound: true,
-      },
-    },
-  });
+return ok(pricing); // Returns { data: { naver, coupang, market, competitiveness, ... } }
+```
 
-  return errors.notFound("Product");
+`ok()` function (`lib/api/response.ts` line 4-6):
+```typescript
+export function ok<T>(data: T) {
+  return NextResponse.json({ data });
 }
 ```
 
-**Design Comparison** (design.md lines 749-763):
+Hook (`usePriceComparison.ts` line 17):
 ```typescript
-// Design specifies:
-// Create scan log (even if product not found for audit)
-const scanLog = await prisma.scanLog.create({
-  data: {
-    userId: session.user.userId,
-    productId: product?.id,
-    barcode,
-    scanType,
-    quantity,
-    centerId,
-    // ...
-  },
+return response.json(); // Returns { data: { naver, ... } } -- NOT unwrapped
+```
+
+Component (`PriceComparisonCard.tsx` line 52):
+```typescript
+if (!data?.market?.avgPrice || !ourPrice) return null;
+// data.market is undefined -- should be data.data.market
+```
+
+**Fix required**: Either (a) unwrap in the hook with `const json = await response.json(); return json.data;` or (b) access `data.data.*` in the component.
+
+**Note**: This is the exact same bug pattern as the P0 `data.success` bugs found in v3 and fixed in v4 for `useBarcodeScanner` and `useScanHistory`. The plan document itself has this bug -- it was copied into implementation verbatim.
+
+---
+
+## 3. useAIAnalysis Hook Comparison
+
+**Plan**: Step 1.3 (lines 140-158)
+**Implementation**: `app/(main)/inventory/barcode/hooks/useAIAnalysis.ts` (24 lines)
+
+### Match Rate: 70% (P0 bug found)
+
+| Item | Plan | Implementation | Status |
+|------|------|----------------|--------|
+| Import | `useMutation` from `@tanstack/react-query` | Same | Match |
+| Function name | `useAIAnalysis` | Same | Match |
+| mutationFn params | `{ barcode: string; skipCache?: boolean }` | Same | Match |
+| API endpoint | `POST /api/ai/analyze` | Same | Match |
+| Request body | `{ barcode, skipCache }` | Same | Match |
+| Content-Type header | `application/json` | Same | Match |
+| Error handling | `if (!response.ok) throw new Error(...)` | Same | Match |
+| **Response unwrapping** | `return response.json()` (no unwrap) | Same | **P0 BUG** |
+
+### P0-2: Response data not unwrapped from ok() envelope
+
+**Problem**: Identical to P0-1. The `/api/ai/analyze` route returns `ok({ ...analysis, rateLimit: {...} })` which produces `{ data: { pricing, sales, metadata, rateLimit } }`.
+
+`AIInsightsCard` accesses `data.pricing`, `data.sales`, `data.rateLimit`, `data.metadata` -- all `undefined` since they are at `data.data.*`.
+
+**Evidence**:
+
+Backend response shape (`/api/ai/analyze/route.ts` lines 58-65):
+```typescript
+const response = ok({
+  ...analysis,
+  rateLimit: { limit, remaining, resetAt },
 });
 ```
 
-**Result**: RESOLVED. All scan modes (LOOKUP, INBOUND, OUTBOUND) now create audit log entries when the scanned product is not found, matching the design's intent of "Create scan log (even if product not found for audit)".
+Component accesses (`AIInsightsCard.tsx` lines 133, 244, 28, 339):
+```typescript
+{activeTab === "pricing" && data.pricing && (  // data.pricing is undefined
+{activeTab === "sales" && data.sales && (      // data.sales is undefined
+const rateLimit = data?.rateLimit;              // data.rateLimit is undefined
+<span>토큰 사용량: {data.metadata?.tokensUsed || 0}</span> // data.metadata is undefined
+```
+
+**Impact**: The AI analysis card will never display any results -- the tabs will appear empty even after a successful API response, since all `data.*` checks evaluate to falsy.
 
 ---
 
-## Previously Verified Items (All Confirmed Still Present)
+## 4. PriceComparisonCard Component Comparison
 
-### P0 Bugs -- ALL RESOLVED (v4, confirmed in v5)
+**Plan**: Step 2 (lines 162-188)
+**Implementation**: `app/(main)/inventory/barcode/components/PriceComparisonCard.tsx` (229 lines)
 
-| # | Item | v3 Status | v4+ Status | Evidence |
-|---|------|-----------|------------|----------|
-| 1 | `data.success` in useBarcodeScanner | BUG | **FIXED** | Line 54: `setScannedProduct(data.data)` |
-| 2 | `data.success` in useScanHistory | BUG | **FIXED** | Line 33: `setHistory(data.data)` |
+### Match Rate: 95% (assuming P0-1 is fixed)
 
-Both hooks use `!response.ok` guard followed by direct `data.data` access, matching the project `ok()` response convention.
+| Item | Plan | Implementation | Status |
+|------|------|----------------|--------|
+| Collapsible card | Yes (collapsed by default) | Yes (`isExpanded` state, default false) | Match |
+| Header text | "시장 가격 비교" | "시장 가격 비교" (line 72) | Match |
+| Competitiveness badge | EXCELLENT/GOOD/FAIR/POOR | All 4 levels with colors (lines 16-44) | Match |
+| Our price section | Blue background, large | `bg-blue-50`, `text-2xl font-bold` (line 114-116) | Match |
+| Price diff vs market | Percentage with +/- | Calculated with isLower flag (lines 51-59) | Match |
+| Naver Shopping section | min/avg/max grid | 3-column grid (lines 134-164) | Match |
+| Coupang section | min/avg/max grid | 3-column grid (lines 166-196) | Match |
+| Timestamp display | Yes | Yes, toLocaleTimeString("ko-KR") (line 206) | Match |
+| Cache indicator | Yes | "캐시된 데이터" / "최신 데이터" (line 202) | Match |
+| Refresh button | Yes with loading | Yes, with disabled state + spin (lines 210-220) | Match |
+| Loading state | Yes | Yes, spinner + message (lines 104-109) | Match |
+| Error handling | Yes | Red error box (lines 98-101) | Match |
+| Mobile responsive | Yes | Uses responsive grid | Match |
 
-### P1 Convention Items -- ALL RESOLVED (v2, confirmed in v5)
-
-| # | Item | Evidence |
-|---|------|----------|
-| 1 | ok()/errors.* on all routes | All 3 routes verified |
-| 2 | withRole() on all routes | All 3 routes use `["SELLER","ADMIN","SUB_MASTER","MASTER"]` |
-| 3 | Zod validation on POST | scan/route.ts lines 7-12 |
-| 4 | Shared Prisma singleton | All 3 routes import from `@/lib/db/prisma` |
-
-### Previously Resolved P2 Items -- ALL CONFIRMED
-
-| # | Item | File | Evidence |
-|---|------|------|----------|
-| 1 | centerName in scan-history | scan-history/route.ts:50 | `centerName: log.center?.name ?? null` |
-| 2 | Product image display | ProductDetailsModal.tsx:135-142 | Conditional img display with `product.imageUrl` |
-| 3 | FlashlightToggle | CameraStream.tsx:118-133,149-156 | `toggleTorch()` + Flashlight icon button |
-| 4 | CameraFlip | CameraStream.tsx:135-137,157-164 | `flipCamera()` + SwitchCamera icon button |
+**Assessment**: Full implementation of all plan requirements. The only issue is the P0 data access bug in the hook layer, not in this component itself.
 
 ---
 
-## 1. Database Schema Comparison
+## 5. AIInsightsCard Component Comparison
 
-**Design**: `docs/02-design/features/barcode-ui.design.md` lines 476-564
-**Implementation**: `prisma/schema.prisma` lines 578-604
+**Plan**: Step 3 (lines 190-223)
+**Implementation**: `app/(main)/inventory/barcode/components/AIInsightsCard.tsx` (370 lines)
+
+### Match Rate: 98% (assuming P0-2 is fixed)
+
+| Item | Plan | Implementation | Status |
+|------|------|----------------|--------|
+| Collapsible card | Yes (collapsed by default) | Yes (`isExpanded`, default false) | Match |
+| Header text | "AI 분석 결과" | "AI 분석 결과" (line 39) | Match |
+| Rate limit counter | X/10 remaining | `{rateLimit.remaining}/{rateLimit.limit} 남음` (line 42) | Match |
+| Cost warning (before analysis) | $0.03-0.05/request | Exact text (line 72) | Match |
+| "AI 분석 시작" button | Manual trigger | Purple button (lines 80-87) | Match |
+| Loading spinner | During AI processing | Custom spinner + "3-10초 소요" message (lines 92-101) | Match |
+| Tabbed interface | "가격 전략" vs "판매 전략" | Two tabs (lines 108-129) | Match |
+| Pricing tab: Competitiveness | Score + insights | Score/100, position, insight text (lines 136-164) | Match |
+| Pricing tab: Margin Health | Current vs recommended | isHealthy, currentMarginPercent, recommended (lines 168-218) | Match |
+| Pricing tab: Action Items | Bulleted list | Purple-bulleted list (lines 222-240) | Match |
+| Sales tab: Key Points | Bulleted list | Purple-bulleted list (lines 247-263) | Match |
+| Sales tab: Target Customer | Paragraph | Text paragraph (lines 266-276) | Match |
+| Sales tab: Broadcast Script | Formatted text | `whitespace-pre-line` formatting (lines 279-288) | Match |
+| Sales tab: Recommended Bundle | List | Purple-bulleted list (lines 291-309) | Match |
+| Sales tab: Cautions | Yellow warning box | `bg-yellow-50` with AlertCircle icon (lines 312-330) | Match |
+| Footer: Token usage | Yes | `tokensUsed` display (line 339) | Match |
+| Footer: Cost | Yes | `formatCost()` (line 341) | Match |
+| Footer: Timestamp | Yes | toLocaleString("ko-KR") (line 352) | Match |
+| Cached result indicator | Yes | Green "캐시됨" text (line 345) | Match |
+| Re-analyze button | Not explicitly in plan | "재분석 (캐시 무시)" with `skipCache: true` (line 356) | Added |
+
+**Assessment**: Exceeds plan requirements with re-analyze button. All specified UI sections implemented.
+
+---
+
+## 6. ProductDetailsModal Integration Comparison
+
+**Plan**: Step 4 (lines 227-258)
+**Implementation**: `app/(main)/inventory/barcode/components/ProductDetailsModal.tsx` (296 lines)
 
 ### Match Rate: 95%
 
-| Item | Design | Implementation | Status |
-|------|--------|----------------|--------|
-| ScanLog table exists | Yes | Yes | Match |
-| ScanLog.id (cuid) | Yes | Yes | Match |
-| ScanLog.userId FK | onDelete Cascade | onDelete Cascade | Match |
-| ScanLog.productId FK | onDelete SetNull | onDelete SetNull | Match |
-| ScanLog.barcode | String | String | Match |
-| ScanLog.scanType | String | ScanType enum | Changed (improvement) |
-| ScanLog.quantity | Int? | Int? | Match |
-| ScanLog.centerId FK | onDelete SetNull | onDelete SetNull | Match |
-| ScanLog.scannedAt | DateTime @default(now()) | DateTime @default(now()) | Match |
-| ScanLog.metadata | Json? | Json? | Match |
-| Index: userId+scannedAt DESC | `@@index([userId, scannedAt(sort: Desc)])` | `@@index([userId, scannedAt])` (no DESC) | Changed (P3) |
-| Index: barcode | Yes | Yes | Match |
-| Index: productId | Yes | Yes | Match |
-| Index: centerId+scannedAt DESC | `@@index([centerId, scannedAt(sort: Desc)])` | `@@index([centerId, scannedAt(sort: Desc)])` | Match |
-| Product.barcode field | String? @unique | String @unique (required) | Changed (stricter) |
-| Relations (User, Product, Center) | Yes | Yes | Match |
+| Item | Plan | Implementation | Status |
+|------|------|----------------|--------|
+| PriceComparisonCard import | Yes | Line 18: `import { PriceComparisonCard }` | Match |
+| AIInsightsCard import | Yes | Line 19: `import { AIInsightsCard }` | Match |
+| LOOKUP mode conditional | `{mode === "LOOKUP" && (...)}` | Lines 220-228: Same | Match |
+| PriceComparisonCard props | `barcode={product.barcode} ourPrice={product.sellPrice}` | Lines 222-225: Same | Match |
+| AIInsightsCard props | `barcode={product.barcode}` | Line 226: Same | Match |
+| Position in modal | After center stocks, before buttons | Lines 219-228: After stocks (line 217), before LOOKUP buttons (line 280) | Match |
+| Container spacing | `space-y-3 mt-4` | `space-y-3` (line 221, no mt-4) | Minor diff |
 
-### Remaining Differences (P3)
-
-1. **scanType**: Prisma enum `ScanType` instead of String -- **improvement** (database-level validation)
-2. **userId+scannedAt index**: Missing DESC sort -- **P3** (minor performance impact on reverse-chronological queries)
-3. **Product.barcode**: Required `String` instead of optional `String?` -- stricter than design, acceptable
+**Differences from plan**:
+1. Container has `space-y-3` but not `mt-4` -- minor styling difference, acceptable
+2. `ourPrice` uses `product.sellPrice` as planned (line 224)
 
 ---
 
-## 2. API Endpoints Comparison
+## 7. Page.tsx QueryProvider Wrapper Comparison
 
-### 2.1 GET /api/products/barcode/[code]
+**Plan**: Step 5 (lines 261-277)
+**Implementation**: `app/(main)/inventory/barcode/page.tsx` (85 lines)
 
-**Design**: lines 570-663
-**Implementation**: `app/api/products/barcode/[code]/route.ts` (67 lines)
+### Match Rate: 100%
 
-### Match Rate: 90%
-
-| Item | Design | Implementation | Status |
-|------|--------|----------------|--------|
-| Endpoint path | `/api/products/barcode/[code]` | Same | Match |
-| HTTP method | GET | GET | Match |
-| Auth pattern | `auth()` + `unauthorized()` | `withRole(["SELLER","ADMIN","SUB_MASTER","MASTER"])` | Match (improved) |
-| Barcode param | `await params; code` | `await context.params; code` | Match |
-| Prisma query | `findUnique where: { barcode: code }` | Same | Match |
-| Include centerStocks | With center { id, name, code } | With center { id, code, name, regionName } | Changed (extra field) |
-| Response helper | `ok({...})` | `ok(response)` | Match |
-| Not found response | `notFound('...')` | `errors.notFound("Product")` | Match |
-| Response: imageUrl | In design response | Not in API route select (schema has field) | Missing (P3) |
-| Response: category | In design response | Not in Product schema | Missing (design doc error) |
-| Extra: code | Not in design | `product.code` included | Added |
-| Extra: supplyPrice | Not in design | `product.supplyPrice` included | Added |
-| Extra: totalStock | Not in design | `product.totalStock` included | Added |
-| Extra: regionName | Not in design | `stock.center.regionName` included | Added |
-| Extra: location | Not in design | `stock.location` included | Added |
-
-### 2.2 POST /api/inventory/scan
-
-**Design**: lines 668-827
-**Implementation**: `app/api/inventory/scan/route.ts` (172 lines)
-
-### Match Rate: 95% (was 88% in v4)
-
-| Item | Design | Implementation | Status |
-|------|--------|----------------|--------|
-| Endpoint path | `/api/inventory/scan` | Same | Match |
-| HTTP method | POST | POST | Match |
-| Auth pattern | `session.user.userId` | `withRole()`, `user.userId` | Match (improved) |
-| Zod schema | `scanSchema.safeParse()` | Same pattern | Match |
-| Schema fields | barcode, scanType, quantity, centerId | Same | Match |
-| Business validation | quantity+centerId for INBOUND/OUTBOUND | `scanType !== "LOOKUP" && (!quantity \|\| !centerId)` | Match |
-| previousStock query | Before stock update | Before transaction (lines 63-74) | Match |
-| Stock update: INBOUND | `upsert` with increment | `findUnique` + manual calc + `update`/`create` | Changed (equivalent) |
-| Stock update: OUTBOUND | `update` with decrement + check | Manual calc + negative check + `update` | Changed (equivalent) |
-| Insufficient stock error | `badRequest('...')` | `throw new Error('...')` (in transaction, caught) | Changed |
-| Transaction wrapping | No transaction | `$transaction()` | Added (improvement) |
-| Audit log for unknown products | Create log even if not found | **All modes create log** (lines 41-60) | **Match (FIXED in v5)** |
-| Metadata content | userAgent, IP | userName, userRole, notFound flag | Changed |
-| Response: scanLogId | Yes | Yes | Match |
-| Response: productId | Yes | Yes | Match |
-| Response: previousStock | Yes | Yes | Match |
-| Response: updatedStock | Yes | Yes | Match |
-| Response: scannedAt | Yes | Yes | Match |
-
-### 2.3 GET /api/inventory/scan-history
-
-**Design**: lines 831-926
-**Implementation**: `app/api/inventory/scan-history/route.ts` (57 lines)
-
-### Match Rate: 92%
-
-| Item | Design | Implementation | Status |
-|------|--------|----------------|--------|
-| Endpoint path | `/api/inventory/scan-history` | Same | Match |
-| HTTP method | GET | GET | Match |
-| Auth pattern | `auth()` + `unauthorized()` | `withRole()` | Match (improved) |
-| limit param | default 20, max 100 | default 20, no max cap | Changed (P3) |
-| scanType filter | Yes | Yes | Match |
-| centerId filter | Yes | Yes | Match |
-| Include product.name | Yes | Yes | Match |
-| Include center.name | Yes | Yes | Match |
-| orderBy scannedAt desc | Yes | Yes | Match |
-| Response: id | Yes | Yes | Match |
-| Response: barcode | Yes | Yes | Match |
-| Response: productName | Yes | Yes | Match |
-| Response: scanType | Yes | Yes | Match |
-| Response: quantity | Yes | Yes | Match |
-| Response: centerName | Yes | Yes | Match |
-| Response: scannedAt | Yes | Yes (toISOString) | Match |
-| Extra: centerId | Not in design | Included | Added |
+| Item | Plan | Implementation | Status |
+|------|------|----------------|--------|
+| BarcodeQueryProvider import | Yes | Line 8 | Match |
+| Wraps page content | `<BarcodeQueryProvider>{children}</BarcodeQueryProvider>` | Lines 21, 82: Wraps entire page content | Match |
+| QueryProvider at top level | Yes | Outermost wrapper in return JSX | Match |
 
 ---
 
-## 3. UI Components Comparison
+## 8. Backend API Convention Compliance
 
-### Match Rate: 95% (was 88% in v4)
+### 8.1 GET /api/pricing/compare
 
-| Design Component | Design Path | Implementation Path | Status | Notes |
-|-----------------|-------------|---------------------|--------|-------|
-| BarcodeScannerPage | `page.tsx` (Server Component) | `page.tsx` ("use client") | Changed | Client-side, adds Tabs for mode selection |
-| BarcodeScannerContainer | `components/BarcodeScannerContainer.tsx` | Same path | Match | Props differ: `mode` only (no `defaultCenterId`) |
-| CameraPermissionGuard | `components/CameraPermissionGuard.tsx` | Inline in BarcodeScannerContainer | Acceptable | Logic merged into parent component |
-| CameraStream | `components/CameraStream.tsx` | Same path | Match | Enhanced with torch + camera flip |
-| ScanOverlay | `components/ScanOverlay.tsx` | Same path | Match | Enhanced with scan line animation |
-| ScanControls | `components/ScanControls.tsx` | In `page.tsx` as Tabs | Acceptable | Mode selection via Tabs component |
-| ModeSelector | Part of ScanControls | `page.tsx` Tabs component | Acceptable | Different UI pattern, same function |
-| FlashlightToggle | `components/ScanControls.tsx` | `CameraStream.tsx` lines 149-156 | Match | Integrated into CameraStream |
-| CameraFlip | `components/ScanControls.tsx` | `CameraStream.tsx` lines 157-164 | Match | Integrated into CameraStream |
-| ManualInputFallback | `components/ManualInputFallback.tsx` | Same path | Match | Adds Search icon, clears input on submit |
-| ProductDetailsModal | `components/ProductDetailsModal.tsx` | Same path | Match | Different props but functionally complete |
-| Product image display | In ProductDetailsModal | `ProductDetailsModal.tsx` lines 135-142 | Match | Uses `<img>` instead of Next.js `<Image>` (P3) |
-| Product detail link (LOOKUP) | `Link href={/products/${id}}` | `Link href={/admin/products/${id}}` with ExternalLink icon | **Match (FIXED in v5)** | Route path differs but correctly navigates |
-| ScanHistoryDrawer | `components/ScanHistoryDrawer.tsx` | Same path | Match | Self-fetching via useScanHistory hook |
-| Center selection UI | Not in design | `ProductDetailsModal.tsx` click-to-select | Added | Enhancement: interactive center selection |
+| Convention | Expected | Actual | Status |
+|-----------|----------|--------|--------|
+| ok()/errors.* | Yes | `ok(pricing)`, `errors.unauthorized()`, `errors.badRequest()`, `errors.internal()` | Match |
+| withRole() middleware | Yes (project convention) | `auth()` + manual session check | **P1 - Missing** |
+| Zod validation | Yes (for query params) | Manual null check only | **P2 - Missing** |
+| Shared Prisma singleton | N/A (uses service) | Uses `getPricing()` service | N/A |
 
-### Key v5 Changes
+### 8.2 POST /api/ai/analyze
 
-**ProductDetailsModal LOOKUP mode** (lines 267-276):
-- v4: Only "닫기" button, no navigation
-- v5: Both "닫기" (outline) + Link to `/admin/products/${product.id}` with ExternalLink icon
-- Design: Single `Link` to `/products/${product.id}`
-- Assessment: RESOLVED -- navigation to product detail page is now present
+| Convention | Expected | Actual | Status |
+|-----------|----------|--------|--------|
+| ok()/errors.* | Yes | `ok({...})`, `errors.unauthorized()`, `errors.badRequest()`, `errors.tooManyRequests()`, `errors.notFound()`, `errors.internal()` | Match |
+| withRole() middleware | Yes (project convention) | `auth()` + manual session check | **P1 - Missing** |
+| Zod validation | Yes (for POST body) | Manual type checking (`typeof barcode !== 'string'`) | **P2 - Missing** |
+| Shared Prisma singleton | N/A | Uses `analyzeProduct()` service | N/A |
+
+### Convention Gaps
+
+Both API routes use `auth()` directly instead of the project-standard `withRole()` HOF pattern. This is consistent with the P1 convention gap pattern seen previously in ONEWMS and broadcast-calendar features. The routes also lack Zod validation, using manual type checks instead.
 
 ---
 
-## 4. Custom Hooks Comparison
+## 9. Gap Summary
 
-### Match Rate: 95%
+### P0 Issues (Critical -- 2 items)
 
-| Hook | Design API | Implementation API | Status |
-|------|-----------|-------------------|--------|
-| useBarcodeScanner | `{ product, isLoading, fetchProduct, reset }` | `{ isScanning, scannedProduct, error, startScanning, stopScanning, handleBarcodeScan, clearProduct }` | Changed (richer API) |
-| useCameraPermission | `{ permission (tri-state), requestPermission }` | `{ hasPermission, permissionDenied, requestPermission }` | Changed (equivalent) |
-| useScanHistory | Listed in file structure only | `{ history, loading, error, refresh }` | Fully implemented |
+| # | Item | File | Description | Impact |
+|---|------|------|-------------|--------|
+| P0-1 | Response not unwrapped in usePriceComparison | `hooks/usePriceComparison.ts:17` | `response.json()` returns `{ data: {...} }` but component accesses top-level properties | PriceComparisonCard shows no data |
+| P0-2 | Response not unwrapped in useAIAnalysis | `hooks/useAIAnalysis.ts:20` | Same pattern -- `response.json()` returns `{ data: {...} }` but component accesses top-level properties | AIInsightsCard shows no results |
 
-All hooks confirmed to use correct `data.data` pattern with `!response.ok` guard.
+**Root cause**: The plan document itself contains this bug. The hooks were implemented verbatim from the plan, which did not account for the `ok()` response wrapper. This is the 4th occurrence of the `data.data` unwrapping bug in this project (after useBarcodeScanner and useScanHistory in v3).
 
----
+**Fix for P0-1** (`usePriceComparison.ts` line 17):
+```typescript
+// Before:
+return response.json();
 
-## 5. Architecture Compliance
+// After:
+const json = await response.json();
+return json.data;
+```
 
-### Match Rate: 95%
+**Fix for P0-2** (`useAIAnalysis.ts` line 20):
+```typescript
+// Before:
+return response.json();
 
-| Item | Status | Evidence |
-|------|--------|----------|
-| ok()/errors.* on all routes | 3/3 | barcode/[code], scan, scan-history |
-| withRole() on all routes | 3/3 | All use `["SELLER","ADMIN","SUB_MASTER","MASTER"]` |
-| Zod validation on POST | 1/1 | scan/route.ts lines 7-12 |
-| Shared Prisma singleton | 3/3 | All import from `@/lib/db/prisma` |
-| Client response pattern | 2/2 | Both hooks use `data.data` (v4 fix) |
-| Server Component page | No | page.tsx has "use client" (P3 -- minor) |
+// After:
+const json = await response.json();
+return json.data;
+```
 
----
+### P1 Issues (Important -- 2 items)
 
-## 6. Convention Compliance
+| # | Item | File | Description |
+|---|------|------|-------------|
+| P1-1 | No withRole() on /api/pricing/compare | `app/api/pricing/compare/route.ts` | Uses `auth()` directly instead of `withRole()` HOF |
+| P1-2 | No withRole() on /api/ai/analyze | `app/api/ai/analyze/route.ts` | Uses `auth()` directly instead of `withRole()` HOF |
 
-### Match Rate: 100% (was 98% in v4)
+### P2 Issues (Minor -- 2 items)
 
-| Convention | Status | Evidence |
-|-----------|--------|----------|
-| Response format: success `{ data: T }` | Compliant | All routes use `ok()` |
-| Response format: error `{ error: { code, message } }` | Compliant | All routes use `errors.*` |
-| API auth pattern: withRole() HOF | Compliant | All 3 routes |
-| Prisma import: shared singleton | Compliant | All 3 routes |
-| Component naming: PascalCase | Compliant | All 7 component files |
-| Hook naming: camelCase (use prefix) | Compliant | All 3 hook files |
-| Folder structure: kebab-case | Compliant | `inventory/barcode/` |
-| Import order: External > Internal > Relative | Compliant | All files checked |
-| Client-side response check pattern | Compliant | `data.data` with `!response.ok` guard |
-| Audit trail completeness | **Compliant** | All scan modes log even for unknown products (FIXED in v5) |
+| # | Item | File | Description |
+|---|------|------|-------------|
+| P2-1 | No Zod validation on /api/pricing/compare | `app/api/pricing/compare/route.ts` | Manual null check for `barcode` param |
+| P2-2 | No Zod validation on /api/ai/analyze | `app/api/ai/analyze/route.ts` | Manual `typeof` check for `barcode` field |
 
-All 10 convention items are now fully compliant. No remaining violations.
-
----
-
-## 7. File Structure Comparison
-
-### Design vs Implementation
-
-| Design Path | Implementation | Status |
-|-------------|---------------|--------|
-| `app/(main)/inventory/barcode/page.tsx` | Exists | Match |
-| `app/(main)/inventory/barcode/components/BarcodeScannerContainer.tsx` | Exists | Match |
-| `app/(main)/inventory/barcode/components/CameraPermissionGuard.tsx` | Not separate file | Acceptable (merged into container) |
-| `app/(main)/inventory/barcode/components/CameraStream.tsx` | Exists | Match |
-| `app/(main)/inventory/barcode/components/ScanOverlay.tsx` | Exists | Match |
-| `app/(main)/inventory/barcode/components/ScanControls.tsx` | Not separate file | Acceptable (in page.tsx as Tabs) |
-| `app/(main)/inventory/barcode/components/ManualInputFallback.tsx` | Exists | Match |
-| `app/(main)/inventory/barcode/components/ProductDetailsModal.tsx` | Exists | Match |
-| `app/(main)/inventory/barcode/components/ScanHistoryDrawer.tsx` | Exists | Match |
-| `app/(main)/inventory/barcode/hooks/useBarcodeScanner.ts` | Exists | Match |
-| `app/(main)/inventory/barcode/hooks/useCameraPermission.ts` | Exists | Match |
-| `app/(main)/inventory/barcode/hooks/useScanHistory.ts` | Exists | Match |
-| `app/api/products/barcode/[code]/route.ts` | Exists | Match |
-| `app/api/inventory/scan/route.ts` | Exists | Match |
-| `app/api/inventory/scan-history/route.ts` | Exists | Match |
-
-**File structure match: 13/15 designed files exist (2 acceptably merged)**
-
----
-
-## 8. Dependencies Comparison
-
-| Dependency | Design Version | Installed Version | Status |
-|-----------|---------------|-------------------|--------|
-| @ericblade/quagga2 | v1.8.0 | ^1.12.1 | Match (newer) |
-| react-webcam | Listed in design | Not installed | Not needed (Quagga handles camera) |
-
----
-
-## 9. Testing Status
-
-| Test Type | Design Requirement | Implementation | Status |
-|-----------|-------------------|----------------|--------|
-| Unit tests (hooks) | `__tests__/useBarcodeScanner.test.ts` | Not found | Missing |
-| Integration tests (API) | `scan/__tests__/route.test.ts` | Not found | Missing |
-| E2E tests (Playwright) | `tests/e2e/inventory/barcode-scanner.spec.ts` | Not found | Missing |
-| Coverage target | 80% | 0% | Missing |
-
-**Note**: Tests are listed as design aspirations in the acceptance criteria. No hard requirement for test coverage was established as a blocking condition.
-
----
-
-## 10. Gap Summary
-
-### P0 Issues -- ALL RESOLVED (v4)
-
-| # | Item | v3 Status | v4+ Status | Fix Evidence |
-|---|------|-----------|------------|--------------|
-| 1 | `data.success` in useBarcodeScanner | BUG | **FIXED** | Line 54: `setScannedProduct(data.data)` |
-| 2 | `data.success` in useScanHistory | BUG | **FIXED** | Line 33: `setHistory(data.data)` |
-
-### P1 Issues -- ALL RESOLVED (v2)
-
-All P1 convention items (ok/errors, withRole, Zod, shared Prisma) were resolved in v2 and confirmed in every subsequent version.
-
-### P2 Issues -- ALL RESOLVED (v5)
-
-| # | Item | v4 Status | v5 Status | Fix Evidence |
-|---|------|-----------|-----------|--------------|
-| 1 | Product detail link (LOOKUP) | MISSING | **FIXED** | Lines 267-276: Link + ExternalLink icon |
-| 2 | Audit log for unknown products | Only LOOKUP mode | **FIXED** | Lines 41-60: All modes create scanLog |
-
-### P3 Issues (Low Priority -- 5 items, documentation-only)
+### P3 Issues (Low -- inherited from v5, unchanged)
 
 | # | Item | Description | Impact |
 |---|------|-------------|--------|
@@ -438,108 +351,141 @@ All P1 convention items (ok/errors, withRole, Zod, shared Prisma) were resolved 
 | 4 | `<img>` vs Next.js `<Image>` | ProductDetailsModal uses native img tag | Very Low |
 | 5 | Permission change listener | useCameraPermission does not listen for browser permission changes | Very Low |
 
-### Resolution History
+---
 
-| Version | Items Resolved | Key Changes |
-|---------|---------------|-------------|
-| v2 | 4x P1 (convention) + 3x P2 | ok/errors, withRole, Zod, shared Prisma |
-| v3 | 4x P2 verified resolved | centerName, FlashlightToggle, CameraFlip, product image |
-| v4 | 2x P0 (critical bugs) | `data.success` -> `data.data` in both hooks |
-| v5 | 2x P2 (final gaps) | Product detail Link + universal audit logging |
+## 10. Added Features (Implementation beyond plan -- 1 item)
 
-### Added Features (Implementation beyond design -- 9 items)
-
-| # | Item | Description |
-|---|------|-------------|
-| 1 | ScanType Prisma enum | DB-level validation instead of String |
-| 2 | Transaction for stock updates | Atomic scan log + stock operations |
-| 3 | Scanning line animation | Enhanced scan feedback UX |
-| 4 | Debounce + duplicate prevention | 300ms debounce + 2s duplicate cooldown |
-| 5 | More barcode readers (9 vs 4) | ean_8, code_39_vin, codabar, upc_e, i2of5 |
-| 6 | Center selection UI | Click-to-select center in modal |
-| 7 | Extra response fields | code, supplyPrice, totalStock, regionName, location |
-| 8 | Scan mode descriptions | Tab content explaining each mode |
-| 9 | Hardware concurrency detection | `navigator.hardwareConcurrency` for Quagga workers |
+| # | Item | File | Description |
+|---|------|------|-------------|
+| 1 | Re-analyze button | `AIInsightsCard.tsx:355-361` | "재분석 (캐시 무시)" button with `skipCache: true` -- not in plan |
 
 ---
 
-## 11. Score Calculation Details
+## 11. Plan vs Implementation File Checklist
 
-### Database Schema: 95%
-- 16 items checked, 13 exact match, 2 improvements (ScanType enum, centerId+scannedAt index), 1 minor gap (DESC on userId index)
+| Plan Step | File | Created/Modified | Exists | Match |
+|-----------|------|:----------------:|:------:|:-----:|
+| Step 1.1 | `providers/QueryProvider.tsx` | New | Yes | 100% |
+| Step 1.2 | `hooks/usePriceComparison.ts` | New | Yes | 70% (P0) |
+| Step 1.3 | `hooks/useAIAnalysis.ts` | New | Yes | 70% (P0) |
+| Step 2 | `components/PriceComparisonCard.tsx` | New | Yes | 95% |
+| Step 3 | `components/AIInsightsCard.tsx` | New | Yes | 98% |
+| Step 4 | `components/ProductDetailsModal.tsx` | Modified | Yes | 95% |
+| Step 5 | `page.tsx` | Modified | Yes | 100% |
+
+All 7 files from the plan exist and match plan structure.
+
+---
+
+## 12. Backend Services Verification
+
+| Backend Service | Plan Reference | File Path | Exists |
+|-----------------|---------------|-----------|:------:|
+| Market Pricing Service | Step 0 | `lib/services/pricing/marketPricing.ts` | Yes |
+| AI Analysis Service | Step 0 | `lib/services/ai/analysis.ts` | Yes |
+| Pricing Compare API | Step 0 | `app/api/pricing/compare/route.ts` | Yes |
+| AI Analyze API | Step 0 | `app/api/ai/analyze/route.ts` | Yes |
+
+All 4 backend services/endpoints referenced in the plan exist.
+
+---
+
+## 13. Score Calculation Details
+
+### UI Components (pricing/AI): 95%
+- 5 new files created, all exist
+- All plan-specified UI elements present (collapsible cards, tabs, badges, loading states, error handling)
+- 1 added feature (re-analyze button)
 - Score: 95%
 
-### API Endpoints: 95% (was 90% in v4)
-- GET barcode: 90% (all core fields match, extra fields added, imageUrl not explicitly selected)
-- POST scan: 95% (was 88%) -- audit log gap RESOLVED (+7%), transaction improvement, metadata differs
-- GET scan-history: 92% (all design fields present, missing limit cap)
-- Weighted average: 92.3% -> 95% (P2-2 fix elevates the weighted score)
+### Custom Hooks (pricing/AI): 70%
+- 2 hooks created matching plan signatures
+- Both contain P0 response unwrapping bug
+- Hooks are functionally broken until P0 is resolved
+- Score: 70%
 
-### UI Components: 95% (was 88% in v4)
-- 15 design components/features checked
-- 14 match or acceptable (was 13), 0 missing (was 1), 1 added
-- P2-1 fix (product detail Link) resolved the only remaining missing item
-- Score: 95%
+### Architecture Compliance: 88%
+- ok()/errors.* on pricing/AI routes: 2/2 (Match)
+- withRole() on pricing/AI routes: 0/2 (P1 - Missing)
+- Zod validation on POST AI route: 0/1 (P2 - Missing)
+- Response unwrapping in hooks: 0/2 (P0)
+- QueryProvider wrapping: 1/1 (Match)
+- Score: 88%
 
-### Custom Hooks: 95%
-- 3 hooks implemented with richer APIs than design
-- All hooks follow correct `ok()` response convention
-- Minor: useCameraPermission uses different approach (boolean pair vs tri-state) -- functionally equivalent
+### Convention Compliance: 90%
+- Component naming PascalCase: 2/2 (Match)
+- Hook naming camelCase with use prefix: 2/2 (Match)
+- Folder structure (providers/, hooks/): 2/2 (Match)
+- Import order: 7/7 files (Match)
+- withRole() pattern: 0/2 (P1 - Missing)
+- Zod validation: 0/1 (P2 - Missing)
+- Client response pattern (data.data): 0/2 (P0)
+- Score: 90%
 
-### Architecture Compliance: 95%
-- 5/5 convention patterns applied (ok/errors, withRole, Zod, shared Prisma, client response check)
-- 1 minor gap (Server Component page -- P3)
-
-### Convention Compliance: 100% (was 98% in v4)
-- 10/10 convention items compliant
-- Audit trail completeness now verified for all scan modes
-- All project convention patterns properly applied
-
-### Overall: 96%
-- Weighted average: (95 + 95 + 95 + 95 + 95 + 100) / 6 = 95.8% -> 96%
+### Overall (including AI/pricing): 90%
+- Weighted: (95 + 95 + 95 + 95 + 70 + 88 + 90) / 7 = 89.7% -> 90%
 
 ---
 
-## 12. Recommended Actions
+## 14. Recommended Actions
 
-### All P0, P1, P2 Items RESOLVED
+### Immediate Actions (P0 -- blocks feature functionality)
 
-No immediate action items remain. All gaps identified across v1-v5 have been addressed.
+| # | Priority | Action | File | Fix |
+|---|----------|--------|------|-----|
+| 1 | P0 | Unwrap ok() envelope in usePriceComparison | `hooks/usePriceComparison.ts:17` | `const json = await response.json(); return json.data;` |
+| 2 | P0 | Unwrap ok() envelope in useAIAnalysis | `hooks/useAIAnalysis.ts:20` | `const json = await response.json(); return json.data;` |
 
-### Documentation Updates (Optional)
+### Short-term Actions (P1 -- convention compliance)
 
-1. Update design document response format from `{ success, data }` to `{ data }` (matches ok() convention)
-2. Document additional response fields (code, supplyPrice, totalStock, regionName, location)
-3. Document ScanType enum improvement over String type
-4. Document center selection UI (click-to-select pattern)
-5. Note FlashlightToggle and CameraFlip as integrated into CameraStream (not separate components)
-6. Update product detail link path from `/products/${id}` to `/admin/products/${id}`
+| # | Priority | Action | File |
+|---|----------|--------|------|
+| 3 | P1 | Add withRole() to pricing compare route | `app/api/pricing/compare/route.ts` |
+| 4 | P1 | Add withRole() to AI analyze route | `app/api/ai/analyze/route.ts` |
 
-### Future Iteration (P3 -- optional, no impact on functionality)
+### Documentation Updates (P2)
 
-7. Cap limit parameter at 100 in scan-history endpoint
-8. Add DESC sort to userId+scannedAt index
-9. Convert page.tsx to Server Component with client BarcodeScannerPage child
-10. Replace `<img>` with Next.js `<Image>` in ProductDetailsModal
-11. Add camera permission change listener
+| # | Priority | Action | File |
+|---|----------|--------|------|
+| 5 | P2 | Add Zod validation schema for pricing compare | `app/api/pricing/compare/route.ts` |
+| 6 | P2 | Add Zod validation schema for AI analyze | `app/api/ai/analyze/route.ts` |
 
 ---
 
-## 13. Conclusion
+## 15. Comparison with v5 Base Barcode Scanner
 
-The barcode scanner UI feature has reached **96% match rate** (PASS) after v5 fixes. All P0, P1, and P2 issues have been resolved across five analysis iterations. The implementation exceeds the design in several areas (transaction wrapping, expanded barcode readers, interactive center selection, enhanced scan UX). Only 5 P3 items remain, none of which affect core functionality or user experience.
+The base barcode scanner feature (v5 FINAL, 96%) remains unaffected by this analysis. All previous P0/P1/P2 fixes from v1-v5 are confirmed intact:
 
-### Complete Resolution Timeline
+| Category | Base (v5) | AI/Pricing (v6) | Combined |
+|----------|:---------:|:----------------:|:--------:|
+| Database Schema | 95% | N/A | 95% |
+| API Endpoints | 95% | 85% | 92% |
+| UI Components | 95% | 95% | 95% |
+| Custom Hooks | 95% | 70% | 85% |
+| Architecture | 95% | 88% | 92% |
+| Convention | 100% | 90% | 95% |
+| **Overall** | **96%** | **90%** | **93%** |
 
-| Phase | Version | Score | Items Resolved |
-|-------|:-------:|:-----:|----------------|
-| Initial analysis | v1 | 66% | Baseline assessment |
-| Convention fixes | v2 | 88% | +22% (P1 convention: withRole, ok/errors, Zod, Prisma) |
-| P2 verification | v3 | 90% | +2% (centerName, FlashlightToggle, CameraFlip, image) |
-| P0 bug fixes | v4 | 94% | +4% (data.success -> data.data in hooks) |
-| P2 final fixes | v5 | 96% | +2% (product detail Link, universal audit log) |
+---
 
-**PDCA Status**: Check phase PASSED. Feature is ready for Report phase.
+## 16. Conclusion
+
+The AI Price Comparison & Sales Analysis UI integration achieves a **90% match rate** (PASS) against the plan document. All 7 files specified in the plan exist with correct structure and comprehensive UI implementation. However, 2 P0 bugs prevent the feature from functioning correctly at runtime:
+
+1. `usePriceComparison` does not unwrap the `ok()` response envelope -- `PriceComparisonCard` will display no data
+2. `useAIAnalysis` does not unwrap the `ok()` response envelope -- `AIInsightsCard` will display no results
+
+These are the same class of bug as the `data.success` issue fixed in v4 for the core barcode hooks. The root cause is that the plan document itself specified `return response.json()` without accounting for the project's `ok()` wrapper convention. This is now the 4th occurrence of this pattern in the barcode-ui feature.
+
+Additionally, the two backend API routes (`/api/pricing/compare` and `/api/ai/analyze`) do not follow the project-standard `withRole()` and Zod validation conventions, consistent with the pattern observed in other feature integrations (ONEWMS, broadcast-calendar).
+
+### Resolution Priority
+
+1. **Fix P0-1 and P0-2** (5 minutes) -- Feature is non-functional without these fixes
+2. **Apply withRole() to API routes** (15 minutes) -- Convention compliance
+3. **Add Zod validation** (10 minutes) -- Input validation
+
+After P0 fixes, the match rate would increase to approximately **95%**.
 
 ---
 
@@ -550,5 +496,6 @@ The barcode scanner UI feature has reached **96% match rate** (PASS) after v5 fi
 | 1.0 | 2026-04-15 | 66% | Initial gap analysis | gap-detector |
 | 2.0 | 2026-04-15 | 88% | All P1 resolved, 3 P2 resolved | gap-detector |
 | 3.0 | 2026-04-15 | 90% | Discovered P0 `data.success` bug, verified 4 P2 items resolved | gap-detector |
-| 4.0 | 2026-04-15 | 94% | P0 bugs fixed, all items re-verified, convention compliance restored | gap-detector |
-| 5.0 | 2026-04-15 | 96% | **FINAL** -- All P2 resolved, product detail Link added, universal audit logging | gap-detector |
+| 4.0 | 2026-04-15 | 94% | P0 bugs fixed, all items re-verified | gap-detector |
+| 5.0 | 2026-04-15 | 96% | **FINAL (base)** -- All P2 resolved | gap-detector |
+| 6.0 | 2026-04-15 | 90% | AI/Pricing UI integration analysis -- 2 new P0 bugs found | gap-detector |

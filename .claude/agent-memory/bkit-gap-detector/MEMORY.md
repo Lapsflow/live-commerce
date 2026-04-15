@@ -113,37 +113,35 @@
 - P3: Stats returns zeros (Sale model aggregation not wired)
 - P3: Stylistic layout differences (flat vs Card-based)
 
-## Barcode Scanner UI Analysis (2026-04-15, v5 FINAL)
+## Barcode Scanner UI Analysis (2026-04-15, v6)
 
-### Match Rate: 96% (PASS) -- v1: 66%, v2: 88%, v3: 90%, v4: 94%, v5: 96%
+### Base Match Rate: 96% (v5 FINAL) -- v1: 66%, v2: 88%, v3: 90%, v4: 94%, v5: 96%
+### AI/Pricing UI Match Rate: 90% (v6) -- 2 P0 bugs found
 - Design doc: `docs/02-design/features/barcode-ui.design.md` (1460 lines)
-- Report: `docs/03-analysis/barcode-ui.analysis.md` (v5 FINAL)
+- Plan doc: `.claude/plans/snoopy-purring-ritchie.md` (AI Price Comparison integration)
+- Report: `docs/03-analysis/barcode-ui.analysis.md` (v6)
 
-### Category Scores
-| Category | v1 | v4 | v5 | Change (v4-v5) |
-|---|---|---|---|---|
-| Database Schema | 88% | 95% | 95% | -- |
-| API Endpoints | 65% | 90% | 95% | +5% (P2-2 audit log) |
-| UI Components | 75% | 88% | 95% | +7% (P2-1 product link) |
-| Custom Hooks | 80% | 95% | 95% | -- |
-| Architecture Compliance | 40% | 95% | 95% | -- |
-| Convention Compliance | 45% | 98% | 100% | +2% (audit completeness) |
+### v6: AI/Pricing UI Integration (7 files)
+- QueryProvider.tsx: 100% match
+- usePriceComparison.ts: 70% -- **P0: response.json() not unwrapped from ok() envelope**
+- useAIAnalysis.ts: 70% -- **P0: same ok() envelope bug**
+- PriceComparisonCard.tsx: 95% -- full UI, but data access fails due to P0
+- AIInsightsCard.tsx: 98% -- full UI + bonus re-analyze button
+- ProductDetailsModal.tsx: 95% -- correctly imports and renders both cards in LOOKUP mode
+- page.tsx: 100% -- BarcodeQueryProvider wrapper applied
 
-### ALL P0, P1, P2 Issues RESOLVED
-- P0-1: useBarcodeScanner.ts `data.success` -> `data.data` (v4)
-- P0-2: useScanHistory.ts `data.success` -> `data.data` (v4)
-- P1-1..P1-4: ok/errors, withRole, Zod, shared Prisma (v2)
-- P2-1: Product detail Link + ExternalLink icon in LOOKUP mode (v5)
-- P2-2: Universal audit log for ALL scan modes when product not found (v5)
+### v6 P0 Bugs (2 items -- feature non-functional)
+- P0-1: usePriceComparison returns `{ data: {...} }` but component accesses top-level
+- P0-2: useAIAnalysis same pattern -- `data.pricing` is undefined, should be `data.data.pricing`
+- Fix: `const json = await response.json(); return json.data;` in both hooks
+- This is the 4th and 5th occurrence of the ok() envelope bug in this project
 
-### Remaining P3 only (5 items -- no functional impact)
-- limit max cap, userId+scannedAt DESC index, Server Component page, img vs Image, permission listener
+### v6 P1/P2 (backend convention)
+- P1: /api/pricing/compare uses auth() not withRole() (4th feature with this gap)
+- P1: /api/ai/analyze uses auth() not withRole()
+- P2: Neither route uses Zod validation
 
-### Key Pattern: Convention fixes are highly effective
-- P1 convention fixes alone: +22% (66%->88%)
-- P0 client-side fix: +4% (90%->94%)
-- P2 final fixes: +2% (94%->96%)
-- 15 Prisma models (ScanLog + ScanType enum)
+### Base v5 ALL P0/P1/P2 RESOLVED (unchanged)
 
 ## Lessons
 - CRUD factory covers basic CRUD; stats/analytics/bulk ops need custom routes
@@ -202,4 +200,9 @@
 - Universal audit logging requires the scanLog.create() to be BEFORE the error return, not after
 - Design specifies `/products/${id}` but actual route structure may differ (e.g., `/admin/products/${id}`) -- route path alignment is an acceptable difference
 - Barcode scanner v1->v5 complete trajectory: 66% -> 88% -> 90% -> 94% -> 96% over 5 iterations
-- All four feature analyses (ONEWMS, broadcast-calendar, barcode-ui, base migration) now have all P0/P1/P2 resolved
+- **CRITICAL**: Plan documents can contain the same ok() envelope bug -- implementing plan verbatim reproduces the bug
+- React Query hooks that do `return response.json()` will return `{ data: T }` (ok envelope), not `T` directly
+- The ok() envelope bug has now occurred 5 times in this project (useBarcodeScanner, useScanHistory, usePriceComparison, useAIAnalysis x2)
+- When auditing new hooks, ALWAYS check: does the hook unwrap `json.data` or pass raw `response.json()`?
+- Backend routes created for pre-existing services (pricing, AI) often skip withRole() because they predate the convention
+- useMutation (React Query) returns `{ data, mutate, isPending }` where data = mutationFn return value -- same envelope issue applies

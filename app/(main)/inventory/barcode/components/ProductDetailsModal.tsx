@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Package, MapPin, ExternalLink } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
+import { PriceComparisonCard } from "./PriceComparisonCard";
+import { AIInsightsCard } from "./AIInsightsCard";
 
 type ScanMode = "INBOUND" | "OUTBOUND" | "LOOKUP";
 
@@ -213,6 +215,17 @@ export function ProductDetailsModal({
               ))}
             </div>
           </div>
+
+          {/* Price Comparison & AI Analysis - Only in LOOKUP mode */}
+          {mode === "LOOKUP" && (
+            <div className="space-y-3">
+              <PriceComparisonCard
+                barcode={product.barcode}
+                ourPrice={product.sellPrice}
+              />
+              <AIInsightsCard barcode={product.barcode} />
+            </div>
+          )}
 
           {/* Action Modes */}
           {mode === "INBOUND" && (
