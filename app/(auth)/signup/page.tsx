@@ -278,7 +278,7 @@ export default function SignupPage() {
             <Select
               value={formData.centerId || undefined}
               onValueChange={(value) =>
-                setFormData({ ...formData, centerId: value })
+                setFormData({ ...formData, centerId: value || "" })
               }
             >
               <SelectTrigger className="w-full">
