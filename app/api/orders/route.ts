@@ -28,8 +28,8 @@ const orderSchema = z.object({
 });
 
 // GET: List orders with filters
-// Phase 2: withRole() middleware applied (ADMIN, SELLER)
-export const GET = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+// Phase 2: withRole() middleware applied (MASTER, ADMIN, SELLER)
+export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
     const { searchParams } = new URL(req.url);
     const productType = searchParams.get("productType") as "HEADQUARTERS" | "CENTER" | null;
@@ -92,8 +92,8 @@ export const GET = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: 
 });
 
 // POST: Create order with auto-split by product type
-// Phase 2: withRole() middleware applied (ADMIN, SELLER)
-export const POST = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+// Phase 2: withRole() middleware applied (MASTER, ADMIN, SELLER)
+export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
     const body = await req.json();
     const data = orderSchema.parse(body);
