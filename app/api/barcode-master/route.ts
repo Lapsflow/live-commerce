@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { normBarcode } from '@/lib/utils/barcode';
+import { paginated } from '@/lib/api/response';
 
 /**
  * Barcode Master API
@@ -50,15 +51,7 @@ export async function GET(req: NextRequest) {
       db.barcodeMaster.count({ where }),
     ]);
 
-    return NextResponse.json({
-      data: barcodes,
-      pagination: {
-        pageIndex,
-        pageSize,
-        total,
-        pageCount: Math.ceil(total / pageSize),
-      },
-    });
+    return paginated(barcodes, total, pageSize);
   } catch (error) {
     console.error('[Barcode Master] GET error:', error);
     return NextResponse.json(

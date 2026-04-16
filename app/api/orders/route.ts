@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { ok, error } from "@/lib/api/response";
+import { ok, error, paginated } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
@@ -34,8 +34,8 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
     const { searchParams } = new URL(req.url);
     const productType = searchParams.get("productType") as "HEADQUARTERS" | "CENTER" | null;
     const search = searchParams.get("search");
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "50");
+    const pageIndex = parseInt(searchParams.get("pageIndex") || "0");
+    const pageSize = parseInt(searchParams.get("pageSize") || "50");
 
     const where: any = {};
 
@@ -57,8 +57,8 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
         where,
-        take: limit,
-        skip: (page - 1) * limit,
+        take: pageSize,
+        skip: pageIndex * pageSize,
         orderBy: { createdAt: "desc" },
         include: {
           seller: {
@@ -76,15 +76,7 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
       prisma.order.count({ where }),
     ]);
 
-    return ok({
-      data: orders,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    });
+    return paginated(orders, total, pageSize);
   } catch (err: any) {
     console.error("[ORDERS GET ERROR]", err);
     return error("FETCH_FAILED", err.message, 500);
