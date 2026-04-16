@@ -185,10 +185,9 @@ export const POST = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user:
     // Phase 2: Create separate orders if mixed types
     if (wmsItems.length > 0 && centerItems.length > 0) {
       // Mixed types: create 2 orders with suffixes wrapped in transaction
-      const [wmsOrder, centerOrder] = await prisma.$transaction([
-        createOrderWithItems(wmsItems, "HEADQUARTERS", "-WMS"),
-        createOrderWithItems(centerItems, "CENTER", "-CENTER"),
-      ]);
+      const wmsPromise = createOrderWithItems(wmsItems, "HEADQUARTERS", "-WMS");
+      const centerPromise = createOrderWithItems(centerItems, "CENTER", "-CENTER");
+      const [wmsOrder, centerOrder] = await Promise.all([wmsPromise, centerPromise]);
 
       createdOrders.push(wmsOrder, centerOrder);
 

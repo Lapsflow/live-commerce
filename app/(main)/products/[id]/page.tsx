@@ -175,7 +175,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
       const result = await update(productId, payload);
       if (result) {
-        setProduct(result as Product);
+        setProduct(result as unknown as Product);
         setIsEditing(false);
       }
     } finally {

@@ -20,11 +20,13 @@ async function main() {
     console.log('📦 Creating test center...');
     center = await prisma.center.create({
       data: {
-        code: 'TEST-CENTER-001',
+        code: '01-1234',
         name: '테스트 센터',
+        regionCode: '01',
+        regionName: '서울',
         address: '서울특별시 강남구 테헤란로 123',
-        phoneNumber: '02-1234-5678',
-        managerName: '테스트 매니저',
+        representative: '테스트 매니저',
+        representativePhone: '02-1234-5678',
         isActive: true,
       },
     });

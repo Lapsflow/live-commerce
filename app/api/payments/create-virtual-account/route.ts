@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
       amount: order.totalAmount,
       orderId: order.id,
       orderName: `발주 ${order.orderNo}`,
-      customerName: order.seller.name || order.seller.email,
+      customerName: order.seller.name || order.seller.email || "고객",
       validHours: VALID_HOURS,
       cashReceipt: {
         type: '소득공제',
@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
       recipient: {
         name: order.seller.name,
         phone: order.seller.phone ?? 'N/A',
-        email: order.seller.email,
+        email: order.seller.email || undefined,
       },
       orderNo: order.orderNo,
       depositInfo: {

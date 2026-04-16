@@ -3470,6 +3470,7 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
+    username: string | null
     email: string | null
     name: string | null
     phone: string | null
@@ -3488,6 +3489,7 @@ export namespace Prisma {
 
   export type UserMaxAggregateOutputType = {
     id: string | null
+    username: string | null
     email: string | null
     name: string | null
     phone: string | null
@@ -3506,6 +3508,7 @@ export namespace Prisma {
 
   export type UserCountAggregateOutputType = {
     id: number
+    username: number
     email: number
     name: number
     phone: number
@@ -3517,6 +3520,9 @@ export namespace Prisma {
     updatedAt: number
     channels: number
     avgSales: number
+    categories: number
+    regions: number
+    timeSlots: number
     contractStatus: number
     contractApprovedAt: number
     contractApprovedBy: number
@@ -3535,6 +3541,7 @@ export namespace Prisma {
 
   export type UserMinAggregateInputType = {
     id?: true
+    username?: true
     email?: true
     name?: true
     phone?: true
@@ -3553,6 +3560,7 @@ export namespace Prisma {
 
   export type UserMaxAggregateInputType = {
     id?: true
+    username?: true
     email?: true
     name?: true
     phone?: true
@@ -3571,6 +3579,7 @@ export namespace Prisma {
 
   export type UserCountAggregateInputType = {
     id?: true
+    username?: true
     email?: true
     name?: true
     phone?: true
@@ -3582,6 +3591,9 @@ export namespace Prisma {
     updatedAt?: true
     channels?: true
     avgSales?: true
+    categories?: true
+    regions?: true
+    timeSlots?: true
     contractStatus?: true
     contractApprovedAt?: true
     contractApprovedBy?: true
@@ -3677,9 +3689,10 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
-    email: string
+    username: string
+    email: string | null
     name: string
-    phone: string | null
+    phone: string
     role: $Enums.Role
     adminId: string | null
     centerId: string | null
@@ -3688,6 +3701,9 @@ export namespace Prisma {
     updatedAt: Date
     channels: string[]
     avgSales: number | null
+    categories: string[]
+    regions: string[]
+    timeSlots: string[]
     contractStatus: $Enums.ContractStatus
     contractApprovedAt: Date | null
     contractApprovedBy: string | null
@@ -3715,6 +3731,7 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    username?: boolean
     email?: boolean
     name?: boolean
     phone?: boolean
@@ -3726,6 +3743,9 @@ export namespace Prisma {
     updatedAt?: boolean
     channels?: boolean
     avgSales?: boolean
+    categories?: boolean
+    regions?: boolean
+    timeSlots?: boolean
     contractStatus?: boolean
     contractApprovedAt?: boolean
     contractApprovedBy?: boolean
@@ -3746,6 +3766,7 @@ export namespace Prisma {
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    username?: boolean
     email?: boolean
     name?: boolean
     phone?: boolean
@@ -3757,6 +3778,9 @@ export namespace Prisma {
     updatedAt?: boolean
     channels?: boolean
     avgSales?: boolean
+    categories?: boolean
+    regions?: boolean
+    timeSlots?: boolean
     contractStatus?: boolean
     contractApprovedAt?: boolean
     contractApprovedBy?: boolean
@@ -3767,6 +3791,7 @@ export namespace Prisma {
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    username?: boolean
     email?: boolean
     name?: boolean
     phone?: boolean
@@ -3778,6 +3803,9 @@ export namespace Prisma {
     updatedAt?: boolean
     channels?: boolean
     avgSales?: boolean
+    categories?: boolean
+    regions?: boolean
+    timeSlots?: boolean
     contractStatus?: boolean
     contractApprovedAt?: boolean
     contractApprovedBy?: boolean
@@ -3788,6 +3816,7 @@ export namespace Prisma {
 
   export type UserSelectScalar = {
     id?: boolean
+    username?: boolean
     email?: boolean
     name?: boolean
     phone?: boolean
@@ -3799,13 +3828,16 @@ export namespace Prisma {
     updatedAt?: boolean
     channels?: boolean
     avgSales?: boolean
+    categories?: boolean
+    regions?: boolean
+    timeSlots?: boolean
     contractStatus?: boolean
     contractApprovedAt?: boolean
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "phone" | "role" | "adminId" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "adminId" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | User$adminArgs<ExtArgs>
     sellers?: boolean | User$sellersArgs<ExtArgs>
@@ -3846,9 +3878,10 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      email: string
+      username: string
+      email: string | null
       name: string
-      phone: string | null
+      phone: string
       role: $Enums.Role
       adminId: string | null
       centerId: string | null
@@ -3857,6 +3890,9 @@ export namespace Prisma {
       updatedAt: Date
       channels: string[]
       avgSales: number | null
+      categories: string[]
+      regions: string[]
+      timeSlots: string[]
       contractStatus: $Enums.ContractStatus
       contractApprovedAt: Date | null
       contractApprovedBy: string | null
@@ -4296,6 +4332,7 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
+    readonly username: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
@@ -4307,6 +4344,9 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly channels: FieldRef<"User", 'String[]'>
     readonly avgSales: FieldRef<"User", 'Int'>
+    readonly categories: FieldRef<"User", 'String[]'>
+    readonly regions: FieldRef<"User", 'String[]'>
+    readonly timeSlots: FieldRef<"User", 'String[]'>
     readonly contractStatus: FieldRef<"User", 'ContractStatus'>
     readonly contractApprovedAt: FieldRef<"User", 'DateTime'>
     readonly contractApprovedBy: FieldRef<"User", 'String'>
@@ -31385,6 +31425,7 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
+    username: 'username',
     email: 'email',
     name: 'name',
     phone: 'phone',
@@ -31396,6 +31437,9 @@ export namespace Prisma {
     updatedAt: 'updatedAt',
     channels: 'channels',
     avgSales: 'avgSales',
+    categories: 'categories',
+    regions: 'regions',
+    timeSlots: 'timeSlots',
     contractStatus: 'contractStatus',
     contractApprovedAt: 'contractApprovedAt',
     contractApprovedBy: 'contractApprovedBy',
@@ -32051,9 +32095,10 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
-    email?: StringFilter<"User"> | string
+    username?: StringFilter<"User"> | string
+    email?: StringNullableFilter<"User"> | string | null
     name?: StringFilter<"User"> | string
-    phone?: StringNullableFilter<"User"> | string | null
+    phone?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     adminId?: StringNullableFilter<"User"> | string | null
     centerId?: StringNullableFilter<"User"> | string | null
@@ -32062,6 +32107,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     channels?: StringNullableListFilter<"User">
     avgSales?: IntNullableFilter<"User"> | number | null
+    categories?: StringNullableListFilter<"User">
+    regions?: StringNullableListFilter<"User">
+    timeSlots?: StringNullableListFilter<"User">
     contractStatus?: EnumContractStatusFilter<"User"> | $Enums.ContractStatus
     contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
@@ -32081,9 +32129,10 @@ export namespace Prisma {
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    email?: SortOrder
+    username?: SortOrder
+    email?: SortOrderInput | SortOrder
     name?: SortOrder
-    phone?: SortOrderInput | SortOrder
+    phone?: SortOrder
     role?: SortOrder
     adminId?: SortOrderInput | SortOrder
     centerId?: SortOrderInput | SortOrder
@@ -32092,6 +32141,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     channels?: SortOrder
     avgSales?: SortOrderInput | SortOrder
+    categories?: SortOrder
+    regions?: SortOrder
+    timeSlots?: SortOrder
     contractStatus?: SortOrder
     contractApprovedAt?: SortOrderInput | SortOrder
     contractApprovedBy?: SortOrderInput | SortOrder
@@ -32111,12 +32163,13 @@ export namespace Prisma {
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    username?: string
     email?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringFilter<"User"> | string
-    phone?: StringNullableFilter<"User"> | string | null
+    phone?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     adminId?: StringNullableFilter<"User"> | string | null
     centerId?: StringNullableFilter<"User"> | string | null
@@ -32125,6 +32178,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     channels?: StringNullableListFilter<"User">
     avgSales?: IntNullableFilter<"User"> | number | null
+    categories?: StringNullableListFilter<"User">
+    regions?: StringNullableListFilter<"User">
+    timeSlots?: StringNullableListFilter<"User">
     contractStatus?: EnumContractStatusFilter<"User"> | $Enums.ContractStatus
     contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
@@ -32140,13 +32196,14 @@ export namespace Prisma {
     proposalCarts?: ProposalCartListRelationFilter
     sellerMatches?: OrderSellerMatchingListRelationFilter
     scanLogs?: ScanLogListRelationFilter
-  }, "id" | "email">
+  }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    email?: SortOrder
+    username?: SortOrder
+    email?: SortOrderInput | SortOrder
     name?: SortOrder
-    phone?: SortOrderInput | SortOrder
+    phone?: SortOrder
     role?: SortOrder
     adminId?: SortOrderInput | SortOrder
     centerId?: SortOrderInput | SortOrder
@@ -32155,6 +32212,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     channels?: SortOrder
     avgSales?: SortOrderInput | SortOrder
+    categories?: SortOrder
+    regions?: SortOrder
+    timeSlots?: SortOrder
     contractStatus?: SortOrder
     contractApprovedAt?: SortOrderInput | SortOrder
     contractApprovedBy?: SortOrderInput | SortOrder
@@ -32171,9 +32231,10 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
-    email?: StringWithAggregatesFilter<"User"> | string
+    username?: StringWithAggregatesFilter<"User"> | string
+    email?: StringNullableWithAggregatesFilter<"User"> | string | null
     name?: StringWithAggregatesFilter<"User"> | string
-    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    phone?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     adminId?: StringNullableWithAggregatesFilter<"User"> | string | null
     centerId?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -32182,6 +32243,9 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     channels?: StringNullableListFilter<"User">
     avgSales?: IntNullableWithAggregatesFilter<"User"> | number | null
+    categories?: StringNullableListFilter<"User">
+    regions?: StringNullableListFilter<"User">
+    timeSlots?: StringNullableListFilter<"User">
     contractStatus?: EnumContractStatusWithAggregatesFilter<"User"> | $Enums.ContractStatus
     contractApprovedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     contractApprovedBy?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -34165,15 +34229,19 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -34193,9 +34261,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -34204,6 +34273,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -34221,15 +34293,19 @@ export namespace Prisma {
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34249,9 +34325,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34260,6 +34337,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34277,9 +34357,10 @@ export namespace Prisma {
 
   export type UserCreateManyInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -34288,6 +34369,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -34296,15 +34380,19 @@ export namespace Prisma {
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34313,9 +34401,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34324,6 +34413,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36691,6 +36783,7 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
+    username?: SortOrder
     email?: SortOrder
     name?: SortOrder
     phone?: SortOrder
@@ -36702,6 +36795,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     channels?: SortOrder
     avgSales?: SortOrder
+    categories?: SortOrder
+    regions?: SortOrder
+    timeSlots?: SortOrder
     contractStatus?: SortOrder
     contractApprovedAt?: SortOrder
     contractApprovedBy?: SortOrder
@@ -36714,6 +36810,7 @@ export namespace Prisma {
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
+    username?: SortOrder
     email?: SortOrder
     name?: SortOrder
     phone?: SortOrder
@@ -36732,6 +36829,7 @@ export namespace Prisma {
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
+    username?: SortOrder
     email?: SortOrder
     name?: SortOrder
     phone?: SortOrder
@@ -38398,6 +38496,18 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type UserCreatecategoriesInput = {
+    set: string[]
+  }
+
+  export type UserCreateregionsInput = {
+    set: string[]
+  }
+
+  export type UserCreatetimeSlotsInput = {
+    set: string[]
+  }
+
   export type UserCreateNestedOneWithoutSellersInput = {
     create?: XOR<UserCreateWithoutSellersInput, UserUncheckedCreateWithoutSellersInput>
     connectOrCreate?: UserCreateOrConnectWithoutSellersInput
@@ -38563,6 +38673,21 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type UserUpdatecategoriesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdateregionsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdatetimeSlotsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type EnumContractStatusFieldUpdateOperationsInput = {
@@ -40803,15 +40928,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutSellersInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -40830,9 +40959,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutSellersInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -40841,6 +40971,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -40862,15 +40995,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutAdminInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -40889,9 +41026,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutAdminInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     centerId?: string | null
     passwordHash?: string | null
@@ -40899,6 +41037,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -41332,15 +41473,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSellersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41359,9 +41504,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutSellersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41370,6 +41516,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41405,9 +41554,10 @@ export namespace Prisma {
     OR?: UserScalarWhereInput[]
     NOT?: UserScalarWhereInput | UserScalarWhereInput[]
     id?: StringFilter<"User"> | string
-    email?: StringFilter<"User"> | string
+    username?: StringFilter<"User"> | string
+    email?: StringNullableFilter<"User"> | string | null
     name?: StringFilter<"User"> | string
-    phone?: StringNullableFilter<"User"> | string | null
+    phone?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     adminId?: StringNullableFilter<"User"> | string | null
     centerId?: StringNullableFilter<"User"> | string | null
@@ -41416,6 +41566,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     channels?: StringNullableListFilter<"User">
     avgSales?: IntNullableFilter<"User"> | number | null
+    categories?: StringNullableListFilter<"User">
+    regions?: StringNullableListFilter<"User">
+    timeSlots?: StringNullableListFilter<"User">
     contractStatus?: EnumContractStatusFilter<"User"> | $Enums.ContractStatus
     contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
@@ -42319,15 +42472,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutCenterInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -42346,9 +42503,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutCenterInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     passwordHash?: string | null
@@ -42356,6 +42514,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -42938,15 +43099,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutSellerMatchesInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -42965,9 +43130,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutSellerMatchesInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -42976,6 +43142,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -43144,15 +43313,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSellerMatchesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43171,9 +43344,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutSellerMatchesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43182,6 +43356,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43271,15 +43448,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutOrdersInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -43298,9 +43479,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutOrdersInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -43309,6 +43491,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -43330,15 +43515,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutAdminOrdersInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -43357,9 +43546,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutAdminOrdersInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -43368,6 +43558,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -43588,15 +43781,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43615,9 +43812,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43626,6 +43824,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43653,15 +43854,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAdminOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43680,9 +43885,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutAdminOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43691,6 +43897,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44136,15 +44345,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutBroadcastsInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -44163,9 +44376,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutBroadcastsInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -44174,6 +44388,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -44289,15 +44506,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutBroadcastsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44316,9 +44537,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutBroadcastsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44327,6 +44549,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44414,15 +44639,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutSalesInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -44441,9 +44670,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutSalesInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -44452,6 +44682,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -44586,15 +44819,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSalesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44613,9 +44850,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutSalesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44624,6 +44862,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44754,15 +44995,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutProposalsInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -44781,9 +45026,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutProposalsInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -44792,6 +45038,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -44824,15 +45073,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutProposalsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44851,9 +45104,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutProposalsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44862,6 +45116,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44878,15 +45135,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutProposalCartsInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -44905,9 +45166,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutProposalCartsInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -44916,6 +45178,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -45015,15 +45280,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutProposalCartsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -45042,9 +45311,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutProposalCartsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -45053,6 +45323,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -46458,15 +46731,19 @@ export namespace Prisma {
 
   export type UserCreateWithoutScanLogsInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -46485,9 +46762,10 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutScanLogsInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     centerId?: string | null
@@ -46496,6 +46774,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -46644,15 +46925,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutScanLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -46671,9 +46956,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutScanLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -46682,6 +46968,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -46826,9 +47115,10 @@ export namespace Prisma {
 
   export type UserCreateManyAdminInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     centerId?: string | null
     passwordHash?: string | null
@@ -46836,6 +47126,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -46968,15 +47261,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAdminInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -46995,9 +47292,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutAdminInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -47005,6 +47303,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -47022,9 +47323,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyWithoutAdminInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -47032,6 +47334,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -47894,9 +48199,10 @@ export namespace Prisma {
 
   export type UserCreateManyCenterInput = {
     id?: string
-    email: string
+    username: string
+    email?: string | null
     name: string
-    phone?: string | null
+    phone: string
     role?: $Enums.Role
     adminId?: string | null
     passwordHash?: string | null
@@ -47904,6 +48210,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     channels?: UserCreatechannelsInput | string[]
     avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
     contractStatus?: $Enums.ContractStatus
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
@@ -47971,15 +48280,19 @@ export namespace Prisma {
 
   export type UserUpdateWithoutCenterInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -47998,9 +48311,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutCenterInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -48008,6 +48322,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -48025,9 +48342,10 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyWithoutCenterInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -48035,6 +48353,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channels?: UserUpdatechannelsInput | string[]
     avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
     contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null

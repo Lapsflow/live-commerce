@@ -177,7 +177,7 @@ export default function NewProductPage() {
             {productType === "CENTER" && (
               <div className="space-y-2">
                 <Label htmlFor="managedBy">관리 센터 *</Label>
-                <Select value={managedBy} onValueChange={setManagedBy} disabled={loadingCenters}>
+                <Select value={managedBy} onValueChange={(value) => setManagedBy(value || "")} disabled={loadingCenters}>
                   <SelectTrigger>
                     <SelectValue placeholder={loadingCenters ? "로딩 중..." : "센터를 선택하세요"} />
                   </SelectTrigger>

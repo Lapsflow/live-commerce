@@ -96,7 +96,6 @@ export async function getProductWithBarcode(): Promise<{ id: string; barcode: st
     const product = await prisma.product.findFirst({
       where: {
         barcode: { not: '' },
-        barcode: { not: null },
       },
       select: { id: true, barcode: true, name: true },
       orderBy: { createdAt: 'desc' },

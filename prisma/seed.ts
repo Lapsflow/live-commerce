@@ -17,12 +17,13 @@ async function main() {
   const sellerPassword = await bcrypt.hash("seller1234", 10);
 
   const master = await prisma.user.upsert({
-    where: { email: "master@live-commerce.com" },
+    where: { username: "master" },
     update: {
       passwordHash: masterPassword,
       contractStatus: "APPROVED",
     },
     create: {
+      username: "master",
       email: "master@live-commerce.com",
       name: "Master Admin",
       phone: "010-1234-5678",
@@ -33,12 +34,13 @@ async function main() {
   });
 
   const admin1 = await prisma.user.upsert({
-    where: { email: "admin1@live-commerce.com" },
+    where: { username: "admin1" },
     update: {
       passwordHash: adminPassword,
       contractStatus: "APPROVED",
     },
     create: {
+      username: "admin1",
       email: "admin1@live-commerce.com",
       name: "Admin 1",
       phone: "010-2345-6789",
@@ -49,12 +51,13 @@ async function main() {
   });
 
   const admin2 = await prisma.user.upsert({
-    where: { email: "admin2@live-commerce.com" },
+    where: { username: "admin2" },
     update: {
       passwordHash: adminPassword,
       contractStatus: "APPROVED",
     },
     create: {
+      username: "admin2",
       email: "admin2@live-commerce.com",
       name: "Admin 2",
       phone: "010-3456-7890",
@@ -66,12 +69,13 @@ async function main() {
 
   const sellers = await Promise.all([
     prisma.user.upsert({
-      where: { email: "seller1@live-commerce.com" },
+      where: { username: "seller1" },
       update: {
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
       create: {
+        username: "seller1",
         email: "seller1@live-commerce.com",
         name: "Seller 1",
         phone: "010-4567-8901",
@@ -82,12 +86,13 @@ async function main() {
       },
     }),
     prisma.user.upsert({
-      where: { email: "seller2@live-commerce.com" },
+      where: { username: "seller2" },
       update: {
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
       create: {
+        username: "seller2",
         email: "seller2@live-commerce.com",
         name: "Seller 2",
         phone: "010-5678-9012",
@@ -98,12 +103,13 @@ async function main() {
       },
     }),
     prisma.user.upsert({
-      where: { email: "seller3@live-commerce.com" },
+      where: { username: "seller3" },
       update: {
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
       create: {
+        username: "seller3",
         email: "seller3@live-commerce.com",
         name: "Seller 3",
         phone: "010-6789-0123",
@@ -114,12 +120,13 @@ async function main() {
       },
     }),
     prisma.user.upsert({
-      where: { email: "seller4@live-commerce.com" },
+      where: { username: "seller4" },
       update: {
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
       create: {
+        username: "seller4",
         email: "seller4@live-commerce.com",
         name: "Seller 4",
         phone: "010-7890-1234",
@@ -130,12 +137,13 @@ async function main() {
       },
     }),
     prisma.user.upsert({
-      where: { email: "seller5@live-commerce.com" },
+      where: { username: "seller5" },
       update: {
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
       create: {
+        username: "seller5",
         email: "seller5@live-commerce.com",
         name: "Seller 5",
         phone: "010-8901-2345",

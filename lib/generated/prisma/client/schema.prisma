@@ -14,9 +14,10 @@ datasource db {
 
 model User {
   id           String   @id @default(cuid())
-  email        String   @unique
+  username     String   @unique // ✨ 로그인용 아이디 (pptx 스펙)
+  email        String?  @unique // ✨ 실제 이메일 (선택)
   name         String
-  phone        String?
+  phone        String // ✨ 휴대폰번호 (필수 - pptx 스펙)
   role         Role     @default(SELLER)
   adminId      String?
   centerId     String? // ✨ Center assignment (nullable - MASTER has no center)
@@ -24,9 +25,14 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  // ✨ Seller Profile Fields
+  // ✨ Seller 1차 정보 (회원가입 시)
   channels String[] @default([]) // 활동 채널 (예: ["GRIP", "CLME", "YOUTUBE"])
   avgSales Int? // 평균 매출 (월간 평균)
+
+  // ✨ Seller 2차 정보 (가입 후 선택 입력 - pptx 스펙)
+  categories String[] @default([]) // 주요 판매 카테고리
+  regions    String[] @default([]) // 활동 지역
+  timeSlots  String[] @default([]) // 방송 가능 시간대
 
   // ✨ Contract Approval Fields (Phase 1)
   contractStatus          ContractStatus @default(PENDING)
