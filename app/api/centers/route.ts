@@ -11,7 +11,7 @@ import {
   createCenter,
   type CreateCenterInput,
 } from '@/lib/services/center/centerService';
-import { withRole } from '@/lib/middleware/withRole';
+import { withRole } from '@/lib/api/middleware';
 import { validateCenterCode } from '@/lib/validators/center';
 
 /**
@@ -19,7 +19,7 @@ import { validateCenterCode } from '@/lib/validators/center';
  * 센터 목록 조회 (ADMIN만 접근 가능)
  * Phase 2: withRole() middleware applied
  */
-export const GET = withRole("ADMIN")(async (req: NextRequest) => {
+export const GET = withRole(["ADMIN"], async (req: NextRequest, user) => {
   try {
 
     // Query parameters
@@ -50,7 +50,7 @@ export const GET = withRole("ADMIN")(async (req: NextRequest) => {
  * 센터 생성 (ADMIN만 가능)
  * Phase 2: withRole() middleware applied
  */
-export const POST = withRole("ADMIN")(async (req: NextRequest) => {
+export const POST = withRole(["ADMIN"], async (req: NextRequest, user) => {
   try {
 
     const body = await req.json();

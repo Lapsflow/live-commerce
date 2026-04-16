@@ -2,11 +2,12 @@ import { NextRequest } from "next/server";
 import { ok, error } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
-import { withRole } from "@/lib/middleware/withRole";
+import { withRole } from "@/lib/api/middleware";
 
 // Phase 2: withRole() middleware applied (ADMIN only)
-export const POST = withRole("ADMIN")(async (
+export const POST = withRole(["ADMIN"], async (
   req: NextRequest,
+  user,
   { params }: { params: Promise<{ userId: string }> }
 ) => {
   try {

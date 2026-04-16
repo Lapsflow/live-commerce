@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-04-15T10:18:59.101Z",
+  "lastUpdated": "2026-04-16T11:13:10.573Z",
   "activeFeatures": [
     "live-commerce-migration",
     "db",
@@ -807,7 +807,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-13T02:54:35.768Z",
-        "lastUpdated": "2026-04-15T01:32:10.332Z"
+        "lastUpdated": "2026-04-16T11:13:10.573Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/centers/route.ts"
     },
@@ -1220,7 +1220,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-15T09:48:40.700Z",
-        "lastUpdated": "2026-04-15T09:48:40.700Z"
+        "lastUpdated": "2026-04-16T11:13:08.592Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/admin/contracts/[userId]/approve/route.ts"
     },
@@ -1298,7 +1298,7 @@
   "session": {
     "startedAt": "2026-04-05T11:31:25.159Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-04-15T10:18:59.101Z"
+    "lastActivity": "2026-04-16T11:13:10.573Z"
   },
   "history": [
     {
@@ -4678,6 +4678,36 @@
     {
       "timestamp": "2026-04-15T10:18:59.101Z",
       "feature": "export",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:12:38.953Z",
+      "feature": "approve",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:12:39.700Z",
+      "feature": "centers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:13:08.592Z",
+      "feature": "approve",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:13:09.413Z",
+      "feature": "centers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:13:10.573Z",
+      "feature": "centers",
       "phase": "do",
       "action": "updated"
     }
