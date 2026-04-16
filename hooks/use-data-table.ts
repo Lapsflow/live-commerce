@@ -102,7 +102,7 @@ export function useDataTable<TData, TValue>({
       ? ["dataTable", fetchParams]
       : null;
 
-  const { data: serverResult, isLoading: swrLoading } = useSWR<FetchPageResult<TData>>(
+  const { data: serverResult, isLoading: swrLoading, error: swrError } = useSWR<FetchPageResult<TData>>(
     swrKey,
     ([, params]: string[]) => {
       if (dataSource.mode !== "server") {
@@ -123,6 +123,7 @@ export function useDataTable<TData, TValue>({
   const serverData = serverResult?.data ?? [];
   const serverPageCount = serverResult?.pageCount ?? 0;
   const isLoading = dataSource.mode === "server" ? swrLoading : false;
+  const error = dataSource.mode === "server" ? swrError : undefined;
 
   const data = dataSource.mode === "client" ? clientData : serverData;
 
@@ -171,5 +172,6 @@ export function useDataTable<TData, TValue>({
     globalFilter,
     setGlobalFilter,
     isLoading,
+    error,
   };
 }

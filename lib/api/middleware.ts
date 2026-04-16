@@ -12,13 +12,14 @@ export interface AuthUser {
   email: string;
   role: Role;
   adminId?: string;
+  centerId?: string;
 }
 
 type NextHandler = (req: NextRequest, context?: any) => Promise<NextResponse>;
 type AuthHandler = (req: NextRequest, user: AuthUser, context?: any) => Promise<NextResponse>;
 
 function toAuthUser(user: Record<string, unknown>): AuthUser | null {
-  const { userId, name, email, role, adminId } = user;
+  const { userId, name, email, role, adminId, centerId } = user;
   if (typeof userId !== "string" || typeof name !== "string" || typeof email !== "string") return null;
   if (typeof role !== "string" || !VALID_ROLES.includes(role)) return null;
   return {
@@ -27,6 +28,7 @@ function toAuthUser(user: Record<string, unknown>): AuthUser | null {
     email,
     role: role as Role,
     adminId: typeof adminId === "string" ? adminId : undefined,
+    centerId: typeof centerId === "string" ? centerId : undefined,
   };
 }
 

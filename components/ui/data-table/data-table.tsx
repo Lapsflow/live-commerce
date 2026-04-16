@@ -36,7 +36,7 @@ export function DataTable<TData, TValue>({
   defaultColumnVisibility,
   hideSearch = false,
 }: DataTableProps<TData, TValue>) {
-  const { table, globalFilter, setGlobalFilter, isLoading } = useDataTable({
+  const { table, globalFilter, setGlobalFilter, isLoading, error } = useDataTable({
     columns,
     dataSource,
     enableColumnResizing,
@@ -71,7 +71,27 @@ export function DataTable<TData, TValue>({
         hideSearch={hideSearch}
       />
 
-      {isLoading ? (
+      {error ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="rounded-lg bg-red-50 p-6 max-w-md">
+            <div className="flex items-center gap-2 text-red-600 mb-2">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <h3 className="font-semibold">데이터를 불러올 수 없습니다</h3>
+            </div>
+            <p className="text-sm text-red-700 mb-4">
+              {error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다"}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium"
+            >
+              페이지 새로고침
+            </button>
+          </div>
+        </div>
+      ) : isLoading ? (
         <DataTableSkeleton columnCount={columns.length} />
       ) : (
         <div className="overflow-x-auto">
