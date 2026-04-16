@@ -12,6 +12,7 @@ import {
   type CreateCenterInput,
 } from '@/lib/services/center/centerService';
 import { withRole } from '@/lib/middleware/withRole';
+import { validateCenterCode } from '@/lib/validators/center';
 
 /**
  * GET /api/centers
@@ -69,6 +70,13 @@ export const POST = withRole("ADMIN")(async (req: NextRequest) => {
       if (!body[field]) {
         return errors.badRequest(`${field} is required`);
       }
+    }
+
+    // pptx 스펙: 센터 코드 형식 검증
+    if (!validateCenterCode(body.code)) {
+      return errors.badRequest(
+        '센터 코드 형식이 올바르지 않습니다. 형식: [01-17]-[4자리 숫자] (예: 01-4213)'
+      );
     }
 
     const input: CreateCenterInput = {

@@ -34,28 +34,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        email: { label: "이메일", type: "email" },
+        username: { label: "아이디", type: "text" },
         password: { label: "비밀번호", type: "password" },
       },
       authorize: async (credentials) => {
         console.log("[AUTH DEBUG] Login attempt:", {
-          hasEmail: !!credentials?.email,
+          hasUsername: !!credentials?.username,
           hasPassword: !!credentials?.password,
-          email: credentials?.email,
+          username: credentials?.username,
           passwordLength: credentials?.password
             ? String(credentials.password).length
             : 0,
         });
 
-        const email = credentials?.email as string | undefined;
-        if (!email || !credentials?.password) {
+        const username = credentials?.username as string | undefined;
+        if (!username || !credentials?.password) {
           console.log("[AUTH DEBUG] Missing credentials");
           securityLogger.authFailed({ reason: "missing_credentials" });
           return null;
         }
 
         const user = await prisma.user.findUnique({
-          where: { email },
+          where: { username },
           include: {
             center: {
               select: {
@@ -68,13 +68,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (!user) {
-          console.log("[AUTH DEBUG] User not found:", email);
-          securityLogger.authFailed({ reason: "user_not_found", email });
+          console.log("[AUTH DEBUG] User not found:", username);
+          securityLogger.authFailed({ reason: "user_not_found", username });
           return null;
         }
 
         console.log("[AUTH DEBUG] User found:", {
-          email,
+          username,
           hasPasswordHash: !!user.passwordHash,
           passwordHashLength: user.passwordHash?.length || 0,
         });
@@ -86,7 +86,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!bypassEnabled) {
           if (!user.passwordHash) {
             console.log("[AUTH DEBUG] No password hash set");
-            securityLogger.authFailed({ reason: "no_password_set", email });
+            securityLogger.authFailed({ reason: "no_password_set", username });
             throw new Error("INVALID_CREDENTIALS");
           }
           const isValid = await bcrypt.compare(
@@ -99,7 +99,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             hashPrefix: user.passwordHash.substring(0, 20),
           });
           if (!isValid) {
-            securityLogger.authFailed({ reason: "invalid_password", email });
+            securityLogger.authFailed({ reason: "invalid_password", username });
             throw new Error("INVALID_CREDENTIALS");
           }
         }
@@ -107,20 +107,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // Phase 1: Contract status validation for SELLER role
         if (user.role === "SELLER") {
           if (user.contractStatus === "PENDING") {
-            console.log("[AUTH DEBUG] Contract approval pending:", email);
+            console.log("[AUTH DEBUG] Contract approval pending:", username);
             securityLogger.authFailed({
               reason: "contract_pending",
-              email,
+              username,
               contractStatus: user.contractStatus,
             });
             throw new Error("CONTRACT_PENDING");
           }
 
           if (user.contractStatus === "REJECTED") {
-            console.log("[AUTH DEBUG] Contract rejected:", email);
+            console.log("[AUTH DEBUG] Contract rejected:", username);
             securityLogger.authFailed({
               reason: "contract_rejected",
-              email,
+              username,
               contractStatus: user.contractStatus,
             });
             throw new Error("CONTRACT_REJECTED");

@@ -14,21 +14,28 @@ import {
 } from "@/components/ui/select";
 
 type FormData = {
-  id: string;
+  username: string; // 로그인용 아이디 (pptx 스펙)
   password: string;
   name: string;
-  phone: string;
-  email: string;
+  phone: string; // 필수 (pptx 스펙)
+  email?: string; // 실제 이메일 (선택)
   role: "SELLER" | "ADMIN";
   adminId: string;
   centerId: string; // Phase 1: Required center selection
+
+  // SELLER 1차 정보
   channels: string[]; // Phase 1: Activity channels for SELLER
   avgSales: number | undefined; // Phase 1: Monthly average sales for SELLER
+
+  // SELLER 2차 정보 (선택)
+  categories?: string[];
+  regions?: string[];
+  timeSlots?: string[];
 };
 
 export default function SignupPage() {
   const [formData, setFormData] = useState<FormData>({
-    id: "",
+    username: "",
     password: "",
     name: "",
     phone: "",
@@ -38,6 +45,9 @@ export default function SignupPage() {
     centerId: "",
     channels: [],
     avgSales: undefined,
+    categories: [],
+    regions: [],
+    timeSlots: [],
   });
   const [admins, setAdmins] = useState<Array<{ id: string; name: string }>>([]);
   const [centers, setCenters] = useState<Array<{ id: string; name: string; code: string }>>([]);
@@ -73,6 +83,13 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // pptx 스펙: 휴대폰번호 필수 검증
+    if (!formData.phone || formData.phone.length < 10 || formData.phone.length > 11) {
+      setError("휴대폰번호를 올바르게 입력해주세요 (10-11자리)");
+      setLoading(false);
+      return;
+    }
 
     // Phase 1: Validate center selection
     if (!formData.centerId) {
@@ -152,20 +169,29 @@ export default function SignupPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">아이디</label>
+            <label className="block text-sm font-medium mb-2">
+              아이디 <span className="text-red-500">*</span>
+            </label>
             <Input
               type="text"
-              value={formData.id}
+              value={formData.username}
               onChange={(e) =>
-                setFormData({ ...formData, id: e.target.value })
+                setFormData({ ...formData, username: e.target.value })
               }
-              placeholder="아이디를 입력하세요"
+              placeholder="seller123"
               required
+              minLength={3}
+              maxLength={50}
             />
+            <p className="text-xs text-gray-500 mt-1">
+              로그인 시 사용할 아이디 (3-50자)
+            </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">비밀번호</label>
+            <label className="block text-sm font-medium mb-2">
+              비밀번호 <span className="text-red-500">*</span>
+            </label>
             <Input
               type="password"
               value={formData.password}
@@ -174,11 +200,14 @@ export default function SignupPage() {
               }
               placeholder="비밀번호를 입력하세요"
               required
+              minLength={6}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">이름</label>
+            <label className="block text-sm font-medium mb-2">
+              이름 <span className="text-red-500">*</span>
+            </label>
             <Input
               type="text"
               value={formData.name}
@@ -191,26 +220,36 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">연락처</label>
+            <label className="block text-sm font-medium mb-2">
+              휴대폰번호 <span className="text-red-500">*</span>
+            </label>
             <Input
-              type="text"
+              type="tel"
               value={formData.phone}
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
               }
-              placeholder="연락처를 입력하세요"
+              placeholder="01012345678"
+              required
+              minLength={10}
+              maxLength={11}
             />
+            <p className="text-xs text-gray-500 mt-1">
+              숫자만 입력 (10-11자리)
+            </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">이메일</label>
+            <label className="block text-sm font-medium mb-2">
+              이메일 (선택)
+            </label>
             <Input
               type="email"
-              value={formData.email}
+              value={formData.email || ""}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              placeholder="이메일을 입력하세요"
+              placeholder="user@example.com"
             />
           </div>
 
