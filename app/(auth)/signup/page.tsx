@@ -276,7 +276,7 @@ export default function SignupPage() {
               소속 센터 <span className="text-red-500">*</span>
             </label>
             <Select
-              value={formData.centerId}
+              value={formData.centerId || undefined}
               onValueChange={(value) =>
                 setFormData({ ...formData, centerId: value })
               }
