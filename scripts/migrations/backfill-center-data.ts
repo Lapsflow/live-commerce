@@ -12,7 +12,7 @@
  */
 
 import 'dotenv/config';
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role } from '@/lib/generated/prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 
 const DATABASE_URL = process.env.DATABASE_URL ?? '';

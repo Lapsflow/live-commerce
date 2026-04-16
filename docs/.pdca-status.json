@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-04-16T11:38:01.212Z",
+  "lastUpdated": "2026-04-16T11:48:02.309Z",
   "activeFeatures": [
     "live-commerce-migration",
     "db",
@@ -717,9 +717,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-10T10:09:08.094Z",
-        "lastUpdated": "2026-04-16T11:36:37.794Z"
+        "lastUpdated": "2026-04-16T11:48:00.497Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/prisma/seed.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/prisma/seed-warehouses.ts"
     },
     "[productId]": {
       "phase": "do",
@@ -782,7 +782,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-12T12:27:31.070Z",
-        "lastUpdated": "2026-04-12T12:33:18.578Z"
+        "lastUpdated": "2026-04-16T11:48:02.309Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/scripts/migrations/validate-center-migration.ts"
     },
@@ -1312,7 +1312,7 @@
   "session": {
     "startedAt": "2026-04-05T11:31:25.159Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-04-16T11:38:01.212Z"
+    "lastActivity": "2026-04-16T11:48:02.309Z"
   },
   "history": [
     {
@@ -4860,6 +4860,30 @@
     {
       "timestamp": "2026-04-16T11:38:01.212Z",
       "feature": "fixtures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:41:48.689Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:48:00.497Z",
+      "feature": "prisma",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:48:01.476Z",
+      "feature": "migrations",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-16T11:48:02.309Z",
+      "feature": "migrations",
       "phase": "do",
       "action": "updated"
     }
