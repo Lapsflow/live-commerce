@@ -23,7 +23,7 @@ const productUpdateSchema = z.object({
 
 // GET: Get single product
 // Phase 2: withRole() middleware applied
-export const GET = withRole(["ADMIN", "SELLER"], async (
+export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (
   req: NextRequest,
   user: AuthUser,
   { params }: { params: Promise<{ id: string }> }
@@ -70,7 +70,7 @@ export const GET = withRole(["ADMIN", "SELLER"], async (
 
 // PUT: Update product
 // Phase 2: withRole() middleware applied
-export const PUT = withRole(["ADMIN", "SELLER"], async (
+export const PUT = withRole(["MASTER", "ADMIN", "SELLER"], async (
   req: NextRequest,
   user: AuthUser,
   { params }: { params: Promise<{ id: string }> }
@@ -183,7 +183,7 @@ export const PUT = withRole(["ADMIN", "SELLER"], async (
 
 // DELETE: Delete product
 // Phase 2: withRole() middleware applied (ADMIN only)
-export const DELETE = withRole(["ADMIN"], async (
+export const DELETE = withRole(["MASTER", "ADMIN"], async (
   req: NextRequest,
   user: AuthUser,
   { params }: { params: Promise<{ id: string }> }

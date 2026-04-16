@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { withRole } from "@/lib/api/middleware";
 
 // Phase 2: withRole() middleware applied (ADMIN only)
-export const POST = withRole(["ADMIN"], async (
+export const POST = withRole(["MASTER", "ADMIN"], async (
   req: NextRequest,
   authUser,
   { params }: { params: Promise<{ userId: string }> }

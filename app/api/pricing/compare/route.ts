@@ -9,7 +9,7 @@ import { ok, errors } from '@/lib/api/response';
 import { getPricing } from '@/lib/services/pricing/marketPricing';
 import { withRole, type AuthUser } from '@/lib/api/middleware';
 
-export const GET = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
 
     const { searchParams } = new URL(req.url);

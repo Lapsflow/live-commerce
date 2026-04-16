@@ -23,7 +23,7 @@ const aiAnalyzeSchema = z.object({
   skipCache: z.boolean().optional(),
 });
 
-export const POST = withRole(["ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
     // Rate limiting check
     const userId = user.userId;

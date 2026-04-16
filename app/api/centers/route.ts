@@ -19,7 +19,7 @@ import { validateCenterCode } from '@/lib/validators/center';
  * 센터 목록 조회 (ADMIN만 접근 가능)
  * Phase 2: withRole() middleware applied
  */
-export const GET = withRole(["ADMIN"], async (req: NextRequest, user) => {
+export const GET = withRole(["MASTER", "ADMIN"], async (req: NextRequest, user) => {
   try {
 
     // Query parameters
@@ -50,7 +50,7 @@ export const GET = withRole(["ADMIN"], async (req: NextRequest, user) => {
  * 센터 생성 (ADMIN만 가능)
  * Phase 2: withRole() middleware applied
  */
-export const POST = withRole(["ADMIN"], async (req: NextRequest, user) => {
+export const POST = withRole(["MASTER", "ADMIN"], async (req: NextRequest, user) => {
   try {
 
     const body = await req.json();
