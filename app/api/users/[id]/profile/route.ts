@@ -10,15 +10,16 @@ const profileUpdateSchema = z.object({
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await req.json();
     const validatedData = profileUpdateSchema.parse(body);
 
     // 사용자 존재 확인
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!user) {
@@ -38,7 +39,7 @@ export async function PATCH(
 
     // 프로필 업데이트
     const updatedUser = await prisma.user.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         categories: validatedData.categories,
         regions: validatedData.regions,
