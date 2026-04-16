@@ -106,8 +106,17 @@ export default async function LiveBroadcastPage({
     },
   });
 
-  // Combine products
-  const allProducts = [...centerProducts, ...hqProducts];
+  // Combine products and serialize dates for client components
+  const allProducts = [...centerProducts, ...hqProducts].map((product) => ({
+    ...product,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    centerStocks: product.centerStocks.map((stock) => ({
+      ...stock,
+      createdAt: stock.createdAt.toISOString(),
+      updatedAt: stock.updatedAt.toISOString(),
+    })),
+  }));
 
   return (
     <div className="container mx-auto py-6">
