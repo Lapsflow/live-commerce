@@ -1,8 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { db } from '@/lib/db';
+import { NextRequest } from 'next/server';
+import { withRole, AuthUser } from '@/lib/api/middleware';
+import { prisma } from '@/lib/db/prisma';
+import { ok, paginated, errors } from '@/lib/api/response';
 import { normBarcode } from '@/lib/utils/barcode';
-import { paginated } from '@/lib/api/response';
+import { z } from 'zod';
+
+const barcodeMasterCreateSchema = z.object({
+  barcode: z.string().min(1, "바코드는 필수입니다"),
+  standardName: z.string().min(1, "표준명은 필수입니다"),
+  category: z.string().nullable().optional(),
+  manufacturer: z.string().nullable().optional(),
+  specifications: z.record(z.string(), z.unknown()).nullable().optional(),
+});
+
+const barcodeMasterUpdateSchema = z.object({
+  id: z.string().min(1, "ID는 필수입니다"),
+  standardName: z.string().optional(),
+  category: z.string().nullable().optional(),
+  manufacturer: z.string().nullable().optional(),
+  specifications: z.record(z.string(), z.unknown()).nullable().optional(),
+  isActive: z.boolean().optional(),
+});
 
 /**
  * Barcode Master API
@@ -12,185 +30,114 @@ import { paginated } from '@/lib/api/response';
  */
 
 // GET /api/barcode-master - List all barcode masters
-export async function GET(req: NextRequest) {
-  const session = await auth();
-
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, _user: AuthUser) => {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get('search');
   const isActive = searchParams.get('isActive');
-  const pageIndex = parseInt(searchParams.get('pageIndex') || '0');
-  const pageSize = parseInt(searchParams.get('pageSize') || '50');
+  const pageIndex = Math.max(0, parseInt(searchParams.get('pageIndex') || '0'));
+  const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('pageSize') || '50')));
 
-  try {
-    const where: any = {};
+  const where: Record<string, unknown> = {};
 
-    if (search) {
-      where.OR = [
-        { barcode: { contains: search, mode: 'insensitive' } },
-        { standardName: { contains: search, mode: 'insensitive' } },
-        { category: { contains: search, mode: 'insensitive' } },
-        { manufacturer: { contains: search, mode: 'insensitive' } },
-      ];
-    }
-
-    if (isActive !== null && isActive !== undefined) {
-      where.isActive = isActive === 'true';
-    }
-
-    const [barcodes, total] = await Promise.all([
-      db.barcodeMaster.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip: pageIndex * pageSize,
-        take: pageSize,
-      }),
-      db.barcodeMaster.count({ where }),
-    ]);
-
-    return paginated(barcodes, total, pageSize);
-  } catch (error) {
-    console.error('[Barcode Master] GET error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch barcode masters' },
-      { status: 500 }
-    );
+  if (search) {
+    where.OR = [
+      { barcode: { contains: search, mode: 'insensitive' } },
+      { standardName: { contains: search, mode: 'insensitive' } },
+      { category: { contains: search, mode: 'insensitive' } },
+      { manufacturer: { contains: search, mode: 'insensitive' } },
+    ];
   }
-}
+
+  if (isActive !== null && isActive !== undefined) {
+    where.isActive = isActive === 'true';
+  }
+
+  const [barcodes, total] = await Promise.all([
+    prisma.barcodeMaster.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip: pageIndex * pageSize,
+      take: pageSize,
+    }),
+    prisma.barcodeMaster.count({ where }),
+  ]);
+
+  return paginated(barcodes, total, pageSize);
+});
 
 // POST /api/barcode-master - Create new barcode master
-export async function POST(req: NextRequest) {
-  const session = await auth();
+export const POST = withRole(["MASTER"], async (req: NextRequest, user: AuthUser) => {
+  const body = await req.json();
+  const parsed = barcodeMasterCreateSchema.safeParse(body);
 
-  // Only MASTER role can register official barcodes
-  if (session?.user?.role !== 'MASTER') {
-    return NextResponse.json(
-      { error: 'Only Master role can register barcodes' },
-      { status: 403 }
-    );
+  if (!parsed.success) {
+    return errors.badRequest(parsed.error.issues[0].message, parsed.error.issues);
   }
 
-  try {
-    const body = await req.json();
-    const { barcode, standardName, category, manufacturer, specifications } = body;
+  const { barcode, standardName, category, manufacturer, specifications } = parsed.data;
+  const normalized = normBarcode(barcode);
 
-    if (!barcode || !standardName) {
-      return NextResponse.json(
-        { error: 'Barcode and standardName are required' },
-        { status: 400 }
-      );
-    }
+  const existing = await prisma.barcodeMaster.findUnique({
+    where: { barcode: normalized },
+  });
 
-    const normalized = normBarcode(barcode);
-
-    // Check if barcode already exists
-    const existing = await db.barcodeMaster.findUnique({
-      where: { barcode: normalized },
-    });
-
-    if (existing) {
-      return NextResponse.json(
-        { error: 'Barcode already registered' },
-        { status: 409 }
-      );
-    }
-
-    const master = await db.barcodeMaster.create({
-      data: {
-        barcode: normalized,
-        standardName,
-        category: category || null,
-        manufacturer: manufacturer || null,
-        specifications: specifications ? JSON.stringify(specifications) : null,
-        registeredBy: session.user.id!,
-        isActive: true,
-      },
-    });
-
-    return NextResponse.json({ success: true, data: master });
-  } catch (error) {
-    console.error('[Barcode Master] POST error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create barcode master' },
-      { status: 500 }
-    );
+  if (existing) {
+    return errors.conflict('이미 등록된 바코드입니다');
   }
-}
+
+  const master = await prisma.barcodeMaster.create({
+    data: {
+      barcode: normalized,
+      standardName,
+      category: category || null,
+      manufacturer: manufacturer || null,
+      specifications: specifications ? JSON.stringify(specifications) : null,
+      registeredBy: user.userId,
+      isActive: true,
+    },
+  });
+
+  return ok(master);
+});
 
 // PUT /api/barcode-master - Update barcode master
-export async function PUT(req: NextRequest) {
-  const session = await auth();
+export const PUT = withRole(["MASTER"], async (req: NextRequest, _user: AuthUser) => {
+  const body = await req.json();
+  const parsed = barcodeMasterUpdateSchema.safeParse(body);
 
-  if (session?.user?.role !== 'MASTER') {
-    return NextResponse.json(
-      { error: 'Only Master role can update barcodes' },
-      { status: 403 }
-    );
+  if (!parsed.success) {
+    return errors.badRequest(parsed.error.issues[0].message, parsed.error.issues);
   }
 
-  try {
-    const body = await req.json();
-    const { id, standardName, category, manufacturer, specifications, isActive } = body;
+  const { id, standardName, category, manufacturer, specifications, isActive } = parsed.data;
 
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
-    }
+  const master = await prisma.barcodeMaster.update({
+    where: { id },
+    data: {
+      standardName: standardName || undefined,
+      category: category !== undefined ? category : undefined,
+      manufacturer: manufacturer !== undefined ? manufacturer : undefined,
+      specifications: specifications ? JSON.stringify(specifications) : undefined,
+      isActive: isActive !== undefined ? isActive : undefined,
+    },
+  });
 
-    const master = await db.barcodeMaster.update({
-      where: { id },
-      data: {
-        standardName: standardName || undefined,
-        category: category !== undefined ? category : undefined,
-        manufacturer: manufacturer !== undefined ? manufacturer : undefined,
-        specifications: specifications ? JSON.stringify(specifications) : undefined,
-        isActive: isActive !== undefined ? isActive : undefined,
-      },
-    });
-
-    return NextResponse.json({ success: true, data: master });
-  } catch (error) {
-    console.error('[Barcode Master] PUT error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update barcode master' },
-      { status: 500 }
-    );
-  }
-}
+  return ok(master);
+});
 
 // DELETE /api/barcode-master - Deactivate barcode master
-export async function DELETE(req: NextRequest) {
-  const session = await auth();
-
-  if (session?.user?.role !== 'MASTER') {
-    return NextResponse.json(
-      { error: 'Only Master role can delete barcodes' },
-      { status: 403 }
-    );
-  }
-
+export const DELETE = withRole(["MASTER"], async (req: NextRequest, _user: AuthUser) => {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get('id');
 
   if (!id) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    return errors.badRequest('ID는 필수입니다');
   }
 
-  try {
-    // Soft delete by setting isActive = false
-    const master = await db.barcodeMaster.update({
-      where: { id },
-      data: { isActive: false },
-    });
+  const master = await prisma.barcodeMaster.update({
+    where: { id },
+    data: { isActive: false },
+  });
 
-    return NextResponse.json({ success: true, data: master });
-  } catch (error) {
-    console.error('[Barcode Master] DELETE error:', error);
-    return NextResponse.json(
-      { error: 'Failed to deactivate barcode master' },
-      { status: 500 }
-    );
-  }
-}
+  return ok(master);
+});

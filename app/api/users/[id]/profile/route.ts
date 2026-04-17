@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { withRole, AuthUser } from '@/lib/api/middleware';
 import { prisma } from '@/lib/db/prisma';
+import { ok, errors } from '@/lib/api/response';
 import { z } from 'zod';
 
 const profileUpdateSchema = z.object({
@@ -8,58 +10,52 @@ const profileUpdateSchema = z.object({
   timeSlots: z.array(z.string()).optional(),
 });
 
-export async function PATCH(
+export const PATCH = withRole(["MASTER", "ADMIN", "SELLER"], async (
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const body = await req.json();
-    const validatedData = profileUpdateSchema.parse(body);
+  user: AuthUser,
+  context: { params: Promise<{ id: string }> }
+) => {
+  const { id } = await context.params;
+  const body = await req.json();
+  const parsed = profileUpdateSchema.safeParse(body);
 
-    // 사용자 존재 확인
-    const user = await prisma.user.findUnique({
-      where: { id },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: '사용자를 찾을 수 없습니다' },
-        { status: 404 }
-      );
-    }
-
-    // SELLER만 프로필 업데이트 가능
-    if (user.role !== 'SELLER') {
-      return NextResponse.json(
-        { error: 'SELLER만 프로필을 업데이트할 수 있습니다' },
-        { status: 403 }
-      );
-    }
-
-    // 프로필 업데이트
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data: {
-        categories: validatedData.categories,
-        regions: validatedData.regions,
-        timeSlots: validatedData.timeSlots,
-      },
-      select: {
-        id: true,
-        name: true,
-        categories: true,
-        regions: true,
-        timeSlots: true,
-      },
-    });
-
-    return NextResponse.json(updatedUser);
-  } catch (error) {
-    console.error('Profile update error:', error);
-    return NextResponse.json(
-      { error: '프로필 업데이트 중 오류가 발생했습니다' },
-      { status: 500 }
-    );
+  if (!parsed.success) {
+    return errors.badRequest(parsed.error.issues[0].message, parsed.error.issues);
   }
-}
+
+  // 본인 프로필만 수정 가능 (MASTER/ADMIN은 예외)
+  if (user.role === "SELLER" && user.userId !== id) {
+    return errors.forbidden("본인의 프로필만 수정할 수 있습니다.");
+  }
+
+  const targetUser = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!targetUser) {
+    return errors.notFound('사용자');
+  }
+
+  // SELLER만 프로필 업데이트 가능
+  if (targetUser.role !== 'SELLER') {
+    return errors.forbidden('SELLER만 프로필을 업데이트할 수 있습니다.');
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: {
+      categories: parsed.data.categories,
+      regions: parsed.data.regions,
+      timeSlots: parsed.data.timeSlots,
+    },
+    select: {
+      id: true,
+      name: true,
+      categories: true,
+      regions: true,
+      timeSlots: true,
+    },
+  });
+
+  return ok(updatedUser);
+});
