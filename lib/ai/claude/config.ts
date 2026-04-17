@@ -1,39 +1,42 @@
 /**
- * Claude API Configuration
+ * Gemini AI Configuration
  */
 
-import { ClaudeConfig } from './types';
+import { GeminiConfig } from './types';
 
-export function getClaudeConfig(): ClaudeConfig {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+export function getGeminiConfig(): GeminiConfig {
+  const apiKey = process.env.GEMINI_KEY;
 
   if (!apiKey) {
     throw new Error(
-      'Claude API key not configured. Set ANTHROPIC_API_KEY environment variable.'
+      'Gemini API key not configured. Set GEMINI_KEY environment variable.'
     );
   }
 
   return {
     apiKey,
-    model: process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022',
-    maxTokens: parseInt(process.env.CLAUDE_MAX_TOKENS || '4096'),
+    model: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    maxTokens: parseInt(process.env.GEMINI_MAX_TOKENS || '4096'),
   };
 }
 
 /**
- * Pricing constants
- * Based on Claude 3.5 Sonnet pricing as of 2024
+ * Gemini pricing (per 1K tokens, approximate)
+ * Gemini 1.5 Flash: very low cost
  */
-export const CLAUDE_PRICING = {
-  INPUT_PER_1K: 0.003, // $0.003 per 1K input tokens
-  OUTPUT_PER_1K: 0.015, // $0.015 per 1K output tokens
+export const GEMINI_PRICING = {
+  INPUT_PER_1K: 0.000075, // $0.000075 per 1K input tokens
+  OUTPUT_PER_1K: 0.0003, // $0.0003 per 1K output tokens
 } as const;
 
 /**
  * Calculate cost for token usage
  */
 export function calculateCost(inputTokens: number, outputTokens: number): number {
-  const inputCost = (inputTokens / 1000) * CLAUDE_PRICING.INPUT_PER_1K;
-  const outputCost = (outputTokens / 1000) * CLAUDE_PRICING.OUTPUT_PER_1K;
+  const inputCost = (inputTokens / 1000) * GEMINI_PRICING.INPUT_PER_1K;
+  const outputCost = (outputTokens / 1000) * GEMINI_PRICING.OUTPUT_PER_1K;
   return inputCost + outputCost;
 }
+
+// Backward compatibility alias
+export const getClaudeConfig = getGeminiConfig;

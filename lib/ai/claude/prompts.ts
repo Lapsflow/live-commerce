@@ -1,5 +1,5 @@
 /**
- * Claude AI Analysis Prompts
+ * AI Analysis Prompts
  * Templates for pricing and sales strategy analysis
  */
 

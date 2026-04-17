@@ -88,17 +88,17 @@ const ENV_RULES: EnvValidationRule[] = [
 
   // AI Services
   {
-    key: "ANTHROPIC_API_KEY",
+    key: "GEMINI_KEY",
     required: true,
     env: "production",
-    description: "Claude API Key (AI analysis)",
-    pattern: /^sk-ant-api03-.+/,
+    description: "Google Gemini API Key (AI analysis)",
+    pattern: /^AIza.+/,
   },
   {
-    key: "CLAUDE_MODEL",
+    key: "GEMINI_MODEL",
     required: false,
     env: "all",
-    description: "Claude model version",
+    description: "Gemini model version",
   },
 
   // ONEWMS Integration

@@ -1,12 +1,11 @@
 /**
- * Claude API Client
- * API Documentation: https://docs.anthropic.com/claude/reference/
- * Cost Management: Track token usage and estimated costs
+ * Gemini AI Client
+ * Uses Google Generative AI SDK
  */
 
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
-  ClaudeConfig,
+  GeminiConfig,
   ClaudeApiError,
   PricingContext,
   PricingAnalysis,
@@ -14,67 +13,65 @@ import {
   SalesAnalysis,
   TokenUsage,
 } from './types';
-import { getClaudeConfig, calculateCost } from './config';
+import { getGeminiConfig, calculateCost } from './config';
 import { PRICING_ANALYSIS_PROMPT, SALES_ANALYSIS_PROMPT } from './prompts';
 
-export class ClaudeClient {
-  private client: Anthropic;
-  private config: ClaudeConfig;
+export class GeminiClient {
+  private genAI: GoogleGenerativeAI;
+  private config: GeminiConfig;
   private requestCount: number = 0;
   private totalTokensUsed: number = 0;
   private totalCost: number = 0;
 
-  constructor(config?: ClaudeConfig) {
-    this.config = config || getClaudeConfig();
-    this.client = new Anthropic({
-      apiKey: this.config.apiKey,
-    });
+  constructor(config?: GeminiConfig) {
+    this.config = config || getGeminiConfig();
+    this.genAI = new GoogleGenerativeAI(this.config.apiKey);
   }
 
   /**
    * Make API request
    */
   private async request(
-    messages: Array<{ role: 'user' | 'assistant'; content: string }>,
+    prompt: string,
     options: {
-      system?: string;
+      systemInstruction?: string;
       temperature?: number;
     } = {}
   ): Promise<{ text: string; usage: TokenUsage }> {
     try {
-      const response = await this.client.messages.create({
-        model: this.config.model!,
-        max_tokens: this.config.maxTokens!,
-        messages,
-        system: options.system,
-        temperature: options.temperature || 1.0,
+      const model = this.genAI.getGenerativeModel({
+        model: this.config.model || 'gemini-1.5-flash',
+        systemInstruction: options.systemInstruction,
+        generationConfig: {
+          temperature: options.temperature || 1.0,
+          maxOutputTokens: this.config.maxTokens || 4096,
+        },
       });
 
+      const result = await model.generateContent(prompt);
+      const response = result.response;
+      const text = response.text();
+
       // Track token usage
+      const usageMetadata = response.usageMetadata;
+      const inputTokens = usageMetadata?.promptTokenCount || 0;
+      const outputTokens = usageMetadata?.candidatesTokenCount || 0;
+
       const usage: TokenUsage = {
-        inputTokens: response.usage.input_tokens,
-        outputTokens: response.usage.output_tokens,
-        totalTokens: response.usage.input_tokens + response.usage.output_tokens,
-        estimatedCost: calculateCost(
-          response.usage.input_tokens,
-          response.usage.output_tokens
-        ),
+        inputTokens,
+        outputTokens,
+        totalTokens: inputTokens + outputTokens,
+        estimatedCost: calculateCost(inputTokens, outputTokens),
       };
 
       this.requestCount++;
       this.totalTokensUsed += usage.totalTokens;
       this.totalCost += usage.estimatedCost;
 
-      // Extract text from response
-      const text = response.content
-        .filter((block) => block.type === 'text')
-        .map((block) => (block as any).text)
-        .join('\n');
-
       return { text, usage };
     } catch (error: any) {
       const apiError = new Error(
-        error.message || 'Claude API request failed'
+        error.message || 'Gemini API request failed'
       ) as ClaudeApiError;
       apiError.type = error.type || 'unknown_error';
       apiError.status = error.status || -1;
@@ -91,24 +88,20 @@ export class ClaudeClient {
   }> {
     const prompt = PRICING_ANALYSIS_PROMPT(context);
 
-    const { text, usage } = await this.request(
-      [{ role: 'user', content: prompt }],
-      {
-        system:
-          'You are a pricing strategy expert for live commerce. Provide analysis in valid JSON format only.',
-        temperature: 0.7,
-      }
-    );
+    const { text, usage } = await this.request(prompt, {
+      systemInstruction:
+        'You are a pricing strategy expert for live commerce. Provide analysis in valid JSON format only.',
+      temperature: 0.7,
+    });
 
     try {
-      // Parse JSON response
       const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/{[\s\S]*}/);
       const jsonText = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : text;
       const analysis: PricingAnalysis = JSON.parse(jsonText);
 
       return { analysis, usage };
     } catch (error) {
-      console.error('Failed to parse Claude response:', text);
+      console.error('Failed to parse Gemini response:', text);
       throw new Error('Failed to parse AI analysis response');
     }
   }
@@ -122,24 +115,20 @@ export class ClaudeClient {
   }> {
     const prompt = SALES_ANALYSIS_PROMPT(context);
 
-    const { text, usage } = await this.request(
-      [{ role: 'user', content: prompt }],
-      {
-        system:
-          'You are a live commerce sales strategy expert. Provide analysis in valid JSON format only.',
-        temperature: 0.8,
-      }
-    );
+    const { text, usage } = await this.request(prompt, {
+      systemInstruction:
+        'You are a live commerce sales strategy expert. Provide analysis in valid JSON format only.',
+      temperature: 0.8,
+    });
 
     try {
-      // Parse JSON response
       const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/{[\s\S]*}/);
       const jsonText = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : text;
       const analysis: SalesAnalysis = JSON.parse(jsonText);
 
       return { analysis, usage };
     } catch (error) {
-      console.error('Failed to parse Claude response:', text);
+      console.error('Failed to parse Gemini response:', text);
       throw new Error('Failed to parse AI analysis response');
     }
   }
@@ -169,9 +158,15 @@ export class ClaudeClient {
   }
 }
 
+// Backward compatibility alias
+export const ClaudeClient = GeminiClient;
+
 /**
- * Create a new Claude client instance
+ * Create a new Gemini client instance
  */
-export function createClaudeClient(config?: ClaudeConfig): ClaudeClient {
-  return new ClaudeClient(config);
+export function createGeminiClient(config?: GeminiConfig): GeminiClient {
+  return new GeminiClient(config);
 }
+
+// Backward compatibility alias
+export const createClaudeClient = createGeminiClient;

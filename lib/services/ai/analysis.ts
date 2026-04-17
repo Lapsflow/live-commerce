@@ -1,9 +1,9 @@
 /**
  * AI Analysis Service
- * Unified service for product analysis using Claude AI
+ * Unified service for product analysis using Gemini AI
  */
 
-import { createClaudeClient, PricingContext, SalesContext } from '@/lib/ai/claude';
+import { createGeminiClient, PricingContext, SalesContext } from '@/lib/ai/claude';
 import { getPricing } from '@/lib/services/pricing/marketPricing';
 import { prisma } from '@/lib/db/prisma';
 import { getCached, setCached, CACHE_TTL } from '@/lib/cache/redis';
@@ -121,8 +121,8 @@ export async function analyzeProduct(
     rfmScore: product.sellerMatches[0]?.recommendScore || 0,
   };
 
-  // 6. Call Claude API
-  const client = createClaudeClient();
+  // 6. Call Gemini API
+  const client = createGeminiClient();
 
   const [pricingAnalysis, salesAnalysis] = await Promise.all([
     client.analyzePricing(pricingContext),
@@ -194,7 +194,7 @@ async function storeAnalysisInDb(
         parsedData: pricingAnalysis.analysis as any,
         tokensUsed: pricingAnalysis.usage.totalTokens,
         estimatedCost: pricingAnalysis.usage.estimatedCost,
-        modelVersion: 'claude-3-5-sonnet-20241022',
+        modelVersion: 'gemini-1.5-flash',
       },
     });
 
@@ -209,7 +209,7 @@ async function storeAnalysisInDb(
         parsedData: salesAnalysis.analysis as any,
         tokensUsed: salesAnalysis.usage.totalTokens,
         estimatedCost: salesAnalysis.usage.estimatedCost,
-        modelVersion: 'claude-3-5-sonnet-20241022',
+        modelVersion: 'gemini-1.5-flash',
       },
     });
   } catch (error) {

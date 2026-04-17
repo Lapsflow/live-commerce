@@ -1,5 +1,5 @@
 /**
- * Claude AI Client
+ * AI Client (Gemini)
  */
 
 export * from './types';

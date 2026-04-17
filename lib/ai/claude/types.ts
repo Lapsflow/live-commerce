@@ -1,43 +1,15 @@
 /**
- * Claude API Types
- * API Documentation: https://docs.anthropic.com/claude/reference/
+ * AI API Types
  */
 
-export interface ClaudeConfig {
+export interface GeminiConfig {
   apiKey: string;
   model?: string;
   maxTokens?: number;
 }
 
-export interface ClaudeMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-export interface ClaudeApiRequest {
-  model: string;
-  max_tokens: number;
-  messages: ClaudeMessage[];
-  temperature?: number;
-  system?: string;
-}
-
-export interface ClaudeApiResponse {
-  id: string;
-  type: 'message';
-  role: 'assistant';
-  content: Array<{
-    type: 'text';
-    text: string;
-  }>;
-  model: string;
-  stop_reason: 'end_turn' | 'max_tokens' | 'stop_sequence';
-  stop_sequence: string | null;
-  usage: {
-    input_tokens: number;
-    output_tokens: number;
-  };
-}
+// Backward compatibility
+export type ClaudeConfig = GeminiConfig;
 
 export interface ClaudeApiError extends Error {
   type: string;
