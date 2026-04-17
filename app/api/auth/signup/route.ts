@@ -11,13 +11,13 @@ const signupSchema = z.object({
   name: z.string().min(1),
   phone: z.string().min(10).max(11), // 필수 (pptx 스펙)
   email: z.string().email().optional(), // 실제 이메일 (선택)
-  role: z.enum(["SELLER", "ADMIN"]),
+  role: z.string().optional(), // 무시됨 - 항상 SELLER로 가입 (ADMIN은 수기 등록)
   adminId: z.string().optional(),
   centerId: z.string(), // Required - center assignment
 
   // SELLER 1차 정보
-  channels: z.array(z.string()).optional(), // Required if role=SELLER
-  avgSales: z.number().optional(), // Required if role=SELLER
+  channels: z.array(z.string()).optional(),
+  avgSales: z.number().optional(),
 
   // SELLER 2차 정보 (선택)
   categories: z.array(z.string()).optional(),
@@ -48,14 +48,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate SELLER-specific fields
-    if (data.role === "SELLER") {
-      if (!data.channels || data.channels.length === 0) {
-        return error("VALIDATION_ERROR", "판매자는 활동 채널을 선택해야 합니다.", 400);
-      }
-      if (!data.avgSales || data.avgSales <= 0) {
-        return error("VALIDATION_ERROR", "판매자는 월평균 매출을 입력해야 합니다.", 400);
-      }
+    // Validate SELLER-specific fields (회원가입은 항상 SELLER)
+    if (!data.channels || data.channels.length === 0) {
+      return error("VALIDATION_ERROR", "활동 채널을 선택해야 합니다.", 400);
+    }
+    if (!data.avgSales || data.avgSales <= 0) {
+      return error("VALIDATION_ERROR", "월평균 매출을 입력해야 합니다.", 400);
     }
 
     // 중복 확인 (username)
@@ -70,27 +68,27 @@ export async function POST(req: NextRequest) {
     // 비밀번호 해싱
     const passwordHash = await bcrypt.hash(data.password, 10);
 
-    // 사용자 생성
+    // 사용자 생성 (회원가입은 항상 SELLER, ADMIN은 수기 등록)
     const user = await prisma.user.create({
       data: {
-        username: data.username, // 로그인용 아이디 (pptx 스펙)
-        email: data.email, // 실제 이메일 (선택)
+        username: data.username,
+        email: data.email,
         name: data.name,
-        phone: data.phone, // 필수 (pptx 스펙)
-        role: data.role,
+        phone: data.phone,
+        role: "SELLER", // 항상 SELLER - ADMIN은 관리자가 수기 등록
         adminId: data.adminId,
-        centerId: data.centerId, // Center assignment
+        centerId: data.centerId,
 
-        // SELLER 1차 정보
-        channels: data.role === "SELLER" ? data.channels : [],
-        avgSales: data.role === "SELLER" ? data.avgSales : undefined,
+        // SELLER 정보
+        channels: data.channels || [],
+        avgSales: data.avgSales,
 
-        // SELLER 2차 정보 (선택)
+        // 2차 정보 (선택)
         categories: data.categories || [],
         regions: data.regions || [],
         timeSlots: data.timeSlots || [],
 
-        contractStatus: data.role === "SELLER" ? "PENDING" : "APPROVED", // SELLER needs approval
+        contractStatus: "PENDING", // 관리자 승인 필요
         passwordHash,
       },
     });
@@ -100,7 +98,7 @@ export async function POST(req: NextRequest) {
       name: user.name,
       role: user.role,
       contractStatus: user.contractStatus,
-      message: data.role === "SELLER" ? "계약 승인 대기 중입니다. 관리자 승인 후 로그인 가능합니다." : undefined,
+      message: "계약 승인 대기 중입니다. 관리자 승인 후 로그인 가능합니다.",
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {

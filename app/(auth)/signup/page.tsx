@@ -19,7 +19,6 @@ type FormData = {
   name: string;
   phone: string; // 필수 (pptx 스펙)
   email?: string; // 실제 이메일 (선택)
-  role: "SELLER" | "ADMIN";
   adminId: string;
   centerId: string; // Phase 1: Required center selection
 
@@ -40,7 +39,6 @@ export default function SignupPage() {
     name: "",
     phone: "",
     email: "",
-    role: "SELLER",
     adminId: "",
     centerId: "",
     channels: [],
@@ -69,15 +67,13 @@ export default function SignupPage() {
       .catch(() => setCenters([]));
   }, []);
 
-  // 관리자 목록 조회 (셀러 선택 시)
+  // 관리자 목록 조회
   useEffect(() => {
-    if (formData.role === "SELLER") {
-      fetch("/api/users?role=ADMIN")
-        .then((res) => res.json())
-        .then((data) => setAdmins(data.data || []))
-        .catch(() => setAdmins([]));
-    }
-  }, [formData.role]);
+    fetch("/api/users?role=ADMIN")
+      .then((res) => res.json())
+      .then((data) => setAdmins(data.data || []))
+      .catch(() => setAdmins([]));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,24 +94,22 @@ export default function SignupPage() {
       return;
     }
 
-    // Phase 1: Validate SELLER-specific fields
-    if (formData.role === "SELLER") {
-      if (formData.channels.length === 0) {
-        setError("활동 채널을 최소 1개 이상 선택해주세요.");
-        setLoading(false);
-        return;
-      }
-      if (!formData.avgSales || formData.avgSales <= 0) {
-        setError("월평균 매출을 입력해주세요.");
-        setLoading(false);
-        return;
-      }
+    // Validate SELLER-specific fields
+    if (formData.channels.length === 0) {
+      setError("활동 채널을 최소 1개 이상 선택해주세요.");
+      setLoading(false);
+      return;
+    }
+    if (!formData.avgSales || formData.avgSales <= 0) {
+      setError("월평균 매출을 입력해주세요.");
+      setLoading(false);
+      return;
     }
 
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, role: "SELLER" }),
     });
 
     const data = await res.json();
@@ -125,13 +119,8 @@ export default function SignupPage() {
       setLoading(false);
     } else {
       setLoading(false);
-      if (formData.role === "SELLER") {
-        // Phase 1: Show approval waiting message for SELLER
-        setSuccess(true);
-        setSuccessMessage(data.data?.message || "회원가입이 완료되었습니다. 관리자 승인 후 로그인 가능합니다.");
-      } else {
-        router.push("/login?signup=success");
-      }
+      setSuccess(true);
+      setSuccessMessage(data.data?.message || "회원가입이 완료되었습니다. 관리자 승인 후 로그인 가능합니다.");
     }
   };
 
@@ -254,24 +243,6 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">역할</label>
-            <Select
-              value={formData.role}
-              onValueChange={(value) =>
-                setFormData({ ...formData, role: value as "SELLER" | "ADMIN" })
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="역할을 선택하세요" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SELLER">셀러</SelectItem>
-                <SelectItem value="ADMIN">관리자</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
             <label className="block text-sm font-medium mb-2">
               소속 센터 <span className="text-red-500">*</span>
             </label>
@@ -294,7 +265,7 @@ export default function SignupPage() {
             </Select>
           </div>
 
-          {formData.role === "SELLER" && admins.length > 0 && (
+          {admins.length > 0 && (
             <div>
               <label className="block text-sm font-medium mb-2">
                 소속 관리자
@@ -319,76 +290,72 @@ export default function SignupPage() {
             </div>
           )}
 
-          {/* Phase 2: SELLER-specific fields */}
-          {formData.role === "SELLER" && (
-            <>
-              <div className="pt-4 border-t border-gray-200">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">
-                  판매자 추가 정보
-                </h3>
-              </div>
+          {/* 판매자 추가 정보 */}
+          <div className="pt-4 border-t border-gray-200">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900">
+              판매자 추가 정보
+            </h3>
+          </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  활동 채널 <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {["쿠팡", "네이버", "SSG", "11번가", "GRIP", "CLME", "유튜브", "틱톡"].map(
-                    (channel) => (
-                      <label
-                        key={channel}
-                        className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={formData.channels.includes(channel)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData({
-                                ...formData,
-                                channels: [...formData.channels, channel],
-                              });
-                            } else {
-                              setFormData({
-                                ...formData,
-                                channels: formData.channels.filter(
-                                  (c) => c !== channel
-                                ),
-                              });
-                            }
-                          }}
-                          className="rounded"
-                        />
-                        <span className="text-sm">{channel}</span>
-                      </label>
-                    )
-                  )}
-                </div>
-              </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              활동 채널 <span className="text-red-500">*</span>
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {["쿠팡", "네이버", "SSG", "11번가", "GRIP", "CLME", "유튜브", "틱톡"].map(
+                (channel) => (
+                  <label
+                    key={channel}
+                    className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={formData.channels.includes(channel)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormData({
+                            ...formData,
+                            channels: [...formData.channels, channel],
+                          });
+                        } else {
+                          setFormData({
+                            ...formData,
+                            channels: formData.channels.filter(
+                              (c) => c !== channel
+                            ),
+                          });
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <span className="text-sm">{channel}</span>
+                  </label>
+                )
+              )}
+            </div>
+          </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  월평균 매출 (만원) <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="number"
-                  value={formData.avgSales || ""}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      avgSales: parseInt(e.target.value) || undefined,
-                    })
-                  }
-                  placeholder="예: 500 (500만원)"
-                  min="0"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  최근 3개월 평균 매출을 입력해주세요
-                </p>
-              </div>
-            </>
-          )}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              월평균 매출 (만원) <span className="text-red-500">*</span>
+            </label>
+            <Input
+              type="number"
+              value={formData.avgSales || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  avgSales: parseInt(e.target.value) || undefined,
+                })
+              }
+              placeholder="예: 500 (500만원)"
+              min="0"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              최근 3개월 평균 매출을 입력해주세요
+            </p>
+          </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}
 
