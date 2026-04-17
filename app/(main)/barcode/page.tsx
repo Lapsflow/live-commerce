@@ -70,9 +70,9 @@ export default function BarcodePage() {
         return;
       }
 
-      const data = await res.json();
-      if (data.product) {
-        setProduct(data.product);
+      const json = await res.json();
+      if (json.data) {
+        setProduct(json.data);
       } else {
         setError("해당 바코드의 상품이 없습니다");
         setProduct(null);
