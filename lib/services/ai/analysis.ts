@@ -194,7 +194,7 @@ async function storeAnalysisInDb(
         parsedData: pricingAnalysis.analysis as any,
         tokensUsed: pricingAnalysis.usage.totalTokens,
         estimatedCost: pricingAnalysis.usage.estimatedCost,
-        modelVersion: 'gemini-1.5-flash',
+        modelVersion: 'gemini-2.5-flash',
       },
     });
 
@@ -209,7 +209,7 @@ async function storeAnalysisInDb(
         parsedData: salesAnalysis.analysis as any,
         tokensUsed: salesAnalysis.usage.totalTokens,
         estimatedCost: salesAnalysis.usage.estimatedCost,
-        modelVersion: 'gemini-1.5-flash',
+        modelVersion: 'gemini-2.5-flash',
       },
     });
   } catch (error) {

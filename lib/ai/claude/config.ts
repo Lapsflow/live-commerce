@@ -15,14 +15,14 @@ export function getGeminiConfig(): GeminiConfig {
 
   return {
     apiKey,
-    model: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
     maxTokens: parseInt(process.env.GEMINI_MAX_TOKENS || '4096'),
   };
 }
 
 /**
  * Gemini pricing (per 1K tokens, approximate)
- * Gemini 1.5 Flash: very low cost
+ * Gemini 2.5 Flash: very low cost
  */
 export const GEMINI_PRICING = {
   INPUT_PER_1K: 0.000075, // $0.000075 per 1K input tokens

@@ -40,7 +40,7 @@ export class GeminiClient {
   ): Promise<{ text: string; usage: TokenUsage }> {
     try {
       const model = this.genAI.getGenerativeModel({
-        model: this.config.model || 'gemini-1.5-flash',
+        model: this.config.model || 'gemini-2.5-flash',
         systemInstruction: options.systemInstruction,
         generationConfig: {
           temperature: options.temperature || 1.0,
