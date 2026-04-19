@@ -15,6 +15,7 @@ import {
   PackageIcon,
   AlertTriangleIcon,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DashboardStats {
   totalSales: number;
@@ -67,9 +68,16 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-6">
-        <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">로딩 중...</p>
+      <div className="container mx-auto py-6 space-y-6">
+        <Skeleton className="h-9 w-48" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-80 rounded-xl lg:col-span-2" />
+          <Skeleton className="h-80 rounded-xl" />
         </div>
       </div>
     );
@@ -152,18 +160,18 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
-              <AlertTriangleIcon className={`h-8 w-8 ${onewmsStats.orders.failed > 0 ? 'text-red-500' : 'text-gray-300'}`} />
+              <AlertTriangleIcon className={`h-8 w-8 ${onewmsStats.orders.failed > 0 ? 'text-red-500' : 'text-grey-300'}`} />
               <div>
-                <p className="text-sm text-gray-600">실패 주문</p>
-                <p className="text-2xl font-bold text-gray-900">{onewmsStats.orders.failed}건</p>
+                <p className="text-sm text-grey-600">실패 주문</p>
+                <p className="text-2xl font-bold text-grey-900">{onewmsStats.orders.failed}건</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
-              <AlertTriangleIcon className={`h-8 w-8 ${onewmsStats.stock.conflicts > 0 ? 'text-yellow-500' : 'text-gray-300'}`} />
+              <AlertTriangleIcon className={`h-8 w-8 ${onewmsStats.stock.conflicts > 0 ? 'text-yellow-500' : 'text-grey-300'}`} />
               <div>
-                <p className="text-sm text-gray-600">재고 충돌</p>
-                <p className="text-2xl font-bold text-gray-900">{onewmsStats.stock.conflicts}건</p>
+                <p className="text-sm text-grey-600">재고 충돌</p>
+                <p className="text-2xl font-bold text-grey-900">{onewmsStats.stock.conflicts}건</p>
               </div>
             </div>
           </div>

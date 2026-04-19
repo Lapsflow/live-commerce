@@ -84,12 +84,12 @@ export default function SyncControls({ onSyncComplete }: SyncControlsProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {controls.map((control) => (
-          <div key={control.id} className="border border-gray-200 rounded-lg p-4">
+          <div key={control.id} className="border border-grey-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
               <span className="text-2xl mr-2">{control.icon}</span>
               <h3 className="font-semibold">{control.label}</h3>
             </div>
-            <p className="text-sm text-gray-600 mb-4">{control.description}</p>
+            <p className="text-sm text-grey-600 mb-4">{control.description}</p>
             <button
               onClick={() => setConfirmDialog(control.id)}
               disabled={control.loading}
@@ -106,7 +106,7 @@ export default function SyncControls({ onSyncComplete }: SyncControlsProps) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <h3 className="text-lg font-bold mb-2">확인</h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-grey-600 mb-6">
               {controls.find((c) => c.id === confirmDialog)?.label}을(를)
               실행하시겠습니까?
             </p>
@@ -122,7 +122,7 @@ export default function SyncControls({ onSyncComplete }: SyncControlsProps) {
               </button>
               <button
                 onClick={() => setConfirmDialog(null)}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-grey-200 hover:bg-grey-300 text-grey-800 py-2 px-4 rounded transition-colors"
               >
                 취소
               </button>

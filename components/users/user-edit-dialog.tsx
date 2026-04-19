@@ -136,7 +136,7 @@ export function UserEditDialog({
                 type="email"
                 value={user?.email || ""}
                 disabled
-                className="bg-gray-100"
+                className="bg-grey-100"
               />
             </div>
 
@@ -227,7 +227,7 @@ export function UserEditDialog({
                   }
                   placeholder="쿠팡, 네이버, 카카오 (쉼표로 구분)"
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-grey-500">
                   여러 채널은 쉼표(,)로 구분하세요
                 </p>
               </div>

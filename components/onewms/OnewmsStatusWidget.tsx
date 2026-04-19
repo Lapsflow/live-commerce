@@ -19,8 +19,8 @@ export default function OnewmsStatusWidget({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="bg-white p-6 rounded-lg shadow animate-pulse">
-            <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-            <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-4 bg-grey-200 rounded w-3/4 mb-4"></div>
+            <div className="h-8 bg-grey-200 rounded w-1/2"></div>
           </div>
         ))}
       </div>
@@ -53,13 +53,13 @@ export default function OnewmsStatusWidget({
     {
       label: '실패 주문',
       value: orders.failed,
-      color: orders.failed > 0 ? 'bg-red-500' : 'bg-gray-300',
+      color: orders.failed > 0 ? 'bg-red-500' : 'bg-grey-300',
       icon: '❌',
     },
     {
       label: '재고 충돌',
       value: stock.conflicts,
-      color: stock.conflicts > 0 ? 'bg-yellow-500' : 'bg-gray-300',
+      color: stock.conflicts > 0 ? 'bg-yellow-500' : 'bg-grey-300',
       icon: '⚠️',
     },
   ];
@@ -72,29 +72,29 @@ export default function OnewmsStatusWidget({
           className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">{metric.label}</span>
+            <span className="text-sm text-grey-600">{metric.label}</span>
             <span className="text-2xl">{metric.icon}</span>
           </div>
-          <div className="text-3xl font-bold text-gray-900">{metric.value}</div>
+          <div className="text-3xl font-bold text-grey-900">{metric.value}</div>
           <div className={`mt-3 h-1 ${metric.color} rounded`}></div>
         </div>
       ))}
 
       {/* Last Sync Time */}
       {stock.lastSync && (
-        <div className="col-span-full bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <div className="col-span-full bg-grey-50 p-4 rounded-lg border border-grey-200">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-sm text-gray-600">마지막 재고 동기화</span>
-              <p className="text-xs text-gray-500 mt-1">
+              <span className="text-sm text-grey-600">마지막 재고 동기화</span>
+              <p className="text-xs text-grey-500 mt-1">
                 ⏰ 자동 동기화: 5분마다 실행
               </p>
             </div>
             <div className="text-right">
-              <span className="text-sm font-medium text-gray-900 block">
+              <span className="text-sm font-medium text-grey-900 block">
                 {getRelativeTime(stock.lastSync)}
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-grey-500">
                 {new Date(stock.lastSync).toLocaleString('ko-KR')}
               </span>
             </div>

@@ -375,7 +375,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     onChange={(e) => setSellPrice(e.target.value)}
                     disabled={!isEditing || product.productType === "HEADQUARTERS"}
                     className={
-                      product.productType === "HEADQUARTERS" ? "bg-gray-100" : ""
+                      product.productType === "HEADQUARTERS" ? "bg-grey-100" : ""
                     }
                     min="0"
                   />
@@ -398,7 +398,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     onChange={(e) => setSupplyPrice(e.target.value)}
                     disabled={!isEditing || product.productType === "HEADQUARTERS"}
                     className={
-                      product.productType === "HEADQUARTERS" ? "bg-gray-100" : ""
+                      product.productType === "HEADQUARTERS" ? "bg-grey-100" : ""
                     }
                     min="0"
                   />

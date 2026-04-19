@@ -62,7 +62,7 @@ const platformLabels: Record<string, string> = {
 const statusColors: Record<string, string> = {
   SCHEDULED: "bg-blue-100 text-blue-800",
   LIVE: "bg-green-100 text-green-800",
-  ENDED: "bg-gray-100 text-gray-800",
+  ENDED: "bg-grey-100 text-grey-800",
   CANCELED: "bg-red-100 text-red-800",
 };
 
@@ -166,7 +166,7 @@ export default function BroadcastCalendarPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">방송 캘린더</h1>
+        <h1 className="text-3xl font-bold text-grey-900">방송 캘린더</h1>
       </div>
 
       {/* Calendar Card */}
@@ -183,7 +183,7 @@ export default function BroadcastCalendarPage() {
             이전 달
           </Button>
 
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold text-grey-900">
             {format(currentDate, "yyyy년 MM월", { locale: ko })}
           </h2>
 
@@ -202,19 +202,19 @@ export default function BroadcastCalendarPage() {
         <div className="flex flex-wrap gap-3 mb-4">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-blue-500"></div>
-            <span className="text-sm text-gray-600">예정</span>
+            <span className="text-sm text-grey-600">예정</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-green-500"></div>
-            <span className="text-sm text-gray-600">진행중</span>
+            <span className="text-sm text-grey-600">진행중</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-gray-500"></div>
-            <span className="text-sm text-gray-600">종료</span>
+            <div className="w-4 h-4 rounded bg-grey-500"></div>
+            <span className="text-sm text-grey-600">종료</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-red-500"></div>
-            <span className="text-sm text-gray-600">취소</span>
+            <span className="text-sm text-grey-600">취소</span>
           </div>
         </div>
 
@@ -249,13 +249,13 @@ export default function BroadcastCalendarPage() {
         </div>
 
         {loading && (
-          <div className="mt-4 text-center text-gray-500">
+          <div className="mt-4 text-center text-grey-500">
             로딩 중...
           </div>
         )}
 
         {!loading && broadcasts.length === 0 && (
-          <div className="mt-4 text-center text-gray-500">
+          <div className="mt-4 text-center text-grey-500">
             이번 달 방송 일정이 없습니다.
           </div>
         )}

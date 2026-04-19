@@ -19,7 +19,7 @@ export function NavItem({ href, label, icon: Icon, isActive }: NavItemProps) {
           ${
             isActive
               ? "bg-blue-50 text-blue-700"
-              : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              : "text-grey-700 hover:bg-grey-100 hover:text-grey-900"
           }
         `}
       >

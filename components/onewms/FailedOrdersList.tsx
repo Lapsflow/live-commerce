@@ -63,7 +63,7 @@ export default function FailedOrdersList() {
         <h2 className="text-xl font-bold mb-4">실패 주문</h2>
         <div className="animate-pulse space-y-3">
           {[1, 2].map((i) => (
-            <div key={i} className="h-20 bg-gray-200 rounded"></div>
+            <div key={i} className="h-20 bg-grey-200 rounded"></div>
           ))}
         </div>
       </div>
@@ -82,7 +82,7 @@ export default function FailedOrdersList() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-grey-500">
           <div className="text-4xl mb-2">✅</div>
           <p>실패한 주문이 없습니다</p>
         </div>
@@ -118,7 +118,7 @@ export default function FailedOrdersList() {
                     </div>
                   )}
 
-                  <div className="text-xs text-gray-600">
+                  <div className="text-xs text-grey-600">
                     {order.lastSyncAt && (
                       <span>
                         마지막 시도:{' '}
@@ -140,7 +140,7 @@ export default function FailedOrdersList() {
                   )}
                   <button
                     onClick={() => setSelectedOrder(order.id)}
-                    className="px-3 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600"
+                    className="px-3 py-1 bg-grey-500 text-white rounded text-sm hover:bg-grey-600"
                   >
                     상세
                   </button>
@@ -159,7 +159,7 @@ export default function FailedOrdersList() {
               <h3 className="text-lg font-bold">주문 상세</h3>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
+                className="text-grey-500 hover:text-grey-700 text-2xl"
               >
                 ×
               </button>
@@ -171,24 +171,24 @@ export default function FailedOrdersList() {
                 .map((order: any) => (
                   <div key={order.id} className="space-y-2">
                     <div>
-                      <span className="text-sm text-gray-600">주문번호</span>
+                      <span className="text-sm text-grey-600">주문번호</span>
                       <div className="font-medium">
                         {order.order?.orderNo || order.onewmsOrderNo}
                       </div>
                     </div>
                     <div>
-                      <span className="text-sm text-gray-600">상태</span>
+                      <span className="text-sm text-grey-600">상태</span>
                       <div className="font-medium">{order.status}</div>
                     </div>
                     <div>
-                      <span className="text-sm text-gray-600">재시도 횟수</span>
+                      <span className="text-sm text-grey-600">재시도 횟수</span>
                       <div className="font-medium">
                         {order.retryCount} / 3
                       </div>
                     </div>
                     {order.errorMessage && (
                       <div>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-grey-600">
                           에러 메시지
                         </span>
                         <div className="font-medium text-red-600">
@@ -197,14 +197,14 @@ export default function FailedOrdersList() {
                       </div>
                     )}
                     <div>
-                      <span className="text-sm text-gray-600">생성 시각</span>
+                      <span className="text-sm text-grey-600">생성 시각</span>
                       <div className="font-medium">
                         {new Date(order.createdAt).toLocaleString('ko-KR')}
                       </div>
                     </div>
                     {order.lastSyncAt && (
                       <div>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-grey-600">
                           마지막 동기화 시도
                         </span>
                         <div className="font-medium">
@@ -219,7 +219,7 @@ export default function FailedOrdersList() {
             <div className="mt-6 flex gap-2 justify-end">
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded transition-colors"
+                className="px-4 py-2 bg-grey-200 hover:bg-grey-300 text-grey-800 rounded transition-colors"
               >
                 닫기
               </button>

@@ -45,7 +45,7 @@ const paymentLabels = {
 } as const;
 
 const shippingColors = {
-  PENDING: "bg-gray-500/10 text-gray-700 dark:text-gray-400",
+  PENDING: "bg-grey-500/10 text-grey-700 dark:text-grey-400",
   PREPARING: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
   SHIPPED: "bg-green-500/10 text-green-700 dark:text-green-400",
   PARTIAL: "bg-orange-500/10 text-orange-700 dark:text-orange-400",

@@ -25,7 +25,7 @@ const platformLabels = {
 const statusColors = {
   SCHEDULED: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
   LIVE: "bg-red-500/10 text-red-700 dark:text-red-400 animate-pulse",
-  ENDED: "bg-gray-500/10 text-gray-700 dark:text-gray-400",
+  ENDED: "bg-grey-500/10 text-grey-700 dark:text-grey-400",
   CANCELED: "bg-orange-500/10 text-orange-700 dark:text-orange-400",
 } as const;
 

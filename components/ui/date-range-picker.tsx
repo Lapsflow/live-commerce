@@ -39,28 +39,28 @@ export function DateRangePicker({
       {/* Date Inputs */}
       <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-end">
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-grey-700">
             시작일
           </label>
           <input
             type="date"
             value={localFromDate}
             onChange={(e) => setLocalFromDate(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-grey-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        <span className="text-gray-500 self-center">~</span>
+        <span className="text-grey-500 self-center">~</span>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-grey-700">
             종료일
           </label>
           <input
             type="date"
             value={localToDate}
             onChange={(e) => setLocalToDate(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-grey-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -77,19 +77,19 @@ export function DateRangePicker({
       <div className="flex gap-2">
         <button
           onClick={() => handlePreset(7)}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          className="px-3 py-2 text-sm border border-grey-300 rounded-md hover:bg-grey-50 transition-colors"
         >
           최근 7일
         </button>
         <button
           onClick={() => handlePreset(30)}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          className="px-3 py-2 text-sm border border-grey-300 rounded-md hover:bg-grey-50 transition-colors"
         >
           최근 30일
         </button>
         <button
           onClick={() => handlePreset(90)}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          className="px-3 py-2 text-sm border border-grey-300 rounded-md hover:bg-grey-50 transition-colors"
         >
           최근 90일
         </button>

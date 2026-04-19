@@ -34,7 +34,7 @@ export function RankingTable({ data }: RankingTableProps) {
     }
     if (rank === 2) {
       return (
-        <Badge className="bg-gray-400 text-white">
+        <Badge className="bg-grey-400 text-white">
           <TrophyIcon className="h-3 w-3 mr-1" />
           {rank}위
         </Badge>

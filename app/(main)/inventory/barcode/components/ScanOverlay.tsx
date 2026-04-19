@@ -36,7 +36,7 @@ export function ScanOverlay({ isScanning }: ScanOverlayProps) {
             ${
               isScanning
                 ? "bg-green-500 text-white"
-                : "bg-gray-800 text-gray-300"
+                : "bg-grey-800 text-grey-300"
             }
           `}
         >

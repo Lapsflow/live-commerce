@@ -183,7 +183,7 @@ export default function OrderDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-500">로딩 중...</div>
+        <div className="text-grey-500">로딩 중...</div>
       </div>
     );
   }
@@ -226,7 +226,7 @@ export default function OrderDetailPage() {
             <ArrowLeft className="h-4 w-4" />
             목록
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">발주 상세</h1>
+          <h1 className="text-3xl font-bold text-grey-900">발주 상세</h1>
         </div>
         {/* 액션 버튼 */}
         <div className="flex gap-2">
@@ -291,24 +291,24 @@ export default function OrderDetailPage() {
 
       {/* Order Info Card */}
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">발주 정보</h2>
+        <h2 className="text-xl font-semibold text-grey-900 mb-4">발주 정보</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-600">발주 번호</p>
-            <p className="font-medium text-gray-900">{order.orderNo}</p>
+            <p className="text-sm text-grey-600">발주 번호</p>
+            <p className="font-medium text-grey-900">{order.orderNo}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">셀러</p>
-            <p className="font-medium text-gray-900">{order.seller.name}</p>
+            <p className="text-sm text-grey-600">셀러</p>
+            <p className="font-medium text-grey-900">{order.seller.name}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">상태</p>
-            <span className="inline-block px-2 py-1 text-sm rounded-md bg-gray-100 text-gray-800">
+            <p className="text-sm text-grey-600">상태</p>
+            <span className="inline-block px-2 py-1 text-sm rounded-md bg-grey-100 text-grey-800">
               {statusLabels[order.status]}
             </span>
           </div>
           <div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-grey-600">
               <CreditCard className="h-4 w-4 inline mr-1" />
               입금 상태
             </p>
@@ -323,7 +323,7 @@ export default function OrderDetailPage() {
             </span>
           </div>
           <div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-grey-600">
               <Truck className="h-4 w-4 inline mr-1" />
               출고 상태
             </p>
@@ -333,15 +333,15 @@ export default function OrderDetailPage() {
                   ? "bg-green-100 text-green-800"
                   : order.shippingStatus === "PREPARING"
                   ? "bg-blue-100 text-blue-800"
-                  : "bg-gray-100 text-gray-800"
+                  : "bg-grey-100 text-grey-800"
               }`}
             >
               {shippingStatusLabels[order.shippingStatus]}
             </span>
           </div>
           <div>
-            <p className="text-sm text-gray-600">등록일</p>
-            <p className="font-medium text-gray-900">
+            <p className="text-sm text-grey-600">등록일</p>
+            <p className="font-medium text-grey-900">
               {new Date(order.uploadedAt).toLocaleDateString("ko-KR")}
             </p>
           </div>
@@ -351,24 +351,24 @@ export default function OrderDetailPage() {
       {/* Recipient Info Card */}
       {(order.recipient || order.phone || order.address) && (
         <Card className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">수령자 정보</h2>
+          <h2 className="text-xl font-semibold text-grey-900 mb-4">수령자 정보</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {order.recipient && (
               <div>
-                <p className="text-sm text-gray-600">수령자</p>
-                <p className="font-medium text-gray-900">{order.recipient}</p>
+                <p className="text-sm text-grey-600">수령자</p>
+                <p className="font-medium text-grey-900">{order.recipient}</p>
               </div>
             )}
             {order.phone && (
               <div>
-                <p className="text-sm text-gray-600">연락처</p>
-                <p className="font-medium text-gray-900">{order.phone}</p>
+                <p className="text-sm text-grey-600">연락처</p>
+                <p className="font-medium text-grey-900">{order.phone}</p>
               </div>
             )}
             {order.address && (
               <div className="md:col-span-2">
-                <p className="text-sm text-gray-600">주소</p>
-                <p className="font-medium text-gray-900">{order.address}</p>
+                <p className="text-sm text-grey-600">주소</p>
+                <p className="font-medium text-grey-900">{order.address}</p>
               </div>
             )}
           </div>
@@ -380,67 +380,67 @@ export default function OrderDetailPage() {
 
       {/* Order Items Card */}
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <h2 className="text-xl font-semibold text-grey-900 mb-4">
           <Package className="h-5 w-5 inline mr-2" />
           발주 항목
         </h2>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-grey-200">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <tr className="bg-grey-50">
+                <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
                   바코드
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
                   상품명
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
                   수량
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
                   공급가
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
                   공급가 합계
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
                   마진
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-grey-200">
               {order.items.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm text-gray-900">
+                <tr key={item.id} className="hover:bg-grey-50">
+                  <td className="px-4 py-3 text-sm text-grey-900">
                     {item.barcode}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900">
+                  <td className="px-4 py-3 text-sm text-grey-900">
                     {item.productName}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900 text-right">
+                  <td className="px-4 py-3 text-sm text-grey-900 text-right">
                     {item.quantity.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900 text-right">
+                  <td className="px-4 py-3 text-sm text-grey-900 text-right">
                     {item.supplyPrice.toLocaleString()}원
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900 text-right">
+                  <td className="px-4 py-3 text-sm text-grey-900 text-right">
                     {item.totalSupply.toLocaleString()}원
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900 text-right font-medium">
+                  <td className="px-4 py-3 text-sm text-grey-900 text-right font-medium">
                     {item.margin.toLocaleString()}원
                   </td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
-              <tr className="bg-gray-50 font-semibold">
+              <tr className="bg-grey-50 font-semibold">
                 <td
                   colSpan={4}
-                  className="px-4 py-3 text-sm text-gray-900 text-right"
+                  className="px-4 py-3 text-sm text-grey-900 text-right"
                 >
                   합계
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-900 text-right">
+                <td className="px-4 py-3 text-sm text-grey-900 text-right">
                   {order.totalAmount.toLocaleString()}원
                 </td>
                 <td className="px-4 py-3 text-sm text-blue-600 text-right">
@@ -455,8 +455,8 @@ export default function OrderDetailPage() {
       {/* Memo Card */}
       {order.memo && (
         <Card className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">메모</h2>
-          <p className="text-gray-700 whitespace-pre-wrap">{order.memo}</p>
+          <h2 className="text-xl font-semibold text-grey-900 mb-2">메모</h2>
+          <p className="text-grey-700 whitespace-pre-wrap">{order.memo}</p>
         </Card>
       )}
     </div>

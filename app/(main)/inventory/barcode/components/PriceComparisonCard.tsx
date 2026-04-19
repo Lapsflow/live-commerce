@@ -24,7 +24,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
       case "POOR":
         return "bg-red-100 text-red-800 border-red-300";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-grey-100 text-grey-800 border-grey-300";
     }
   };
 
@@ -62,14 +62,14 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
   const priceDiff = calculatePriceDiff();
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
+    <div className="border border-grey-200 rounded-lg overflow-hidden bg-white shadow-sm">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+        className="w-full px-4 py-3 flex items-center justify-between hover:bg-grey-50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <h3 className="font-semibold text-gray-900">시장 가격 비교</h3>
+          <h3 className="font-semibold text-grey-900">시장 가격 비교</h3>
           {data?.competitiveness && (
             <span
               className={`px-2 py-1 text-xs font-medium rounded border ${getCompetitivenessColor(
@@ -82,12 +82,12 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
         </div>
         <div className="flex items-center gap-2">
           {(isLoading || isFetching) && (
-            <RefreshCw className="w-4 h-4 text-gray-400 animate-spin" />
+            <RefreshCw className="w-4 h-4 text-grey-400 animate-spin" />
           )}
           {isExpanded ? (
-            <ChevronUp className="w-5 h-5 text-gray-400" />
+            <ChevronUp className="w-5 h-5 text-grey-400" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-5 h-5 text-grey-400" />
           )}
         </div>
       </button>
@@ -102,7 +102,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
           )}
 
           {isLoading && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-grey-500">
               <RefreshCw className="w-6 h-6 mx-auto mb-2 animate-spin" />
               <p className="text-sm">가격 정보를 불러오는 중...</p>
             </div>
@@ -118,7 +118,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                   ? "bg-red-50 border-red-300"
                   : data.competitiveness === "GOOD"
                   ? "bg-blue-50 border-blue-200"
-                  : "bg-gray-50 border-gray-200"
+                  : "bg-grey-50 border-grey-200"
               }`}>
                 <div className="flex items-center justify-between mb-1">
                   <div className={`text-sm font-medium ${
@@ -128,7 +128,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                       ? "text-red-700"
                       : data.competitiveness === "GOOD"
                       ? "text-blue-600"
-                      : "text-gray-600"
+                      : "text-grey-600"
                   }`}>우리 판매가</div>
                   {data.competitiveness === "EXCELLENT" && (
                     <span className="text-xs font-bold text-green-700 px-2 py-1 bg-green-200 rounded">
@@ -148,7 +148,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                     ? "text-red-900"
                     : data.competitiveness === "GOOD"
                     ? "text-blue-900"
-                    : "text-gray-900"
+                    : "text-grey-900"
                 }`}>{formatPrice(ourPrice)}</div>
 
                 {/* PDF Requirement: 판단 메시지 */}
@@ -187,29 +187,29 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
 
               {/* Naver Shopping Section */}
               {data.naver && (
-                <div className="border border-gray-200 rounded-lg p-4">
+                <div className="border border-grey-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="text-sm font-semibold text-gray-700">네이버 쇼핑</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-sm font-semibold text-grey-700">네이버 쇼핑</div>
+                    <div className="text-xs text-grey-500">
                       ({data.naver.count || 0}개 상품)
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <div className="text-xs text-gray-500 mb-1">최저가</div>
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-xs text-grey-500 mb-1">최저가</div>
+                      <div className="text-sm font-semibold text-grey-900">
                         {formatPrice(data.naver.minPrice)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-1">평균가</div>
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-xs text-grey-500 mb-1">평균가</div>
+                      <div className="text-sm font-semibold text-grey-900">
                         {formatPrice(data.naver.avgPrice)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-1">최고가</div>
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-xs text-grey-500 mb-1">최고가</div>
+                      <div className="text-sm font-semibold text-grey-900">
                         {formatPrice(data.naver.maxPrice)}
                       </div>
                     </div>
@@ -219,29 +219,29 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
 
               {/* Coupang Section */}
               {data.coupang && (
-                <div className="border border-gray-200 rounded-lg p-4">
+                <div className="border border-grey-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="text-sm font-semibold text-gray-700">쿠팡</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-sm font-semibold text-grey-700">쿠팡</div>
+                    <div className="text-xs text-grey-500">
                       ({data.coupang.count || 0}개 상품)
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <div className="text-xs text-gray-500 mb-1">최저가</div>
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-xs text-grey-500 mb-1">최저가</div>
+                      <div className="text-sm font-semibold text-grey-900">
                         {formatPrice(data.coupang.minPrice)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-1">평균가</div>
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-xs text-grey-500 mb-1">평균가</div>
+                      <div className="text-sm font-semibold text-grey-900">
                         {formatPrice(data.coupang.avgPrice)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-1">최고가</div>
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-xs text-grey-500 mb-1">최고가</div>
+                      <div className="text-sm font-semibold text-grey-900">
                         {formatPrice(data.coupang.maxPrice)}
                       </div>
                     </div>
@@ -250,7 +250,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
               )}
 
               {/* Footer - Cache Status and Refresh */}
-              <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
+              <div className="flex items-center justify-between text-xs text-grey-500 pt-2 border-t border-grey-100">
                 <div className="flex items-center gap-2">
                   <span>
                     {data.cached ? "캐시된 데이터" : "최신 데이터"}
@@ -267,7 +267,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                     refetch();
                   }}
                   disabled={isFetching}
-                  className="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-2 py-1 hover:bg-grey-100 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <RefreshCw className={`w-3 h-3 ${isFetching ? "animate-spin" : ""}`} />
                   <span>새로고침</span>

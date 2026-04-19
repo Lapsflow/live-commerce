@@ -114,14 +114,14 @@ export default function AdminContractsPage() {
     <div className="p-8">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">판매자 계약 승인</h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-grey-600 mt-2">
           대기 중인 판매자 계약을 승인 또는 거부할 수 있습니다.
         </p>
       </div>
 
       {contracts.length === 0 ? (
         <Card className="p-8">
-          <div className="text-center text-gray-500">
+          <div className="text-center text-grey-500">
             대기 중인 계약이 없습니다.
           </div>
         </Card>
@@ -134,24 +134,24 @@ export default function AdminContractsPage() {
                 <div className="space-y-3">
                   <div>
                     <h3 className="text-xl font-semibold">{contract.name}</h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-grey-500">
                       {contract.email} | {contract.phone || "연락처 없음"}
                     </p>
                   </div>
 
                   {contract.center && (
-                    <div className="bg-gray-50 p-3 rounded">
-                      <p className="text-sm font-medium text-gray-700">
+                    <div className="bg-grey-50 p-3 rounded">
+                      <p className="text-sm font-medium text-grey-700">
                         소속 센터
                       </p>
-                      <p className="text-sm text-gray-900">
+                      <p className="text-sm text-grey-900">
                         {contract.center.code} - {contract.center.name}
                       </p>
                     </div>
                   )}
 
                   <div className="bg-blue-50 p-3 rounded">
-                    <p className="text-sm font-medium text-gray-700">활동 채널</p>
+                    <p className="text-sm font-medium text-grey-700">활동 채널</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {contract.channels.map((channel) => (
                         <span
@@ -165,7 +165,7 @@ export default function AdminContractsPage() {
                   </div>
 
                   <div className="bg-green-50 p-3 rounded">
-                    <p className="text-sm font-medium text-gray-700">
+                    <p className="text-sm font-medium text-grey-700">
                       월평균 매출
                     </p>
                     <p className="text-lg font-semibold text-green-700">
@@ -174,7 +174,7 @@ export default function AdminContractsPage() {
                   </div>
 
                   <div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-grey-500">
                       신청일: {new Date(contract.createdAt).toLocaleString("ko-KR")}
                     </p>
                   </div>

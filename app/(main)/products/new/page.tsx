@@ -249,7 +249,7 @@ export default function NewProductPage() {
                     placeholder="0"
                     min="0"
                     readOnly={productType === "HEADQUARTERS"}
-                    className={productType === "HEADQUARTERS" ? "bg-gray-100" : ""}
+                    className={productType === "HEADQUARTERS" ? "bg-grey-100" : ""}
                     required
                   />
                   {productType === "HEADQUARTERS" && (
@@ -272,7 +272,7 @@ export default function NewProductPage() {
                     placeholder="0"
                     min="0"
                     readOnly={productType === "HEADQUARTERS"}
-                    className={productType === "HEADQUARTERS" ? "bg-gray-100" : ""}
+                    className={productType === "HEADQUARTERS" ? "bg-grey-100" : ""}
                     required
                   />
                   {productType === "HEADQUARTERS" && (

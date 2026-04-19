@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Clock, CreditCard, Truck, PackageCheck, XCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface OrderStats {
   pendingUnpaid: number;
@@ -33,7 +34,15 @@ export default function OrderPipelineCards({
       .catch(() => {});
   }, []);
 
-  if (!stats) return null;
+  if (!stats) {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-24 rounded-xl" />
+        ))}
+      </div>
+    );
+  }
 
   const cards = [
     {
@@ -70,9 +79,9 @@ export default function OrderPipelineCards({
       label: "취소/만료",
       count: stats.rejected,
       icon: XCircle,
-      color: "text-gray-500",
-      bgColor: "bg-gray-50",
-      borderColor: "border-gray-200",
+      color: "text-grey-500",
+      bgColor: "bg-grey-50",
+      borderColor: "border-grey-200",
     },
   ];
 
@@ -96,10 +105,10 @@ export default function OrderPipelineCards({
                 <Icon className={`h-5 w-5 ${card.color}`} />
               </div>
               <div>
-                <p className="text-sm text-gray-500">{card.label}</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-grey-500">{card.label}</p>
+                <p className="text-2xl font-bold text-grey-900">
                   {card.count}
-                  <span className="text-sm font-normal text-gray-400 ml-1">건</span>
+                  <span className="text-sm font-normal text-grey-400 ml-1">건</span>
                 </p>
                 {card.extra && (
                   <p className={`text-xs ${card.extraColor}`}>{card.extra}</p>

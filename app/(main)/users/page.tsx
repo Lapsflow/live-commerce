@@ -103,7 +103,7 @@ export default function UsersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-500">로딩 중...</div>
+        <div className="text-grey-500">로딩 중...</div>
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default function UsersPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <UsersIcon className="h-8 w-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-gray-900">사용자 관리</h1>
+          <h1 className="text-3xl font-bold text-grey-900">사용자 관리</h1>
         </div>
         <Button
           onClick={() => (window.location.href = "/signup")}
@@ -128,7 +128,7 @@ export default function UsersPage() {
       {/* Search Bar */}
       <Card className="p-4">
         <div className="flex items-center gap-2">
-          <Search className="h-5 w-5 text-gray-400" />
+          <Search className="h-5 w-5 text-grey-400" />
           <Input
             type="text"
             placeholder="이름, 이메일, 전화번호로 검색..."
@@ -150,39 +150,39 @@ export default function UsersPage() {
       {!error && (
         <Card className="p-6">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-full divide-y divide-grey-200">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <tr className="bg-grey-50">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
                     이름
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
                     이메일
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
                     전화번호
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
                     역할
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
                     활동 채널
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
                     평균 매출
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
                     가입일
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
                     액션
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-grey-200">
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={8} className="px-4 py-8 text-center text-grey-500">
                       {searchQuery
                         ? "검색 결과가 없습니다"
                         : "등록된 사용자가 없습니다"}
@@ -190,30 +190,30 @@ export default function UsersPage() {
                   </tr>
                 ) : (
                   filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-900 font-medium">
+                    <tr key={user.id} className="hover:bg-grey-50">
+                      <td className="px-4 py-3 text-sm text-grey-900 font-medium">
                         {user.name}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                      <td className="px-4 py-3 text-sm text-grey-600">
                         {user.email}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                      <td className="px-4 py-3 text-sm text-grey-600">
                         {user.phone || "-"}
                       </td>
                       <td className="px-4 py-3 text-sm">
                         <RoleBadge role={user.role} />
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                      <td className="px-4 py-3 text-sm text-grey-600">
                         {user.channels && user.channels.length > 0
                           ? user.channels.join(", ")
                           : "-"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900 text-right">
+                      <td className="px-4 py-3 text-sm text-grey-900 text-right">
                         {user.avgSales
                           ? `${user.avgSales.toLocaleString()}원`
                           : "-"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                      <td className="px-4 py-3 text-sm text-grey-600">
                         {new Date(user.createdAt).toLocaleDateString("ko-KR")}
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -236,11 +236,11 @@ export default function UsersPage() {
 
           {/* Summary */}
           {filteredUsers.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600">
+            <div className="mt-4 pt-4 border-t border-grey-200">
+              <p className="text-sm text-grey-600">
                 총 <span className="font-semibold">{filteredUsers.length}</span>명의 사용자
                 {searchQuery && (
-                  <span className="ml-2 text-gray-500">
+                  <span className="ml-2 text-grey-500">
                     (전체: {users.length}명)
                   </span>
                 )}

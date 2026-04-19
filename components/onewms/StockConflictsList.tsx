@@ -59,7 +59,7 @@ export default function StockConflictsList() {
         <h2 className="text-xl font-bold mb-4">재고 충돌</h2>
         <div className="animate-pulse space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 bg-gray-200 rounded"></div>
+            <div key={i} className="h-16 bg-grey-200 rounded"></div>
           ))}
         </div>
       </div>
@@ -78,41 +78,41 @@ export default function StockConflictsList() {
       </div>
 
       {conflicts.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-grey-500">
           <div className="text-4xl mb-2">✅</div>
           <p>재고 충돌이 없습니다</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-grey-50 border-b">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-grey-600">
                   상품명
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-grey-600">
                   ONEWMS
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-grey-600">
                   플랫폼
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-grey-600">
                   차이
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-grey-600">
                   발견 시각
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-grey-600">
                   작업
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {conflicts.map((conflict: any) => (
-                <tr key={conflict.id} className="hover:bg-gray-50">
+                <tr key={conflict.id} className="hover:bg-grey-50">
                   <td className="px-4 py-3 text-sm">
                     <div className="font-medium">{conflict.productName}</div>
-                    <div className="text-gray-500 text-xs">
+                    <div className="text-grey-500 text-xs">
                       {conflict.productCode}
                     </div>
                   </td>
@@ -134,7 +134,7 @@ export default function StockConflictsList() {
                       {conflict.difference}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-grey-600">
                     {new Date(conflict.syncedAt).toLocaleString('ko-KR', {
                       month: 'short',
                       day: 'numeric',
@@ -177,13 +177,13 @@ export default function StockConflictsList() {
                             })
                           }
                           disabled={resolveMutation.isPending}
-                          className="px-2 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600 disabled:opacity-50"
+                          className="px-2 py-1 bg-grey-500 text-white rounded text-xs hover:bg-grey-600 disabled:opacity-50"
                         >
                           무시
                         </button>
                         <button
                           onClick={() => setResolvingId(null)}
-                          className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs hover:bg-gray-300"
+                          className="px-2 py-1 bg-grey-200 text-grey-700 rounded text-xs hover:bg-grey-300"
                         >
                           취소
                         </button>

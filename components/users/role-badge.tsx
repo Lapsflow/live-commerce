@@ -16,7 +16,7 @@ export function RoleBadge({ role }: { role: string }) {
   return (
     <span
       className={`inline-block px-2 py-1 text-xs font-medium rounded-md ${
-        roleColors[role] || "bg-gray-100 text-gray-800"
+        roleColors[role] || "bg-grey-100 text-grey-800"
       }`}
     >
       {roleLabels[role] || role}

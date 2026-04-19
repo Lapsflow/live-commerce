@@ -59,7 +59,7 @@ export default function ExpiryTimer({
   }
 
   const colorClasses = {
-    normal: "text-gray-600",
+    normal: "text-grey-600",
     warning: "text-orange-600 font-semibold",
     expired: "text-red-600 font-semibold",
   };

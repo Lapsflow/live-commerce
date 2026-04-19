@@ -190,7 +190,7 @@ export function ProductDetailsModal({
           {/* Product Info */}
           <div className="space-y-2">
             {product.imageUrl && (
-              <div className="w-full h-48 relative rounded-lg overflow-hidden bg-gray-100">
+              <div className="w-full h-48 relative rounded-lg overflow-hidden bg-grey-100">
                 <img
                   src={product.imageUrl}
                   alt={product.name}
@@ -241,7 +241,7 @@ export function ProductDetailsModal({
                     ${
                       selectedCenter === stock.centerId
                         ? "border-primary bg-primary/5"
-                        : "border-gray-200 hover:border-primary/50"
+                        : "border-grey-200 hover:border-primary/50"
                     }
                     ${mode !== "LOOKUP" ? "cursor-pointer" : ""}
                   `}
@@ -271,7 +271,7 @@ export function ProductDetailsModal({
                         ? "bg-yellow-100 text-yellow-800 border-yellow-300"
                         : stock.stock > 0
                         ? "bg-red-100 text-red-800 border-red-300"
-                        : "bg-gray-100 text-gray-500 border-gray-300"
+                        : "bg-grey-100 text-grey-500 border-grey-300"
                     }
                     variant="outline"
                   >

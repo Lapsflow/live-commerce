@@ -95,7 +95,7 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-40 h-screen w-64 bg-white border-r border-gray-200
+          fixed top-0 left-0 z-40 h-screen w-64 bg-white border-r border-grey-200
           transition-transform duration-300 ease-in-out
           lg:translate-x-0
           ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
@@ -103,9 +103,13 @@ export function Sidebar() {
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-center h-16 border-b border-gray-200">
-            <Link href="/dashboard" className="text-xl font-bold text-gray-800">
-              Live Commerce
+          <div className="flex items-center gap-2.5 h-16 px-4 border-b border-grey-200">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+              <span className="text-white text-sm font-black">S</span>
+            </div>
+            <Link href="/dashboard" className="flex flex-col">
+              <span className="text-sm font-bold text-grey-900 leading-tight">슈퍼무진</span>
+              <span className="text-[11px] text-grey-400 leading-tight">라이브커머스</span>
             </Link>
           </div>
 
@@ -125,7 +129,7 @@ export function Sidebar() {
           </nav>
 
           {/* User Menu */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-grey-200">
             <UserMenu />
           </div>
         </div>
@@ -134,7 +138,7 @@ export function Sidebar() {
       {/* Mobile Overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}

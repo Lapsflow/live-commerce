@@ -28,7 +28,7 @@ export default function OnewmsDashboardPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">ONEWMS 통합 관리</h1>
-        <p className="text-gray-600">
+        <p className="text-grey-600">
           주문, 재고, 배송 상태를 실시간으로 모니터링하고 관리합니다
         </p>
       </div>

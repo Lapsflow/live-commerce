@@ -25,10 +25,10 @@ export function UserMenu() {
     <div className="space-y-2">
       {/* User Info */}
       <div className="flex items-center px-3 py-2 text-sm">
-        <User className="h-5 w-5 mr-3 text-gray-500" />
+        <User className="h-5 w-5 mr-3 text-grey-500" />
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-gray-900 truncate">{userName}</p>
-          <p className="text-xs text-gray-500">{roleLabel}</p>
+          <p className="font-medium text-grey-900 truncate">{userName}</p>
+          <p className="text-xs text-grey-500">{roleLabel}</p>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ export function UserMenu() {
         onClick={() => signOut({ callbackUrl: "/login" })}
         className="
           flex items-center w-full px-3 py-2 text-sm font-medium
-          text-gray-700 hover:bg-gray-100 hover:text-gray-900
+          text-grey-700 hover:bg-grey-100 hover:text-grey-900
           rounded-md transition-colors duration-150 ease-in-out
         "
       >
