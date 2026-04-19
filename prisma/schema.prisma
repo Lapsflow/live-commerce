@@ -80,8 +80,9 @@ model Product {
   barcode     String   @unique
   sellPrice   Int
   supplyPrice Int
-  totalStock  Int      @default(0)
-  stockMujin  Int      @default(0)
+  totalStock    Int      @default(0)
+  reservedStock Int      @default(0) // ✨ 선점된 재고 수량 (발주 시 증가, 입금/취소 시 감소)
+  stockMujin    Int      @default(0)
   stock1      Int      @default(0)
   stock2      Int      @default(0)
   stock3      Int      @default(0)
@@ -111,6 +112,7 @@ model Product {
   aiAnalyses           AIAnalysis[] // ✨ AI Analysis results
   proposalCarts        ProposalCart[]
   scanLogs             ScanLog[]
+  reservations         StockReservation[] // ✨ 재고 선점 이력
 
   @@index([productType])
   @@index([managedBy])
@@ -247,6 +249,11 @@ model Order {
   // ✨ Phase 2: Product Type for Auto-Split
   productType ProductType? // HEADQUARTERS or CENTER (null for mixed orders)
 
+  // ✨ 재고 선점 자동화 (PDF 스펙 7페이지)
+  expiresAt    DateTime? // 입금 마감 시각 (생성 + 3시간)
+  cancelledAt  DateTime? // 취소 시각
+  cancelReason String?   // "EXPIRED" | "SELLER_CANCELLED" | "ADMIN_CANCELLED"
+
   // Relations
   seller             User                  @relation(fields: [sellerId], references: [id])
   admin              User?                 @relation("AdminOrders", fields: [adminId], references: [id])
@@ -255,12 +262,14 @@ model Order {
   onewmsMapping      OnewmsOrderMapping?
   onewmsDeliveryLogs OnewmsDeliveryLog[]
   sellerMatches      OrderSellerMatching[]
+  reservations       StockReservation[] // ✨ 재고 선점 이력
 
   // Indexes
   @@index([sellerId, uploadedAt])
   @@index([orderNo])
   @@index([paymentStatus, shippingStatus])
   @@index([productType])
+  @@index([expiresAt, paymentStatus, status]) // ✨ cron 만료 조회 최적화
 }
 
 enum OrderStatus {
@@ -306,6 +315,32 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
   @@index([productType])
+}
+
+// ──────────────────────── Stock Reservation (PDF 스펙 7페이지) ────────────────────────
+
+model StockReservation {
+  id          String            @id @default(cuid())
+  orderId     String
+  productId   String
+  quantity    Int // 선점 수량
+  status      ReservationStatus @default(ACTIVE)
+  reservedAt  DateTime          @default(now())
+  releasedAt  DateTime?
+  releaseType String? // "PAYMENT_CONFIRMED" | "CANCELLED" | "EXPIRED"
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([productId, status])
+}
+
+enum ReservationStatus {
+  ACTIVE    // 선점 중
+  CONVERTED // 입금 확인 → 재고 차감 완료
+  RELEASED  // 취소 또는 만료
 }
 
 // ──────────────────────── Broadcast Management ────────────────────────

@@ -101,7 +101,12 @@ export async function getPricing(
 
   // 4. Calculate competitiveness
   const competitiveness = ourPrice
-    ? calculateCompetitiveness(ourPrice, market.avgPrice)
+    ? calculateCompetitiveness(
+        ourPrice,
+        market.minPrice,
+        coupangResult?.statistics.minPrice,
+        naverResult?.statistics.minPrice
+      )
     : 'FAIR';
 
   const result: UnifiedPricing = {
@@ -208,27 +213,53 @@ async function fetchCoupangPricing(
 }
 
 /**
- * Calculate competitiveness based on our price vs market average
+ * Calculate competitiveness based on PDF requirements:
+ * - If we are the lowest price → EXCELLENT (강조)
+ * - If we are 20%+ more expensive than Coupang → POOR (경고)
+ * - Otherwise GOOD/FAIR based on market position
  */
 function calculateCompetitiveness(
   ourPrice: number,
-  marketAvg: number
+  marketMinPrice: number,
+  coupangMinPrice?: number,
+  naverMinPrice?: number
 ): 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' {
-  if (marketAvg === 0) {
+  if (!ourPrice || ourPrice <= 0) {
     return 'FAIR';
   }
 
-  const ratio = ourPrice / marketAvg;
+  // 1. PDF Requirement: 우리가 최저가면 → 강조 (EXCELLENT)
+  const isLowestPrice =
+    (!marketMinPrice || ourPrice <= marketMinPrice) &&
+    (!coupangMinPrice || ourPrice <= coupangMinPrice) &&
+    (!naverMinPrice || ourPrice <= naverMinPrice);
 
-  if (ratio <= 0.8) {
-    return 'EXCELLENT'; // 20% 이상 저렴
-  } else if (ratio <= 0.95) {
-    return 'GOOD'; // 5-20% 저렴
-  } else if (ratio <= 1.1) {
-    return 'FAIR'; // ±10% 범위
-  } else {
-    return 'POOR'; // 10% 이상 비쌈
+  if (isLowestPrice) {
+    return 'EXCELLENT';
   }
+
+  // 2. PDF Requirement: 쿠팡보다 20% 비싸면 → 경고 (POOR)
+  if (coupangMinPrice && coupangMinPrice > 0) {
+    const coupangRatio = ourPrice / coupangMinPrice;
+    if (coupangRatio >= 1.2) {
+      return 'POOR'; // 쿠팡보다 20% 이상 비쌈
+    }
+  }
+
+  // 3. General market comparison
+  if (marketMinPrice && marketMinPrice > 0) {
+    const ratio = ourPrice / marketMinPrice;
+
+    if (ratio <= 1.05) {
+      return 'GOOD'; // 시장 최저가 대비 5% 이내
+    } else if (ratio <= 1.15) {
+      return 'FAIR'; // 시장 최저가 대비 15% 이내
+    } else {
+      return 'POOR'; // 시장 최저가 대비 15% 이상 비쌈
+    }
+  }
+
+  return 'FAIR';
 }
 
 /**

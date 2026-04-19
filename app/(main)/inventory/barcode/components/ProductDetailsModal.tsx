@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Package, MapPin, ExternalLink } from "lucide-react";
+import { CheckCircle, Package, MapPin, ExternalLink, ShoppingCart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 import { PriceComparisonCard } from "./PriceComparisonCard";
@@ -57,6 +57,13 @@ export function ProductDetailsModal({
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const [selectedCenter, setSelectedCenter] = useState<string>("");
+
+  // 주문 입력 폼 상태 (PDF p5: 바코드 스캔 후 바로 주문 접수)
+  const [showOrderForm, setShowOrderForm] = useState(false);
+  const [orderQuantity, setOrderQuantity] = useState<number>(1);
+  const [orderRecipient, setOrderRecipient] = useState("");
+  const [orderPhone, setOrderPhone] = useState("");
+  const [orderLoading, setOrderLoading] = useState(false);
 
   const handleInventoryAction = async () => {
     if (!selectedCenter) {
@@ -118,6 +125,54 @@ export function ProductDetailsModal({
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleQuickOrder = async () => {
+    if (orderQuantity <= 0) {
+      toast({ title: "수량을 입력해주세요", variant: "destructive" });
+      return;
+    }
+
+    try {
+      setOrderLoading(true);
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: [
+            {
+              productId: product.id,
+              quantity: orderQuantity,
+              unitPrice: product.supplyPrice,
+            },
+          ],
+          recipient: orderRecipient || undefined,
+          phone: orderPhone || undefined,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast({
+          title: "주문 실패",
+          description: data.error?.message || "주문 접수 중 오류가 발생했습니다.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({ title: "주문이 접수되었습니다" });
+      setShowOrderForm(false);
+      setOrderQuantity(1);
+      setOrderRecipient("");
+      setOrderPhone("");
+      onClose();
+    } catch {
+      toast({ title: "네트워크 오류가 발생했습니다.", variant: "destructive" });
+    } finally {
+      setOrderLoading(false);
     }
   };
 
@@ -208,8 +263,26 @@ export function ProductDetailsModal({
                       </div>
                     </div>
                   </div>
-                  <Badge variant={stock.stock > 0 ? "default" : "secondary"}>
-                    재고 {stock.stock}개
+                  <Badge
+                    className={
+                      stock.stock >= 50
+                        ? "bg-green-100 text-green-800 border-green-300"
+                        : stock.stock >= 10
+                        ? "bg-yellow-100 text-yellow-800 border-yellow-300"
+                        : stock.stock > 0
+                        ? "bg-red-100 text-red-800 border-red-300"
+                        : "bg-gray-100 text-gray-500 border-gray-300"
+                    }
+                    variant="outline"
+                  >
+                    {stock.stock >= 50
+                      ? "많음"
+                      : stock.stock >= 10
+                      ? "부족"
+                      : stock.stock > 0
+                      ? "위험"
+                      : "품절"}{" "}
+                    {stock.stock}개
                   </Badge>
                 </div>
               ))}
@@ -278,14 +351,87 @@ export function ProductDetailsModal({
           )}
 
           {mode === "LOOKUP" && (
-            <div className="flex justify-end gap-2">
-              <Button onClick={onClose} variant="outline">닫기</Button>
-              <Link href={`/admin/products/${product.id}`}>
-                <Button>
-                  상세 정보 보기
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+            <div className="space-y-4">
+              {/* 주문 입력 폼 (PDF p5: 바코드 스캔 후 바로 주문 접수) */}
+              {showOrderForm && (
+                <div className="p-4 bg-blue-50 rounded-lg space-y-3">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <ShoppingCart className="h-4 w-4" />
+                    주문 접수
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="orderQty">수량</Label>
+                      <Input
+                        id="orderQty"
+                        type="number"
+                        min={1}
+                        value={orderQuantity}
+                        onChange={(e) => setOrderQuantity(parseInt(e.target.value) || 1)}
+                      />
+                    </div>
+                    <div>
+                      <Label>공급가</Label>
+                      <div className="text-sm font-medium pt-2">
+                        {(product.supplyPrice * orderQuantity).toLocaleString()}원
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="orderRecipient">수령자명</Label>
+                    <Input
+                      id="orderRecipient"
+                      value={orderRecipient}
+                      onChange={(e) => setOrderRecipient(e.target.value)}
+                      placeholder="수령자명 (선택)"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="orderPhone">연락처</Label>
+                    <Input
+                      id="orderPhone"
+                      value={orderPhone}
+                      onChange={(e) => setOrderPhone(e.target.value)}
+                      placeholder="010-1234-1234 (선택)"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleQuickOrder}
+                      disabled={orderLoading}
+                      className="flex-1"
+                    >
+                      {orderLoading ? "접수 중..." : "주문 접수"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowOrderForm(false)}
+                    >
+                      취소
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2">
+                <Button onClick={onClose} variant="outline">닫기</Button>
+                {!showOrderForm && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowOrderForm(true)}
+                    className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                  >
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    주문 접수
+                  </Button>
+                )}
+                <Link href={`/admin/products/${product.id}`}>
+                  <Button>
+                    상세 정보 보기
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
             </div>
           )}
         </div>

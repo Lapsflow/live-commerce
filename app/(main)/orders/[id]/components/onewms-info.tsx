@@ -33,7 +33,12 @@ export function OnewmsInfo({ orderId }: OnewmsInfoProps) {
     queryFn: async () => {
       const res = await fetch(`/api/onewms/orders/${orderId}/status`);
       if (!res.ok) throw new Error('Failed to fetch');
-      return res.json() as Promise<OnewmsOrderStatus | null>;
+      const json = await res.json();
+      // API returns { data: { ... } } wrapper
+      const info = json?.data ?? json;
+      // not_synced means no ONEWMS data yet
+      if (!info || info.status === 'not_synced' || info.synced === false) return null;
+      return info as OnewmsOrderStatus;
     },
   });
 
@@ -96,7 +101,7 @@ export function OnewmsInfo({ orderId }: OnewmsInfoProps) {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>ONEWMS 정보</span>
-          <Badge className={statusColor}>{data.status.toUpperCase()}</Badge>
+          <Badge className={statusColor}>{data.status?.toUpperCase() ?? 'UNKNOWN'}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>

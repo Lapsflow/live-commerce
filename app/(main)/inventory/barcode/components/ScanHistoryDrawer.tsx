@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useScanHistory } from "../hooks/useScanHistory";
-import { RefreshCw, Package, ArrowUp, ArrowDown, Eye } from "lucide-react";
+import { RefreshCw, Package, ArrowUp, ArrowDown, Eye, FileSpreadsheet } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -41,20 +41,55 @@ const scanTypeConfig = {
 export function ScanHistoryDrawer({ open, onOpenChange }: ScanHistoryDrawerProps) {
   const { history, loading, error, refresh } = useScanHistory(20);
 
+  const handleExportExcel = () => {
+    if (history.length === 0) return;
+
+    // CSV 생성 (엑셀 호환)
+    const headers = ["스캔유형", "바코드", "상품명", "수량", "스캔일시"];
+    const rows = history.map((item) => [
+      scanTypeConfig[item.scanType]?.label || item.scanType,
+      item.barcode,
+      item.productName || "",
+      item.quantity?.toString() || "",
+      format(new Date(item.scannedAt), "yyyy-MM-dd HH:mm:ss"),
+    ]);
+
+    const bom = "\uFEFF"; // UTF-8 BOM for Excel
+    const csv = bom + [headers, ...rows].map((row) => row.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `스캔이력_${format(new Date(), "yyyyMMdd_HHmm")}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-md">
         <SheetHeader>
           <SheetTitle className="flex items-center justify-between">
             <span>최근 스캔 이력</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={refresh}
-              disabled={loading}
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleExportExcel}
+                disabled={loading || history.length === 0}
+                title="엑셀 내보내기"
+              >
+                <FileSpreadsheet className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={refresh}
+                disabled={loading}
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              </Button>
+            </div>
           </SheetTitle>
           <SheetDescription>
             최근 20건의 바코드 스캔 기록입니다.

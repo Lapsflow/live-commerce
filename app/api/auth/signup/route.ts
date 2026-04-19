@@ -6,29 +6,21 @@ import { z } from "zod";
 import { validateCenterCode } from "@/lib/validators/center";
 
 const signupSchema = z.object({
-  username: z.string().min(3).max(50), // 로그인용 아이디 (pptx 스펙)
-  password: z.string().min(6),
+  username: z.string().min(3).max(50),
+  password: z.string().min(8), // PDF 스펙: 8자 이상
   name: z.string().min(1),
-  phone: z.string().min(10).max(11), // 필수 (pptx 스펙)
-  email: z.string().email().optional(), // 실제 이메일 (선택)
-  role: z.string().optional(), // 무시됨 - 항상 SELLER로 가입 (ADMIN은 수기 등록)
-  adminId: z.string().optional(),
-  centerId: z.string(), // Required - center assignment
-
-  // SELLER 1차 정보
-  channels: z.array(z.string()).optional(),
-  avgSales: z.number().optional(),
-
-  // SELLER 2차 정보 (선택)
-  categories: z.array(z.string()).optional(),
-  regions: z.array(z.string()).optional(),
-  timeSlots: z.array(z.string()).optional(),
+  phone: z.string().min(10).max(13), // 010-1234-1234 형식도 허용
+  email: z.string().email(), // PDF 스펙: 필수
+  centerId: z.string(), // 소속 센터 (필수)
 });
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const data = signupSchema.parse(body);
+
+    // 휴대폰번호에서 하이픈 제거하여 저장
+    const phoneDigits = data.phone.replace(/-/g, "");
 
     // Validate center exists
     const center = await prisma.center.findUnique({
@@ -48,14 +40,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate SELLER-specific fields (회원가입은 항상 SELLER)
-    if (!data.channels || data.channels.length === 0) {
-      return error("VALIDATION_ERROR", "활동 채널을 선택해야 합니다.", 400);
-    }
-    if (!data.avgSales || data.avgSales <= 0) {
-      return error("VALIDATION_ERROR", "월평균 매출을 입력해야 합니다.", 400);
-    }
-
     // 중복 확인 (username)
     const existing = await prisma.user.findUnique({
       where: { username: data.username },
@@ -63,6 +47,15 @@ export async function POST(req: NextRequest) {
 
     if (existing) {
       return error("USER_EXISTS", "이미 존재하는 아이디입니다.", 400);
+    }
+
+    // 이메일 중복 확인
+    const existingEmail = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingEmail) {
+      return error("EMAIL_EXISTS", "이미 사용 중인 이메일입니다.", 400);
     }
 
     // 비밀번호 해싱
@@ -74,21 +67,10 @@ export async function POST(req: NextRequest) {
         username: data.username,
         email: data.email,
         name: data.name,
-        phone: data.phone,
-        role: "SELLER", // 항상 SELLER - ADMIN은 관리자가 수기 등록
-        adminId: data.adminId,
+        phone: phoneDigits,
+        role: "SELLER",
         centerId: data.centerId,
-
-        // SELLER 정보
-        channels: data.channels || [],
-        avgSales: data.avgSales,
-
-        // 2차 정보 (선택)
-        categories: data.categories || [],
-        regions: data.regions || [],
-        timeSlots: data.timeSlots || [],
-
-        contractStatus: "PENDING", // 관리자 승인 필요
+        contractStatus: "PENDING",
         passwordHash,
       },
     });
@@ -98,11 +80,19 @@ export async function POST(req: NextRequest) {
       name: user.name,
       role: user.role,
       contractStatus: user.contractStatus,
-      message: "계약 승인 대기 중입니다. 관리자 승인 후 로그인 가능합니다.",
+      message: "가입 신청이 완료되었습니다! 관리자 승인 후 로그인 가능합니다.",
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return error("VALIDATION_ERROR", err.issues[0].message, 400);
+      const issue = err.issues[0];
+      let message = issue.message;
+      if (issue.path[0] === "password" && issue.code === "too_small") {
+        message = "비밀번호는 8자 이상이어야 합니다.";
+      }
+      if (issue.path[0] === "email") {
+        message = "올바른 이메일 형식을 입력해주세요.";
+      }
+      return error("VALIDATION_ERROR", message, 400);
     }
     return error("SIGNUP_FAILED", err.message, 500);
   }

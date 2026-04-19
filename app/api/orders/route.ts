@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { z } from "zod";
+import { reserveStock } from "@/lib/services/stock/reservation";
 
 // Phase 2: Order with Items Schema
 const orderItemSchema = z.object({
@@ -183,6 +184,22 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
 
       createdOrders.push(wmsOrder, centerOrder);
 
+      // ✨ 재고 선점: split 주문에도 적용
+      for (const order of createdOrders) {
+        const reserveResult = await reserveStock(order.id);
+        if (!reserveResult.success) {
+          // 실패 시 생성된 주문 모두 삭제
+          for (const o of createdOrders) {
+            await prisma.order.delete({ where: { id: o.id } }).catch(() => {});
+          }
+          return error(
+            "STOCK_RESERVE_FAILED",
+            reserveResult.error || "재고 선점 실패",
+            400
+          );
+        }
+      }
+
       return ok({
         message: "주문이 상품 유형별로 분리되어 생성되었습니다.",
         orders: createdOrders,
@@ -196,6 +213,20 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
       // Only CENTER items
       const order = await createOrderWithItems(centerItems, "CENTER", "");
       createdOrders.push(order);
+    }
+
+    // ✨ 재고 선점: 생성된 주문에 대해 재고 선점 처리
+    for (const order of createdOrders) {
+      const reserveResult = await reserveStock(order.id);
+      if (!reserveResult.success) {
+        // 선점 실패 시 주문 삭제 (롤백)
+        await prisma.order.delete({ where: { id: order.id } });
+        return error(
+          "STOCK_RESERVE_FAILED",
+          reserveResult.error || "재고 선점 실패",
+          400
+        );
+      }
     }
 
     return ok({

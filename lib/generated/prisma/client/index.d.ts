@@ -49,6 +49,11 @@ export type Order = $Result.DefaultSelection<Prisma.$OrderPayload>
  */
 export type OrderItem = $Result.DefaultSelection<Prisma.$OrderItemPayload>
 /**
+ * Model StockReservation
+ * 
+ */
+export type StockReservation = $Result.DefaultSelection<Prisma.$StockReservationPayload>
+/**
  * Model Broadcast
  * 
  */
@@ -187,6 +192,15 @@ export const ShippingStatus: {
 export type ShippingStatus = (typeof ShippingStatus)[keyof typeof ShippingStatus]
 
 
+export const ReservationStatus: {
+  ACTIVE: 'ACTIVE',
+  CONVERTED: 'CONVERTED',
+  RELEASED: 'RELEASED'
+};
+
+export type ReservationStatus = (typeof ReservationStatus)[keyof typeof ReservationStatus]
+
+
 export const BroadcastPlatform: {
   GRIP: 'GRIP',
   CLME: 'CLME',
@@ -251,6 +265,10 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type ShippingStatus = $Enums.ShippingStatus
 
 export const ShippingStatus: typeof $Enums.ShippingStatus
+
+export type ReservationStatus = $Enums.ReservationStatus
+
+export const ReservationStatus: typeof $Enums.ReservationStatus
 
 export type BroadcastPlatform = $Enums.BroadcastPlatform
 
@@ -458,6 +476,16 @@ export class PrismaClient<
     * ```
     */
   get orderItem(): Prisma.OrderItemDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.stockReservation`: Exposes CRUD operations for the **StockReservation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StockReservations
+    * const stockReservations = await prisma.stockReservation.findMany()
+    * ```
+    */
+  get stockReservation(): Prisma.StockReservationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.broadcast`: Exposes CRUD operations for the **Broadcast** model.
@@ -1059,6 +1087,7 @@ export namespace Prisma {
     OrderSellerMatching: 'OrderSellerMatching',
     Order: 'Order',
     OrderItem: 'OrderItem',
+    StockReservation: 'StockReservation',
     Broadcast: 'Broadcast',
     Sale: 'Sale',
     Proposal: 'Proposal',
@@ -1090,7 +1119,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "center" | "productCenterStock" | "orderSellerMatching" | "order" | "orderItem" | "broadcast" | "sale" | "proposal" | "proposalCart" | "onewmsOrderMapping" | "onewmsStockSync" | "onewmsDeliveryLog" | "warehouse" | "barcodeMaster" | "warehouseInventory" | "stockMovement" | "aIAnalysis" | "aIUsageStats" | "rateLimit" | "marketPricing" | "scanLog"
+      modelProps: "user" | "product" | "center" | "productCenterStock" | "orderSellerMatching" | "order" | "orderItem" | "stockReservation" | "broadcast" | "sale" | "proposal" | "proposalCart" | "onewmsOrderMapping" | "onewmsStockSync" | "onewmsDeliveryLog" | "warehouse" | "barcodeMaster" | "warehouseInventory" | "stockMovement" | "aIAnalysis" | "aIUsageStats" | "rateLimit" | "marketPricing" | "scanLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1609,6 +1638,80 @@ export namespace Prisma {
           count: {
             args: Prisma.OrderItemCountArgs<ExtArgs>
             result: $Utils.Optional<OrderItemCountAggregateOutputType> | number
+          }
+        }
+      }
+      StockReservation: {
+        payload: Prisma.$StockReservationPayload<ExtArgs>
+        fields: Prisma.StockReservationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StockReservationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StockReservationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>
+          }
+          findFirst: {
+            args: Prisma.StockReservationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StockReservationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>
+          }
+          findMany: {
+            args: Prisma.StockReservationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>[]
+          }
+          create: {
+            args: Prisma.StockReservationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>
+          }
+          createMany: {
+            args: Prisma.StockReservationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.StockReservationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>[]
+          }
+          delete: {
+            args: Prisma.StockReservationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>
+          }
+          update: {
+            args: Prisma.StockReservationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>
+          }
+          deleteMany: {
+            args: Prisma.StockReservationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StockReservationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.StockReservationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>[]
+          }
+          upsert: {
+            args: Prisma.StockReservationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StockReservationPayload>
+          }
+          aggregate: {
+            args: Prisma.StockReservationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStockReservation>
+          }
+          groupBy: {
+            args: Prisma.StockReservationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StockReservationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StockReservationCountArgs<ExtArgs>
+            result: $Utils.Optional<StockReservationCountAggregateOutputType> | number
           }
         }
       }
@@ -2911,6 +3014,7 @@ export namespace Prisma {
     orderSellerMatching?: OrderSellerMatchingOmit
     order?: OrderOmit
     orderItem?: OrderItemOmit
+    stockReservation?: StockReservationOmit
     broadcast?: BroadcastOmit
     sale?: SaleOmit
     proposal?: ProposalOmit
@@ -3120,6 +3224,7 @@ export namespace Prisma {
     aiAnalyses: number
     proposalCarts: number
     scanLogs: number
+    reservations: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3133,6 +3238,7 @@ export namespace Prisma {
     aiAnalyses?: boolean | ProductCountOutputTypeCountAiAnalysesArgs
     proposalCarts?: boolean | ProductCountOutputTypeCountProposalCartsArgs
     scanLogs?: boolean | ProductCountOutputTypeCountScanLogsArgs
+    reservations?: boolean | ProductCountOutputTypeCountReservationsArgs
   }
 
   // Custom InputTypes
@@ -3216,6 +3322,13 @@ export namespace Prisma {
     where?: ScanLogWhereInput
   }
 
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountReservationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StockReservationWhereInput
+  }
+
 
   /**
    * Count Type CenterCountOutputType
@@ -3292,12 +3405,14 @@ export namespace Prisma {
     items: number
     onewmsDeliveryLogs: number
     sellerMatches: number
+    reservations: number
   }
 
   export type OrderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     items?: boolean | OrderCountOutputTypeCountItemsArgs
     onewmsDeliveryLogs?: boolean | OrderCountOutputTypeCountOnewmsDeliveryLogsArgs
     sellerMatches?: boolean | OrderCountOutputTypeCountSellerMatchesArgs
+    reservations?: boolean | OrderCountOutputTypeCountReservationsArgs
   }
 
   // Custom InputTypes
@@ -3330,6 +3445,13 @@ export namespace Prisma {
    */
   export type OrderCountOutputTypeCountSellerMatchesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OrderSellerMatchingWhereInput
+  }
+
+  /**
+   * OrderCountOutputType without action
+   */
+  export type OrderCountOutputTypeCountReservationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StockReservationWhereInput
   }
 
 
@@ -5040,6 +5162,7 @@ export namespace Prisma {
     sellPrice: number | null
     supplyPrice: number | null
     totalStock: number | null
+    reservedStock: number | null
     stockMujin: number | null
     stock1: number | null
     stock2: number | null
@@ -5050,6 +5173,7 @@ export namespace Prisma {
     sellPrice: number | null
     supplyPrice: number | null
     totalStock: number | null
+    reservedStock: number | null
     stockMujin: number | null
     stock1: number | null
     stock2: number | null
@@ -5064,6 +5188,7 @@ export namespace Prisma {
     sellPrice: number | null
     supplyPrice: number | null
     totalStock: number | null
+    reservedStock: number | null
     stockMujin: number | null
     stock1: number | null
     stock2: number | null
@@ -5086,6 +5211,7 @@ export namespace Prisma {
     sellPrice: number | null
     supplyPrice: number | null
     totalStock: number | null
+    reservedStock: number | null
     stockMujin: number | null
     stock1: number | null
     stock2: number | null
@@ -5108,6 +5234,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock: number
+    reservedStock: number
     stockMujin: number
     stock1: number
     stock2: number
@@ -5128,6 +5255,7 @@ export namespace Prisma {
     sellPrice?: true
     supplyPrice?: true
     totalStock?: true
+    reservedStock?: true
     stockMujin?: true
     stock1?: true
     stock2?: true
@@ -5138,6 +5266,7 @@ export namespace Prisma {
     sellPrice?: true
     supplyPrice?: true
     totalStock?: true
+    reservedStock?: true
     stockMujin?: true
     stock1?: true
     stock2?: true
@@ -5152,6 +5281,7 @@ export namespace Prisma {
     sellPrice?: true
     supplyPrice?: true
     totalStock?: true
+    reservedStock?: true
     stockMujin?: true
     stock1?: true
     stock2?: true
@@ -5174,6 +5304,7 @@ export namespace Prisma {
     sellPrice?: true
     supplyPrice?: true
     totalStock?: true
+    reservedStock?: true
     stockMujin?: true
     stock1?: true
     stock2?: true
@@ -5196,6 +5327,7 @@ export namespace Prisma {
     sellPrice?: true
     supplyPrice?: true
     totalStock?: true
+    reservedStock?: true
     stockMujin?: true
     stock1?: true
     stock2?: true
@@ -5305,6 +5437,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock: number
+    reservedStock: number
     stockMujin: number
     stock1: number
     stock2: number
@@ -5346,6 +5479,7 @@ export namespace Prisma {
     sellPrice?: boolean
     supplyPrice?: boolean
     totalStock?: boolean
+    reservedStock?: boolean
     stockMujin?: boolean
     stock1?: boolean
     stock2?: boolean
@@ -5368,6 +5502,7 @@ export namespace Prisma {
     aiAnalyses?: boolean | Product$aiAnalysesArgs<ExtArgs>
     proposalCarts?: boolean | Product$proposalCartsArgs<ExtArgs>
     scanLogs?: boolean | Product$scanLogsArgs<ExtArgs>
+    reservations?: boolean | Product$reservationsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -5379,6 +5514,7 @@ export namespace Prisma {
     sellPrice?: boolean
     supplyPrice?: boolean
     totalStock?: boolean
+    reservedStock?: boolean
     stockMujin?: boolean
     stock1?: boolean
     stock2?: boolean
@@ -5401,6 +5537,7 @@ export namespace Prisma {
     sellPrice?: boolean
     supplyPrice?: boolean
     totalStock?: boolean
+    reservedStock?: boolean
     stockMujin?: boolean
     stock1?: boolean
     stock2?: boolean
@@ -5423,6 +5560,7 @@ export namespace Prisma {
     sellPrice?: boolean
     supplyPrice?: boolean
     totalStock?: boolean
+    reservedStock?: boolean
     stockMujin?: boolean
     stock1?: boolean
     stock2?: boolean
@@ -5437,7 +5575,7 @@ export namespace Prisma {
     isWmsProduct?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "totalStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
@@ -5449,6 +5587,7 @@ export namespace Prisma {
     aiAnalyses?: boolean | Product$aiAnalysesArgs<ExtArgs>
     proposalCarts?: boolean | Product$proposalCartsArgs<ExtArgs>
     scanLogs?: boolean | Product$scanLogsArgs<ExtArgs>
+    reservations?: boolean | Product$reservationsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5467,6 +5606,7 @@ export namespace Prisma {
       aiAnalyses: Prisma.$AIAnalysisPayload<ExtArgs>[]
       proposalCarts: Prisma.$ProposalCartPayload<ExtArgs>[]
       scanLogs: Prisma.$ScanLogPayload<ExtArgs>[]
+      reservations: Prisma.$StockReservationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5476,6 +5616,7 @@ export namespace Prisma {
       sellPrice: number
       supplyPrice: number
       totalStock: number
+      reservedStock: number
       stockMujin: number
       stock1: number
       stock2: number
@@ -5892,6 +6033,7 @@ export namespace Prisma {
     aiAnalyses<T extends Product$aiAnalysesArgs<ExtArgs> = {}>(args?: Subset<T, Product$aiAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     proposalCarts<T extends Product$proposalCartsArgs<ExtArgs> = {}>(args?: Subset<T, Product$proposalCartsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalCartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     scanLogs<T extends Product$scanLogsArgs<ExtArgs> = {}>(args?: Subset<T, Product$scanLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScanLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reservations<T extends Product$reservationsArgs<ExtArgs> = {}>(args?: Subset<T, Product$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5928,6 +6070,7 @@ export namespace Prisma {
     readonly sellPrice: FieldRef<"Product", 'Int'>
     readonly supplyPrice: FieldRef<"Product", 'Int'>
     readonly totalStock: FieldRef<"Product", 'Int'>
+    readonly reservedStock: FieldRef<"Product", 'Int'>
     readonly stockMujin: FieldRef<"Product", 'Int'>
     readonly stock1: FieldRef<"Product", 'Int'>
     readonly stock2: FieldRef<"Product", 'Int'>
@@ -6570,6 +6713,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ScanLogScalarFieldEnum | ScanLogScalarFieldEnum[]
+  }
+
+  /**
+   * Product.reservations
+   */
+  export type Product$reservationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    where?: StockReservationWhereInput
+    orderBy?: StockReservationOrderByWithRelationInput | StockReservationOrderByWithRelationInput[]
+    cursor?: StockReservationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StockReservationScalarFieldEnum | StockReservationScalarFieldEnum[]
   }
 
   /**
@@ -10314,6 +10481,9 @@ export namespace Prisma {
     virtualAccountBank: string | null
     virtualAccountExpiry: Date | null
     productType: $Enums.ProductType | null
+    expiresAt: Date | null
+    cancelledAt: Date | null
+    cancelReason: string | null
   }
 
   export type OrderMaxAggregateOutputType = {
@@ -10340,6 +10510,9 @@ export namespace Prisma {
     virtualAccountBank: string | null
     virtualAccountExpiry: Date | null
     productType: $Enums.ProductType | null
+    expiresAt: Date | null
+    cancelledAt: Date | null
+    cancelReason: string | null
   }
 
   export type OrderCountAggregateOutputType = {
@@ -10366,6 +10539,9 @@ export namespace Prisma {
     virtualAccountBank: number
     virtualAccountExpiry: number
     productType: number
+    expiresAt: number
+    cancelledAt: number
+    cancelReason: number
     _all: number
   }
 
@@ -10404,6 +10580,9 @@ export namespace Prisma {
     virtualAccountBank?: true
     virtualAccountExpiry?: true
     productType?: true
+    expiresAt?: true
+    cancelledAt?: true
+    cancelReason?: true
   }
 
   export type OrderMaxAggregateInputType = {
@@ -10430,6 +10609,9 @@ export namespace Prisma {
     virtualAccountBank?: true
     virtualAccountExpiry?: true
     productType?: true
+    expiresAt?: true
+    cancelledAt?: true
+    cancelReason?: true
   }
 
   export type OrderCountAggregateInputType = {
@@ -10456,6 +10638,9 @@ export namespace Prisma {
     virtualAccountBank?: true
     virtualAccountExpiry?: true
     productType?: true
+    expiresAt?: true
+    cancelledAt?: true
+    cancelReason?: true
     _all?: true
   }
 
@@ -10569,6 +10754,9 @@ export namespace Prisma {
     virtualAccountBank: string | null
     virtualAccountExpiry: Date | null
     productType: $Enums.ProductType | null
+    expiresAt: Date | null
+    cancelledAt: Date | null
+    cancelReason: string | null
     _count: OrderCountAggregateOutputType | null
     _avg: OrderAvgAggregateOutputType | null
     _sum: OrderSumAggregateOutputType | null
@@ -10614,6 +10802,9 @@ export namespace Prisma {
     virtualAccountBank?: boolean
     virtualAccountExpiry?: boolean
     productType?: boolean
+    expiresAt?: boolean
+    cancelledAt?: boolean
+    cancelReason?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
@@ -10621,6 +10812,7 @@ export namespace Prisma {
     onewmsMapping?: boolean | Order$onewmsMappingArgs<ExtArgs>
     onewmsDeliveryLogs?: boolean | Order$onewmsDeliveryLogsArgs<ExtArgs>
     sellerMatches?: boolean | Order$sellerMatchesArgs<ExtArgs>
+    reservations?: boolean | Order$reservationsArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
@@ -10648,6 +10840,9 @@ export namespace Prisma {
     virtualAccountBank?: boolean
     virtualAccountExpiry?: boolean
     productType?: boolean
+    expiresAt?: boolean
+    cancelledAt?: boolean
+    cancelReason?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
@@ -10677,6 +10872,9 @@ export namespace Prisma {
     virtualAccountBank?: boolean
     virtualAccountExpiry?: boolean
     productType?: boolean
+    expiresAt?: boolean
+    cancelledAt?: boolean
+    cancelReason?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
@@ -10706,9 +10904,12 @@ export namespace Prisma {
     virtualAccountBank?: boolean
     virtualAccountExpiry?: boolean
     productType?: boolean
+    expiresAt?: boolean
+    cancelledAt?: boolean
+    cancelReason?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "adminId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "adminId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
@@ -10717,6 +10918,7 @@ export namespace Prisma {
     onewmsMapping?: boolean | Order$onewmsMappingArgs<ExtArgs>
     onewmsDeliveryLogs?: boolean | Order$onewmsDeliveryLogsArgs<ExtArgs>
     sellerMatches?: boolean | Order$sellerMatchesArgs<ExtArgs>
+    reservations?: boolean | Order$reservationsArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10740,6 +10942,7 @@ export namespace Prisma {
       onewmsMapping: Prisma.$OnewmsOrderMappingPayload<ExtArgs> | null
       onewmsDeliveryLogs: Prisma.$OnewmsDeliveryLogPayload<ExtArgs>[]
       sellerMatches: Prisma.$OrderSellerMatchingPayload<ExtArgs>[]
+      reservations: Prisma.$StockReservationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10765,6 +10968,9 @@ export namespace Prisma {
       virtualAccountBank: string | null
       virtualAccountExpiry: Date | null
       productType: $Enums.ProductType | null
+      expiresAt: Date | null
+      cancelledAt: Date | null
+      cancelReason: string | null
     }, ExtArgs["result"]["order"]>
     composites: {}
   }
@@ -11166,6 +11372,7 @@ export namespace Prisma {
     onewmsMapping<T extends Order$onewmsMappingArgs<ExtArgs> = {}>(args?: Subset<T, Order$onewmsMappingArgs<ExtArgs>>): Prisma__OnewmsOrderMappingClient<$Result.GetResult<Prisma.$OnewmsOrderMappingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     onewmsDeliveryLogs<T extends Order$onewmsDeliveryLogsArgs<ExtArgs> = {}>(args?: Subset<T, Order$onewmsDeliveryLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnewmsDeliveryLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sellerMatches<T extends Order$sellerMatchesArgs<ExtArgs> = {}>(args?: Subset<T, Order$sellerMatchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderSellerMatchingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reservations<T extends Order$reservationsArgs<ExtArgs> = {}>(args?: Subset<T, Order$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11218,6 +11425,9 @@ export namespace Prisma {
     readonly virtualAccountBank: FieldRef<"Order", 'String'>
     readonly virtualAccountExpiry: FieldRef<"Order", 'DateTime'>
     readonly productType: FieldRef<"Order", 'ProductType'>
+    readonly expiresAt: FieldRef<"Order", 'DateTime'>
+    readonly cancelledAt: FieldRef<"Order", 'DateTime'>
+    readonly cancelReason: FieldRef<"Order", 'String'>
   }
     
 
@@ -11745,6 +11955,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: OrderSellerMatchingScalarFieldEnum | OrderSellerMatchingScalarFieldEnum[]
+  }
+
+  /**
+   * Order.reservations
+   */
+  export type Order$reservationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    where?: StockReservationWhereInput
+    orderBy?: StockReservationOrderByWithRelationInput | StockReservationOrderByWithRelationInput[]
+    cursor?: StockReservationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StockReservationScalarFieldEnum | StockReservationScalarFieldEnum[]
   }
 
   /**
@@ -12958,6 +13192,1150 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrderItemInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model StockReservation
+   */
+
+  export type AggregateStockReservation = {
+    _count: StockReservationCountAggregateOutputType | null
+    _avg: StockReservationAvgAggregateOutputType | null
+    _sum: StockReservationSumAggregateOutputType | null
+    _min: StockReservationMinAggregateOutputType | null
+    _max: StockReservationMaxAggregateOutputType | null
+  }
+
+  export type StockReservationAvgAggregateOutputType = {
+    quantity: number | null
+  }
+
+  export type StockReservationSumAggregateOutputType = {
+    quantity: number | null
+  }
+
+  export type StockReservationMinAggregateOutputType = {
+    id: string | null
+    orderId: string | null
+    productId: string | null
+    quantity: number | null
+    status: $Enums.ReservationStatus | null
+    reservedAt: Date | null
+    releasedAt: Date | null
+    releaseType: string | null
+  }
+
+  export type StockReservationMaxAggregateOutputType = {
+    id: string | null
+    orderId: string | null
+    productId: string | null
+    quantity: number | null
+    status: $Enums.ReservationStatus | null
+    reservedAt: Date | null
+    releasedAt: Date | null
+    releaseType: string | null
+  }
+
+  export type StockReservationCountAggregateOutputType = {
+    id: number
+    orderId: number
+    productId: number
+    quantity: number
+    status: number
+    reservedAt: number
+    releasedAt: number
+    releaseType: number
+    _all: number
+  }
+
+
+  export type StockReservationAvgAggregateInputType = {
+    quantity?: true
+  }
+
+  export type StockReservationSumAggregateInputType = {
+    quantity?: true
+  }
+
+  export type StockReservationMinAggregateInputType = {
+    id?: true
+    orderId?: true
+    productId?: true
+    quantity?: true
+    status?: true
+    reservedAt?: true
+    releasedAt?: true
+    releaseType?: true
+  }
+
+  export type StockReservationMaxAggregateInputType = {
+    id?: true
+    orderId?: true
+    productId?: true
+    quantity?: true
+    status?: true
+    reservedAt?: true
+    releasedAt?: true
+    releaseType?: true
+  }
+
+  export type StockReservationCountAggregateInputType = {
+    id?: true
+    orderId?: true
+    productId?: true
+    quantity?: true
+    status?: true
+    reservedAt?: true
+    releasedAt?: true
+    releaseType?: true
+    _all?: true
+  }
+
+  export type StockReservationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StockReservation to aggregate.
+     */
+    where?: StockReservationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StockReservations to fetch.
+     */
+    orderBy?: StockReservationOrderByWithRelationInput | StockReservationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StockReservationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StockReservations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StockReservations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned StockReservations
+    **/
+    _count?: true | StockReservationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: StockReservationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: StockReservationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StockReservationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StockReservationMaxAggregateInputType
+  }
+
+  export type GetStockReservationAggregateType<T extends StockReservationAggregateArgs> = {
+        [P in keyof T & keyof AggregateStockReservation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStockReservation[P]>
+      : GetScalarType<T[P], AggregateStockReservation[P]>
+  }
+
+
+
+
+  export type StockReservationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StockReservationWhereInput
+    orderBy?: StockReservationOrderByWithAggregationInput | StockReservationOrderByWithAggregationInput[]
+    by: StockReservationScalarFieldEnum[] | StockReservationScalarFieldEnum
+    having?: StockReservationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StockReservationCountAggregateInputType | true
+    _avg?: StockReservationAvgAggregateInputType
+    _sum?: StockReservationSumAggregateInputType
+    _min?: StockReservationMinAggregateInputType
+    _max?: StockReservationMaxAggregateInputType
+  }
+
+  export type StockReservationGroupByOutputType = {
+    id: string
+    orderId: string
+    productId: string
+    quantity: number
+    status: $Enums.ReservationStatus
+    reservedAt: Date
+    releasedAt: Date | null
+    releaseType: string | null
+    _count: StockReservationCountAggregateOutputType | null
+    _avg: StockReservationAvgAggregateOutputType | null
+    _sum: StockReservationSumAggregateOutputType | null
+    _min: StockReservationMinAggregateOutputType | null
+    _max: StockReservationMaxAggregateOutputType | null
+  }
+
+  type GetStockReservationGroupByPayload<T extends StockReservationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StockReservationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StockReservationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StockReservationGroupByOutputType[P]>
+            : GetScalarType<T[P], StockReservationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StockReservationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orderId?: boolean
+    productId?: boolean
+    quantity?: boolean
+    status?: boolean
+    reservedAt?: boolean
+    releasedAt?: boolean
+    releaseType?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stockReservation"]>
+
+  export type StockReservationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orderId?: boolean
+    productId?: boolean
+    quantity?: boolean
+    status?: boolean
+    reservedAt?: boolean
+    releasedAt?: boolean
+    releaseType?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stockReservation"]>
+
+  export type StockReservationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orderId?: boolean
+    productId?: boolean
+    quantity?: boolean
+    status?: boolean
+    reservedAt?: boolean
+    releasedAt?: boolean
+    releaseType?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stockReservation"]>
+
+  export type StockReservationSelectScalar = {
+    id?: boolean
+    orderId?: boolean
+    productId?: boolean
+    quantity?: boolean
+    status?: boolean
+    reservedAt?: boolean
+    releasedAt?: boolean
+    releaseType?: boolean
+  }
+
+  export type StockReservationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderId" | "productId" | "quantity" | "status" | "reservedAt" | "releasedAt" | "releaseType", ExtArgs["result"]["stockReservation"]>
+  export type StockReservationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+  export type StockReservationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+  export type StockReservationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+  }
+
+  export type $StockReservationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StockReservation"
+    objects: {
+      order: Prisma.$OrderPayload<ExtArgs>
+      product: Prisma.$ProductPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      orderId: string
+      productId: string
+      quantity: number
+      status: $Enums.ReservationStatus
+      reservedAt: Date
+      releasedAt: Date | null
+      releaseType: string | null
+    }, ExtArgs["result"]["stockReservation"]>
+    composites: {}
+  }
+
+  type StockReservationGetPayload<S extends boolean | null | undefined | StockReservationDefaultArgs> = $Result.GetResult<Prisma.$StockReservationPayload, S>
+
+  type StockReservationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StockReservationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StockReservationCountAggregateInputType | true
+    }
+
+  export interface StockReservationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StockReservation'], meta: { name: 'StockReservation' } }
+    /**
+     * Find zero or one StockReservation that matches the filter.
+     * @param {StockReservationFindUniqueArgs} args - Arguments to find a StockReservation
+     * @example
+     * // Get one StockReservation
+     * const stockReservation = await prisma.stockReservation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StockReservationFindUniqueArgs>(args: SelectSubset<T, StockReservationFindUniqueArgs<ExtArgs>>): Prisma__StockReservationClient<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one StockReservation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {StockReservationFindUniqueOrThrowArgs} args - Arguments to find a StockReservation
+     * @example
+     * // Get one StockReservation
+     * const stockReservation = await prisma.stockReservation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StockReservationFindUniqueOrThrowArgs>(args: SelectSubset<T, StockReservationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StockReservationClient<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StockReservation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StockReservationFindFirstArgs} args - Arguments to find a StockReservation
+     * @example
+     * // Get one StockReservation
+     * const stockReservation = await prisma.stockReservation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StockReservationFindFirstArgs>(args?: SelectSubset<T, StockReservationFindFirstArgs<ExtArgs>>): Prisma__StockReservationClient<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StockReservation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StockReservationFindFirstOrThrowArgs} args - Arguments to find a StockReservation
+     * @example
+     * // Get one StockReservation
+     * const stockReservation = await prisma.stockReservation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StockReservationFindFirstOrThrowArgs>(args?: SelectSubset<T, StockReservationFindFirstOrThrowArgs<ExtArgs>>): Prisma__StockReservationClient<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more StockReservations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StockReservationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StockReservations
+     * const stockReservations = await prisma.stockReservation.findMany()
+     * 
+     * // Get first 10 StockReservations
+     * const stockReservations = await prisma.stockReservation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const stockReservationWithIdOnly = await prisma.stockReservation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StockReservationFindManyArgs>(args?: SelectSubset<T, StockReservationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a StockReservation.
+     * @param {StockReservationCreateArgs} args - Arguments to create a StockReservation.
+     * @example
+     * // Create one StockReservation
+     * const StockReservation = await prisma.stockReservation.create({
+     *   data: {
+     *     // ... data to create a StockReservation
+     *   }
+     * })
+     * 
+     */
+    create<T extends StockReservationCreateArgs>(args: SelectSubset<T, StockReservationCreateArgs<ExtArgs>>): Prisma__StockReservationClient<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many StockReservations.
+     * @param {StockReservationCreateManyArgs} args - Arguments to create many StockReservations.
+     * @example
+     * // Create many StockReservations
+     * const stockReservation = await prisma.stockReservation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StockReservationCreateManyArgs>(args?: SelectSubset<T, StockReservationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many StockReservations and returns the data saved in the database.
+     * @param {StockReservationCreateManyAndReturnArgs} args - Arguments to create many StockReservations.
+     * @example
+     * // Create many StockReservations
+     * const stockReservation = await prisma.stockReservation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many StockReservations and only return the `id`
+     * const stockReservationWithIdOnly = await prisma.stockReservation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends StockReservationCreateManyAndReturnArgs>(args?: SelectSubset<T, StockReservationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a StockReservation.
+     * @param {StockReservationDeleteArgs} args - Arguments to delete one StockReservation.
+     * @example
+     * // Delete one StockReservation
+     * const StockReservation = await prisma.stockReservation.delete({
+     *   where: {
+     *     // ... filter to delete one StockReservation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StockReservationDeleteArgs>(args: SelectSubset<T, StockReservationDeleteArgs<ExtArgs>>): Prisma__StockReservationClient<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one StockReservation.
+     * @param {StockReservationUpdateArgs} args - Arguments to update one StockReservation.
+     * @example
+     * // Update one StockReservation
+     * const stockReservation = await prisma.stockReservation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StockReservationUpdateArgs>(args: SelectSubset<T, StockReservationUpdateArgs<ExtArgs>>): Prisma__StockReservationClient<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more StockReservations.
+     * @param {StockReservationDeleteManyArgs} args - Arguments to filter StockReservations to delete.
+     * @example
+     * // Delete a few StockReservations
+     * const { count } = await prisma.stockReservation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StockReservationDeleteManyArgs>(args?: SelectSubset<T, StockReservationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StockReservations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StockReservationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StockReservations
+     * const stockReservation = await prisma.stockReservation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StockReservationUpdateManyArgs>(args: SelectSubset<T, StockReservationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StockReservations and returns the data updated in the database.
+     * @param {StockReservationUpdateManyAndReturnArgs} args - Arguments to update many StockReservations.
+     * @example
+     * // Update many StockReservations
+     * const stockReservation = await prisma.stockReservation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more StockReservations and only return the `id`
+     * const stockReservationWithIdOnly = await prisma.stockReservation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends StockReservationUpdateManyAndReturnArgs>(args: SelectSubset<T, StockReservationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one StockReservation.
+     * @param {StockReservationUpsertArgs} args - Arguments to update or create a StockReservation.
+     * @example
+     * // Update or create a StockReservation
+     * const stockReservation = await prisma.stockReservation.upsert({
+     *   create: {
+     *     // ... data to create a StockReservation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StockReservation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StockReservationUpsertArgs>(args: SelectSubset<T, StockReservationUpsertArgs<ExtArgs>>): Prisma__StockReservationClient<$Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of StockReservations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StockReservationCountArgs} args - Arguments to filter StockReservations to count.
+     * @example
+     * // Count the number of StockReservations
+     * const count = await prisma.stockReservation.count({
+     *   where: {
+     *     // ... the filter for the StockReservations we want to count
+     *   }
+     * })
+    **/
+    count<T extends StockReservationCountArgs>(
+      args?: Subset<T, StockReservationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StockReservationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StockReservation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StockReservationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StockReservationAggregateArgs>(args: Subset<T, StockReservationAggregateArgs>): Prisma.PrismaPromise<GetStockReservationAggregateType<T>>
+
+    /**
+     * Group by StockReservation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StockReservationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StockReservationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StockReservationGroupByArgs['orderBy'] }
+        : { orderBy?: StockReservationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StockReservationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStockReservationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StockReservation model
+   */
+  readonly fields: StockReservationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StockReservation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StockReservationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    order<T extends OrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrderDefaultArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StockReservation model
+   */
+  interface StockReservationFieldRefs {
+    readonly id: FieldRef<"StockReservation", 'String'>
+    readonly orderId: FieldRef<"StockReservation", 'String'>
+    readonly productId: FieldRef<"StockReservation", 'String'>
+    readonly quantity: FieldRef<"StockReservation", 'Int'>
+    readonly status: FieldRef<"StockReservation", 'ReservationStatus'>
+    readonly reservedAt: FieldRef<"StockReservation", 'DateTime'>
+    readonly releasedAt: FieldRef<"StockReservation", 'DateTime'>
+    readonly releaseType: FieldRef<"StockReservation", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StockReservation findUnique
+   */
+  export type StockReservationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * Filter, which StockReservation to fetch.
+     */
+    where: StockReservationWhereUniqueInput
+  }
+
+  /**
+   * StockReservation findUniqueOrThrow
+   */
+  export type StockReservationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * Filter, which StockReservation to fetch.
+     */
+    where: StockReservationWhereUniqueInput
+  }
+
+  /**
+   * StockReservation findFirst
+   */
+  export type StockReservationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * Filter, which StockReservation to fetch.
+     */
+    where?: StockReservationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StockReservations to fetch.
+     */
+    orderBy?: StockReservationOrderByWithRelationInput | StockReservationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StockReservations.
+     */
+    cursor?: StockReservationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StockReservations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StockReservations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StockReservations.
+     */
+    distinct?: StockReservationScalarFieldEnum | StockReservationScalarFieldEnum[]
+  }
+
+  /**
+   * StockReservation findFirstOrThrow
+   */
+  export type StockReservationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * Filter, which StockReservation to fetch.
+     */
+    where?: StockReservationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StockReservations to fetch.
+     */
+    orderBy?: StockReservationOrderByWithRelationInput | StockReservationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StockReservations.
+     */
+    cursor?: StockReservationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StockReservations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StockReservations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StockReservations.
+     */
+    distinct?: StockReservationScalarFieldEnum | StockReservationScalarFieldEnum[]
+  }
+
+  /**
+   * StockReservation findMany
+   */
+  export type StockReservationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * Filter, which StockReservations to fetch.
+     */
+    where?: StockReservationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StockReservations to fetch.
+     */
+    orderBy?: StockReservationOrderByWithRelationInput | StockReservationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StockReservations.
+     */
+    cursor?: StockReservationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StockReservations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StockReservations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StockReservations.
+     */
+    distinct?: StockReservationScalarFieldEnum | StockReservationScalarFieldEnum[]
+  }
+
+  /**
+   * StockReservation create
+   */
+  export type StockReservationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a StockReservation.
+     */
+    data: XOR<StockReservationCreateInput, StockReservationUncheckedCreateInput>
+  }
+
+  /**
+   * StockReservation createMany
+   */
+  export type StockReservationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StockReservations.
+     */
+    data: StockReservationCreateManyInput | StockReservationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * StockReservation createManyAndReturn
+   */
+  export type StockReservationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * The data used to create many StockReservations.
+     */
+    data: StockReservationCreateManyInput | StockReservationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StockReservation update
+   */
+  export type StockReservationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a StockReservation.
+     */
+    data: XOR<StockReservationUpdateInput, StockReservationUncheckedUpdateInput>
+    /**
+     * Choose, which StockReservation to update.
+     */
+    where: StockReservationWhereUniqueInput
+  }
+
+  /**
+   * StockReservation updateMany
+   */
+  export type StockReservationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StockReservations.
+     */
+    data: XOR<StockReservationUpdateManyMutationInput, StockReservationUncheckedUpdateManyInput>
+    /**
+     * Filter which StockReservations to update
+     */
+    where?: StockReservationWhereInput
+    /**
+     * Limit how many StockReservations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StockReservation updateManyAndReturn
+   */
+  export type StockReservationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * The data used to update StockReservations.
+     */
+    data: XOR<StockReservationUpdateManyMutationInput, StockReservationUncheckedUpdateManyInput>
+    /**
+     * Filter which StockReservations to update
+     */
+    where?: StockReservationWhereInput
+    /**
+     * Limit how many StockReservations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StockReservation upsert
+   */
+  export type StockReservationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the StockReservation to update in case it exists.
+     */
+    where: StockReservationWhereUniqueInput
+    /**
+     * In case the StockReservation found by the `where` argument doesn't exist, create a new StockReservation with this data.
+     */
+    create: XOR<StockReservationCreateInput, StockReservationUncheckedCreateInput>
+    /**
+     * In case the StockReservation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StockReservationUpdateInput, StockReservationUncheckedUpdateInput>
+  }
+
+  /**
+   * StockReservation delete
+   */
+  export type StockReservationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
+    /**
+     * Filter which StockReservation to delete.
+     */
+    where: StockReservationWhereUniqueInput
+  }
+
+  /**
+   * StockReservation deleteMany
+   */
+  export type StockReservationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StockReservations to delete
+     */
+    where?: StockReservationWhereInput
+    /**
+     * Limit how many StockReservations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * StockReservation without action
+   */
+  export type StockReservationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StockReservation
+     */
+    select?: StockReservationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StockReservation
+     */
+    omit?: StockReservationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StockReservationInclude<ExtArgs> | null
   }
 
 
@@ -31457,6 +32835,7 @@ export namespace Prisma {
     sellPrice: 'sellPrice',
     supplyPrice: 'supplyPrice',
     totalStock: 'totalStock',
+    reservedStock: 'reservedStock',
     stockMujin: 'stockMujin',
     stock1: 'stock1',
     stock2: 'stock2',
@@ -31550,7 +32929,10 @@ export namespace Prisma {
     virtualAccount: 'virtualAccount',
     virtualAccountBank: 'virtualAccountBank',
     virtualAccountExpiry: 'virtualAccountExpiry',
-    productType: 'productType'
+    productType: 'productType',
+    expiresAt: 'expiresAt',
+    cancelledAt: 'cancelledAt',
+    cancelReason: 'cancelReason'
   };
 
   export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
@@ -31571,6 +32953,20 @@ export namespace Prisma {
   };
 
   export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
+
+
+  export const StockReservationScalarFieldEnum: {
+    id: 'id',
+    orderId: 'orderId',
+    productId: 'productId',
+    quantity: 'quantity',
+    status: 'status',
+    reservedAt: 'reservedAt',
+    releasedAt: 'releasedAt',
+    releaseType: 'releaseType'
+  };
+
+  export type StockReservationScalarFieldEnum = (typeof StockReservationScalarFieldEnum)[keyof typeof StockReservationScalarFieldEnum]
 
 
   export const BroadcastScalarFieldEnum: {
@@ -32018,6 +33414,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ReservationStatus'
+   */
+  export type EnumReservationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReservationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReservationStatus[]'
+   */
+  export type ListEnumReservationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReservationStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'BroadcastPlatform'
    */
   export type EnumBroadcastPlatformFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BroadcastPlatform'>
@@ -32263,6 +33673,7 @@ export namespace Prisma {
     sellPrice?: IntFilter<"Product"> | number
     supplyPrice?: IntFilter<"Product"> | number
     totalStock?: IntFilter<"Product"> | number
+    reservedStock?: IntFilter<"Product"> | number
     stockMujin?: IntFilter<"Product"> | number
     stock1?: IntFilter<"Product"> | number
     stock2?: IntFilter<"Product"> | number
@@ -32285,6 +33696,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisListRelationFilter
     proposalCarts?: ProposalCartListRelationFilter
     scanLogs?: ScanLogListRelationFilter
+    reservations?: StockReservationListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -32295,6 +33707,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
     totalStock?: SortOrder
+    reservedStock?: SortOrder
     stockMujin?: SortOrder
     stock1?: SortOrder
     stock2?: SortOrder
@@ -32317,6 +33730,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisOrderByRelationAggregateInput
     proposalCarts?: ProposalCartOrderByRelationAggregateInput
     scanLogs?: ScanLogOrderByRelationAggregateInput
+    reservations?: StockReservationOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -32331,6 +33745,7 @@ export namespace Prisma {
     sellPrice?: IntFilter<"Product"> | number
     supplyPrice?: IntFilter<"Product"> | number
     totalStock?: IntFilter<"Product"> | number
+    reservedStock?: IntFilter<"Product"> | number
     stockMujin?: IntFilter<"Product"> | number
     stock1?: IntFilter<"Product"> | number
     stock2?: IntFilter<"Product"> | number
@@ -32352,6 +33767,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisListRelationFilter
     proposalCarts?: ProposalCartListRelationFilter
     scanLogs?: ScanLogListRelationFilter
+    reservations?: StockReservationListRelationFilter
   }, "id" | "code" | "barcode" | "onewmsCode">
 
   export type ProductOrderByWithAggregationInput = {
@@ -32362,6 +33778,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
     totalStock?: SortOrder
+    reservedStock?: SortOrder
     stockMujin?: SortOrder
     stock1?: SortOrder
     stock2?: SortOrder
@@ -32392,6 +33809,7 @@ export namespace Prisma {
     sellPrice?: IntWithAggregatesFilter<"Product"> | number
     supplyPrice?: IntWithAggregatesFilter<"Product"> | number
     totalStock?: IntWithAggregatesFilter<"Product"> | number
+    reservedStock?: IntWithAggregatesFilter<"Product"> | number
     stockMujin?: IntWithAggregatesFilter<"Product"> | number
     stock1?: IntWithAggregatesFilter<"Product"> | number
     stock2?: IntWithAggregatesFilter<"Product"> | number
@@ -32725,6 +34143,9 @@ export namespace Prisma {
     virtualAccountBank?: StringNullableFilter<"Order"> | string | null
     virtualAccountExpiry?: DateTimeNullableFilter<"Order"> | Date | string | null
     productType?: EnumProductTypeNullableFilter<"Order"> | $Enums.ProductType | null
+    expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    cancelReason?: StringNullableFilter<"Order"> | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processingCenter?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
@@ -32732,6 +34153,7 @@ export namespace Prisma {
     onewmsMapping?: XOR<OnewmsOrderMappingNullableScalarRelationFilter, OnewmsOrderMappingWhereInput> | null
     onewmsDeliveryLogs?: OnewmsDeliveryLogListRelationFilter
     sellerMatches?: OrderSellerMatchingListRelationFilter
+    reservations?: StockReservationListRelationFilter
   }
 
   export type OrderOrderByWithRelationInput = {
@@ -32758,6 +34180,9 @@ export namespace Prisma {
     virtualAccountBank?: SortOrderInput | SortOrder
     virtualAccountExpiry?: SortOrderInput | SortOrder
     productType?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    cancelledAt?: SortOrderInput | SortOrder
+    cancelReason?: SortOrderInput | SortOrder
     seller?: UserOrderByWithRelationInput
     admin?: UserOrderByWithRelationInput
     processingCenter?: CenterOrderByWithRelationInput
@@ -32765,6 +34190,7 @@ export namespace Prisma {
     onewmsMapping?: OnewmsOrderMappingOrderByWithRelationInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogOrderByRelationAggregateInput
     sellerMatches?: OrderSellerMatchingOrderByRelationAggregateInput
+    reservations?: StockReservationOrderByRelationAggregateInput
   }
 
   export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -32794,6 +34220,9 @@ export namespace Prisma {
     virtualAccountBank?: StringNullableFilter<"Order"> | string | null
     virtualAccountExpiry?: DateTimeNullableFilter<"Order"> | Date | string | null
     productType?: EnumProductTypeNullableFilter<"Order"> | $Enums.ProductType | null
+    expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    cancelReason?: StringNullableFilter<"Order"> | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processingCenter?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
@@ -32801,6 +34230,7 @@ export namespace Prisma {
     onewmsMapping?: XOR<OnewmsOrderMappingNullableScalarRelationFilter, OnewmsOrderMappingWhereInput> | null
     onewmsDeliveryLogs?: OnewmsDeliveryLogListRelationFilter
     sellerMatches?: OrderSellerMatchingListRelationFilter
+    reservations?: StockReservationListRelationFilter
   }, "id" | "orderNo">
 
   export type OrderOrderByWithAggregationInput = {
@@ -32827,6 +34257,9 @@ export namespace Prisma {
     virtualAccountBank?: SortOrderInput | SortOrder
     virtualAccountExpiry?: SortOrderInput | SortOrder
     productType?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    cancelledAt?: SortOrderInput | SortOrder
+    cancelReason?: SortOrderInput | SortOrder
     _count?: OrderCountOrderByAggregateInput
     _avg?: OrderAvgOrderByAggregateInput
     _max?: OrderMaxOrderByAggregateInput
@@ -32861,6 +34294,9 @@ export namespace Prisma {
     virtualAccountBank?: StringNullableWithAggregatesFilter<"Order"> | string | null
     virtualAccountExpiry?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     productType?: EnumProductTypeNullableWithAggregatesFilter<"Order"> | $Enums.ProductType | null
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    cancelledAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    cancelReason?: StringNullableWithAggregatesFilter<"Order"> | string | null
   }
 
   export type OrderItemWhereInput = {
@@ -32951,6 +34387,81 @@ export namespace Prisma {
     totalSupply?: IntWithAggregatesFilter<"OrderItem"> | number
     margin?: IntWithAggregatesFilter<"OrderItem"> | number
     productType?: EnumProductTypeWithAggregatesFilter<"OrderItem"> | $Enums.ProductType
+  }
+
+  export type StockReservationWhereInput = {
+    AND?: StockReservationWhereInput | StockReservationWhereInput[]
+    OR?: StockReservationWhereInput[]
+    NOT?: StockReservationWhereInput | StockReservationWhereInput[]
+    id?: StringFilter<"StockReservation"> | string
+    orderId?: StringFilter<"StockReservation"> | string
+    productId?: StringFilter<"StockReservation"> | string
+    quantity?: IntFilter<"StockReservation"> | number
+    status?: EnumReservationStatusFilter<"StockReservation"> | $Enums.ReservationStatus
+    reservedAt?: DateTimeFilter<"StockReservation"> | Date | string
+    releasedAt?: DateTimeNullableFilter<"StockReservation"> | Date | string | null
+    releaseType?: StringNullableFilter<"StockReservation"> | string | null
+    order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+  }
+
+  export type StockReservationOrderByWithRelationInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    productId?: SortOrder
+    quantity?: SortOrder
+    status?: SortOrder
+    reservedAt?: SortOrder
+    releasedAt?: SortOrderInput | SortOrder
+    releaseType?: SortOrderInput | SortOrder
+    order?: OrderOrderByWithRelationInput
+    product?: ProductOrderByWithRelationInput
+  }
+
+  export type StockReservationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StockReservationWhereInput | StockReservationWhereInput[]
+    OR?: StockReservationWhereInput[]
+    NOT?: StockReservationWhereInput | StockReservationWhereInput[]
+    orderId?: StringFilter<"StockReservation"> | string
+    productId?: StringFilter<"StockReservation"> | string
+    quantity?: IntFilter<"StockReservation"> | number
+    status?: EnumReservationStatusFilter<"StockReservation"> | $Enums.ReservationStatus
+    reservedAt?: DateTimeFilter<"StockReservation"> | Date | string
+    releasedAt?: DateTimeNullableFilter<"StockReservation"> | Date | string | null
+    releaseType?: StringNullableFilter<"StockReservation"> | string | null
+    order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+  }, "id">
+
+  export type StockReservationOrderByWithAggregationInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    productId?: SortOrder
+    quantity?: SortOrder
+    status?: SortOrder
+    reservedAt?: SortOrder
+    releasedAt?: SortOrderInput | SortOrder
+    releaseType?: SortOrderInput | SortOrder
+    _count?: StockReservationCountOrderByAggregateInput
+    _avg?: StockReservationAvgOrderByAggregateInput
+    _max?: StockReservationMaxOrderByAggregateInput
+    _min?: StockReservationMinOrderByAggregateInput
+    _sum?: StockReservationSumOrderByAggregateInput
+  }
+
+  export type StockReservationScalarWhereWithAggregatesInput = {
+    AND?: StockReservationScalarWhereWithAggregatesInput | StockReservationScalarWhereWithAggregatesInput[]
+    OR?: StockReservationScalarWhereWithAggregatesInput[]
+    NOT?: StockReservationScalarWhereWithAggregatesInput | StockReservationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"StockReservation"> | string
+    orderId?: StringWithAggregatesFilter<"StockReservation"> | string
+    productId?: StringWithAggregatesFilter<"StockReservation"> | string
+    quantity?: IntWithAggregatesFilter<"StockReservation"> | number
+    status?: EnumReservationStatusWithAggregatesFilter<"StockReservation"> | $Enums.ReservationStatus
+    reservedAt?: DateTimeWithAggregatesFilter<"StockReservation"> | Date | string
+    releasedAt?: DateTimeNullableWithAggregatesFilter<"StockReservation"> | Date | string | null
+    releaseType?: StringNullableWithAggregatesFilter<"StockReservation"> | string | null
   }
 
   export type BroadcastWhereInput = {
@@ -34430,6 +35941,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -34452,6 +35964,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -34462,6 +35975,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -34484,6 +35998,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -34494,6 +36009,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -34516,6 +36032,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -34526,6 +36043,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -34548,6 +36066,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -34558,6 +36077,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -34580,6 +36100,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -34602,6 +36123,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -34960,6 +36482,9 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
@@ -34967,6 +36492,7 @@ export namespace Prisma {
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateInput = {
@@ -34993,10 +36519,14 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUpdateInput = {
@@ -35020,6 +36550,9 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
@@ -35027,6 +36560,7 @@ export namespace Prisma {
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateInput = {
@@ -35053,10 +36587,14 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderCreateManyInput = {
@@ -35083,6 +36621,9 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
   }
 
   export type OrderUpdateManyMutationInput = {
@@ -35106,6 +36647,9 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUncheckedUpdateManyInput = {
@@ -35132,6 +36676,9 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemCreateInput = {
@@ -35228,6 +36775,81 @@ export namespace Prisma {
     totalSupply?: IntFieldUpdateOperationsInput | number
     margin?: IntFieldUpdateOperationsInput | number
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+  }
+
+  export type StockReservationCreateInput = {
+    id?: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
+    order: OrderCreateNestedOneWithoutReservationsInput
+    product: ProductCreateNestedOneWithoutReservationsInput
+  }
+
+  export type StockReservationUncheckedCreateInput = {
+    id?: string
+    orderId: string
+    productId: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
+  }
+
+  export type StockReservationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: OrderUpdateOneRequiredWithoutReservationsNestedInput
+    product?: ProductUpdateOneRequiredWithoutReservationsNestedInput
+  }
+
+  export type StockReservationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type StockReservationCreateManyInput = {
+    id?: string
+    orderId: string
+    productId: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
+  }
+
+  export type StockReservationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type StockReservationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BroadcastCreateInput = {
@@ -37009,6 +38631,12 @@ export namespace Prisma {
     none?: AIAnalysisWhereInput
   }
 
+  export type StockReservationListRelationFilter = {
+    every?: StockReservationWhereInput
+    some?: StockReservationWhereInput
+    none?: StockReservationWhereInput
+  }
+
   export type OrderItemOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -37033,6 +38661,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type StockReservationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ProductCountOrderByAggregateInput = {
     id?: SortOrder
     code?: SortOrder
@@ -37041,6 +38673,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
     totalStock?: SortOrder
+    reservedStock?: SortOrder
     stockMujin?: SortOrder
     stock1?: SortOrder
     stock2?: SortOrder
@@ -37059,6 +38692,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
     totalStock?: SortOrder
+    reservedStock?: SortOrder
     stockMujin?: SortOrder
     stock1?: SortOrder
     stock2?: SortOrder
@@ -37073,6 +38707,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
     totalStock?: SortOrder
+    reservedStock?: SortOrder
     stockMujin?: SortOrder
     stock1?: SortOrder
     stock2?: SortOrder
@@ -37095,6 +38730,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
     totalStock?: SortOrder
+    reservedStock?: SortOrder
     stockMujin?: SortOrder
     stock1?: SortOrder
     stock2?: SortOrder
@@ -37113,6 +38749,7 @@ export namespace Prisma {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
     totalStock?: SortOrder
+    reservedStock?: SortOrder
     stockMujin?: SortOrder
     stock1?: SortOrder
     stock2?: SortOrder
@@ -37431,6 +39068,9 @@ export namespace Prisma {
     virtualAccountBank?: SortOrder
     virtualAccountExpiry?: SortOrder
     productType?: SortOrder
+    expiresAt?: SortOrder
+    cancelledAt?: SortOrder
+    cancelReason?: SortOrder
   }
 
   export type OrderAvgOrderByAggregateInput = {
@@ -37462,6 +39102,9 @@ export namespace Prisma {
     virtualAccountBank?: SortOrder
     virtualAccountExpiry?: SortOrder
     productType?: SortOrder
+    expiresAt?: SortOrder
+    cancelledAt?: SortOrder
+    cancelReason?: SortOrder
   }
 
   export type OrderMinOrderByAggregateInput = {
@@ -37488,6 +39131,9 @@ export namespace Prisma {
     virtualAccountBank?: SortOrder
     virtualAccountExpiry?: SortOrder
     productType?: SortOrder
+    expiresAt?: SortOrder
+    cancelledAt?: SortOrder
+    cancelReason?: SortOrder
   }
 
   export type OrderSumOrderByAggregateInput = {
@@ -37589,6 +39235,64 @@ export namespace Prisma {
     supplyPrice?: SortOrder
     totalSupply?: SortOrder
     margin?: SortOrder
+  }
+
+  export type EnumReservationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReservationStatus | EnumReservationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReservationStatusFilter<$PrismaModel> | $Enums.ReservationStatus
+  }
+
+  export type StockReservationCountOrderByAggregateInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    productId?: SortOrder
+    quantity?: SortOrder
+    status?: SortOrder
+    reservedAt?: SortOrder
+    releasedAt?: SortOrder
+    releaseType?: SortOrder
+  }
+
+  export type StockReservationAvgOrderByAggregateInput = {
+    quantity?: SortOrder
+  }
+
+  export type StockReservationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    productId?: SortOrder
+    quantity?: SortOrder
+    status?: SortOrder
+    reservedAt?: SortOrder
+    releasedAt?: SortOrder
+    releaseType?: SortOrder
+  }
+
+  export type StockReservationMinOrderByAggregateInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    productId?: SortOrder
+    quantity?: SortOrder
+    status?: SortOrder
+    reservedAt?: SortOrder
+    releasedAt?: SortOrder
+    releaseType?: SortOrder
+  }
+
+  export type StockReservationSumOrderByAggregateInput = {
+    quantity?: SortOrder
+  }
+
+  export type EnumReservationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReservationStatus | EnumReservationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReservationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ReservationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReservationStatusFilter<$PrismaModel>
+    _max?: NestedEnumReservationStatusFilter<$PrismaModel>
   }
 
   export type EnumBroadcastPlatformFilter<$PrismaModel = never> = {
@@ -39040,6 +40744,13 @@ export namespace Prisma {
     connect?: ScanLogWhereUniqueInput | ScanLogWhereUniqueInput[]
   }
 
+  export type StockReservationCreateNestedManyWithoutProductInput = {
+    create?: XOR<StockReservationCreateWithoutProductInput, StockReservationUncheckedCreateWithoutProductInput> | StockReservationCreateWithoutProductInput[] | StockReservationUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: StockReservationCreateOrConnectWithoutProductInput | StockReservationCreateOrConnectWithoutProductInput[]
+    createMany?: StockReservationCreateManyProductInputEnvelope
+    connect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+  }
+
   export type OrderItemUncheckedCreateNestedManyWithoutProductInput = {
     create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
@@ -39108,6 +40819,13 @@ export namespace Prisma {
     connectOrCreate?: ScanLogCreateOrConnectWithoutProductInput | ScanLogCreateOrConnectWithoutProductInput[]
     createMany?: ScanLogCreateManyProductInputEnvelope
     connect?: ScanLogWhereUniqueInput | ScanLogWhereUniqueInput[]
+  }
+
+  export type StockReservationUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<StockReservationCreateWithoutProductInput, StockReservationUncheckedCreateWithoutProductInput> | StockReservationCreateWithoutProductInput[] | StockReservationUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: StockReservationCreateOrConnectWithoutProductInput | StockReservationCreateOrConnectWithoutProductInput[]
+    createMany?: StockReservationCreateManyProductInputEnvelope
+    connect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -39266,6 +40984,20 @@ export namespace Prisma {
     deleteMany?: ScanLogScalarWhereInput | ScanLogScalarWhereInput[]
   }
 
+  export type StockReservationUpdateManyWithoutProductNestedInput = {
+    create?: XOR<StockReservationCreateWithoutProductInput, StockReservationUncheckedCreateWithoutProductInput> | StockReservationCreateWithoutProductInput[] | StockReservationUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: StockReservationCreateOrConnectWithoutProductInput | StockReservationCreateOrConnectWithoutProductInput[]
+    upsert?: StockReservationUpsertWithWhereUniqueWithoutProductInput | StockReservationUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: StockReservationCreateManyProductInputEnvelope
+    set?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    disconnect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    delete?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    connect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    update?: StockReservationUpdateWithWhereUniqueWithoutProductInput | StockReservationUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: StockReservationUpdateManyWithWhereWithoutProductInput | StockReservationUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: StockReservationScalarWhereInput | StockReservationScalarWhereInput[]
+  }
+
   export type OrderItemUncheckedUpdateManyWithoutProductNestedInput = {
     create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
@@ -39404,6 +41136,20 @@ export namespace Prisma {
     update?: ScanLogUpdateWithWhereUniqueWithoutProductInput | ScanLogUpdateWithWhereUniqueWithoutProductInput[]
     updateMany?: ScanLogUpdateManyWithWhereWithoutProductInput | ScanLogUpdateManyWithWhereWithoutProductInput[]
     deleteMany?: ScanLogScalarWhereInput | ScanLogScalarWhereInput[]
+  }
+
+  export type StockReservationUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<StockReservationCreateWithoutProductInput, StockReservationUncheckedCreateWithoutProductInput> | StockReservationCreateWithoutProductInput[] | StockReservationUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: StockReservationCreateOrConnectWithoutProductInput | StockReservationCreateOrConnectWithoutProductInput[]
+    upsert?: StockReservationUpsertWithWhereUniqueWithoutProductInput | StockReservationUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: StockReservationCreateManyProductInputEnvelope
+    set?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    disconnect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    delete?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    connect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    update?: StockReservationUpdateWithWhereUniqueWithoutProductInput | StockReservationUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: StockReservationUpdateManyWithWhereWithoutProductInput | StockReservationUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: StockReservationScalarWhereInput | StockReservationScalarWhereInput[]
   }
 
   export type UserCreateNestedManyWithoutCenterInput = {
@@ -39739,6 +41485,13 @@ export namespace Prisma {
     connect?: OrderSellerMatchingWhereUniqueInput | OrderSellerMatchingWhereUniqueInput[]
   }
 
+  export type StockReservationCreateNestedManyWithoutOrderInput = {
+    create?: XOR<StockReservationCreateWithoutOrderInput, StockReservationUncheckedCreateWithoutOrderInput> | StockReservationCreateWithoutOrderInput[] | StockReservationUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: StockReservationCreateOrConnectWithoutOrderInput | StockReservationCreateOrConnectWithoutOrderInput[]
+    createMany?: StockReservationCreateManyOrderInputEnvelope
+    connect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+  }
+
   export type OrderItemUncheckedCreateNestedManyWithoutOrderInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -39764,6 +41517,13 @@ export namespace Prisma {
     connectOrCreate?: OrderSellerMatchingCreateOrConnectWithoutOrderInput | OrderSellerMatchingCreateOrConnectWithoutOrderInput[]
     createMany?: OrderSellerMatchingCreateManyOrderInputEnvelope
     connect?: OrderSellerMatchingWhereUniqueInput | OrderSellerMatchingWhereUniqueInput[]
+  }
+
+  export type StockReservationUncheckedCreateNestedManyWithoutOrderInput = {
+    create?: XOR<StockReservationCreateWithoutOrderInput, StockReservationUncheckedCreateWithoutOrderInput> | StockReservationCreateWithoutOrderInput[] | StockReservationUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: StockReservationCreateOrConnectWithoutOrderInput | StockReservationCreateOrConnectWithoutOrderInput[]
+    createMany?: StockReservationCreateManyOrderInputEnvelope
+    connect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
   }
 
   export type EnumOrderStatusFieldUpdateOperationsInput = {
@@ -39862,6 +41622,20 @@ export namespace Prisma {
     deleteMany?: OrderSellerMatchingScalarWhereInput | OrderSellerMatchingScalarWhereInput[]
   }
 
+  export type StockReservationUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<StockReservationCreateWithoutOrderInput, StockReservationUncheckedCreateWithoutOrderInput> | StockReservationCreateWithoutOrderInput[] | StockReservationUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: StockReservationCreateOrConnectWithoutOrderInput | StockReservationCreateOrConnectWithoutOrderInput[]
+    upsert?: StockReservationUpsertWithWhereUniqueWithoutOrderInput | StockReservationUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: StockReservationCreateManyOrderInputEnvelope
+    set?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    disconnect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    delete?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    connect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    update?: StockReservationUpdateWithWhereUniqueWithoutOrderInput | StockReservationUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: StockReservationUpdateManyWithWhereWithoutOrderInput | StockReservationUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: StockReservationScalarWhereInput | StockReservationScalarWhereInput[]
+  }
+
   export type OrderItemUncheckedUpdateManyWithoutOrderNestedInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -39914,6 +41688,20 @@ export namespace Prisma {
     deleteMany?: OrderSellerMatchingScalarWhereInput | OrderSellerMatchingScalarWhereInput[]
   }
 
+  export type StockReservationUncheckedUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<StockReservationCreateWithoutOrderInput, StockReservationUncheckedCreateWithoutOrderInput> | StockReservationCreateWithoutOrderInput[] | StockReservationUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: StockReservationCreateOrConnectWithoutOrderInput | StockReservationCreateOrConnectWithoutOrderInput[]
+    upsert?: StockReservationUpsertWithWhereUniqueWithoutOrderInput | StockReservationUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: StockReservationCreateManyOrderInputEnvelope
+    set?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    disconnect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    delete?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    connect?: StockReservationWhereUniqueInput | StockReservationWhereUniqueInput[]
+    update?: StockReservationUpdateWithWhereUniqueWithoutOrderInput | StockReservationUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: StockReservationUpdateManyWithWhereWithoutOrderInput | StockReservationUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: StockReservationScalarWhereInput | StockReservationScalarWhereInput[]
+  }
+
   export type OrderCreateNestedOneWithoutItemsInput = {
     create?: XOR<OrderCreateWithoutItemsInput, OrderUncheckedCreateWithoutItemsInput>
     connectOrCreate?: OrderCreateOrConnectWithoutItemsInput
@@ -39940,6 +41728,38 @@ export namespace Prisma {
     upsert?: ProductUpsertWithoutOrderItemsInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutOrderItemsInput, ProductUpdateWithoutOrderItemsInput>, ProductUncheckedUpdateWithoutOrderItemsInput>
+  }
+
+  export type OrderCreateNestedOneWithoutReservationsInput = {
+    create?: XOR<OrderCreateWithoutReservationsInput, OrderUncheckedCreateWithoutReservationsInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutReservationsInput
+    connect?: OrderWhereUniqueInput
+  }
+
+  export type ProductCreateNestedOneWithoutReservationsInput = {
+    create?: XOR<ProductCreateWithoutReservationsInput, ProductUncheckedCreateWithoutReservationsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutReservationsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type EnumReservationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ReservationStatus
+  }
+
+  export type OrderUpdateOneRequiredWithoutReservationsNestedInput = {
+    create?: XOR<OrderCreateWithoutReservationsInput, OrderUncheckedCreateWithoutReservationsInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutReservationsInput
+    upsert?: OrderUpsertWithoutReservationsInput
+    connect?: OrderWhereUniqueInput
+    update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutReservationsInput, OrderUpdateWithoutReservationsInput>, OrderUncheckedUpdateWithoutReservationsInput>
+  }
+
+  export type ProductUpdateOneRequiredWithoutReservationsNestedInput = {
+    create?: XOR<ProductCreateWithoutReservationsInput, ProductUncheckedCreateWithoutReservationsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutReservationsInput
+    upsert?: ProductUpsertWithoutReservationsInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutReservationsInput, ProductUpdateWithoutReservationsInput>, ProductUncheckedUpdateWithoutReservationsInput>
   }
 
   export type UserCreateNestedOneWithoutBroadcastsInput = {
@@ -40812,6 +42632,23 @@ export namespace Prisma {
     _max?: NestedEnumProductTypeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumReservationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReservationStatus | EnumReservationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReservationStatusFilter<$PrismaModel> | $Enums.ReservationStatus
+  }
+
+  export type NestedEnumReservationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReservationStatus | EnumReservationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReservationStatus[] | ListEnumReservationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReservationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ReservationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReservationStatusFilter<$PrismaModel>
+    _max?: NestedEnumReservationStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumBroadcastPlatformFilter<$PrismaModel = never> = {
     equals?: $Enums.BroadcastPlatform | EnumBroadcastPlatformFieldRefInput<$PrismaModel>
     in?: $Enums.BroadcastPlatform[] | ListEnumBroadcastPlatformFieldRefInput<$PrismaModel>
@@ -41135,12 +42972,16 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutSellerInput = {
@@ -41166,10 +43007,14 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutSellerInput = {
@@ -41203,12 +43048,16 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutAdminInput = {
@@ -41234,10 +43083,14 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutAdminInput = {
@@ -41673,6 +43526,9 @@ export namespace Prisma {
     virtualAccountBank?: StringNullableFilter<"Order"> | string | null
     virtualAccountExpiry?: DateTimeNullableFilter<"Order"> | Date | string | null
     productType?: EnumProductTypeNullableFilter<"Order"> | $Enums.ProductType | null
+    expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    cancelReason?: StringNullableFilter<"Order"> | string | null
   }
 
   export type OrderUpsertWithWhereUniqueWithoutAdminInput = {
@@ -42217,6 +44073,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type StockReservationCreateWithoutProductInput = {
+    id?: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
+    order: OrderCreateNestedOneWithoutReservationsInput
+  }
+
+  export type StockReservationUncheckedCreateWithoutProductInput = {
+    id?: string
+    orderId: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
+  }
+
+  export type StockReservationCreateOrConnectWithoutProductInput = {
+    where: StockReservationWhereUniqueInput
+    create: XOR<StockReservationCreateWithoutProductInput, StockReservationUncheckedCreateWithoutProductInput>
+  }
+
+  export type StockReservationCreateManyProductInputEnvelope = {
+    data: StockReservationCreateManyProductInput | StockReservationCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
   export type OrderItemUpsertWithWhereUniqueWithoutProductInput = {
     where: OrderItemWhereUniqueInput
     update: XOR<OrderItemUpdateWithoutProductInput, OrderItemUncheckedUpdateWithoutProductInput>
@@ -42470,6 +44356,36 @@ export namespace Prisma {
     data: XOR<ScanLogUpdateManyMutationInput, ScanLogUncheckedUpdateManyWithoutProductInput>
   }
 
+  export type StockReservationUpsertWithWhereUniqueWithoutProductInput = {
+    where: StockReservationWhereUniqueInput
+    update: XOR<StockReservationUpdateWithoutProductInput, StockReservationUncheckedUpdateWithoutProductInput>
+    create: XOR<StockReservationCreateWithoutProductInput, StockReservationUncheckedCreateWithoutProductInput>
+  }
+
+  export type StockReservationUpdateWithWhereUniqueWithoutProductInput = {
+    where: StockReservationWhereUniqueInput
+    data: XOR<StockReservationUpdateWithoutProductInput, StockReservationUncheckedUpdateWithoutProductInput>
+  }
+
+  export type StockReservationUpdateManyWithWhereWithoutProductInput = {
+    where: StockReservationScalarWhereInput
+    data: XOR<StockReservationUpdateManyMutationInput, StockReservationUncheckedUpdateManyWithoutProductInput>
+  }
+
+  export type StockReservationScalarWhereInput = {
+    AND?: StockReservationScalarWhereInput | StockReservationScalarWhereInput[]
+    OR?: StockReservationScalarWhereInput[]
+    NOT?: StockReservationScalarWhereInput | StockReservationScalarWhereInput[]
+    id?: StringFilter<"StockReservation"> | string
+    orderId?: StringFilter<"StockReservation"> | string
+    productId?: StringFilter<"StockReservation"> | string
+    quantity?: IntFilter<"StockReservation"> | number
+    status?: EnumReservationStatusFilter<"StockReservation"> | $Enums.ReservationStatus
+    reservedAt?: DateTimeFilter<"StockReservation"> | Date | string
+    releasedAt?: DateTimeNullableFilter<"StockReservation"> | Date | string | null
+    releaseType?: StringNullableFilter<"StockReservation"> | string | null
+  }
+
   export type UserCreateWithoutCenterInput = {
     id?: string
     username: string
@@ -42591,12 +44507,16 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutProcessingCenterInput = {
@@ -42622,10 +44542,14 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutProcessingCenterInput = {
@@ -42798,6 +44722,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -42819,6 +44744,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutCenterStocksInput = {
@@ -42829,6 +44755,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -42850,6 +44777,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutCenterStocksInput = {
@@ -42925,6 +44853,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -42946,6 +44875,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutCenterStocksInput = {
@@ -42956,6 +44886,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -42977,6 +44908,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type CenterUpsertWithoutCenterStocksInput = {
@@ -43055,12 +44987,16 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutSellerMatchesInput = {
@@ -43087,9 +45023,13 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutSellerMatchesInput = {
@@ -43172,6 +45112,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -43193,6 +45134,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutSellerMatchesInput = {
@@ -43203,6 +45145,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -43224,6 +45167,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutSellerMatchesInput = {
@@ -43263,12 +45207,16 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutSellerMatchesInput = {
@@ -43295,9 +45243,13 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type UserUpsertWithoutSellerMatchesInput = {
@@ -43392,6 +45344,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -43413,6 +45366,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutSellerMatchesInput = {
@@ -43423,6 +45377,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -43444,6 +45399,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type UserCreateWithoutOrdersInput = {
@@ -43768,6 +45724,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type StockReservationCreateWithoutOrderInput = {
+    id?: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
+    product: ProductCreateNestedOneWithoutReservationsInput
+  }
+
+  export type StockReservationUncheckedCreateWithoutOrderInput = {
+    id?: string
+    productId: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
+  }
+
+  export type StockReservationCreateOrConnectWithoutOrderInput = {
+    where: StockReservationWhereUniqueInput
+    create: XOR<StockReservationCreateWithoutOrderInput, StockReservationUncheckedCreateWithoutOrderInput>
+  }
+
+  export type StockReservationCreateManyOrderInputEnvelope = {
+    data: StockReservationCreateManyOrderInput | StockReservationCreateManyOrderInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutOrdersInput = {
     update: XOR<UserUpdateWithoutOrdersInput, UserUncheckedUpdateWithoutOrdersInput>
     create: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
@@ -44071,6 +46057,22 @@ export namespace Prisma {
     data: XOR<OrderSellerMatchingUpdateManyMutationInput, OrderSellerMatchingUncheckedUpdateManyWithoutOrderInput>
   }
 
+  export type StockReservationUpsertWithWhereUniqueWithoutOrderInput = {
+    where: StockReservationWhereUniqueInput
+    update: XOR<StockReservationUpdateWithoutOrderInput, StockReservationUncheckedUpdateWithoutOrderInput>
+    create: XOR<StockReservationCreateWithoutOrderInput, StockReservationUncheckedCreateWithoutOrderInput>
+  }
+
+  export type StockReservationUpdateWithWhereUniqueWithoutOrderInput = {
+    where: StockReservationWhereUniqueInput
+    data: XOR<StockReservationUpdateWithoutOrderInput, StockReservationUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type StockReservationUpdateManyWithWhereWithoutOrderInput = {
+    where: StockReservationScalarWhereInput
+    data: XOR<StockReservationUpdateManyMutationInput, StockReservationUncheckedUpdateManyWithoutOrderInput>
+  }
+
   export type OrderCreateWithoutItemsInput = {
     id?: string
     orderNo: string
@@ -44092,12 +46094,16 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutItemsInput = {
@@ -44124,9 +46130,13 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutItemsInput = {
@@ -44142,6 +46152,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -44163,6 +46174,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutOrderItemsInput = {
@@ -44173,6 +46185,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -44194,6 +46207,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutOrderItemsInput = {
@@ -44233,12 +46247,16 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutItemsInput = {
@@ -44265,9 +46283,13 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type ProductUpsertWithoutOrderItemsInput = {
@@ -44289,6 +46311,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -44310,6 +46333,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutOrderItemsInput = {
@@ -44320,6 +46344,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -44332,6 +46357,303 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
+    onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
+    warehouseInventories?: WarehouseInventoryUncheckedUpdateManyWithoutProductNestedInput
+    stockMovements?: StockMovementUncheckedUpdateManyWithoutProductNestedInput
+    centerStocks?: ProductCenterStockUncheckedUpdateManyWithoutProductNestedInput
+    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutProductNestedInput
+    aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
+    proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
+    scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type OrderCreateWithoutReservationsInput = {
+    id?: string
+    orderNo: string
+    status?: $Enums.OrderStatus
+    totalAmount?: number
+    memo?: string | null
+    uploadedAt?: Date | string
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipient?: string | null
+    phone?: string | null
+    address?: string | null
+    totalMargin?: number
+    paymentStatus?: $Enums.PaymentStatus
+    shippingStatus?: $Enums.ShippingStatus
+    paidAt?: Date | string | null
+    virtualAccount?: string | null
+    virtualAccountBank?: string | null
+    virtualAccountExpiry?: Date | string | null
+    productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
+    seller: UserCreateNestedOneWithoutOrdersInput
+    admin?: UserCreateNestedOneWithoutAdminOrdersInput
+    processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    items?: OrderItemCreateNestedManyWithoutOrderInput
+    onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
+    onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
+    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderUncheckedCreateWithoutReservationsInput = {
+    id?: string
+    orderNo: string
+    sellerId: string
+    adminId?: string | null
+    processingCenterId?: string | null
+    status?: $Enums.OrderStatus
+    totalAmount?: number
+    memo?: string | null
+    uploadedAt?: Date | string
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipient?: string | null
+    phone?: string | null
+    address?: string | null
+    totalMargin?: number
+    paymentStatus?: $Enums.PaymentStatus
+    shippingStatus?: $Enums.ShippingStatus
+    paidAt?: Date | string | null
+    virtualAccount?: string | null
+    virtualAccountBank?: string | null
+    virtualAccountExpiry?: Date | string | null
+    productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
+    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+    onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
+    onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
+    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderCreateOrConnectWithoutReservationsInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutReservationsInput, OrderUncheckedCreateWithoutReservationsInput>
+  }
+
+  export type ProductCreateWithoutReservationsInput = {
+    id?: string
+    code: string
+    name: string
+    barcode: string
+    sellPrice: number
+    supplyPrice: number
+    totalStock?: number
+    reservedStock?: number
+    stockMujin?: number
+    stock1?: number
+    stock2?: number
+    stock3?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    onewmsCode?: string | null
+    onewmsBarcode?: string | null
+    masterBarcodeId?: string | null
+    productType?: $Enums.ProductType
+    managedBy?: string | null
+    isWmsProduct?: boolean
+    orderItems?: OrderItemCreateNestedManyWithoutProductInput
+    sales?: SaleCreateNestedManyWithoutProductInput
+    onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
+    warehouseInventories?: WarehouseInventoryCreateNestedManyWithoutProductInput
+    stockMovements?: StockMovementCreateNestedManyWithoutProductInput
+    centerStocks?: ProductCenterStockCreateNestedManyWithoutProductInput
+    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutProductInput
+    aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
+    proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
+    scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutReservationsInput = {
+    id?: string
+    code: string
+    name: string
+    barcode: string
+    sellPrice: number
+    supplyPrice: number
+    totalStock?: number
+    reservedStock?: number
+    stockMujin?: number
+    stock1?: number
+    stock2?: number
+    stock3?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    onewmsCode?: string | null
+    onewmsBarcode?: string | null
+    masterBarcodeId?: string | null
+    productType?: $Enums.ProductType
+    managedBy?: string | null
+    isWmsProduct?: boolean
+    orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
+    sales?: SaleUncheckedCreateNestedManyWithoutProductInput
+    onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
+    warehouseInventories?: WarehouseInventoryUncheckedCreateNestedManyWithoutProductInput
+    stockMovements?: StockMovementUncheckedCreateNestedManyWithoutProductInput
+    centerStocks?: ProductCenterStockUncheckedCreateNestedManyWithoutProductInput
+    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutProductInput
+    aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
+    proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
+    scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutReservationsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutReservationsInput, ProductUncheckedCreateWithoutReservationsInput>
+  }
+
+  export type OrderUpsertWithoutReservationsInput = {
+    update: XOR<OrderUpdateWithoutReservationsInput, OrderUncheckedUpdateWithoutReservationsInput>
+    create: XOR<OrderCreateWithoutReservationsInput, OrderUncheckedCreateWithoutReservationsInput>
+    where?: OrderWhereInput
+  }
+
+  export type OrderUpdateToOneWithWhereWithoutReservationsInput = {
+    where?: OrderWhereInput
+    data: XOR<OrderUpdateWithoutReservationsInput, OrderUncheckedUpdateWithoutReservationsInput>
+  }
+
+  export type OrderUpdateWithoutReservationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderNo?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    totalAmount?: IntFieldUpdateOperationsInput | number
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipient?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    totalMargin?: IntFieldUpdateOperationsInput | number
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
+    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
+    processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    items?: OrderItemUpdateManyWithoutOrderNestedInput
+    onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
+    onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
+    sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutReservationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderNo?: StringFieldUpdateOperationsInput | string
+    sellerId?: StringFieldUpdateOperationsInput | string
+    adminId?: NullableStringFieldUpdateOperationsInput | string | null
+    processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    totalAmount?: IntFieldUpdateOperationsInput | number
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipient?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    totalMargin?: IntFieldUpdateOperationsInput | number
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+    onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
+    onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
+    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
+  export type ProductUpsertWithoutReservationsInput = {
+    update: XOR<ProductUpdateWithoutReservationsInput, ProductUncheckedUpdateWithoutReservationsInput>
+    create: XOR<ProductCreateWithoutReservationsInput, ProductUncheckedCreateWithoutReservationsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutReservationsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutReservationsInput, ProductUncheckedUpdateWithoutReservationsInput>
+  }
+
+  export type ProductUpdateWithoutReservationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    barcode?: StringFieldUpdateOperationsInput | string
+    sellPrice?: IntFieldUpdateOperationsInput | number
+    supplyPrice?: IntFieldUpdateOperationsInput | number
+    totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
+    stockMujin?: IntFieldUpdateOperationsInput | number
+    stock1?: IntFieldUpdateOperationsInput | number
+    stock2?: IntFieldUpdateOperationsInput | number
+    stock3?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    onewmsCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onewmsBarcode?: NullableStringFieldUpdateOperationsInput | string | null
+    masterBarcodeId?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    managedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    orderItems?: OrderItemUpdateManyWithoutProductNestedInput
+    sales?: SaleUpdateManyWithoutProductNestedInput
+    onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
+    warehouseInventories?: WarehouseInventoryUpdateManyWithoutProductNestedInput
+    stockMovements?: StockMovementUpdateManyWithoutProductNestedInput
+    centerStocks?: ProductCenterStockUpdateManyWithoutProductNestedInput
+    sellerMatches?: OrderSellerMatchingUpdateManyWithoutProductNestedInput
+    aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
+    proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
+    scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutReservationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    barcode?: StringFieldUpdateOperationsInput | string
+    sellPrice?: IntFieldUpdateOperationsInput | number
+    supplyPrice?: IntFieldUpdateOperationsInput | number
+    totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
+    stockMujin?: IntFieldUpdateOperationsInput | number
+    stock1?: IntFieldUpdateOperationsInput | number
+    stock2?: IntFieldUpdateOperationsInput | number
+    stock3?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    onewmsCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onewmsBarcode?: NullableStringFieldUpdateOperationsInput | string | null
+    masterBarcodeId?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    managedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
     warehouseInventories?: WarehouseInventoryUncheckedUpdateManyWithoutProductNestedInput
@@ -44712,6 +47034,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -44733,6 +47056,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutSalesInput = {
@@ -44743,6 +47067,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -44764,6 +47089,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutSalesInput = {
@@ -44898,6 +47224,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -44919,6 +47246,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutSalesInput = {
@@ -44929,6 +47257,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -44950,6 +47279,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type BroadcastUpsertWithoutSalesInput = {
@@ -45208,6 +47538,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -45229,6 +47560,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutProductInput
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutProposalCartsInput = {
@@ -45239,6 +47571,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -45260,6 +47593,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutProductInput
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutProposalCartsInput = {
@@ -45359,6 +47693,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -45380,6 +47715,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutProductNestedInput
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutProposalCartsInput = {
@@ -45390,6 +47726,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -45411,6 +47748,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutProductNestedInput
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type OrderCreateWithoutOnewmsMappingInput = {
@@ -45434,12 +47772,16 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutOnewmsMappingInput = {
@@ -45466,9 +47808,13 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutOnewmsMappingInput = {
@@ -45508,12 +47854,16 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutOnewmsMappingInput = {
@@ -45540,9 +47890,13 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type ProductCreateWithoutOnewmsStocksInput = {
@@ -45553,6 +47907,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -45574,6 +47929,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutOnewmsStocksInput = {
@@ -45584,6 +47940,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -45605,6 +47962,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutOnewmsStocksInput = {
@@ -45631,6 +47989,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -45652,6 +48011,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutOnewmsStocksInput = {
@@ -45662,6 +48022,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -45683,6 +48044,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type OrderCreateWithoutOnewmsDeliveryLogsInput = {
@@ -45706,12 +48068,16 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutOnewmsDeliveryLogsInput = {
@@ -45738,9 +48104,13 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutOnewmsDeliveryLogsInput = {
@@ -45780,12 +48150,16 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutOnewmsDeliveryLogsInput = {
@@ -45812,9 +48186,13 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type WarehouseInventoryCreateWithoutWarehouseInput = {
@@ -46056,6 +48434,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -46077,6 +48456,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutWarehouseInventoriesInput = {
@@ -46087,6 +48467,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -46108,6 +48489,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutWarehouseInventoriesInput = {
@@ -46206,6 +48588,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -46227,6 +48610,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutWarehouseInventoriesInput = {
@@ -46237,6 +48621,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -46258,6 +48643,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type BarcodeMasterUpsertWithoutInventoriesInput = {
@@ -46305,6 +48691,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -46326,6 +48713,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutStockMovementsInput = {
@@ -46336,6 +48724,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -46357,6 +48746,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutStockMovementsInput = {
@@ -46453,6 +48843,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -46474,6 +48865,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutStockMovementsInput = {
@@ -46484,6 +48876,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -46505,6 +48898,7 @@ export namespace Prisma {
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type WarehouseUpsertWithoutStockMovementsFromInput = {
@@ -46597,6 +48991,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -46618,6 +49013,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutAiAnalysesInput = {
@@ -46628,6 +49024,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -46649,6 +49046,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutAiAnalysesInput = {
@@ -46675,6 +49073,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -46696,6 +49095,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutAiAnalysesInput = {
@@ -46706,6 +49106,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -46727,6 +49128,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type UserCreateWithoutScanLogsInput = {
@@ -46804,6 +49206,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -46825,6 +49228,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutProductInput
     aiAnalyses?: AIAnalysisCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutProductInput
+    reservations?: StockReservationCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutScanLogsInput = {
@@ -46835,6 +49239,7 @@ export namespace Prisma {
     sellPrice: number
     supplyPrice: number
     totalStock?: number
+    reservedStock?: number
     stockMujin?: number
     stock1?: number
     stock2?: number
@@ -46856,6 +49261,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutProductInput
     aiAnalyses?: AIAnalysisUncheckedCreateNestedManyWithoutProductInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutProductInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutScanLogsInput = {
@@ -47004,6 +49410,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -47025,6 +49432,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutProductNestedInput
     aiAnalyses?: AIAnalysisUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutScanLogsInput = {
@@ -47035,6 +49443,7 @@ export namespace Prisma {
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
     totalStock?: IntFieldUpdateOperationsInput | number
+    reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
     stock1?: IntFieldUpdateOperationsInput | number
     stock2?: IntFieldUpdateOperationsInput | number
@@ -47056,6 +49465,7 @@ export namespace Prisma {
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutProductNestedInput
     aiAnalyses?: AIAnalysisUncheckedUpdateManyWithoutProductNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutProductNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type CenterUpsertWithoutScanLogsInput = {
@@ -47158,6 +49568,9 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
   }
 
   export type OrderCreateManyAdminInput = {
@@ -47183,6 +49596,9 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
   }
 
   export type BroadcastCreateManySellerInput = {
@@ -47364,12 +49780,16 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutSellerInput = {
@@ -47395,10 +49815,14 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateManyWithoutSellerInput = {
@@ -47424,6 +49848,9 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUpdateWithoutAdminInput = {
@@ -47447,12 +49874,16 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutAdminInput = {
@@ -47478,10 +49909,14 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateManyWithoutAdminInput = {
@@ -47507,6 +49942,9 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BroadcastUpdateWithoutSellerInput = {
@@ -47847,6 +50285,16 @@ export namespace Prisma {
     centerId?: string | null
     scannedAt?: Date | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type StockReservationCreateManyProductInput = {
+    id?: string
+    orderId: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
   }
 
   export type OrderItemUpdateWithoutProductInput = {
@@ -48197,6 +50645,36 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
+  export type StockReservationUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: OrderUpdateOneRequiredWithoutReservationsNestedInput
+  }
+
+  export type StockReservationUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type StockReservationUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type UserCreateManyCenterInput = {
     id?: string
     username: string
@@ -48251,6 +50729,9 @@ export namespace Prisma {
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
     productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
   }
 
   export type BroadcastCreateManyCenterInput = {
@@ -48410,12 +50891,16 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutProcessingCenterInput = {
@@ -48441,10 +50926,14 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateManyWithoutProcessingCenterInput = {
@@ -48470,6 +50959,9 @@ export namespace Prisma {
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BroadcastUpdateWithoutCenterInput = {
@@ -48586,6 +51078,16 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type StockReservationCreateManyOrderInput = {
+    id?: string
+    productId: string
+    quantity: number
+    status?: $Enums.ReservationStatus
+    reservedAt?: Date | string
+    releasedAt?: Date | string | null
+    releaseType?: string | null
+  }
+
   export type OrderItemUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
@@ -48695,6 +51197,36 @@ export namespace Prisma {
     recommendScore?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StockReservationUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
+    product?: ProductUpdateOneRequiredWithoutReservationsNestedInput
+  }
+
+  export type StockReservationUncheckedUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type StockReservationUncheckedUpdateManyWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    status?: EnumReservationStatusFieldUpdateOperationsInput | $Enums.ReservationStatus
+    reservedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    releasedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    releaseType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SaleCreateManyBroadcastInput = {

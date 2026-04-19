@@ -54,6 +54,11 @@ export interface Order {
   approvedAt: string | null; // Changed: string for API responses
   createdAt: string; // Changed: string for API responses
   updatedAt: string; // Changed: string for API responses
+  // ✨ 재고 선점 자동화 (PDF 스펙 7페이지)
+  expiresAt?: string | null; // 입금 마감 시각
+  cancelledAt?: string | null; // 취소 시각
+  cancelReason?: string | null; // EXPIRED | SELLER_CANCELLED | ADMIN_CANCELLED
+  paidAt?: string | null; // 입금 완료 시각
   items?: OrderItem[];
 }
 

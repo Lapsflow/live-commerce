@@ -11,13 +11,9 @@ interface AIInsightsCardProps {
 type TabType = "pricing" | "sales";
 
 export function AIInsightsCard({ barcode }: AIInsightsCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>("pricing");
-  const { mutate, data, isPending, error } = useAIAnalysis();
-
-  const handleAnalyze = () => {
-    mutate({ barcode, skipCache: false });
-  };
+  const { data, isLoading, error, refetch } = useAIAnalysis({ barcode });
 
   const formatCost = (cost?: number) => {
     if (!cost) return "-";
@@ -60,36 +56,8 @@ export function AIInsightsCard({ barcode }: AIInsightsCardProps) {
             </div>
           )}
 
-          {/* Not Analyzed Yet - Show Cost Warning */}
-          {!hasAnalysis && !isPending && (
-            <div className="space-y-4">
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <div className="flex gap-3">
-                  <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <div className="space-y-2">
-                    <div className="font-medium text-yellow-900">AI 분석 비용 안내</div>
-                    <div className="text-sm text-yellow-800 space-y-1">
-                      <p>• Claude AI API 사용: 약 $0.03-0.05/회</p>
-                      <p>• 시간당 최대 10회까지 분석 가능</p>
-                      <p>• 6시간 동안 결과가 캐시됩니다</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={handleAnalyze}
-                disabled={isPending}
-                className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Sparkles className="w-4 h-4" />
-                AI 분석 시작
-              </button>
-            </div>
-          )}
-
           {/* Loading State */}
-          {isPending && (
+          {isLoading && (
             <div className="text-center py-8">
               <div className="inline-flex items-center gap-3 px-6 py-3 bg-purple-50 rounded-lg">
                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-purple-600 border-t-transparent" />
@@ -353,11 +321,11 @@ export function AIInsightsCard({ barcode }: AIInsightsCardProps) {
                   </div>
                 )}
                 <button
-                  onClick={() => mutate({ barcode, skipCache: true })}
-                  disabled={isPending}
+                  onClick={() => refetch()}
+                  disabled={isLoading}
                   className="w-full mt-2 px-3 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  재분석 (캐시 무시)
+                  재분석
                 </button>
               </div>
             </>

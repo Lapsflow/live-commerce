@@ -10,7 +10,7 @@ interface PriceComparisonCardProps {
 }
 
 export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const { data, isLoading, error, refetch, isFetching } = usePriceComparison(barcode, ourPrice);
 
   const getCompetitivenessColor = (level?: string) => {
@@ -111,9 +111,63 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
           {data && !isLoading && (
             <>
               {/* Our Price Section */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="text-sm text-blue-600 font-medium mb-1">우리 판매가</div>
-                <div className="text-2xl font-bold text-blue-900">{formatPrice(ourPrice)}</div>
+              <div className={`rounded-lg p-4 border-2 ${
+                data.competitiveness === "EXCELLENT"
+                  ? "bg-green-50 border-green-300"
+                  : data.competitiveness === "POOR"
+                  ? "bg-red-50 border-red-300"
+                  : data.competitiveness === "GOOD"
+                  ? "bg-blue-50 border-blue-200"
+                  : "bg-gray-50 border-gray-200"
+              }`}>
+                <div className="flex items-center justify-between mb-1">
+                  <div className={`text-sm font-medium ${
+                    data.competitiveness === "EXCELLENT"
+                      ? "text-green-700"
+                      : data.competitiveness === "POOR"
+                      ? "text-red-700"
+                      : data.competitiveness === "GOOD"
+                      ? "text-blue-600"
+                      : "text-gray-600"
+                  }`}>우리 판매가</div>
+                  {data.competitiveness === "EXCELLENT" && (
+                    <span className="text-xs font-bold text-green-700 px-2 py-1 bg-green-200 rounded">
+                      🎉 최저가
+                    </span>
+                  )}
+                  {data.competitiveness === "POOR" && (
+                    <span className="text-xs font-bold text-red-700 px-2 py-1 bg-red-200 rounded">
+                      ⚠️ 경고
+                    </span>
+                  )}
+                </div>
+                <div className={`text-2xl font-bold ${
+                  data.competitiveness === "EXCELLENT"
+                    ? "text-green-900"
+                    : data.competitiveness === "POOR"
+                    ? "text-red-900"
+                    : data.competitiveness === "GOOD"
+                    ? "text-blue-900"
+                    : "text-gray-900"
+                }`}>{formatPrice(ourPrice)}</div>
+
+                {/* PDF Requirement: 판단 메시지 */}
+                {data.competitiveness === "EXCELLENT" && (
+                  <div className="mt-2 p-2 bg-green-100 border border-green-300 rounded text-sm text-green-800 font-medium">
+                    ✨ 최저가입니다! 지금 판매하기 좋은 가격입니다.
+                  </div>
+                )}
+                {data.competitiveness === "POOR" && (
+                  <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded text-sm text-red-800 font-medium">
+                    ⚠️ 쿠팡보다 20% 이상 비쌉니다. 가격 조정을 고려하세요.
+                  </div>
+                )}
+                {data.competitiveness === "GOOD" && (
+                  <div className="mt-2 p-2 bg-blue-100 border border-blue-200 rounded text-sm text-blue-800">
+                    ✓ 경쟁력 있는 가격입니다.
+                  </div>
+                )}
+
                 {priceDiff && (
                   <div className="mt-2 text-sm">
                     <span

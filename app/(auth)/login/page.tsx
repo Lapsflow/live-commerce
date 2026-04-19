@@ -34,7 +34,6 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      // Map error type to user-friendly message
       const errorMessage = errorMessages[result.error] || "로그인에 실패했습니다";
       setError(errorMessage);
       setLoading(false);
@@ -45,15 +44,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <Card className="w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          라이브커머스 관리 시스템
-        </h1>
+    <div className="flex min-h-screen items-center justify-center bg-grey-50">
+      <Card className="w-full max-w-md p-8 shadow-md">
+        {/* 브랜딩 */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-grey-900">라이브커머스</h1>
+          <h2 className="text-lg font-semibold text-blue-600">운영관리 시스템</h2>
+          <p className="text-xs text-grey-400 mt-1">Live Commerce Management System</p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">아이디</label>
+            <label className="block text-sm font-medium text-grey-700 mb-1.5">아이디</label>
             <Input
               type="text"
               value={username}
@@ -64,7 +66,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">비밀번호</label>
+            <label className="block text-sm font-medium text-grey-700 mb-1.5">비밀번호</label>
             <Input
               type="password"
               value={password}
@@ -75,7 +77,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <p className="text-sm text-destructive">{error}</p>
+            <p className="text-sm text-red bg-red/5 p-3 rounded-lg">{error}</p>
           )}
 
           <Button type="submit" className="w-full" disabled={loading}>
@@ -83,8 +85,8 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className="mt-4 text-center">
-          <a href="/signup" className="text-sm text-blue-600 hover:underline">
+        <div className="mt-6 text-center">
+          <a href="/signup" className="text-sm text-blue-600 hover:text-blue-700 hover:underline">
             회원가입
           </a>
         </div>
