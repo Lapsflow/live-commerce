@@ -41,6 +41,7 @@ export const POST = withRole(['MASTER'], async (req: NextRequest) => {
         created: result.created,
         skipped: result.skipped,
         errors: result.errors,
+        productsAutoCreated: result.productsAutoCreated,
         errorDetails: result.errorDetails.slice(0, 20),
       },
       timestamp: new Date().toISOString(),

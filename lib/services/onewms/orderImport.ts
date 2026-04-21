@@ -1,6 +1,7 @@
 /**
  * ONEWMS Order Import Service
- * Imports orders from ONEWMS API into platform DB
+ * Imports orders from ONEWMS API into platform DB.
+ * Auto-creates products when order references unknown product_ids.
  */
 
 import { prisma } from '@/lib/db/prisma';
@@ -12,19 +13,14 @@ interface ImportOrdersResult {
   created: number;
   skipped: number;
   errors: number;
+  productsAutoCreated: number;
   errorDetails: Array<{ orderId: string; error: string }>;
 }
 
-/**
- * Map ONEWMS status string to platform OrderStatus
- */
 function mapOrderStatus(status: string): 'PENDING' | 'APPROVED' {
   return status === '8' ? 'APPROVED' : 'PENDING';
 }
 
-/**
- * Map ONEWMS status string to platform ShippingStatus
- */
 function mapShippingStatus(status: string): 'PENDING' | 'PREPARING' | 'SHIPPED' {
   const s = parseInt(status || '0', 10);
   if (s === 8) return 'SHIPPED';
@@ -32,19 +28,64 @@ function mapShippingStatus(status: string): 'PENDING' | 'PREPARING' | 'SHIPPED' 
   return 'PENDING';
 }
 
-/**
- * Map ONEWMS status string to platform PaymentStatus
- */
 function mapPaymentStatus(status: string): 'UNPAID' | 'PAID' {
   return status === '8' ? 'PAID' : 'UNPAID';
 }
 
 /**
+ * Auto-create a product in DB from ONEWMS order product data.
+ * Uses stock API to get barcode, or falls back to synthetic barcode.
+ */
+async function autoCreateProduct(
+  onewmsProductId: string,
+  productName: string,
+  client: ReturnType<typeof createOnewmsClient>,
+  existingBarcodes: Set<string>
+) {
+  const code = `WMS-${onewmsProductId}`;
+
+  // Try to get barcode from stock API
+  let barcode = `WMS-OP-${onewmsProductId}`;
+  try {
+    const stockData = await client.getStockInfo('product_id', onewmsProductId);
+    const entry = stockData[onewmsProductId];
+    if (entry?.barcode) {
+      barcode = entry.barcode;
+      // Handle barcode collision
+      if (existingBarcodes.has(barcode)) {
+        barcode = `${barcode}-${onewmsProductId}`;
+      }
+    }
+  } catch {
+    // Stock API failed, use synthetic barcode
+  }
+
+  // Ensure barcode uniqueness
+  if (existingBarcodes.has(barcode)) {
+    barcode = `WMS-OP-${onewmsProductId}`;
+  }
+
+  const product = await prisma.product.create({
+    data: {
+      code,
+      name: productName || `WMS Order Product ${onewmsProductId}`,
+      barcode,
+      sellPrice: 0,
+      supplyPrice: 0,
+      onewmsCode: onewmsProductId,
+      onewmsBarcode: barcode.startsWith('WMS-OP-') ? null : barcode,
+      productType: 'HEADQUARTERS',
+      isWmsProduct: true,
+    },
+  });
+
+  existingBarcodes.add(barcode);
+  return product;
+}
+
+/**
  * Import orders from ONEWMS into the platform database.
- *
- * @param params.start_date - Start date (YYYY-MM-DD)
- * @param params.end_date - End date (YYYY-MM-DD)
- * @param params.sub_domain_seq - Optional warehouse filter
+ * Auto-creates products when order_products reference unknown product_ids.
  */
 export async function importOrdersFromOnewms(params: {
   start_date: string;
@@ -56,6 +97,7 @@ export async function importOrdersFromOnewms(params: {
     created: 0,
     skipped: 0,
     errors: 0,
+    productsAutoCreated: 0,
     errorDetails: [],
   };
 
@@ -75,7 +117,7 @@ export async function importOrdersFromOnewms(params: {
 
   if (orders.length === 0) return result;
 
-  // Step 2: Get MASTER user (used as sellerId for imported orders)
+  // Step 2: Get MASTER user
   const masterUser = await prisma.user.findFirst({
     where: { role: 'MASTER' },
     select: { id: true },
@@ -89,32 +131,32 @@ export async function importOrdersFromOnewms(params: {
   const existingOrderNos = new Set(
     (
       await prisma.order.findMany({
-        where: {
-          orderNo: {
-            startsWith: 'WMS-',
-          },
-        },
+        where: { orderNo: { startsWith: 'WMS-' } },
         select: { orderNo: true },
       })
     ).map((o) => o.orderNo)
   );
 
   // Step 4: Build product lookup map (onewmsCode -> Product)
-  const productMap = new Map(
-    (
-      await prisma.product.findMany({
-        where: { onewmsCode: { not: null } },
-        select: {
-          id: true,
-          code: true,
-          name: true,
-          barcode: true,
-          supplyPrice: true,
-          sellPrice: true,
-          onewmsCode: true,
-        },
-      })
-    ).map((p) => [p.onewmsCode!, p])
+  const allProducts = await prisma.product.findMany({
+    where: { onewmsCode: { not: null } },
+    select: {
+      id: true,
+      code: true,
+      name: true,
+      barcode: true,
+      supplyPrice: true,
+      sellPrice: true,
+      onewmsCode: true,
+    },
+  });
+
+  const productMap = new Map(allProducts.map((p) => [p.onewmsCode!, p]));
+  const existingBarcodes = new Set(
+    (await prisma.product.findMany({ select: { barcode: true } })).map((p) => p.barcode)
+  );
+  const existingCodes = new Set(
+    (await prisma.product.findMany({ select: { code: true } })).map((p) => p.code)
   );
 
   // Step 5: Import each order
@@ -128,7 +170,6 @@ export async function importOrdersFromOnewms(params: {
 
     const orderNo = `WMS-${onewmsOrderId}`;
 
-    // Skip if already imported
     if (existingOrderNos.has(orderNo)) {
       result.skipped++;
       continue;
@@ -139,7 +180,7 @@ export async function importOrdersFromOnewms(params: {
       const totalAmount = parseInt(String(order.amount || '0'), 10) || 0;
       const orderProducts = order.order_products || [];
 
-      // Build order items from order_products
+      // Build order items, auto-creating missing products
       const orderItems: Array<{
         productId: string;
         quantity: number;
@@ -151,23 +192,60 @@ export async function importOrdersFromOnewms(params: {
         productType: 'HEADQUARTERS' | 'CENTER';
       }> = [];
 
-      let hasUnmatchedProducts = false;
-
       for (const op of orderProducts) {
         const wmsProdId = op.product_id;
-        const product = productMap.get(wmsProdId);
+        if (!wmsProdId) continue;
 
+        let product = productMap.get(wmsProdId);
+
+        // Auto-create product if not found
         if (!product) {
-          // Product not found in DB - skip this order item but continue
-          hasUnmatchedProducts = true;
-          continue;
+          const code = `WMS-${wmsProdId}`;
+          if (existingCodes.has(code)) {
+            // Code collision - product exists with different onewmsCode lookup
+            const existing = await prisma.product.findUnique({
+              where: { code },
+              select: { id: true, code: true, name: true, barcode: true, supplyPrice: true, sellPrice: true, onewmsCode: true },
+            });
+            if (existing) {
+              product = existing;
+              productMap.set(wmsProdId, existing);
+            }
+          }
+
+          if (!product) {
+            try {
+              const created = await autoCreateProduct(
+                wmsProdId,
+                order.product_name || '',
+                client,
+                existingBarcodes
+              );
+              product = {
+                id: created.id,
+                code: created.code,
+                name: created.name,
+                barcode: created.barcode,
+                supplyPrice: created.supplyPrice,
+                sellPrice: created.sellPrice,
+                onewmsCode: created.onewmsCode,
+              };
+              productMap.set(wmsProdId, product);
+              existingCodes.add(created.code);
+              result.productsAutoCreated++;
+            } catch (err) {
+              // Product auto-creation failed, skip this item
+              console.error(`Failed to auto-create product ${wmsProdId}:`, err);
+              continue;
+            }
+          }
         }
 
         const qty = parseInt(String(op.qty || '1'), 10) || 1;
-        const supplyPrice = product.supplyPrice;
+        const supplyPrice = parseInt(String(op.prd_supply_price || '0'), 10) || product.supplyPrice;
         const totalSupply = supplyPrice * qty;
-        const sellPricePerItem = product.sellPrice || 0;
-        const margin = sellPricePerItem > 0 ? sellPricePerItem - supplyPrice : 0;
+        const sellPrice = product.sellPrice || 0;
+        const margin = sellPrice > 0 ? sellPrice - supplyPrice : 0;
 
         orderItems.push({
           productId: product.id,
@@ -181,17 +259,15 @@ export async function importOrdersFromOnewms(params: {
         });
       }
 
-      // Skip order if no valid items
       if (orderItems.length === 0) {
         result.errors++;
         result.errorDetails.push({
           orderId: onewmsOrderId,
-          error: 'No matching products found for order items',
+          error: 'No valid products for order items',
         });
         continue;
       }
 
-      // Create order with items and mapping in a transaction
       await prisma.$transaction(async (tx) => {
         const newOrder = await tx.order.create({
           data: {
@@ -212,7 +288,6 @@ export async function importOrdersFromOnewms(params: {
           },
         });
 
-        // Create ONEWMS order mapping
         const csStatus = parseInt(String(order.order_cs || '0'), 10) || 0;
         const holdStatus = parseInt(String(order.hold || '0'), 10) || 0;
         const transNo = order.trans_no || null;
@@ -232,13 +307,7 @@ export async function importOrdersFromOnewms(params: {
       });
 
       result.created++;
-      existingOrderNos.add(orderNo); // Prevent duplicates within same batch
-
-      if (hasUnmatchedProducts) {
-        console.warn(
-          `Order ${orderNo}: Some products not matched, imported with available items only`
-        );
-      }
+      existingOrderNos.add(orderNo);
     } catch (error) {
       result.errors++;
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -248,7 +317,7 @@ export async function importOrdersFromOnewms(params: {
   }
 
   console.log(
-    `Order import completed: ${result.created} created, ${result.skipped} skipped, ${result.errors} errors`
+    `Order import completed: ${result.created} created, ${result.skipped} skipped, ${result.errors} errors, ${result.productsAutoCreated} products auto-created`
   );
 
   return result;
