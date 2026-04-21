@@ -15,6 +15,8 @@ interface ImportOrdersResult {
   errors: number;
   productsAutoCreated: number;
   errorDetails: Array<{ orderId: string; error: string }>;
+  page: number;
+  hasMore: boolean;
 }
 
 function mapOrderStatus(status: string): 'PENDING' | 'APPROVED' {
@@ -85,13 +87,19 @@ async function autoCreateProduct(
 
 /**
  * Import orders from ONEWMS into the platform database.
+ * Batch mode: processes one page at a time (default 50 orders per page).
  * Auto-creates products when order_products reference unknown product_ids.
  */
 export async function importOrdersFromOnewms(params: {
   start_date: string;
   end_date: string;
   sub_domain_seq?: string;
+  page?: number;
+  limit?: number;
 }): Promise<ImportOrdersResult> {
+  const page = params.page || 1;
+  const limit = params.limit || 50;
+
   const result: ImportOrdersResult = {
     total: 0,
     created: 0,
@@ -99,18 +107,24 @@ export async function importOrdersFromOnewms(params: {
     errors: 0,
     productsAutoCreated: 0,
     errorDetails: [],
+    page,
+    hasMore: false,
   };
 
   const client = createOnewmsClient();
 
-  // Step 1: Fetch orders from ONEWMS (sub_domain_seq is required by API)
+  // Step 1: Fetch orders from ONEWMS (batch mode with page/limit)
   const orders = await client.getOrderInfo({
     date_type: 'order_date',
     start_date: params.start_date,
     end_date: params.end_date,
     sub_domain_seq: params.sub_domain_seq || '20',
-    limit: 1000,
+    page,
+    limit,
   });
+
+  // If we got exactly `limit` orders, there are likely more pages
+  result.hasMore = orders.length >= limit;
 
   result.total = orders.length;
   console.log(`Fetched ${result.total} orders from ONEWMS`);
