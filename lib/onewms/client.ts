@@ -21,7 +21,8 @@ import {
   CodeMatchInfo,
   AddProductRequest,
   // Stock
-  StockInfo,
+  StockInfoType,
+  StockInfoResponse,
   StockTransactionInfo,
   StockTransactionDetailInfo,
   // Sheet
@@ -32,6 +33,8 @@ import {
   OnedasPackingDetailInfo,
   // Etc
   EtcInfo,
+  EtcSearchType,
+  StockJobTypeInfo,
 } from './types';
 import { getOnewmsConfig } from './config';
 
@@ -43,7 +46,7 @@ export class OnewmsClient {
   }
 
   /**
-   * Make API request
+   * Make API request (standard {error, msg, data} wrapper)
    */
   private async request<T>(
     action: string,
@@ -59,12 +62,23 @@ export class OnewmsClient {
     const apiUrl = this.config.apiUrl || 'https://api.onewms.co.kr/api.php';
 
     try {
+      // Build form-encoded body (ONEWMS PHP API requires x-www-form-urlencoded)
+      const formData = new URLSearchParams();
+      for (const [key, value] of Object.entries(requestBody)) {
+        if (value !== undefined && value !== null) {
+          formData.append(
+            key,
+            typeof value === 'object' ? JSON.stringify(value) : String(value)
+          );
+        }
+      }
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(requestBody),
+        body: formData.toString(),
       });
 
       if (!response.ok) {
@@ -73,11 +87,11 @@ export class OnewmsClient {
 
       const data: OnewmsApiResponse<T> = await response.json();
 
-      // Check for API error
-      if (data.code !== 0) {
+      // Check for API error (response uses "error" field, not "code")
+      if (data.error !== 0) {
         throw new OnewmsApiError(
-          data.code,
-          data.message || 'Unknown API error',
+          data.error,
+          data.msg || 'Unknown API error',
           data
         );
       }
@@ -95,19 +109,99 @@ export class OnewmsClient {
     }
   }
 
+  /**
+   * Make API request for endpoints that return raw data without {error, msg, data} wrapper.
+   * e.g. get_stock_tx_info returns nested JSON directly.
+   */
+  private async requestRaw<T>(
+    action: string,
+    params: Record<string, unknown> = {}
+  ): Promise<T> {
+    const requestBody: OnewmsApiRequest = {
+      partner_key: this.config.partnerKey,
+      domain_key: this.config.domainKey,
+      action,
+      ...params,
+    };
+
+    const apiUrl = this.config.apiUrl || 'https://api.onewms.co.kr/api.php';
+
+    try {
+      const formData = new URLSearchParams();
+      for (const [key, value] of Object.entries(requestBody)) {
+        if (value !== undefined && value !== null) {
+          formData.append(
+            key,
+            typeof value === 'object' ? JSON.stringify(value) : String(value)
+          );
+        }
+      }
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // If the response happens to have the standard wrapper, check for errors
+      if (typeof data === 'object' && data !== null && 'error' in data && data.error !== 0) {
+        throw new OnewmsApiError(
+          data.error,
+          data.msg || 'Unknown API error',
+          data
+        );
+      }
+
+      return data as T;
+    } catch (error) {
+      if (error instanceof OnewmsApiError) {
+        throw error;
+      }
+      throw new OnewmsApiError(
+        -1,
+        error instanceof Error ? error.message : 'Network error',
+        undefined
+      );
+    }
+  }
+
   // ============================================
   // Order APIs
   // ============================================
 
   /**
-   * Get order information
-   * @param orderNo - Order number
+   * Get order information.
+   * Required: date_type, start_date, end_date.
+   * Optional filters: status, order_cs, hold, order_id, trans_no, product_id, shop_id, sub_domain_seq, etc.
    */
-  async getOrderInfo(orderNo: string): Promise<OrderInfo> {
-    const response = await this.request<OrderInfo>('get_order_info', {
-      order_no: orderNo,
-    });
-    return response.data || {};
+  async getOrderInfo(params: {
+    date_type: string;      // order_date, trans_date, collect_date, ready_date, trans_date_pos, cancel_date, change_date, cs_date
+    start_date: string;     // YYYY-MM-DD
+    end_date: string;       // YYYY-MM-DD
+    status?: string;        // 주문상태 필터
+    order_cs?: string;      // CS상태 필터
+    hold?: string;          // 보류상태 필터
+    order_id?: string;      // 주문번호
+    order_no?: string;      // 주문번호 (legacy)
+    trans_no?: string;      // 송장번호
+    product_id?: string;    // 상품코드
+    seq?: string;           // 관리번호
+    shop_id?: string;       // 판매처코드
+    sub_domain_seq?: string; // 화주번호 (get_etc_info warehouse의 seq)
+    packing_type?: string;  // single_qty, multi_qty, single_product, multi_product, single_product_multi_qty
+    page?: number;
+    limit?: number;         // 10, 30, 50, 100, 300, 500, 1000
+  }): Promise<OrderInfo[]> {
+    const response = await this.request<OrderInfo[]>('get_order_info', params);
+    return response.data || [];
   }
 
   /**
@@ -167,25 +261,30 @@ export class OnewmsClient {
   // ============================================
 
   /**
-   * Get product information
-   * @param productCode - Product code
+   * Get product list (paginated)
+   * Note: product_code param is not supported by API, use page/limit
    */
-  async getProductInfo(productCode: string): Promise<ProductInfo> {
-    const response = await this.request<ProductInfo>('get_product_info', {
-      product_code: productCode,
+  async getProductList(page = 1, limit = 100): Promise<{
+    data: ProductInfo[];
+    total: number;
+  }> {
+    const response = await this.request<ProductInfo[]>('get_product_info', {
+      page,
+      limit,
     });
-    return response.data || {};
+    return {
+      data: response.data || [],
+      total: response.total || 0,
+    };
   }
 
   /**
    * Get code match information
-   * @param internalCode - Internal code
+   * @deprecated API returns "invalid action" as of 2026-04-21. Awaiting ONEWMS clarification.
    */
   async getCodeMatch(internalCode: string): Promise<CodeMatchInfo> {
-    const response = await this.request<CodeMatchInfo>('get_code_match', {
-      internal_code: internalCode,
-    });
-    return response.data || {};
+    console.warn('[ONEWMS] getCodeMatch: API returns "invalid action". Contact ONEWMS team.');
+    return {};
   }
 
   /**
@@ -201,56 +300,52 @@ export class OnewmsClient {
   // ============================================
 
   /**
-   * Get current stock information
-   * @param productCode - Product code
+   * Get stock information.
+   * @param type - Query type: product_id, link_id, barcode, supply_code
+   * @param ids - Search value (required). e.g. product_id, barcode value, supply_code
+   * @param params - Optional: warehouse_seq, stock_type, include_ready_trans
+   *
+   * Response structure: { [product_id]: { product_id, link_id, barcode, stock: { [warehouse_seq]: { warehouse_seq, stock } } } }
+   * For type=supply_code, response includes total/page/limit pagination fields.
    */
-  async getStockInfo(productCode: string): Promise<StockInfo> {
-    const response = await this.request<StockInfo>('get_stock_info', {
-      product_code: productCode,
+  async getStockInfo(
+    type: StockInfoType,
+    ids: string,
+    params?: { warehouse_seq?: string; stock_type?: string; include_ready_trans?: string; page?: number; limit?: number }
+  ): Promise<StockInfoResponse> {
+    const response = await this.request<StockInfoResponse>('get_stock_info', {
+      type,
+      ids,
+      ...params,
     });
     return response.data || {};
   }
 
   /**
-   * Get stock transaction information
-   * @param productCode - Product code
-   * @param startDate - Start date (optional)
-   * @param endDate - End date (optional)
+   * Get stock transaction summary (nested structure)
+   * NOTE: This API returns raw nested JSON without the standard {error, msg, data} wrapper.
+   * Response: { [product_id]: { [warehouse_seq]: StockTransactionEntry[][] } }
    */
   async getStockTxInfo(
-    productCode: string,
-    startDate?: string,
-    endDate?: string
-  ): Promise<StockTransactionInfo[]> {
-    const response = await this.request<StockTransactionInfo[]>(
+    page = 1,
+    limit = 100
+  ): Promise<StockTransactionInfo> {
+    return this.requestRaw<StockTransactionInfo>(
       'get_stock_tx_info',
-      {
-        product_code: productCode,
-        start_date: startDate,
-        end_date: endDate,
-      }
+      { page, limit }
     );
-    return response.data || [];
   }
 
   /**
-   * Get stock transaction detail information
-   * @param productCode - Product code
-   * @param startDate - Start date (optional)
-   * @param endDate - End date (optional)
+   * Get stock transaction detail (flat list with per-entry info)
    */
   async getStockTxDetailInfo(
-    productCode: string,
-    startDate?: string,
-    endDate?: string
+    page = 1,
+    limit = 100
   ): Promise<StockTransactionDetailInfo[]> {
     const response = await this.request<StockTransactionDetailInfo[]>(
       'get_stock_tx_detail_info',
-      {
-        product_code: productCode,
-        start_date: startDate,
-        end_date: endDate,
-      }
+      { page, limit }
     );
     return response.data || [];
   }
@@ -318,10 +413,25 @@ export class OnewmsClient {
   // ============================================
 
   /**
-   * Get etc information
+   * Get etc information (reference data).
+   * Note: Do NOT pass 'job_type' here — use getStockJobTypes() instead,
+   * because job_type returns an object, not an array.
    */
-  async getEtcInfo(): Promise<EtcInfo> {
-    const response = await this.request<EtcInfo>('get_etc_info');
+  async getEtcInfo(searchType: Exclude<EtcSearchType, 'job_type'>): Promise<EtcInfo[]> {
+    const response = await this.request<EtcInfo[]>('get_etc_info', {
+      search_type: searchType,
+    });
+    return response.data || [];
+  }
+
+  /**
+   * Get stock job types (재고작업타입).
+   * Returns: {in: {code, name}, out: {code, name}, trans: {code, name}, shift: {code, name}, arrange: {code, name}}
+   */
+  async getStockJobTypes(): Promise<StockJobTypeInfo> {
+    const response = await this.request<StockJobTypeInfo>('get_etc_info', {
+      search_type: 'job_type',
+    });
     return response.data || {};
   }
 }

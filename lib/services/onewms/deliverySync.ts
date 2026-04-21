@@ -5,7 +5,7 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { createOnewmsClient } from '@/lib/onewms';
-import type { OrderStatus as OnewmsOrderStatus } from '@/lib/onewms/types';
+import type { OrderInfo } from '@/lib/onewms/types';
 import { sendNotification } from './notifications';
 
 interface SyncResult {
@@ -78,14 +78,34 @@ export async function syncOrderDeliveryStatus(orderId: string): Promise<{
       };
     }
 
-    // Fetch order status from ONEWMS
+    // Fetch order status from ONEWMS (requires date range)
     const client = createOnewmsClient();
-    const orderInfo = await client.getOrderInfo(mapping.onewmsOrderNo);
+    const today = new Date().toISOString().slice(0, 10);
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
 
-    const onewmsStatus = typeof orderInfo.status === 'number' ? orderInfo.status : 0;
+    const orderList = await client.getOrderInfo({
+      date_type: 'order_date',
+      start_date: thirtyDaysAgo,
+      end_date: today,
+      order_no: mapping.onewmsOrderNo,
+    });
+
+    // API filters by order_no param; take first matching result
+    const orderInfo = orderList.find(
+      (o) => o.order_no === mapping.onewmsOrderNo || o.order_id === mapping.onewmsOrderNo
+    ) || orderList[0];
+
+    if (!orderInfo) {
+      return { success: true, updated: false };
+    }
+
+    // API returns status as string ("1"=접수, "7"=승장, "8"=배송)
+    const onewmsStatus = parseInt(String(orderInfo.status || '0'), 10);
     const transNo = orderInfo.trans_no || null;
-    const csStatus = orderInfo.cs_status || 0;
-    const holdStatus = orderInfo.hold_status || 0;
+    const csStatus = parseInt(String(orderInfo.order_cs || '0'), 10);
+    const holdStatus = parseInt(String(orderInfo.hold || '0'), 10);
 
     // Determine new shipping status
     const newShippingStatus = mapOnewmsStatusToShippingStatus(onewmsStatus);

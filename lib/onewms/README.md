@@ -198,7 +198,7 @@ try {
   await client.getOrderInfo('ORDER-123');
 } catch (error) {
   if (error instanceof OnewmsApiError) {
-    console.error(`API Error [${error.code}]: ${error.message}`);
+    console.error(`API Error [${error.errorCode}]: ${error.message}`);
     console.error('Response:', error.response);
   } else {
     console.error('Network Error:', error);

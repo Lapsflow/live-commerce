@@ -50,12 +50,20 @@ export async function syncProductStock(productId: string): Promise<{
       };
     }
 
-    // Fetch stock info from ONEWMS
+    // Fetch stock info from ONEWMS using product_id type with ids param
     const client = createOnewmsClient();
-    const stockInfo = await client.getStockInfo(product.onewmsCode);
+    const stockData = await client.getStockInfo('product_id', product.onewmsCode);
 
-    const onewmsAvailableQty = stockInfo.available_qty || 0;
-    const onewmsTotalQty = stockInfo.total_qty || 0;
+    // Response is { [product_id]: { product_id, link_id, barcode, stock: { [warehouse_seq]: { warehouse_seq, stock } } } }
+    const stockEntry = stockData[product.onewmsCode];
+    // Sum stock across all warehouses
+    let onewmsAvailableQty = 0;
+    if (stockEntry?.stock) {
+      for (const wh of Object.values(stockEntry.stock)) {
+        onewmsAvailableQty += (wh.stock || 0);
+      }
+    }
+    const onewmsTotalQty = onewmsAvailableQty;
     const localQty = product.totalStock;
 
     // Calculate difference

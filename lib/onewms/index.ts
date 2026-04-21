@@ -14,24 +14,18 @@
  * // Create client instance
  * const client = createOnewmsClient();
  *
- * // Get order info
- * const order = await client.getOrderInfo('ORDER-123');
- *
- * // Create order
- * await client.createOrder({
- *   order_no: 'ORDER-123',
- *   order_date: '2026-04-09',
- *   recipient_name: 'John Doe',
- *   recipient_phone: '010-1234-5678',
- *   recipient_address: 'Seoul, Korea',
- *   products: [
- *     { product_code: 'PROD-001', quantity: 2 }
- *   ]
+ * // Get order info (requires date range)
+ * const orders = await client.getOrderInfo({
+ *   date_type: 'order_date',
+ *   start_date: '2026-04-09',
+ *   end_date: '2026-04-09',
  * });
  *
- * // Get stock info
- * const stock = await client.getStockInfo('PROD-001');
- * console.log(`Available: ${stock.available_qty}`);
+ * // Get product list (paginated)
+ * const { data: products, total } = await client.getProductList(1, 100);
+ *
+ * // Get reference data
+ * const carriers = await client.getEtcInfo('trans');
  * ```
  */
 

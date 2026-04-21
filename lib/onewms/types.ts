@@ -21,9 +21,12 @@ export interface OnewmsApiRequest {
 }
 
 export interface OnewmsApiResponse<T = unknown> {
-  code: number;
-  message?: string;
+  error: number;
+  msg: string;
   data?: T;
+  total?: number;
+  page?: number | string;
+  limit?: number | string;
 }
 
 // ============================================
@@ -85,15 +88,60 @@ export enum HoldStatus {
 // ============================================
 
 export interface OrderInfo {
+  pack?: string;
+  seq?: string;
+  status?: string;          // "1"=접수, "7"=승장, "8"=배송
+  order_cs?: string;        // CS상태: "0"=정상, "1"~"8" (CsStatus enum)
+  hold?: string;            // 보류상태: "0"=정상, "1"~"6" (HoldStatus enum)
+  shop_id?: string;
+  order_id?: string;
+  order_id_seq?: string;
+  order_id_seq2?: string;
   order_no?: string;
-  order_date?: string;
-  order_status?: OrderStatus;
-  cs_status?: CsStatus;
-  hold_status?: HoldStatus;
+  order_type?: string;
+  order_type2?: string;
+  shop_product_id?: string;
+  product_name?: string;
+  options?: string;
+  qty?: string;
+  order_name?: string;
+  order_mobile?: string;
+  order_tel?: string;
+  recv_name?: string;
+  recv_mobile?: string;
+  recv_tel?: string;
+  recv_address?: string;
+  recv_zip?: string;
+  memo?: string;
+  prepay_price?: string;
+  trans_corp?: string;
   trans_no?: string;
-  recipient_name?: string;
-  recipient_phone?: string;
-  recipient_address?: string;
+  trans_who?: string;
+  order_date?: string;
+  collect_date?: string;
+  ready_date?: string;
+  trans_date?: string;
+  trans_date_pos?: string;
+  trans_due_date?: string;
+  amount?: string;
+  supply_price?: string;
+  extra_money?: string;
+  pay_type?: string;
+  sub_domain_seq?: string;
+  order_products?: Array<{
+    seq: string;
+    order_cs: string;
+    product_id: string;
+    link_id: string;
+    qty: string;
+    supply_code: string;
+    prd_amount: string;
+    prd_supply_price: string;
+    extra_money: string;
+    is_gift: string;
+    cancel_date: string;
+    change_date: string;
+  }>;
   [key: string]: unknown;
 }
 
@@ -143,9 +191,25 @@ export interface SetOrderLabelRequest {
 // ============================================
 
 export interface ProductInfo {
-  product_code?: string;
-  product_name?: string;
+  product_id?: string;
+  name?: string;
+  supply_code?: string;
+  brand?: string;
+  origin?: string;
+  weight?: string;
+  org_price?: string;
+  shop_price?: string;
+  supply_price?: string;
   barcode?: string;
+  img_500?: string;
+  location?: string;
+  memo?: string;
+  category?: string | null;
+  maker?: string;
+  reg_date?: string;
+  last_update_date?: string;
+  options?: string;
+  enable_sale?: string;
   [key: string]: unknown;
 }
 
@@ -166,6 +230,36 @@ export interface AddProductRequest {
 // Stock Types
 // ============================================
 
+/** Valid type values for get_stock_info API */
+export type StockInfoType = 'product_id' | 'link_id' | 'barcode' | 'supply_code';
+
+/** Per-warehouse stock entry */
+export interface StockWarehouseEntry {
+  warehouse_seq?: string;
+  stock?: number;
+  [key: string]: unknown;
+}
+
+/** Per-product stock entry returned by get_stock_info */
+export interface StockProductEntry {
+  product_id?: string;
+  link_id?: string;
+  barcode?: string;
+  supply_code?: string;
+  stock?: Record<string, StockWarehouseEntry>;
+  [key: string]: unknown;
+}
+
+/**
+ * get_stock_info response: nested structure keyed by product_id.
+ * Response wrapped in standard {error, msg, data} but data is:
+ * { [product_id]: StockProductEntry }
+ *
+ * For type=supply_code, response includes total/page/limit pagination.
+ */
+export type StockInfoResponse = Record<string, StockProductEntry>;
+
+/** @deprecated Use StockProductEntry instead */
 export interface StockInfo {
   product_code?: string;
   available_qty?: number;
@@ -173,21 +267,35 @@ export interface StockInfo {
   [key: string]: unknown;
 }
 
-export interface StockTransactionInfo {
-  product_code?: string;
-  trans_type?: string;
-  trans_qty?: number;
-  trans_date?: string;
-  [key: string]: unknown;
+/** Individual stock transaction entry */
+export interface StockTransactionEntry {
+  job?: string;        // "in"=입고, "stock"=재고, "trans"=출고
+  job_type?: string;
+  qty?: string;
 }
 
+/**
+ * get_stock_tx_info response: nested structure
+ * { [product_id]: { [warehouse_seq]: StockTransactionEntry[][] } }
+ */
+export type StockTransactionInfo = Record<
+  string,
+  Record<string, StockTransactionEntry[][]>
+>;
+
 export interface StockTransactionDetailInfo {
-  product_code?: string;
-  trans_type?: string;
-  trans_qty?: number;
-  trans_date?: string;
-  before_qty?: number;
-  after_qty?: number;
+  seq?: string;
+  crdate?: string;
+  product_id?: string;
+  warehouse_seq?: string;
+  stock_type?: string;
+  job?: string;           // "trans"=출고, "in"=입고
+  job_type?: string;
+  qty?: string;
+  stock?: string;         // 변동 후 잔여 재고
+  order_seq?: string;
+  worker?: string;
+  memo?: string;
   [key: string]: unknown;
 }
 
@@ -239,8 +347,27 @@ export interface OnedasPackingDetailInfo {
 // ============================================
 
 export interface EtcInfo {
+  code?: string;
+  seq?: string;   // warehouse search_type returns {seq, name} instead of {code, name}
+  name?: string;
   [key: string]: unknown;
 }
+
+/** job_type returns a nested object, not an array */
+export interface StockJobTypeInfo {
+  in?: { code: string; name: string };
+  out?: { code: string; name: string };
+  trans?: { code: string; name: string };
+  shift?: { code: string; name: string };
+  arrange?: { code: string; name: string };
+  [key: string]: { code: string; name: string } | undefined;
+}
+
+/**
+ * get_etc_info search_type valid values.
+ * Note: job_type returns StockJobTypeInfo (object), not EtcInfo[] (array).
+ */
+export type EtcSearchType = 'shop' | 'supply' | 'trans' | 'warehouse' | 'stock_type' | 'category' | 'job_type';
 
 // ============================================
 // Error Types
@@ -248,7 +375,7 @@ export interface EtcInfo {
 
 export class OnewmsApiError extends Error {
   constructor(
-    public code: number,
+    public errorCode: number,
     message: string,
     public response?: OnewmsApiResponse
   ) {

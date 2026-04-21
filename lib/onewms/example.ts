@@ -60,27 +60,37 @@ async function orderExamples() {
     console.log('✅ Order created successfully');
   } catch (error) {
     if (error instanceof OnewmsApiError) {
-      console.error(`❌ API Error [${error.code}]: ${error.message}`);
+      console.error(`❌ API Error [${error.errorCode}]: ${error.message}`);
     }
   }
 
-  // 2. Get order information
+  // 2. Get order information (requires date_type, start_date, end_date)
   try {
-    const order = await client.getOrderInfo('LC-2026-04-09-001');
-    console.log('📦 Order:', order);
+    const orders = await client.getOrderInfo({
+      date_type: 'order_date',
+      start_date: '2026-04-09',
+      end_date: '2026-04-09',
+      order_no: 'LC-2026-04-09-001',
+    });
+    console.log('📦 Orders:', orders);
 
-    // Check order status
-    if (order.order_status === OrderStatus.RECEIVED) {
-      console.log('Order is received, waiting for processing');
-    } else if (order.order_status === OrderStatus.SHIPPED) {
-      console.log('Order has been shipped');
-    }
+    if (orders.length > 0) {
+      const order = orders[0];
+      const status = parseInt(String(order.status || '0'), 10);
+      // Check order status
+      if (status === OrderStatus.RECEIVED) {
+        console.log('Order is received, waiting for processing');
+      } else if (status === OrderStatus.SHIPPED) {
+        console.log('Order has been shipped');
+      }
 
-    // Check CS status
-    if (order.cs_status === CsStatus.NORMAL) {
-      console.log('No CS issues');
-    } else if (order.cs_status === CsStatus.PRE_DELIVERY_FULL_CANCEL) {
-      console.log('Order is cancelled before delivery');
+      // Check CS status (order_cs field)
+      const csStatus = parseInt(String(order.order_cs || '0'), 10);
+      if (csStatus === CsStatus.NORMAL) {
+        console.log('No CS issues');
+      } else if (csStatus === CsStatus.PRE_DELIVERY_FULL_CANCEL) {
+        console.log('Order is cancelled before delivery');
+      }
     }
   } catch (error) {
     if (error instanceof OnewmsApiError) {
@@ -127,11 +137,12 @@ async function productExamples() {
     barcode: '8801234567890',
   });
 
-  // 2. Get product information
-  const product = await client.getProductInfo('PROD-001');
-  console.log('📦 Product:', product);
-  console.log(`  Name: ${product.product_name}`);
-  console.log(`  Barcode: ${product.barcode}`);
+  // 2. Get product list (paginated)
+  const productResult = await client.getProductList(1, 10);
+  console.log(`📦 Products (${productResult.total} total):`);
+  productResult.data.forEach((p) => {
+    console.log(`  ${p.product_id}: ${p.name} (barcode: ${p.barcode})`);
+  });
 
   // 3. Get code matching
   const match = await client.getCodeMatch('INTERNAL-001');
@@ -145,44 +156,40 @@ async function productExamples() {
 async function stockExamples() {
   const client = setupClient();
 
-  // 1. Check current stock
-  const stock = await client.getStockInfo('PROD-001');
+  // 1. Check current stock by product_id
+  const stockData = await client.getStockInfo('product_id', '22197');
   console.log('📊 Stock Information:');
-  console.log(`  Available: ${stock.available_qty}`);
-  console.log(`  Total: ${stock.total_qty}`);
-
-  // Alert if low stock
-  if (stock.available_qty && stock.available_qty < 10) {
-    console.warn('⚠️  Low stock alert!');
+  for (const [productId, entry] of Object.entries(stockData)) {
+    let totalStock = 0;
+    if (entry.stock) {
+      for (const wh of Object.values(entry.stock)) {
+        totalStock += (wh.stock || 0);
+      }
+    }
+    console.log(`  ${productId} (barcode: ${entry.barcode}): stock=${totalStock}`);
+    if (totalStock < 10) {
+      console.warn(`  ⚠️  Low stock alert for ${productId}!`);
+    }
   }
 
-  // 2. Get stock transactions (last 7 days)
-  const today = new Date();
-  const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+  // 2. Get stock transactions (paginated, nested structure)
+  const txData = await client.getStockTxInfo(1, 10);
+  console.log('📈 Stock Transactions (nested by product_id):');
+  for (const [productId, warehouses] of Object.entries(txData)) {
+    for (const [warehouseSeq, entries] of Object.entries(warehouses)) {
+      console.log(`  Product ${productId}, Warehouse ${warehouseSeq}:`);
+      entries.flat().forEach((e) => {
+        console.log(`    ${e.job} (type=${e.job_type}): ${e.qty} units`);
+      });
+    }
+  }
 
-  const transactions = await client.getStockTxInfo(
-    'PROD-001',
-    lastWeek.toISOString().split('T')[0],
-    today.toISOString().split('T')[0]
-  );
-
-  console.log('📈 Recent Transactions:', transactions.length);
-  transactions.forEach((tx) => {
-    console.log(
-      `  ${tx.trans_date}: ${tx.trans_type} ${tx.trans_qty} units`
-    );
-  });
-
-  // 3. Get detailed stock history
-  const details = await client.getStockTxDetailInfo(
-    'PROD-001',
-    lastWeek.toISOString().split('T')[0],
-    today.toISOString().split('T')[0]
-  );
+  // 3. Get detailed stock history (flat list)
+  const details = await client.getStockTxDetailInfo(1, 10);
 
   details.forEach((detail) => {
     console.log(
-      `  ${detail.trans_date}: ${detail.before_qty} → ${detail.after_qty}`
+      `  ${detail.crdate}: ${detail.job} ${detail.qty} units → stock: ${detail.stock}`
     );
   });
 }
@@ -244,15 +251,7 @@ async function liveCommerceIntegration() {
   for (const order of broadcastOrders) {
     try {
       // Check stock availability first
-      for (const product of order.products) {
-        const stock = await client.getStockInfo(product.product_code);
-        if (!stock.available_qty || stock.available_qty < product.quantity) {
-          console.error(
-            `❌ Insufficient stock for ${product.product_code}`
-          );
-          continue;
-        }
-      }
+      // e.g. await client.getStockInfo('product_id', order.products[0].product_code)
 
       // Create order in ONEWMS
       await client.createOrder({
