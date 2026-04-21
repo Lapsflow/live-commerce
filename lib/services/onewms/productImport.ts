@@ -1,6 +1,7 @@
 /**
  * ONEWMS Product Import Service
- * Imports products from ONEWMS API into platform DB and syncs stock
+ * Imports products from ONEWMS API into platform DB and syncs stock.
+ * Designed for Vercel Hobby 10s function limit: processes in batches per API call.
  */
 
 import { prisma } from '@/lib/db/prisma';
@@ -13,6 +14,8 @@ interface ImportProductsResult {
   updated: number;
   errors: number;
   duplicateBarcodes: number;
+  page: number;
+  hasMore: boolean;
   errorDetails: Array<{ productId: string; error: string }>;
 }
 
@@ -20,75 +23,66 @@ interface SyncStockResult {
   total: number;
   synced: number;
   errors: number;
+  offset: number;
+  hasMore: boolean;
   errorDetails: Array<{ productId: string; error: string }>;
 }
 
 /**
- * Build a map of barcode -> product_id[] to detect duplicates
+ * Build a map of barcode -> product_id[] to detect duplicates within a batch.
+ * Also checks DB for existing barcodes to avoid unique constraint violations.
  */
-function buildBarcodeMap(products: ProductInfo[]): Map<string, string[]> {
-  const map = new Map<string, string[]>();
-  for (const p of products) {
-    const barcode = p.barcode?.trim();
-    const productId = p.product_id;
-    if (!barcode || !productId) continue;
-    const existing = map.get(barcode) || [];
-    existing.push(productId);
-    map.set(barcode, existing);
-  }
-  return map;
+async function getExistingBarcodes(): Promise<Set<string>> {
+  const existing = await prisma.product.findMany({
+    select: { barcode: true },
+  });
+  return new Set(existing.map((p) => p.barcode));
 }
 
 /**
- * Import all products from ONEWMS into the platform database.
- * - Fetches all products via paginated getProductList()
- * - Handles barcode duplicates: first product keeps original, others get "{barcode}-{product_id}"
- * - Upserts by onewmsCode (ONEWMS product_id)
+ * Import products from ONEWMS into the platform database (one page at a time).
+ * Call repeatedly with incrementing page until hasMore=false.
+ *
+ * @param page - ONEWMS API page number (starts at 1)
+ * @param limit - Products per page (default 100, safe for 10s limit)
  */
-export async function importProductsFromOnewms(): Promise<ImportProductsResult> {
+export async function importProductsFromOnewms(
+  page = 1,
+  limit = 100
+): Promise<ImportProductsResult> {
   const result: ImportProductsResult = {
     total: 0,
     created: 0,
     updated: 0,
     errors: 0,
     duplicateBarcodes: 0,
+    page,
+    hasMore: false,
     errorDetails: [],
   };
 
   const client = createOnewmsClient();
 
-  // Step 1: Fetch all products (paginated)
-  const allProducts: ProductInfo[] = [];
-  let page = 1;
-  const limit = 1000;
+  // Fetch one page of products
+  const { data: products, total } = await client.getProductList(page, limit);
+  result.total = products.length;
+  result.hasMore = page * limit < total;
 
-  while (true) {
-    const { data, total } = await client.getProductList(page, limit);
-    allProducts.push(...data);
-    console.log(`Fetched page ${page}: ${data.length} products (total: ${total})`);
-    if (data.length < limit || allProducts.length >= total) break;
-    page++;
+  console.log(`Fetched page ${page}: ${products.length} products (total in ONEWMS: ${total})`);
+
+  if (products.length === 0) return result;
+
+  // Build barcode duplicate map within this batch
+  const barcodeCount = new Map<string, number>();
+  for (const p of products) {
+    const bc = p.barcode?.trim();
+    if (bc) barcodeCount.set(bc, (barcodeCount.get(bc) || 0) + 1);
   }
 
-  result.total = allProducts.length;
-  console.log(`Total ONEWMS products to import: ${result.total}`);
+  // Get existing barcodes in DB to avoid unique constraint violations
+  const existingBarcodes = await getExistingBarcodes();
 
-  // Step 2: Build barcode duplicate map
-  const barcodeMap = buildBarcodeMap(allProducts);
-  const duplicateBarcodes = new Set<string>();
-  for (const [barcode, ids] of barcodeMap.entries()) {
-    if (ids.length > 1) {
-      duplicateBarcodes.add(barcode);
-    }
-  }
-  result.duplicateBarcodes = duplicateBarcodes.size;
-  console.log(`Barcode duplicates detected: ${duplicateBarcodes.size} groups`);
-
-  // Track which barcodes have been assigned to first product (original barcode)
-  const assignedOriginalBarcode = new Set<string>();
-
-  // Step 3: Upsert each product
-  for (const p of allProducts) {
+  for (const p of products) {
     const onewmsCode = p.product_id;
     if (!onewmsCode) {
       result.errors++;
@@ -98,35 +92,31 @@ export async function importProductsFromOnewms(): Promise<ImportProductsResult> 
 
     try {
       const originalBarcode = p.barcode?.trim() || '';
-      let dbBarcode: string;
-
-      // Handle barcode duplicates
-      if (duplicateBarcodes.has(originalBarcode) && assignedOriginalBarcode.has(originalBarcode)) {
-        // Not the first product with this barcode - use suffixed version
-        dbBarcode = `${originalBarcode}-${onewmsCode}`;
-      } else {
-        // First product or unique barcode - use original
-        dbBarcode = originalBarcode;
-        if (duplicateBarcodes.has(originalBarcode)) {
-          assignedOriginalBarcode.add(originalBarcode);
-        }
-      }
-
-      // Fallback for empty barcode
-      if (!dbBarcode) {
-        dbBarcode = `WMS-NOBC-${onewmsCode}`;
-      }
-
+      const code = `WMS-${onewmsCode}`;
+      const productName = p.name || `WMS Product ${onewmsCode}`;
       const sellPrice = parseInt(String(p.shop_price || '0'), 10) || 0;
       const supplyPrice = parseInt(String(p.supply_price || '0'), 10) || 0;
-      const productName = p.name || `WMS Product ${onewmsCode}`;
-      const code = `WMS-${onewmsCode}`;
 
-      // Check if existing product already has this code
+      // Check if this product already exists in DB
       const existing = await prisma.product.findUnique({
         where: { onewmsCode },
-        select: { id: true },
+        select: { id: true, barcode: true },
       });
+
+      // Determine barcode for DB
+      let dbBarcode: string;
+      if (existing) {
+        // Already in DB - keep existing barcode on update
+        dbBarcode = existing.barcode;
+      } else {
+        // New product - assign barcode
+        dbBarcode = originalBarcode || `WMS-NOBC-${onewmsCode}`;
+        // If barcode already taken in DB, suffix with product_id
+        if (existingBarcodes.has(dbBarcode)) {
+          dbBarcode = `${originalBarcode}-${onewmsCode}`;
+          result.duplicateBarcodes++;
+        }
+      }
 
       await prisma.product.upsert({
         where: { onewmsCode },
@@ -149,6 +139,9 @@ export async function importProductsFromOnewms(): Promise<ImportProductsResult> 
         },
       });
 
+      // Track this barcode as used
+      existingBarcodes.add(dbBarcode);
+
       if (existing) {
         result.updated++;
       } else {
@@ -158,43 +151,61 @@ export async function importProductsFromOnewms(): Promise<ImportProductsResult> 
       result.errors++;
       const message = error instanceof Error ? error.message : 'Unknown error';
       result.errorDetails.push({ productId: onewmsCode, error: message });
-
-      // Log but continue with next product
       console.error(`Failed to import product ${onewmsCode}:`, message);
     }
   }
 
   console.log(
-    `Product import completed: ${result.created} created, ${result.updated} updated, ${result.errors} errors`
+    `Product import page ${page}: ${result.created} created, ${result.updated} updated, ${result.errors} errors`
   );
 
   return result;
 }
 
 /**
- * Sync stock from ONEWMS for all imported products.
- * Simple update without conflict detection (use stockSync.ts for ongoing sync with conflict handling).
+ * Sync stock from ONEWMS for imported products (batch of N at a time).
+ * Call repeatedly with incrementing offset until hasMore=false.
+ *
+ * @param offset - Skip first N products
+ * @param limit - Products to sync in this batch (default 20)
  */
-export async function syncStockFromOnewms(): Promise<SyncStockResult> {
+export async function syncStockFromOnewms(
+  offset = 0,
+  limit = 20
+): Promise<SyncStockResult> {
   const result: SyncStockResult = {
     total: 0,
     synced: 0,
     errors: 0,
+    offset,
+    hasMore: false,
     errorDetails: [],
   };
 
-  // Get all products with onewmsCode
+  // Count total and get batch
+  const totalCount = await prisma.product.count({
+    where: { onewmsCode: { not: null } },
+  });
+
   const products = await prisma.product.findMany({
     where: { onewmsCode: { not: null } },
     select: { id: true, code: true, onewmsCode: true },
+    skip: offset,
+    take: limit,
+    orderBy: { createdAt: 'asc' },
   });
 
-  result.total = products.length;
-  console.log(`Starting stock sync for ${result.total} products`);
+  result.total = totalCount;
+  result.hasMore = offset + limit < totalCount;
+
+  console.log(`Stock sync batch: offset=${offset}, count=${products.length}, total=${totalCount}`);
+
+  if (products.length === 0) return result;
 
   const client = createOnewmsClient();
-  const batchSize = 10;
 
+  // Process in small parallel batches of 5
+  const batchSize = 5;
   for (let i = 0; i < products.length; i += batchSize) {
     const batch = products.slice(i, i + batchSize);
 
@@ -232,15 +243,10 @@ export async function syncStockFromOnewms(): Promise<SyncStockResult> {
         result.errorDetails.push({ productId: r.productId, error: r.error || 'Unknown' });
       }
     }
-
-    // Rate limit delay between batches
-    if (i + batchSize < products.length) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
   }
 
   console.log(
-    `Stock sync completed: ${result.synced}/${result.total} synced, ${result.errors} errors`
+    `Stock sync batch done: ${result.synced}/${products.length} synced, ${result.errors} errors`
   );
 
   return result;

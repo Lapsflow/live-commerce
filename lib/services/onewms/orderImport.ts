@@ -61,12 +61,12 @@ export async function importOrdersFromOnewms(params: {
 
   const client = createOnewmsClient();
 
-  // Step 1: Fetch orders from ONEWMS
+  // Step 1: Fetch orders from ONEWMS (sub_domain_seq is required by API)
   const orders = await client.getOrderInfo({
     date_type: 'order_date',
     start_date: params.start_date,
     end_date: params.end_date,
-    sub_domain_seq: params.sub_domain_seq,
+    sub_domain_seq: params.sub_domain_seq || '20',
     limit: 1000,
   });
 
