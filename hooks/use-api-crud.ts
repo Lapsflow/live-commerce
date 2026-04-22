@@ -53,43 +53,48 @@ export function useApiCrud<T = Record<string, unknown>>(
   }, [mutate]);
 
   // Server-mode DataSource for DataTable
+  // Extract base path (without query string) for proper URL construction
   const dataSource: DataSource<T> = useMemo(
-    () => ({
-      mode: "server" as const,
-      fetchPage: async (params: FetchPageParams): Promise<FetchPageResult<T>> => {
-        const sp = new URLSearchParams();
-        sp.set("pageIndex", String(params.pageIndex));
-        sp.set("pageSize", String(params.pageSize));
-        if (params.globalFilter) sp.set("search", params.globalFilter);
-        if (params.sorting.length > 0) {
-          const s = params.sorting[0];
-          sp.set("sort", `${s.id}:${s.desc ? "desc" : "asc"}`);
-        }
-        // Merge extraParams
-        if (extraParams) {
-          for (const [key, value] of Object.entries(extraParams)) {
-            if (value) sp.set(key, value);
+    () => {
+      const [basePath, existingQuery] = endpoint.split("?");
+      return {
+        mode: "server" as const,
+        key: `${endpoint}|${extraParamsKey}`,
+        fetchPage: async (params: FetchPageParams): Promise<FetchPageResult<T>> => {
+          const sp = new URLSearchParams(existingQuery || "");
+          sp.set("pageIndex", String(params.pageIndex));
+          sp.set("pageSize", String(params.pageSize));
+          if (params.globalFilter) sp.set("search", params.globalFilter);
+          if (params.sorting.length > 0) {
+            const s = params.sorting[0];
+            sp.set("sort", `${s.id}:${s.desc ? "desc" : "asc"}`);
           }
-        }
+          // Merge extraParams
+          if (extraParams) {
+            for (const [key, value] of Object.entries(extraParams)) {
+              if (value) sp.set(key, value);
+            }
+          }
 
-        const res = await fetchWithTimeout(`${endpoint}?${sp.toString()}`);
-        if (res.status === 401) {
-          window.location.href = "/login";
-          throw new Error("Unauthorized");
-        }
-        if (!res.ok) {
-          const msg = await extractApiError(res);
-          throw new Error(msg);
-        }
+          const res = await fetchWithTimeout(`${basePath}?${sp.toString()}`);
+          if (res.status === 401) {
+            window.location.href = "/login";
+            throw new Error("Unauthorized");
+          }
+          if (!res.ok) {
+            const msg = await extractApiError(res);
+            throw new Error(msg);
+          }
 
-        const json = await res.json();
-        return {
-          data: json.data ?? [],
-          totalCount: json.totalCount ?? 0,
-          pageCount: json.pageCount ?? 0,
-        };
-      },
-    }),
+          const json = await res.json();
+          return {
+            data: json.data ?? [],
+            totalCount: json.totalCount ?? 0,
+            pageCount: json.pageCount ?? 0,
+          };
+        },
+      };
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [endpoint, extraParamsKey]
   );

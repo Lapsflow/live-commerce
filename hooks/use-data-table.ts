@@ -97,14 +97,15 @@ export function useDataTable<TData, TValue>({
     [pageIndex, pageSize, sorting, columnFilters, debouncedGlobalFilter]
   );
 
+  const dataSourceKey = dataSource.mode === "server" ? dataSource.key : "";
   const swrKey =
     dataSource.mode === "server"
-      ? ["dataTable", fetchParams]
+      ? ["dataTable", dataSourceKey, fetchParams]
       : null;
 
   const { data: serverResult, isLoading: swrLoading, error: swrError } = useSWR<FetchPageResult<TData>>(
     swrKey,
-    ([, params]: string[]) => {
+    ([, , params]: string[]) => {
       if (dataSource.mode !== "server") {
         throw new Error("Invalid data source mode");
       }

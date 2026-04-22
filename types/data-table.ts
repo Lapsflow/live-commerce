@@ -16,7 +16,7 @@ export interface FetchPageResult<TData> {
 
 export type DataSource<TData> =
   | { mode: "client"; fetchAll: () => TData[] }
-  | { mode: "server"; fetchPage: (params: FetchPageParams) => Promise<FetchPageResult<TData>> };
+  | { mode: "server"; key: string; fetchPage: (params: FetchPageParams) => Promise<FetchPageResult<TData>> };
 
 export interface FilterableColumn {
   id: string;
