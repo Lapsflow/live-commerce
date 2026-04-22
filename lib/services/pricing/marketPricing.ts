@@ -65,13 +65,29 @@ export async function getPricing(
     }
   }
 
-  // 2. Fetch from both marketplaces in parallel
+  // 2. Look up product name from DB for marketplace search
+  // Barcode numbers don't return results on Naver/Coupang — product names do
+  let searchQuery = barcode;
+  try {
+    const product = await prisma.product.findUnique({
+      where: { barcode },
+      select: { name: true },
+    });
+    if (product?.name) {
+      // Strip leading "[1234] " prefixes from product names
+      searchQuery = product.name.replace(/^\[\d+\]\s*/, '').trim() || barcode;
+    }
+  } catch {
+    // Fallback to barcode if DB lookup fails
+  }
+
+  // 3. Fetch from both marketplaces in parallel using product name
   const [naverResult, coupangResult] = await Promise.all([
-    fetchNaverPricing(barcode, skipCache),
-    fetchCoupangPricing(barcode, skipCache),
+    fetchNaverPricing(searchQuery, skipCache, barcode),
+    fetchCoupangPricing(searchQuery, skipCache, barcode),
   ]);
 
-  // 3. Calculate unified statistics
+  // 4. Calculate unified statistics
   const allPrices: number[] = [];
 
   if (naverResult) {
@@ -99,7 +115,7 @@ export async function getPricing(
         : 0,
   };
 
-  // 4. Calculate competitiveness
+  // 5. Calculate competitiveness
   const competitiveness = ourPrice
     ? calculateCompetitiveness(
         ourPrice,
@@ -135,10 +151,10 @@ export async function getPricing(
     cached: false,
   };
 
-  // 5. Store in cache (6 hours TTL)
+  // 6. Store in cache (6 hours TTL)
   await setCached(CACHE_KEYS.UNIFIED_PRICING(barcode), result, CACHE_TTL.PRICING);
 
-  // 6. Store in database (optional)
+  // 7. Store in database (optional)
   if (storeInDb) {
     await storePricingInDb(result);
   }
@@ -150,13 +166,15 @@ export async function getPricing(
  * Fetch Naver pricing with cache
  */
 async function fetchNaverPricing(
-  barcode: string,
-  skipCache: boolean = false
+  searchQuery: string,
+  skipCache: boolean = false,
+  cacheKey?: string
 ): Promise<NaverProductSummary | null> {
+  const key = cacheKey || searchQuery;
   // Check cache
   if (!skipCache) {
     const cached = await getCached<NaverProductSummary>(
-      CACHE_KEYS.NAVER_PRICING(barcode)
+      CACHE_KEYS.NAVER_PRICING(key)
     );
     if (cached) {
       return cached;
@@ -165,14 +183,15 @@ async function fetchNaverPricing(
 
   try {
     const client = createNaverShoppingClient();
-    const result = await client.getProductByBarcode(barcode);
+    const result = await client.searchProducts(searchQuery, { display: 10, sort: 'sim' });
 
-    if (result) {
-      // Cache result
-      await setCached(CACHE_KEYS.NAVER_PRICING(barcode), result, CACHE_TTL.PRICING);
+    if (result && result.products.length > 0) {
+      // Cache result using barcode as key
+      await setCached(CACHE_KEYS.NAVER_PRICING(key), result, CACHE_TTL.PRICING);
+      return result;
     }
 
-    return result;
+    return null;
   } catch (error) {
     console.error('Failed to fetch Naver pricing:', error);
     return null;
@@ -183,13 +202,15 @@ async function fetchNaverPricing(
  * Fetch Coupang pricing with cache
  */
 async function fetchCoupangPricing(
-  barcode: string,
-  skipCache: boolean = false
+  searchQuery: string,
+  skipCache: boolean = false,
+  cacheKey?: string
 ): Promise<CoupangProductSummary | null> {
+  const key = cacheKey || searchQuery;
   // Check cache
   if (!skipCache) {
     const cached = await getCached<CoupangProductSummary>(
-      CACHE_KEYS.COUPANG_PRICING(barcode)
+      CACHE_KEYS.COUPANG_PRICING(key)
     );
     if (cached) {
       return cached;
@@ -198,14 +219,15 @@ async function fetchCoupangPricing(
 
   try {
     const client = createCoupangClient();
-    const result = await client.getProductByBarcode(barcode);
+    const result = await client.searchProducts(searchQuery, { limit: 10 });
 
-    if (result) {
-      // Cache result
-      await setCached(CACHE_KEYS.COUPANG_PRICING(barcode), result, CACHE_TTL.PRICING);
+    if (result && result.products.length > 0) {
+      // Cache result using barcode as key
+      await setCached(CACHE_KEYS.COUPANG_PRICING(key), result, CACHE_TTL.PRICING);
+      return result;
     }
 
-    return result;
+    return null;
   } catch (error) {
     console.error('Failed to fetch Coupang pricing:', error);
     return null;
