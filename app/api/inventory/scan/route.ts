@@ -139,20 +139,32 @@ export const POST = withRole(
         }
       }
 
+      // 3. Recalculate Product.totalStock from all center stocks
+      if (scanType !== "LOOKUP") {
+        const allStocks = await tx.productCenterStock.findMany({
+          where: { productId: product.id },
+        });
+        const newTotalStock = allStocks.reduce((sum, s) => sum + s.stock, 0);
+        await tx.product.update({
+          where: { id: product.id },
+          data: { totalStock: newTotalStock },
+        });
+      }
+
       return scanLog;
     });
 
-    // Fetch updated stock
+    // Fetch updated product with all center stocks
     const updatedProduct = await prisma.product.findUnique({
       where: { id: product.id },
       include: {
         centerStocks: {
-          where: centerId ? { centerId } : undefined,
           include: {
             center: {
               select: {
                 code: true,
                 name: true,
+                regionName: true,
               },
             },
           },
@@ -164,7 +176,25 @@ export const POST = withRole(
       scanLogId: result.id,
       productId: product.id,
       previousStock,
-      updatedStock: updatedProduct?.centerStocks[0]?.stock ?? null,
+      updatedStock: updatedProduct?.centerStocks.find(s => s.centerId === centerId)?.stock ?? null,
+      totalStock: updatedProduct?.totalStock ?? product.totalStock,
+      product: updatedProduct ? {
+        id: updatedProduct.id,
+        code: updatedProduct.code,
+        name: updatedProduct.name,
+        barcode: updatedProduct.barcode,
+        sellPrice: updatedProduct.sellPrice,
+        supplyPrice: updatedProduct.supplyPrice,
+        totalStock: updatedProduct.totalStock,
+        centerStocks: updatedProduct.centerStocks.map(cs => ({
+          centerId: cs.centerId,
+          centerCode: cs.center.code,
+          centerName: cs.center.name,
+          regionName: cs.center.regionName,
+          stock: cs.stock,
+          location: cs.location,
+        })),
+      } : null,
       scannedAt: result.scannedAt,
     });
   }

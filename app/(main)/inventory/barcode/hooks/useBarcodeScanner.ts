@@ -58,6 +58,22 @@ export function useBarcodeScanner() {
     }
   }, []);
 
+  const refreshProduct = useCallback(async (barcode: string) => {
+    try {
+      const response = await fetch(`/api/products/barcode/${barcode}`);
+      const data = await response.json();
+      if (response.ok && data.data) {
+        setScannedProduct(data.data);
+      }
+    } catch (err) {
+      console.error("[Barcode Refresh Error]", err);
+    }
+  }, []);
+
+  const updateProduct = useCallback((updatedProduct: ProductData) => {
+    setScannedProduct(updatedProduct);
+  }, []);
+
   const clearProduct = useCallback(() => {
     setScannedProduct(null);
     setError(null);
@@ -70,6 +86,8 @@ export function useBarcodeScanner() {
     startScanning,
     stopScanning,
     handleBarcodeScan,
+    refreshProduct,
+    updateProduct,
     clearProduct,
   };
 }

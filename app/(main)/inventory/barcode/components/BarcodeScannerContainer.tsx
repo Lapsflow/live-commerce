@@ -28,6 +28,7 @@ export function BarcodeScannerContainer({ mode }: BarcodeScannerContainerProps) 
     startScanning,
     stopScanning,
     handleBarcodeScan,
+    updateProduct,
     clearProduct,
   } = useBarcodeScanner();
 
@@ -135,6 +136,7 @@ export function BarcodeScannerContainer({ mode }: BarcodeScannerContainerProps) 
           mode={mode}
           open={!!scannedProduct}
           onClose={clearProduct}
+          onProductUpdate={updateProduct}
         />
       )}
     </>

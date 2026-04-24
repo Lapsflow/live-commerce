@@ -44,6 +44,7 @@ interface ProductDetailsModalProps {
   mode: ScanMode;
   open: boolean;
   onClose: () => void;
+  onProductUpdate?: (updatedProduct: ProductData) => void;
 }
 
 export function ProductDetailsModal({
@@ -51,6 +52,7 @@ export function ProductDetailsModal({
   mode,
   open,
   onClose,
+  onProductUpdate,
 }: ProductDetailsModalProps) {
   const { data: session } = useSession();
   const { toast } = useToast();
@@ -109,13 +111,17 @@ export function ProductDetailsModal({
 
       toast({
         title: "✅ 처리 완료",
-        description: `${mode === "INBOUND" ? "입고" : "출고"} 처리가 완료되었습니다.`,
+        description: `${mode === "INBOUND" ? "입고" : "출고"} ${quantity}개 처리가 완료되었습니다. (재고: ${data.data?.previousStock ?? "?"} → ${data.data?.updatedStock ?? "?"})`,
       });
 
-      // Reset and close
+      // Update product data in-place so the modal reflects new stock
+      if (data.data?.product && onProductUpdate) {
+        onProductUpdate(data.data.product);
+      }
+
+      // Reset quantity
       setQuantity(1);
       setSelectedCenter("");
-      onClose();
     } catch (error) {
       console.error("[Inventory Action Error]", error);
       toast({
