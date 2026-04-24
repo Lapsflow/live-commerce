@@ -6,7 +6,7 @@ import type { Product } from "@/types/product";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, Package } from "lucide-react";
+import { Plus, Package, FileSpreadsheet } from "lucide-react";
 import Link from "next/link";
 import { StockSyncButton } from "./components/stock-sync-button";
 import { useState } from "react";
@@ -106,6 +106,12 @@ export default function ProductsPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Link href="/products/upload">
+            <Button variant="outline">
+              <FileSpreadsheet className="mr-2 h-4 w-4" />
+              엑셀 업로드
+            </Button>
+          </Link>
           <Link href="/products/new">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
