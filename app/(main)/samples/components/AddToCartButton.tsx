@@ -10,10 +10,11 @@ interface AddToCartButtonProps {
     id: string;
     name: string;
   };
+  samplePrice?: number;
   variant?: "icon" | "full";
 }
 
-export function AddToCartButton({ product, variant = "icon" }: AddToCartButtonProps) {
+export function AddToCartButton({ product, samplePrice = 0, variant = "icon" }: AddToCartButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -28,7 +29,7 @@ export function AddToCartButton({ product, variant = "icon" }: AddToCartButtonPr
         body: JSON.stringify({
           productId: product.id,
           quantity: 1,
-          samplePrice: 0, // 샘플은 무료
+          samplePrice,
         }),
       });
 

@@ -165,6 +165,29 @@ export const ProductType: {
 export type ProductType = (typeof ProductType)[keyof typeof ProductType]
 
 
+export const SampleCategory: {
+  LIVING: 'LIVING',
+  FOOD: 'FOOD',
+  GENERAL: 'GENERAL',
+  CLOTHING: 'CLOTHING',
+  BABY: 'BABY',
+  PET: 'PET',
+  BEAUTY: 'BEAUTY',
+  HEALTH: 'HEALTH',
+  OTHER: 'OTHER'
+};
+
+export type SampleCategory = (typeof SampleCategory)[keyof typeof SampleCategory]
+
+
+export const SampleStatus: {
+  CONTINUOUS: 'CONTINUOUS',
+  UNTIL_SOLD: 'UNTIL_SOLD'
+};
+
+export type SampleStatus = (typeof SampleStatus)[keyof typeof SampleStatus]
+
+
 export const OrderStatus: {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -214,10 +237,12 @@ export type BroadcastPlatform = (typeof BroadcastPlatform)[keyof typeof Broadcas
 
 
 export const BroadcastStatus: {
+  REQUESTED: 'REQUESTED',
   SCHEDULED: 'SCHEDULED',
   LIVE: 'LIVE',
   ENDED: 'ENDED',
-  CANCELED: 'CANCELED'
+  CANCELED: 'CANCELED',
+  REJECTED: 'REJECTED'
 };
 
 export type BroadcastStatus = (typeof BroadcastStatus)[keyof typeof BroadcastStatus]
@@ -253,6 +278,14 @@ export const ContractStatus: typeof $Enums.ContractStatus
 export type ProductType = $Enums.ProductType
 
 export const ProductType: typeof $Enums.ProductType
+
+export type SampleCategory = $Enums.SampleCategory
+
+export const SampleCategory: typeof $Enums.SampleCategory
+
+export type SampleStatus = $Enums.SampleStatus
+
+export const SampleStatus: typeof $Enums.SampleStatus
 
 export type OrderStatus = $Enums.OrderStatus
 
@@ -5167,6 +5200,7 @@ export namespace Prisma {
     stock1: number | null
     stock2: number | null
     stock3: number | null
+    samplePrice: number | null
   }
 
   export type ProductSumAggregateOutputType = {
@@ -5178,6 +5212,7 @@ export namespace Prisma {
     stock1: number | null
     stock2: number | null
     stock3: number | null
+    samplePrice: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -5201,6 +5236,10 @@ export namespace Prisma {
     productType: $Enums.ProductType | null
     managedBy: string | null
     isWmsProduct: boolean | null
+    isSample: boolean | null
+    sampleCategory: $Enums.SampleCategory | null
+    samplePrice: number | null
+    sampleStatus: $Enums.SampleStatus | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -5224,6 +5263,10 @@ export namespace Prisma {
     productType: $Enums.ProductType | null
     managedBy: string | null
     isWmsProduct: boolean | null
+    isSample: boolean | null
+    sampleCategory: $Enums.SampleCategory | null
+    samplePrice: number | null
+    sampleStatus: $Enums.SampleStatus | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -5247,6 +5290,10 @@ export namespace Prisma {
     productType: number
     managedBy: number
     isWmsProduct: number
+    isSample: number
+    sampleCategory: number
+    samplePrice: number
+    sampleStatus: number
     _all: number
   }
 
@@ -5260,6 +5307,7 @@ export namespace Prisma {
     stock1?: true
     stock2?: true
     stock3?: true
+    samplePrice?: true
   }
 
   export type ProductSumAggregateInputType = {
@@ -5271,6 +5319,7 @@ export namespace Prisma {
     stock1?: true
     stock2?: true
     stock3?: true
+    samplePrice?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -5294,6 +5343,10 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    isSample?: true
+    sampleCategory?: true
+    samplePrice?: true
+    sampleStatus?: true
   }
 
   export type ProductMaxAggregateInputType = {
@@ -5317,6 +5370,10 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    isSample?: true
+    sampleCategory?: true
+    samplePrice?: true
+    sampleStatus?: true
   }
 
   export type ProductCountAggregateInputType = {
@@ -5340,6 +5397,10 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    isSample?: true
+    sampleCategory?: true
+    samplePrice?: true
+    sampleStatus?: true
     _all?: true
   }
 
@@ -5450,6 +5511,10 @@ export namespace Prisma {
     productType: $Enums.ProductType
     managedBy: string | null
     isWmsProduct: boolean
+    isSample: boolean
+    sampleCategory: $Enums.SampleCategory | null
+    samplePrice: number | null
+    sampleStatus: $Enums.SampleStatus | null
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -5492,6 +5557,10 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: boolean
+    samplePrice?: boolean
+    sampleStatus?: boolean
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
     onewmsStocks?: boolean | Product$onewmsStocksArgs<ExtArgs>
@@ -5527,6 +5596,10 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: boolean
+    samplePrice?: boolean
+    sampleStatus?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5550,6 +5623,10 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: boolean
+    samplePrice?: boolean
+    sampleStatus?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectScalar = {
@@ -5573,9 +5650,13 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: boolean
+    samplePrice?: boolean
+    sampleStatus?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
@@ -5629,6 +5710,10 @@ export namespace Prisma {
       productType: $Enums.ProductType
       managedBy: string | null
       isWmsProduct: boolean
+      isSample: boolean
+      sampleCategory: $Enums.SampleCategory | null
+      samplePrice: number | null
+      sampleStatus: $Enums.SampleStatus | null
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -6083,6 +6168,10 @@ export namespace Prisma {
     readonly productType: FieldRef<"Product", 'ProductType'>
     readonly managedBy: FieldRef<"Product", 'String'>
     readonly isWmsProduct: FieldRef<"Product", 'Boolean'>
+    readonly isSample: FieldRef<"Product", 'Boolean'>
+    readonly sampleCategory: FieldRef<"Product", 'SampleCategory'>
+    readonly samplePrice: FieldRef<"Product", 'Int'>
+    readonly sampleStatus: FieldRef<"Product", 'SampleStatus'>
   }
     
 
@@ -14360,6 +14449,8 @@ export namespace Prisma {
     endedAt: Date | null
     status: $Enums.BroadcastStatus | null
     memo: string | null
+    requestMemo: string | null
+    rejectionReason: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14375,6 +14466,8 @@ export namespace Prisma {
     endedAt: Date | null
     status: $Enums.BroadcastStatus | null
     memo: string | null
+    requestMemo: string | null
+    rejectionReason: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14390,6 +14483,8 @@ export namespace Prisma {
     endedAt: number
     status: number
     memo: number
+    requestMemo: number
+    rejectionReason: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -14407,6 +14502,8 @@ export namespace Prisma {
     endedAt?: true
     status?: true
     memo?: true
+    requestMemo?: true
+    rejectionReason?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14422,6 +14519,8 @@ export namespace Prisma {
     endedAt?: true
     status?: true
     memo?: true
+    requestMemo?: true
+    rejectionReason?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14437,6 +14536,8 @@ export namespace Prisma {
     endedAt?: true
     status?: true
     memo?: true
+    requestMemo?: true
+    rejectionReason?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -14525,6 +14626,8 @@ export namespace Prisma {
     endedAt: Date | null
     status: $Enums.BroadcastStatus
     memo: string | null
+    requestMemo: string | null
+    rejectionReason: string | null
     createdAt: Date
     updatedAt: Date
     _count: BroadcastCountAggregateOutputType | null
@@ -14557,6 +14660,8 @@ export namespace Prisma {
     endedAt?: boolean
     status?: boolean
     memo?: boolean
+    requestMemo?: boolean
+    rejectionReason?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
@@ -14576,6 +14681,8 @@ export namespace Prisma {
     endedAt?: boolean
     status?: boolean
     memo?: boolean
+    requestMemo?: boolean
+    rejectionReason?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
@@ -14593,6 +14700,8 @@ export namespace Prisma {
     endedAt?: boolean
     status?: boolean
     memo?: boolean
+    requestMemo?: boolean
+    rejectionReason?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
@@ -14610,11 +14719,13 @@ export namespace Prisma {
     endedAt?: boolean
     status?: boolean
     memo?: boolean
+    requestMemo?: boolean
+    rejectionReason?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type BroadcastOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "sellerId" | "centerId" | "platform" | "scheduledAt" | "startedAt" | "endedAt" | "status" | "memo" | "createdAt" | "updatedAt", ExtArgs["result"]["broadcast"]>
+  export type BroadcastOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "sellerId" | "centerId" | "platform" | "scheduledAt" | "startedAt" | "endedAt" | "status" | "memo" | "requestMemo" | "rejectionReason" | "createdAt" | "updatedAt", ExtArgs["result"]["broadcast"]>
   export type BroadcastInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
@@ -14648,6 +14759,8 @@ export namespace Prisma {
       endedAt: Date | null
       status: $Enums.BroadcastStatus
       memo: string | null
+      requestMemo: string | null
+      rejectionReason: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["broadcast"]>
@@ -15086,6 +15199,8 @@ export namespace Prisma {
     readonly endedAt: FieldRef<"Broadcast", 'DateTime'>
     readonly status: FieldRef<"Broadcast", 'BroadcastStatus'>
     readonly memo: FieldRef<"Broadcast", 'String'>
+    readonly requestMemo: FieldRef<"Broadcast", 'String'>
+    readonly rejectionReason: FieldRef<"Broadcast", 'String'>
     readonly createdAt: FieldRef<"Broadcast", 'DateTime'>
     readonly updatedAt: FieldRef<"Broadcast", 'DateTime'>
   }
@@ -32847,7 +32962,11 @@ export namespace Prisma {
     masterBarcodeId: 'masterBarcodeId',
     productType: 'productType',
     managedBy: 'managedBy',
-    isWmsProduct: 'isWmsProduct'
+    isWmsProduct: 'isWmsProduct',
+    isSample: 'isSample',
+    sampleCategory: 'sampleCategory',
+    samplePrice: 'samplePrice',
+    sampleStatus: 'sampleStatus'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -32980,6 +33099,8 @@ export namespace Prisma {
     endedAt: 'endedAt',
     status: 'status',
     memo: 'memo',
+    requestMemo: 'requestMemo',
+    rejectionReason: 'rejectionReason',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -33358,6 +33479,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'SampleCategory'
+   */
+  export type EnumSampleCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SampleCategory'>
+    
+
+
+  /**
+   * Reference to a field of type 'SampleCategory[]'
+   */
+  export type ListEnumSampleCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SampleCategory[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SampleStatus'
+   */
+  export type EnumSampleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SampleStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SampleStatus[]'
+   */
+  export type ListEnumSampleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SampleStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -33686,6 +33835,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableFilter<"Product"> | string | null
     isWmsProduct?: BoolFilter<"Product"> | boolean
+    isSample?: BoolFilter<"Product"> | boolean
+    sampleCategory?: EnumSampleCategoryNullableFilter<"Product"> | $Enums.SampleCategory | null
+    samplePrice?: IntNullableFilter<"Product"> | number | null
+    sampleStatus?: EnumSampleStatusNullableFilter<"Product"> | $Enums.SampleStatus | null
     orderItems?: OrderItemListRelationFilter
     sales?: SaleListRelationFilter
     onewmsStocks?: OnewmsStockSyncListRelationFilter
@@ -33720,6 +33873,10 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrderInput | SortOrder
     isWmsProduct?: SortOrder
+    isSample?: SortOrder
+    sampleCategory?: SortOrderInput | SortOrder
+    samplePrice?: SortOrderInput | SortOrder
+    sampleStatus?: SortOrderInput | SortOrder
     orderItems?: OrderItemOrderByRelationAggregateInput
     sales?: SaleOrderByRelationAggregateInput
     onewmsStocks?: OnewmsStockSyncOrderByRelationAggregateInput
@@ -33757,6 +33914,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableFilter<"Product"> | string | null
     isWmsProduct?: BoolFilter<"Product"> | boolean
+    isSample?: BoolFilter<"Product"> | boolean
+    sampleCategory?: EnumSampleCategoryNullableFilter<"Product"> | $Enums.SampleCategory | null
+    samplePrice?: IntNullableFilter<"Product"> | number | null
+    sampleStatus?: EnumSampleStatusNullableFilter<"Product"> | $Enums.SampleStatus | null
     orderItems?: OrderItemListRelationFilter
     sales?: SaleListRelationFilter
     onewmsStocks?: OnewmsStockSyncListRelationFilter
@@ -33791,6 +33952,10 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrderInput | SortOrder
     isWmsProduct?: SortOrder
+    isSample?: SortOrder
+    sampleCategory?: SortOrderInput | SortOrder
+    samplePrice?: SortOrderInput | SortOrder
+    sampleStatus?: SortOrderInput | SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
@@ -33822,6 +33987,10 @@ export namespace Prisma {
     productType?: EnumProductTypeWithAggregatesFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableWithAggregatesFilter<"Product"> | string | null
     isWmsProduct?: BoolWithAggregatesFilter<"Product"> | boolean
+    isSample?: BoolWithAggregatesFilter<"Product"> | boolean
+    sampleCategory?: EnumSampleCategoryNullableWithAggregatesFilter<"Product"> | $Enums.SampleCategory | null
+    samplePrice?: IntNullableWithAggregatesFilter<"Product"> | number | null
+    sampleStatus?: EnumSampleStatusNullableWithAggregatesFilter<"Product"> | $Enums.SampleStatus | null
   }
 
   export type CenterWhereInput = {
@@ -34478,6 +34647,8 @@ export namespace Prisma {
     endedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     status?: EnumBroadcastStatusFilter<"Broadcast"> | $Enums.BroadcastStatus
     memo?: StringNullableFilter<"Broadcast"> | string | null
+    requestMemo?: StringNullableFilter<"Broadcast"> | string | null
+    rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -34496,6 +34667,8 @@ export namespace Prisma {
     endedAt?: SortOrderInput | SortOrder
     status?: SortOrder
     memo?: SortOrderInput | SortOrder
+    requestMemo?: SortOrderInput | SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     seller?: UserOrderByWithRelationInput
@@ -34517,6 +34690,8 @@ export namespace Prisma {
     endedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     status?: EnumBroadcastStatusFilter<"Broadcast"> | $Enums.BroadcastStatus
     memo?: StringNullableFilter<"Broadcast"> | string | null
+    requestMemo?: StringNullableFilter<"Broadcast"> | string | null
+    rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -34535,6 +34710,8 @@ export namespace Prisma {
     endedAt?: SortOrderInput | SortOrder
     status?: SortOrder
     memo?: SortOrderInput | SortOrder
+    requestMemo?: SortOrderInput | SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: BroadcastCountOrderByAggregateInput
@@ -34556,6 +34733,8 @@ export namespace Prisma {
     endedAt?: DateTimeNullableWithAggregatesFilter<"Broadcast"> | Date | string | null
     status?: EnumBroadcastStatusWithAggregatesFilter<"Broadcast"> | $Enums.BroadcastStatus
     memo?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
+    requestMemo?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
+    rejectionReason?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Broadcast"> | Date | string
   }
@@ -35954,6 +36133,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -35988,6 +36171,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -36022,6 +36209,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -36056,6 +36247,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -36090,6 +36285,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -36113,6 +36312,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -36136,6 +36339,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
   }
 
   export type CenterCreateInput = {
@@ -36861,6 +37068,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
@@ -36879,6 +37088,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
@@ -36893,6 +37104,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
@@ -36911,6 +37124,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
@@ -36927,6 +37142,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36940,6 +37157,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36955,6 +37174,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38595,6 +38816,20 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type EnumSampleCategoryNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SampleCategory | EnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SampleCategory[] | ListEnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SampleCategory[] | ListEnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSampleCategoryNullableFilter<$PrismaModel> | $Enums.SampleCategory | null
+  }
+
+  export type EnumSampleStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SampleStatus | EnumSampleStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SampleStatus[] | ListEnumSampleStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SampleStatus[] | ListEnumSampleStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSampleStatusNullableFilter<$PrismaModel> | $Enums.SampleStatus | null
+  }
+
   export type OrderItemListRelationFilter = {
     every?: OrderItemWhereInput
     some?: OrderItemWhereInput
@@ -38686,6 +38921,10 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    isSample?: SortOrder
+    sampleCategory?: SortOrder
+    samplePrice?: SortOrder
+    sampleStatus?: SortOrder
   }
 
   export type ProductAvgOrderByAggregateInput = {
@@ -38697,6 +38936,7 @@ export namespace Prisma {
     stock1?: SortOrder
     stock2?: SortOrder
     stock3?: SortOrder
+    samplePrice?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -38720,6 +38960,10 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    isSample?: SortOrder
+    sampleCategory?: SortOrder
+    samplePrice?: SortOrder
+    sampleStatus?: SortOrder
   }
 
   export type ProductMinOrderByAggregateInput = {
@@ -38743,6 +38987,10 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    isSample?: SortOrder
+    sampleCategory?: SortOrder
+    samplePrice?: SortOrder
+    sampleStatus?: SortOrder
   }
 
   export type ProductSumOrderByAggregateInput = {
@@ -38754,6 +39002,7 @@ export namespace Prisma {
     stock1?: SortOrder
     stock2?: SortOrder
     stock3?: SortOrder
+    samplePrice?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -38788,6 +39037,26 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type EnumSampleCategoryNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SampleCategory | EnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SampleCategory[] | ListEnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SampleCategory[] | ListEnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSampleCategoryNullableWithAggregatesFilter<$PrismaModel> | $Enums.SampleCategory | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSampleCategoryNullableFilter<$PrismaModel>
+    _max?: NestedEnumSampleCategoryNullableFilter<$PrismaModel>
+  }
+
+  export type EnumSampleStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SampleStatus | EnumSampleStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SampleStatus[] | ListEnumSampleStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SampleStatus[] | ListEnumSampleStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSampleStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.SampleStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSampleStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumSampleStatusNullableFilter<$PrismaModel>
   }
 
   export type CenterCountOrderByAggregateInput = {
@@ -39320,6 +39589,8 @@ export namespace Prisma {
     endedAt?: SortOrder
     status?: SortOrder
     memo?: SortOrder
+    requestMemo?: SortOrder
+    rejectionReason?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -39335,6 +39606,8 @@ export namespace Prisma {
     endedAt?: SortOrder
     status?: SortOrder
     memo?: SortOrder
+    requestMemo?: SortOrder
+    rejectionReason?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -39350,6 +39623,8 @@ export namespace Prisma {
     endedAt?: SortOrder
     status?: SortOrder
     memo?: SortOrder
+    requestMemo?: SortOrder
+    rejectionReason?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -40842,6 +41117,14 @@ export namespace Prisma {
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type NullableEnumSampleCategoryFieldUpdateOperationsInput = {
+    set?: $Enums.SampleCategory | null
+  }
+
+  export type NullableEnumSampleStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SampleStatus | null
   }
 
   export type OrderItemUpdateManyWithoutProductNestedInput = {
@@ -42503,6 +42786,20 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type NestedEnumSampleCategoryNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SampleCategory | EnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SampleCategory[] | ListEnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SampleCategory[] | ListEnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSampleCategoryNullableFilter<$PrismaModel> | $Enums.SampleCategory | null
+  }
+
+  export type NestedEnumSampleStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SampleStatus | EnumSampleStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SampleStatus[] | ListEnumSampleStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SampleStatus[] | ListEnumSampleStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSampleStatusNullableFilter<$PrismaModel> | $Enums.SampleStatus | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -42546,6 +42843,26 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSampleCategoryNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SampleCategory | EnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SampleCategory[] | ListEnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SampleCategory[] | ListEnumSampleCategoryFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSampleCategoryNullableWithAggregatesFilter<$PrismaModel> | $Enums.SampleCategory | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSampleCategoryNullableFilter<$PrismaModel>
+    _max?: NestedEnumSampleCategoryNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSampleStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SampleStatus | EnumSampleStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SampleStatus[] | ListEnumSampleStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SampleStatus[] | ListEnumSampleStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSampleStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.SampleStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSampleStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumSampleStatusNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -43112,6 +43429,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     center?: CenterCreateNestedOneWithoutBroadcastsInput
@@ -43128,6 +43447,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
@@ -43577,6 +43898,8 @@ export namespace Prisma {
     endedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     status?: EnumBroadcastStatusFilter<"Broadcast"> | $Enums.BroadcastStatus
     memo?: StringNullableFilter<"Broadcast"> | string | null
+    requestMemo?: StringNullableFilter<"Broadcast"> | string | null
+    rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
   }
@@ -44571,6 +44894,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
@@ -44587,6 +44912,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
@@ -44735,6 +45062,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -44768,6 +45099,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -44866,6 +45201,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -44899,6 +45238,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -45125,6 +45468,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -45158,6 +45505,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -45357,6 +45708,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -45390,6 +45745,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -46165,6 +46524,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
     warehouseInventories?: WarehouseInventoryCreateNestedManyWithoutProductInput
@@ -46198,6 +46561,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
     warehouseInventories?: WarehouseInventoryUncheckedCreateNestedManyWithoutProductInput
@@ -46324,6 +46691,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
     warehouseInventories?: WarehouseInventoryUpdateManyWithoutProductNestedInput
@@ -46357,6 +46728,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
     warehouseInventories?: WarehouseInventoryUncheckedUpdateManyWithoutProductNestedInput
@@ -46461,6 +46836,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -46494,6 +46873,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -46620,6 +47003,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -46653,6 +47040,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -47047,6 +47438,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
     warehouseInventories?: WarehouseInventoryCreateNestedManyWithoutProductInput
@@ -47080,6 +47475,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
     warehouseInventories?: WarehouseInventoryUncheckedCreateNestedManyWithoutProductInput
@@ -47106,6 +47505,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
@@ -47123,6 +47524,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -47237,6 +47640,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
     warehouseInventories?: WarehouseInventoryUpdateManyWithoutProductNestedInput
@@ -47270,6 +47677,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
     warehouseInventories?: WarehouseInventoryUncheckedUpdateManyWithoutProductNestedInput
@@ -47302,6 +47713,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
@@ -47319,6 +47732,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -47551,6 +47966,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -47584,6 +48003,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -47706,6 +48129,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -47739,6 +48166,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -47920,6 +48351,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     warehouseInventories?: WarehouseInventoryCreateNestedManyWithoutProductInput
@@ -47953,6 +48388,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     warehouseInventories?: WarehouseInventoryUncheckedCreateNestedManyWithoutProductInput
@@ -48002,6 +48441,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     warehouseInventories?: WarehouseInventoryUpdateManyWithoutProductNestedInput
@@ -48035,6 +48478,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     warehouseInventories?: WarehouseInventoryUncheckedUpdateManyWithoutProductNestedInput
@@ -48447,6 +48894,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -48480,6 +48931,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -48601,6 +49056,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -48634,6 +49093,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -48704,6 +49167,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -48737,6 +49204,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -48856,6 +49327,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -48889,6 +49364,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -49004,6 +49483,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -49037,6 +49520,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -49086,6 +49573,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -49119,6 +49610,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -49219,6 +49714,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncCreateNestedManyWithoutProductInput
@@ -49252,6 +49751,10 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isSample?: boolean
+    sampleCategory?: $Enums.SampleCategory | null
+    samplePrice?: number | null
+    sampleStatus?: $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
     onewmsStocks?: OnewmsStockSyncUncheckedCreateNestedManyWithoutProductInput
@@ -49423,6 +49926,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUpdateManyWithoutProductNestedInput
@@ -49456,6 +49963,10 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isSample?: BoolFieldUpdateOperationsInput | boolean
+    sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    sampleStatus?: NullableEnumSampleStatusFieldUpdateOperationsInput | $Enums.SampleStatus | null
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
     onewmsStocks?: OnewmsStockSyncUncheckedUpdateManyWithoutProductNestedInput
@@ -49611,6 +50122,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -49956,6 +50469,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
@@ -49972,6 +50487,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
@@ -49987,6 +50504,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -50744,6 +51263,8 @@ export namespace Prisma {
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
     memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -50973,6 +51494,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
@@ -50989,6 +51512,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
@@ -51004,6 +51529,8 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
     memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

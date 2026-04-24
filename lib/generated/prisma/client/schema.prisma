@@ -101,6 +101,12 @@ model Product {
   managedBy    String? // centerId for CENTER products, null for HEADQUARTERS
   isWmsProduct Boolean     @default(true) // true for HEADQUARTERS, false for CENTER
 
+  // ✨ Phase 3: Sample Shopping Mall
+  isSample       Boolean         @default(false)
+  sampleCategory SampleCategory?
+  samplePrice    Int? // null=비공개, 0=무료, >0=유료
+  sampleStatus   SampleStatus?
+
   // Relations
   orderItems           OrderItem[]
   sales                Sale[]
@@ -121,6 +127,23 @@ model Product {
 enum ProductType {
   HEADQUARTERS // WMS 본사 관리 - 바코드 필수, 가격 읽기전용
   CENTER // 센터 자사몰 - 바코드 선택, 가격 수정가능
+}
+
+enum SampleCategory {
+  LIVING // 생활용품
+  FOOD // 식품
+  GENERAL // 잡화
+  CLOTHING // 의류
+  BABY // 유아
+  PET // 애견
+  BEAUTY // 뷰티
+  HEALTH // 건강
+  OTHER // 기타
+}
+
+enum SampleStatus {
+  CONTINUOUS // 꾸준한 제품
+  UNTIL_SOLD // 소진후 종료
 }
 
 // ──────────────────────── Center Management ────────────────────────
@@ -346,18 +369,20 @@ enum ReservationStatus {
 // ──────────────────────── Broadcast Management ────────────────────────
 
 model Broadcast {
-  id          String            @id @default(cuid())
-  code        String            @unique
-  sellerId    String
-  centerId    String? // ✨ Center for this broadcast (nullable)
-  platform    BroadcastPlatform
-  scheduledAt DateTime
-  startedAt   DateTime?
-  endedAt     DateTime?
-  status      BroadcastStatus   @default(SCHEDULED)
-  memo        String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id              String            @id @default(cuid())
+  code            String            @unique
+  sellerId        String
+  centerId        String? // ✨ Center for this broadcast (nullable)
+  platform        BroadcastPlatform
+  scheduledAt     DateTime
+  startedAt       DateTime?
+  endedAt         DateTime?
+  status          BroadcastStatus   @default(SCHEDULED)
+  memo            String?
+  requestMemo     String? // 셀러 신청 메모
+  rejectionReason String? // 반려 사유
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
   // Relations
   seller User    @relation(fields: [sellerId], references: [id])
@@ -375,10 +400,12 @@ enum BroadcastPlatform {
 }
 
 enum BroadcastStatus {
-  SCHEDULED
-  LIVE
-  ENDED
-  CANCELED
+  REQUESTED // 셀러가 신청
+  SCHEDULED // 관리자 승인 → 확정
+  LIVE // 방송 진행중
+  ENDED // 방송 종료
+  CANCELED // 취소
+  REJECTED // 관리자 반려
 }
 
 // ──────────────────────── Sales Management ────────────────────────

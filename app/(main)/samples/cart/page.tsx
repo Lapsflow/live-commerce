@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Trash2, Loader2, Package, ArrowLeft } from "lucide-react";
+import { ShoppingCart, Trash2, Loader2, Package, ArrowLeft, Minus, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -57,8 +57,7 @@ export default function SamplesCartPage() {
         setItems(data.data.items);
         setSummary(data.data.summary);
       }
-    } catch (error) {
-      console.error("Failed to load cart:", error);
+    } catch {
       toast({
         title: "오류",
         description: "장바구니를 불러올 수 없습니다",
@@ -114,7 +113,6 @@ export default function SamplesCartPage() {
         description: `${data.data.proposalCount}개의 샘플이 요청되었습니다`,
       });
 
-      // Redirect to proposals page
       router.push("/proposals");
     } catch (err: any) {
       toast({
@@ -126,6 +124,13 @@ export default function SamplesCartPage() {
       setIsCheckingOut(false);
     }
   };
+
+  const freeItems = items.filter((item) => item.samplePrice === 0);
+  const paidItems = items.filter((item) => item.samplePrice > 0);
+  const paidTotal = paidItems.reduce(
+    (sum, item) => sum + item.samplePrice * item.quantity,
+    0
+  );
 
   if (isLoading) {
     return (
@@ -166,38 +171,38 @@ export default function SamplesCartPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center gap-4 p-4 border rounded-lg"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold truncate mb-1">
-                        {item.product.name}
-                      </h4>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <span>바코드: {item.product.barcode}</span>
-                        <span>•</span>
-                        <span>코드: {item.product.code}</span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="secondary">수량: {item.quantity}개</Badge>
-                        <Badge variant="outline" className="text-green-600">
-                          무료
-                        </Badge>
-                      </div>
-                    </div>
+                {/* 무료 샘플 */}
+                {freeItems.length > 0 && (
+                  <>
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      무료 샘플 ({freeItems.length}건)
+                    </h3>
+                    {freeItems.map((item) => (
+                      <CartItemRow
+                        key={item.id}
+                        item={item}
+                        onRemove={handleRemove}
+                      />
+                    ))}
+                  </>
+                )}
 
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleRemove(item.productId)}
-                      className="shrink-0 text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
+                {/* 유료 샘플 */}
+                {paidItems.length > 0 && (
+                  <>
+                    {freeItems.length > 0 && <Separator className="my-4" />}
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      유료 샘플 ({paidItems.length}건)
+                    </h3>
+                    {paidItems.map((item) => (
+                      <CartItemRow
+                        key={item.id}
+                        item={item}
+                        onRemove={handleRemove}
+                      />
+                    ))}
+                  </>
+                )}
               </div>
             )}
           </CardContent>
@@ -219,11 +224,31 @@ export default function SamplesCartPage() {
                 <span className="font-semibold">{summary.totalQuantity}개</span>
               </div>
 
+              {freeItems.length > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">무료 샘플</span>
+                  <span className="font-semibold text-green-600">{freeItems.length}건</span>
+                </div>
+              )}
+
+              {paidItems.length > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">유료 샘플</span>
+                  <span className="font-semibold text-blue-600">{paidItems.length}건</span>
+                </div>
+              )}
+
               <Separator />
 
               <div className="flex justify-between items-center">
                 <span className="font-semibold">합계</span>
-                <span className="text-2xl font-bold text-green-600">무료</span>
+                {paidTotal > 0 ? (
+                  <span className="text-2xl font-bold text-blue-600">
+                    {paidTotal.toLocaleString()}원
+                  </span>
+                ) : (
+                  <span className="text-2xl font-bold text-green-600">무료</span>
+                )}
               </div>
             </div>
 
@@ -237,6 +262,8 @@ export default function SamplesCartPage() {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   요청 중...
                 </>
+              ) : paidTotal > 0 ? (
+                "샘플 요청 (무통장입금)"
               ) : (
                 "샘플 요청"
               )}
@@ -245,13 +272,58 @@ export default function SamplesCartPage() {
             <Separator />
 
             <div className="text-xs text-muted-foreground space-y-1">
-              <p>• 샘플은 무료로 제공됩니다</p>
+              <p>• 샘플 요청 후 MASTER/SUB_MASTER 승인 필요</p>
               <p>• 승인 후 2-3일 내 배송 시작</p>
+              {paidTotal > 0 && (
+                <p>• 유료 샘플은 승인 후 입금 안내가 발송됩니다</p>
+              )}
               <p>• 승인 상태는 제안 페이지에서 확인 가능</p>
             </div>
           </CardContent>
         </Card>
       </div>
+    </div>
+  );
+}
+
+function CartItemRow({
+  item,
+  onRemove,
+}: {
+  item: CartItem;
+  onRemove: (productId: string) => void;
+}) {
+  const isFree = item.samplePrice === 0;
+
+  return (
+    <div className="flex items-center gap-4 p-4 border rounded-lg">
+      <div className="flex-1 min-w-0">
+        <h4 className="font-semibold truncate mb-1">{item.product.name}</h4>
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <span>코드: {item.product.code}</span>
+        </div>
+        <div className="flex items-center gap-2 mt-2">
+          <Badge variant="secondary">수량: {item.quantity}개</Badge>
+          {isFree ? (
+            <Badge variant="outline" className="text-green-600 border-green-300">
+              무료
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="text-blue-600 border-blue-300">
+              {(item.samplePrice * item.quantity).toLocaleString()}원
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => onRemove(item.productId)}
+        className="shrink-0 text-destructive hover:text-destructive"
+      >
+        <Trash2 className="w-4 h-4" />
+      </Button>
     </div>
   );
 }
