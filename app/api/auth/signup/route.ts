@@ -11,7 +11,7 @@ const signupSchema = z.object({
   name: z.string().min(1),
   phone: z.string().min(10).max(13), // 010-1234-1234 형식도 허용
   email: z.string().email(), // PDF 스펙: 필수
-  centerId: z.string(), // 소속 센터 (필수)
+  centerCode: z.string().min(1), // 센터 코드 (예: 01-4213)
 });
 
 export async function POST(req: NextRequest) {
@@ -22,22 +22,22 @@ export async function POST(req: NextRequest) {
     // 휴대폰번호에서 하이픈 제거하여 저장
     const phoneDigits = data.phone.replace(/-/g, "");
 
-    // Validate center exists
-    const center = await prisma.center.findUnique({
-      where: { id: data.centerId },
-    });
-
-    if (!center) {
-      return error("CENTER_NOT_FOUND", "존재하지 않는 센터입니다.", 400);
-    }
-
-    // Validate center code format (pptx 스펙)
-    if (!validateCenterCode(center.code)) {
+    // Validate center code format
+    if (!validateCenterCode(data.centerCode)) {
       return error(
         "INVALID_CENTER_CODE",
         "센터 코드 형식이 올바르지 않습니다. 형식: [01-17]-[4자리 숫자]",
         400
       );
+    }
+
+    // Find center by code
+    const center = await prisma.center.findUnique({
+      where: { code: data.centerCode },
+    });
+
+    if (!center || !center.isActive) {
+      return error("CENTER_NOT_FOUND", "등록되지 않은 센터 코드입니다.", 400);
     }
 
     // 중복 확인 (username)
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         name: data.name,
         phone: phoneDigits,
         role: "SELLER",
-        centerId: data.centerId,
+        centerId: center.id,
         contractStatus: "PENDING",
         passwordHash,
       },

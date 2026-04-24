@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 
 // 채널 옵션 (PDF 스펙)
 const CHANNEL_OPTIONS = ["그립", "클릭메이트", "유튜브", "틱톡", "개인플랫폼", "기타"];
@@ -30,22 +30,24 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [centerId, setCenterId] = useState("");
+  const [centerCode, setCenterCode] = useState("");
 
   // Step 2: 추가 정보
   const [channels, setChannels] = useState<string[]>([]);
   const [avgSales, setAvgSales] = useState<string>("");
 
-  const [centers, setCenters] = useState<Array<{ id: string; name: string; code: string }>>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const router = useRouter();
 
-  // 실시간 유효성 검증 상태 (PDF 스펙)
+  // 실시간 유효성 검증 상태
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
   const [emailValid, setEmailValid] = useState<"idle" | "valid" | "invalid">("idle");
+  const [centerStatus, setCenterStatus] = useState<"idle" | "checking" | "valid" | "invalid">("idle");
+  const [centerName, setCenterName] = useState("");
   const usernameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const centerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 아이디 중복 확인 (debounce 500ms)
   const checkUsername = useCallback((value: string) => {
@@ -76,17 +78,40 @@ export default function SignupPage() {
     setEmailValid(emailRegex.test(value) ? "valid" : "invalid");
   }, []);
 
-  // 회원가입용 공개 센터 목록 조회
-  useEffect(() => {
-    fetch("/api/auth/centers")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.data) {
-          setCenters(data.data);
+  // 센터 코드 검증 (debounce 500ms)
+  const checkCenterCode = useCallback((value: string) => {
+    if (centerTimerRef.current) clearTimeout(centerTimerRef.current);
+    // XX-XXXX 형식 (7자) 미만이면 대기
+    if (value.length < 7) {
+      setCenterStatus("idle");
+      setCenterName("");
+      return;
+    }
+    setCenterStatus("checking");
+    centerTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/auth/centers/verify?code=${encodeURIComponent(value)}`);
+        const data = await res.json();
+        if (data.data?.valid) {
+          setCenterStatus("valid");
+          setCenterName(data.data.centerName);
+        } else {
+          setCenterStatus("invalid");
+          setCenterName("");
         }
-      })
-      .catch(() => setCenters([]));
+      } catch {
+        setCenterStatus("idle");
+        setCenterName("");
+      }
+    }, 500);
   }, []);
+
+  // 센터 코드 자동 포맷팅 (XX-XXXX)
+  const formatCenterCode = (value: string) => {
+    const digits = value.replace(/[^0-9]/g, "");
+    if (digits.length <= 2) return digits;
+    return `${digits.slice(0, 2)}-${digits.slice(2, 6)}`;
+  };
 
   // 휴대폰번호 자동 포맷팅 (010-1234-1234)
   const formatPhone = (value: string) => {
@@ -109,8 +134,8 @@ export default function SignupPage() {
       return;
     }
 
-    if (!centerId) {
-      setError("소속 관리자를 선택해주세요.");
+    if (centerStatus !== "valid") {
+      setError("유효한 센터 코드를 입력해주세요.");
       setLoading(false);
       return;
     }
@@ -125,7 +150,7 @@ export default function SignupPage() {
           name,
           phone: phoneDigits,
           email,
-          centerId,
+          centerCode,
         }),
       });
 
@@ -311,24 +336,32 @@ export default function SignupPage() {
 
             <div>
               <label className="block text-sm font-medium text-grey-700 mb-1.5">
-                소속 센터 <span className="text-red">*</span>
+                센터 코드 <span className="text-red">*</span>
               </label>
-              <div className="relative">
-                <select
-                  value={centerId}
-                  onChange={(e) => setCenterId(e.target.value)}
-                  required
-                  className="flex h-9 w-full appearance-none items-center rounded-lg border border-input bg-transparent px-3 py-2 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">센터 선택</option>
-                  {centers.map((center) => (
-                    <option key={center.id} value={center.id}>
-                      {center.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              </div>
+              <Input
+                type="text"
+                value={centerCode}
+                onChange={(e) => {
+                  const formatted = formatCenterCode(e.target.value);
+                  setCenterCode(formatted);
+                  checkCenterCode(formatted);
+                }}
+                placeholder="예: 01-4213"
+                required
+                maxLength={7}
+              />
+              {centerStatus === "checking" && (
+                <p className="text-xs text-grey-400 mt-1">확인 중...</p>
+              )}
+              {centerStatus === "valid" && (
+                <p className="text-xs text-green-600 mt-1">{centerName} 확인됨</p>
+              )}
+              {centerStatus === "invalid" && (
+                <p className="text-xs text-red mt-1">등록되지 않은 센터 코드입니다</p>
+              )}
+              <p className="text-xs text-grey-400 mt-1">
+                센터 코드가 없으신 경우, 본사로 문의해주세요.
+              </p>
             </div>
 
             {error && (
