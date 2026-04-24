@@ -40,12 +40,6 @@ export async function GET(req: NextRequest) {
       : new Date(toDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     // 역할 기반 필터 적용
-    console.log("[Dashboard API] Session before role filter:", {
-      hasSession: !!session,
-      hasUser: !!session?.user,
-      role: session?.user?.role,
-      userId: session?.user?.userId,
-    });
     const roleFilter = getRoleBasedFilter(session as any, "sale");
 
     // 날짜 범위 필터 추가

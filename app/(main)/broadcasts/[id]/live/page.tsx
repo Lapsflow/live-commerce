@@ -91,12 +91,9 @@ export default async function LiveBroadcastPage({
   });
 
   // Load headquarters products (available to all centers)
-  // TODO: Phase 4 - Add productType field to Product model
   const hqProducts = await prisma.product.findMany({
     where: {
-      // All products are available for now
-      // Will add productType: "HEADQUARTERS" filter in Phase 4
-      // Note: Product model has no active/isActive field yet
+      productType: "HEADQUARTERS",
     },
     include: {
       centerStocks: true,

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Package, MapPin, ExternalLink, ShoppingCart } from "lucide-react";
+import { CheckCircle, Package, MapPin, ExternalLink, ShoppingCart, ScanLine } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 import { PriceComparisonCard } from "./PriceComparisonCard";
@@ -66,6 +67,7 @@ export function ProductDetailsModal({
   const [orderRecipient, setOrderRecipient] = useState("");
   const [orderPhone, setOrderPhone] = useState("");
   const [orderLoading, setOrderLoading] = useState(false);
+  const [actionCompleted, setActionCompleted] = useState(false);
 
   const handleInventoryAction = async () => {
     if (!selectedCenter) {
@@ -119,9 +121,10 @@ export function ProductDetailsModal({
         onProductUpdate(data.data.product);
       }
 
-      // Reset quantity
+      // Reset quantity and show continue button
       setQuantity(1);
       setSelectedCenter("");
+      setActionCompleted(true);
     } catch (error) {
       console.error("[Inventory Action Error]", error);
       toast({
@@ -196,11 +199,13 @@ export function ProductDetailsModal({
           {/* Product Info */}
           <div className="space-y-2">
             {product.imageUrl && (
-              <div className="w-full h-48 relative rounded-lg overflow-hidden bg-grey-100">
-                <img
+              <div className="w-full h-48 relative rounded-lg overflow-hidden bg-gray-100">
+                <Image
                   src={product.imageUrl}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 672px) 100vw, 672px"
                 />
               </div>
             )}
@@ -312,14 +317,36 @@ export function ProductDetailsModal({
               <h4 className="font-semibold">입고 처리</h4>
               <div className="space-y-2">
                 <Label htmlFor="quantity">입고 수량</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min={1}
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  placeholder="수량 입력"
-                />
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 shrink-0"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </Button>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min={1}
+                    value={quantity}
+                    onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                    className="text-center"
+                    placeholder="수량 입력"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 shrink-0"
+                    onClick={() => setQuantity((q) => q + 1)}
+                  >
+                    +
+                  </Button>
+                </div>
               </div>
               <Button
                 onClick={handleInventoryAction}
@@ -336,14 +363,36 @@ export function ProductDetailsModal({
               <h4 className="font-semibold">출고 처리</h4>
               <div className="space-y-2">
                 <Label htmlFor="quantity">출고 수량</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min={1}
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  placeholder="수량 입력"
-                />
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 shrink-0"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </Button>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min={1}
+                    value={quantity}
+                    onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                    className="text-center"
+                    placeholder="수량 입력"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 shrink-0"
+                    onClick={() => setQuantity((q) => q + 1)}
+                  >
+                    +
+                  </Button>
+                </div>
               </div>
               <Button
                 onClick={handleInventoryAction}
@@ -352,6 +401,23 @@ export function ProductDetailsModal({
                 className="w-full"
               >
                 {loading ? "처리 중..." : "출고 완료"}
+              </Button>
+            </div>
+          )}
+
+          {/* 계속 스캔 버튼 — 입고/출고 완료 후 표시 */}
+          {actionCompleted && mode !== "LOOKUP" && (
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  setActionCompleted(false);
+                  onClose();
+                }}
+                variant="outline"
+                className="gap-2"
+              >
+                <ScanLine className="h-4 w-4" />
+                계속 스캔
               </Button>
             </div>
           )}
