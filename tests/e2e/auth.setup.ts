@@ -4,7 +4,8 @@ const authFile = 'playwright/.auth/admin.json';
 
 setup('authenticate as admin', async ({ page }) => {
   await page.goto('/login');
-  await page.fill('input[type="email"]', 'admin1@live-commerce.com');
+  // username 기반 로그인으로 변경
+  await page.fill('input[name="username"], input[id="username"], input[type="text"]', 'admin1');
   await page.fill('input[type="password"]', 'admin1234');
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/dashboard/);
