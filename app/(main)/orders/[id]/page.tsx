@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import OnewmsInfo from "./components/onewms-info";
+import VirtualAccountInfo from "./components/virtual-account-info";
 import ExpiryTimer from "../components/ExpiryTimer";
 
 type OrderItem = {
@@ -52,6 +53,9 @@ type Order = {
   expiresAt: string | null;
   cancelledAt: string | null;
   cancelReason: string | null;
+  virtualAccount: string | null;
+  virtualAccountBank: string | null;
+  virtualAccountExpiry: string | null;
   seller: {
     id: string;
     name: string;
@@ -374,6 +378,16 @@ export default function OrderDetailPage() {
           </div>
         </Card>
       )}
+
+      {/* 가상계좌 정보 */}
+      <VirtualAccountInfo
+        orderId={order.id}
+        virtualAccount={order.virtualAccount}
+        virtualAccountBank={order.virtualAccountBank}
+        virtualAccountExpiry={order.virtualAccountExpiry}
+        paymentStatus={order.paymentStatus}
+        totalAmount={order.totalAmount}
+      />
 
       {/* ONEWMS Info Card */}
       <OnewmsInfo orderId={order.id} />

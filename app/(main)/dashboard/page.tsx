@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { SalesChart } from "@/components/dashboard/sales-chart";
 import { RankingTable } from "@/components/dashboard/ranking-table";
+import { RecommendedProductsCard } from "@/components/dashboard/recommended-products-card";
 import {
   TrendingUpIcon,
   ShoppingCartIcon,
@@ -43,6 +45,11 @@ interface OnewmsStats {
 }
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
+  const userId = (session?.user as any)?.id;
+  const userRole = (session?.user as any)?.role;
+  const isSeller = userRole === "SELLER";
+
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [onewmsStats, setOnewmsStats] = useState<OnewmsStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -137,11 +144,15 @@ export default function DashboardPage() {
         )}
       </Card>
 
-      {/* 셀러 랭킹 */}
-      <Card className="p-6">
-        <h2 className="text-xl font-bold mb-4">셀러 랭킹 (Top 10)</h2>
-        <RankingTable data={stats.sellerRanking} />
-      </Card>
+      {/* 셀러: 추천 상품 / 관리자: 셀러 랭킹 */}
+      {isSeller && userId ? (
+        <RecommendedProductsCard sellerId={userId} />
+      ) : (
+        <Card className="p-6">
+          <h2 className="text-xl font-bold mb-4">셀러 랭킹 (Top 10)</h2>
+          <RankingTable data={stats.sellerRanking} />
+        </Card>
+      )}
 
       {/* ONEWMS 연동 상태 */}
       {onewmsStats && (
