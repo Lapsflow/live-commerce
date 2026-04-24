@@ -5194,6 +5194,8 @@ export namespace Prisma {
   export type ProductAvgAggregateOutputType = {
     sellPrice: number | null
     supplyPrice: number | null
+    minSellPrice: number | null
+    maxSellPrice: number | null
     totalStock: number | null
     reservedStock: number | null
     stockMujin: number | null
@@ -5206,6 +5208,8 @@ export namespace Prisma {
   export type ProductSumAggregateOutputType = {
     sellPrice: number | null
     supplyPrice: number | null
+    minSellPrice: number | null
+    maxSellPrice: number | null
     totalStock: number | null
     reservedStock: number | null
     stockMujin: number | null
@@ -5222,6 +5226,8 @@ export namespace Prisma {
     barcode: string | null
     sellPrice: number | null
     supplyPrice: number | null
+    minSellPrice: number | null
+    maxSellPrice: number | null
     totalStock: number | null
     reservedStock: number | null
     stockMujin: number | null
@@ -5249,6 +5255,8 @@ export namespace Prisma {
     barcode: string | null
     sellPrice: number | null
     supplyPrice: number | null
+    minSellPrice: number | null
+    maxSellPrice: number | null
     totalStock: number | null
     reservedStock: number | null
     stockMujin: number | null
@@ -5276,6 +5284,8 @@ export namespace Prisma {
     barcode: number
     sellPrice: number
     supplyPrice: number
+    minSellPrice: number
+    maxSellPrice: number
     totalStock: number
     reservedStock: number
     stockMujin: number
@@ -5301,6 +5311,8 @@ export namespace Prisma {
   export type ProductAvgAggregateInputType = {
     sellPrice?: true
     supplyPrice?: true
+    minSellPrice?: true
+    maxSellPrice?: true
     totalStock?: true
     reservedStock?: true
     stockMujin?: true
@@ -5313,6 +5325,8 @@ export namespace Prisma {
   export type ProductSumAggregateInputType = {
     sellPrice?: true
     supplyPrice?: true
+    minSellPrice?: true
+    maxSellPrice?: true
     totalStock?: true
     reservedStock?: true
     stockMujin?: true
@@ -5329,6 +5343,8 @@ export namespace Prisma {
     barcode?: true
     sellPrice?: true
     supplyPrice?: true
+    minSellPrice?: true
+    maxSellPrice?: true
     totalStock?: true
     reservedStock?: true
     stockMujin?: true
@@ -5356,6 +5372,8 @@ export namespace Prisma {
     barcode?: true
     sellPrice?: true
     supplyPrice?: true
+    minSellPrice?: true
+    maxSellPrice?: true
     totalStock?: true
     reservedStock?: true
     stockMujin?: true
@@ -5383,6 +5401,8 @@ export namespace Prisma {
     barcode?: true
     sellPrice?: true
     supplyPrice?: true
+    minSellPrice?: true
+    maxSellPrice?: true
     totalStock?: true
     reservedStock?: true
     stockMujin?: true
@@ -5497,6 +5517,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice: number | null
+    maxSellPrice: number | null
     totalStock: number
     reservedStock: number
     stockMujin: number
@@ -5543,6 +5565,8 @@ export namespace Prisma {
     barcode?: boolean
     sellPrice?: boolean
     supplyPrice?: boolean
+    minSellPrice?: boolean
+    maxSellPrice?: boolean
     totalStock?: boolean
     reservedStock?: boolean
     stockMujin?: boolean
@@ -5582,6 +5606,8 @@ export namespace Prisma {
     barcode?: boolean
     sellPrice?: boolean
     supplyPrice?: boolean
+    minSellPrice?: boolean
+    maxSellPrice?: boolean
     totalStock?: boolean
     reservedStock?: boolean
     stockMujin?: boolean
@@ -5609,6 +5635,8 @@ export namespace Prisma {
     barcode?: boolean
     sellPrice?: boolean
     supplyPrice?: boolean
+    minSellPrice?: boolean
+    maxSellPrice?: boolean
     totalStock?: boolean
     reservedStock?: boolean
     stockMujin?: boolean
@@ -5636,6 +5664,8 @@ export namespace Prisma {
     barcode?: boolean
     sellPrice?: boolean
     supplyPrice?: boolean
+    minSellPrice?: boolean
+    maxSellPrice?: boolean
     totalStock?: boolean
     reservedStock?: boolean
     stockMujin?: boolean
@@ -5656,7 +5686,7 @@ export namespace Prisma {
     sampleStatus?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "minSellPrice" | "maxSellPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
@@ -5696,6 +5726,8 @@ export namespace Prisma {
       barcode: string
       sellPrice: number
       supplyPrice: number
+      minSellPrice: number | null
+      maxSellPrice: number | null
       totalStock: number
       reservedStock: number
       stockMujin: number
@@ -6154,6 +6186,8 @@ export namespace Prisma {
     readonly barcode: FieldRef<"Product", 'String'>
     readonly sellPrice: FieldRef<"Product", 'Int'>
     readonly supplyPrice: FieldRef<"Product", 'Int'>
+    readonly minSellPrice: FieldRef<"Product", 'Int'>
+    readonly maxSellPrice: FieldRef<"Product", 'Int'>
     readonly totalStock: FieldRef<"Product", 'Int'>
     readonly reservedStock: FieldRef<"Product", 'Int'>
     readonly stockMujin: FieldRef<"Product", 'Int'>
@@ -32949,6 +32983,8 @@ export namespace Prisma {
     barcode: 'barcode',
     sellPrice: 'sellPrice',
     supplyPrice: 'supplyPrice',
+    minSellPrice: 'minSellPrice',
+    maxSellPrice: 'maxSellPrice',
     totalStock: 'totalStock',
     reservedStock: 'reservedStock',
     stockMujin: 'stockMujin',
@@ -33821,6 +33857,8 @@ export namespace Prisma {
     barcode?: StringFilter<"Product"> | string
     sellPrice?: IntFilter<"Product"> | number
     supplyPrice?: IntFilter<"Product"> | number
+    minSellPrice?: IntNullableFilter<"Product"> | number | null
+    maxSellPrice?: IntNullableFilter<"Product"> | number | null
     totalStock?: IntFilter<"Product"> | number
     reservedStock?: IntFilter<"Product"> | number
     stockMujin?: IntFilter<"Product"> | number
@@ -33859,6 +33897,8 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    minSellPrice?: SortOrderInput | SortOrder
+    maxSellPrice?: SortOrderInput | SortOrder
     totalStock?: SortOrder
     reservedStock?: SortOrder
     stockMujin?: SortOrder
@@ -33901,6 +33941,8 @@ export namespace Prisma {
     name?: StringFilter<"Product"> | string
     sellPrice?: IntFilter<"Product"> | number
     supplyPrice?: IntFilter<"Product"> | number
+    minSellPrice?: IntNullableFilter<"Product"> | number | null
+    maxSellPrice?: IntNullableFilter<"Product"> | number | null
     totalStock?: IntFilter<"Product"> | number
     reservedStock?: IntFilter<"Product"> | number
     stockMujin?: IntFilter<"Product"> | number
@@ -33938,6 +33980,8 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    minSellPrice?: SortOrderInput | SortOrder
+    maxSellPrice?: SortOrderInput | SortOrder
     totalStock?: SortOrder
     reservedStock?: SortOrder
     stockMujin?: SortOrder
@@ -33973,6 +34017,8 @@ export namespace Prisma {
     barcode?: StringWithAggregatesFilter<"Product"> | string
     sellPrice?: IntWithAggregatesFilter<"Product"> | number
     supplyPrice?: IntWithAggregatesFilter<"Product"> | number
+    minSellPrice?: IntNullableWithAggregatesFilter<"Product"> | number | null
+    maxSellPrice?: IntNullableWithAggregatesFilter<"Product"> | number | null
     totalStock?: IntWithAggregatesFilter<"Product"> | number
     reservedStock?: IntWithAggregatesFilter<"Product"> | number
     stockMujin?: IntWithAggregatesFilter<"Product"> | number
@@ -36119,6 +36165,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -36157,6 +36205,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -36195,6 +36245,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -36233,6 +36285,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -36271,6 +36325,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -36298,6 +36354,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -36325,6 +36383,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -38907,6 +38967,8 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    minSellPrice?: SortOrder
+    maxSellPrice?: SortOrder
     totalStock?: SortOrder
     reservedStock?: SortOrder
     stockMujin?: SortOrder
@@ -38930,6 +38992,8 @@ export namespace Prisma {
   export type ProductAvgOrderByAggregateInput = {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    minSellPrice?: SortOrder
+    maxSellPrice?: SortOrder
     totalStock?: SortOrder
     reservedStock?: SortOrder
     stockMujin?: SortOrder
@@ -38946,6 +39010,8 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    minSellPrice?: SortOrder
+    maxSellPrice?: SortOrder
     totalStock?: SortOrder
     reservedStock?: SortOrder
     stockMujin?: SortOrder
@@ -38973,6 +39039,8 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    minSellPrice?: SortOrder
+    maxSellPrice?: SortOrder
     totalStock?: SortOrder
     reservedStock?: SortOrder
     stockMujin?: SortOrder
@@ -38996,6 +39064,8 @@ export namespace Prisma {
   export type ProductSumOrderByAggregateInput = {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    minSellPrice?: SortOrder
+    maxSellPrice?: SortOrder
     totalStock?: SortOrder
     reservedStock?: SortOrder
     stockMujin?: SortOrder
@@ -45048,6 +45118,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -45085,6 +45157,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -45187,6 +45261,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -45224,6 +45300,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -45454,6 +45532,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -45491,6 +45571,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -45694,6 +45776,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -45731,6 +45815,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -46510,6 +46596,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -46547,6 +46635,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -46677,6 +46767,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -46714,6 +46806,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -46822,6 +46916,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -46859,6 +46955,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -46989,6 +47087,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -47026,6 +47126,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -47424,6 +47526,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -47461,6 +47565,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -47626,6 +47732,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -47663,6 +47771,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -47952,6 +48062,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -47989,6 +48101,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -48115,6 +48229,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -48152,6 +48268,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -48337,6 +48455,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -48374,6 +48494,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -48427,6 +48549,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -48464,6 +48588,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -48880,6 +49006,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -48917,6 +49045,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -49042,6 +49172,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -49079,6 +49211,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -49153,6 +49287,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -49190,6 +49326,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -49313,6 +49451,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -49350,6 +49490,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -49469,6 +49611,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -49506,6 +49650,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -49559,6 +49705,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -49596,6 +49744,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -49700,6 +49850,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -49737,6 +49889,8 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    minSellPrice?: number | null
+    maxSellPrice?: number | null
     totalStock?: number
     reservedStock?: number
     stockMujin?: number
@@ -49912,6 +50066,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number
@@ -49949,6 +50105,8 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
     reservedStock?: IntFieldUpdateOperationsInput | number
     stockMujin?: IntFieldUpdateOperationsInput | number

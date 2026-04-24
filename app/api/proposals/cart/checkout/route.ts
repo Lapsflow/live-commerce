@@ -37,6 +37,21 @@ export async function POST(req: NextRequest) {
       return errors.badRequest("장바구니가 비어있습니다");
     }
 
+    // 동일 상품 5회 제한 체크 (race condition 방지)
+    for (const item of cartItems) {
+      const pastCount = await prisma.proposal.count({
+        where: {
+          submittedBy: session.user.id!,
+          productName: item.product.name,
+        },
+      });
+      if (pastCount >= 5) {
+        return errors.badRequest(
+          `"${item.product.name}"은(는) 이미 5회 샘플 요청되었습니다`
+        );
+      }
+    }
+
     // Transaction으로 일괄 처리
     const result = await prisma.$transaction(async (tx) => {
       // 각 장바구니 아이템을 Proposal로 생성

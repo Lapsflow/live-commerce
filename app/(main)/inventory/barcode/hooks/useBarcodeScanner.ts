@@ -9,6 +9,8 @@ interface ProductData {
   barcode: string;
   sellPrice: number;
   supplyPrice: number;
+  minSellPrice?: number | null;
+  maxSellPrice?: number | null;
   totalStock: number;
   centerStocks: Array<{
     centerId: string;

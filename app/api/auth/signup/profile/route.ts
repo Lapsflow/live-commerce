@@ -12,6 +12,9 @@ const profileSchema = z.object({
   userId: z.string(),
   channels: z.array(z.string()).optional(),
   avgSales: z.string().optional(), // "100만원 이하", "100~500만원" 등 문자열
+  categories: z.array(z.string()).optional(),
+  regions: z.array(z.string()).optional(),
+  timeSlots: z.array(z.string()).optional(),
 });
 
 export async function PATCH(req: NextRequest) {
@@ -51,12 +54,18 @@ export async function PATCH(req: NextRequest) {
       data: {
         channels: data.channels || [],
         avgSales: avgSalesNum,
+        categories: data.categories || [],
+        regions: data.regions || [],
+        timeSlots: data.timeSlots || [],
       },
       select: {
         id: true,
         name: true,
         channels: true,
         avgSales: true,
+        categories: true,
+        regions: true,
+        timeSlots: true,
       },
     });
 

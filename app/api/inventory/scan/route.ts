@@ -185,6 +185,8 @@ export const POST = withRole(
         barcode: updatedProduct.barcode,
         sellPrice: updatedProduct.sellPrice,
         supplyPrice: updatedProduct.supplyPrice,
+        minSellPrice: updatedProduct.minSellPrice,
+        maxSellPrice: updatedProduct.maxSellPrice,
         totalStock: updatedProduct.totalStock,
         centerStocks: updatedProduct.centerStocks.map(cs => ({
           centerId: cs.centerId,

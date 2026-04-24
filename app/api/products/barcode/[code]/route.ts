@@ -50,6 +50,8 @@ export const GET = withRole(
       barcode: product.barcode,
       sellPrice: product.sellPrice,
       supplyPrice: product.supplyPrice,
+      minSellPrice: product.minSellPrice,
+      maxSellPrice: product.maxSellPrice,
       totalStock: product.totalStock,
       centerStocks: product.centerStocks.map((stock) => ({
         centerId: stock.centerId,

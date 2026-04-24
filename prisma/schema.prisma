@@ -78,8 +78,10 @@ model Product {
   code        String   @unique
   name        String
   barcode     String   @unique
-  sellPrice   Int
-  supplyPrice Int
+  sellPrice      Int            // 권장 판매가
+  supplyPrice    Int            // 공급가
+  minSellPrice   Int?           // 최소 판매가
+  maxSellPrice   Int?           // 최대 판매가
   totalStock    Int      @default(0)
   reservedStock Int      @default(0) // ✨ 선점된 재고 수량 (발주 시 증가, 입금/취소 시 감소)
   stockMujin    Int      @default(0)

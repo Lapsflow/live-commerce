@@ -20,6 +20,24 @@ const SALES_OPTIONS = [
   "1억 이상",
 ];
 
+// 판매 카테고리 옵션 (PDF p2 스펙)
+const CATEGORY_OPTIONS = ["식품", "건기식", "의류", "잡화", "유아", "애견", "기타"];
+
+// 활동 지역 옵션 (PDF p2 센터코드 기준)
+const REGION_OPTIONS = [
+  "서울", "경기", "인천", "부산", "대구", "대전", "광주",
+  "울산", "세종", "강원", "충북", "충남", "전북", "전남",
+  "경북", "경남", "제주",
+];
+
+// 방송 가능 시간대
+const TIMESLOT_OPTIONS = [
+  "오전 (06:00~12:00)",
+  "오후 (12:00~18:00)",
+  "저녁 (18:00~22:00)",
+  "심야 (22:00~06:00)",
+];
+
 export default function SignupPage() {
   const [step, setStep] = useState<1 | 2>(1);
   const [userId, setUserId] = useState<string>("");
@@ -35,6 +53,9 @@ export default function SignupPage() {
   // Step 2: 추가 정보
   const [channels, setChannels] = useState<string[]>([]);
   const [avgSales, setAvgSales] = useState<string>("");
+  const [categories, setCategories] = useState<string[]>([]);
+  const [regions, setRegions] = useState<string[]>([]);
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -181,6 +202,9 @@ export default function SignupPage() {
           userId,
           channels,
           avgSales: avgSales || undefined,
+          categories: categories.length > 0 ? categories : undefined,
+          regions: regions.length > 0 ? regions : undefined,
+          timeSlots: timeSlots.length > 0 ? timeSlots : undefined,
         }),
       });
     } catch {
@@ -199,6 +223,17 @@ export default function SignupPage() {
       prev.includes(channel)
         ? prev.filter((c) => c !== channel)
         : [...prev, channel]
+    );
+  };
+
+  const toggleItem = (
+    value: string,
+    setter: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
+    setter((prev) =>
+      prev.includes(value)
+        ? prev.filter((v) => v !== value)
+        : [...prev, value]
     );
   };
 
@@ -447,6 +482,75 @@ export default function SignupPage() {
               </div>
             </div>
 
+            {/* 주요 판매 카테고리 (복수 선택) */}
+            <div>
+              <label className="block text-sm font-medium text-grey-700 mb-2">
+                주요 판매 카테고리 (복수 선택)
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {CATEGORY_OPTIONS.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => toggleItem(cat, setCategories)}
+                    className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                      categories.includes(cat)
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-grey-700 border-grey-200 hover:border-blue-300"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 활동 지역 (복수 선택) */}
+            <div>
+              <label className="block text-sm font-medium text-grey-700 mb-2">
+                활동 지역 (복수 선택)
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {REGION_OPTIONS.map((region) => (
+                  <button
+                    key={region}
+                    type="button"
+                    onClick={() => toggleItem(region, setRegions)}
+                    className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                      regions.includes(region)
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-grey-700 border-grey-200 hover:border-blue-300"
+                    }`}
+                  >
+                    {region}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 방송 가능 시간대 (복수 선택) */}
+            <div>
+              <label className="block text-sm font-medium text-grey-700 mb-2">
+                방송 가능 시간대 (복수 선택)
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {TIMESLOT_OPTIONS.map((slot) => (
+                  <button
+                    key={slot}
+                    type="button"
+                    onClick={() => toggleItem(slot, setTimeSlots)}
+                    className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                      timeSlots.includes(slot)
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-grey-700 border-grey-200 hover:border-blue-300"
+                    }`}
+                  >
+                    {slot}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* 버튼 */}
             <div className="pt-2 space-y-2.5">
               <Button
@@ -462,7 +566,7 @@ export default function SignupPage() {
                 className="w-full"
                 onClick={handleSkip}
               >
-                건너뛰기
+                건너뛰기 →
               </Button>
             </div>
           </div>

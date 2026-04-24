@@ -28,6 +28,8 @@ interface ProductData {
   barcode: string;
   sellPrice: number;
   supplyPrice: number;
+  minSellPrice?: number | null;
+  maxSellPrice?: number | null;
   totalStock: number;
   imageUrl?: string | null;
   centerStocks: Array<{
@@ -210,7 +212,7 @@ export function ProductDetailsModal({
               </div>
             )}
             <h3 className="font-semibold text-lg">{product.name}</h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="flex gap-2 text-sm mb-2">
               <div>
                 <span className="text-muted-foreground">바코드: </span>
                 <span className="font-mono">{product.barcode}</span>
@@ -219,17 +221,35 @@ export function ProductDetailsModal({
                 <span className="text-muted-foreground">상품코드: </span>
                 <span className="font-mono">{product.code}</span>
               </div>
-              <div>
-                <span className="text-muted-foreground">판매가: </span>
-                <span className="font-semibold">
-                  {product.sellPrice.toLocaleString()}원
-                </span>
+            </div>
+            {/* 4단계 가격 바 (PDF p4: WMS 기준 통제 시스템) */}
+            <div className="grid grid-cols-4 gap-0 rounded-lg overflow-hidden border text-center text-sm">
+              <div className="bg-gray-50 p-2 border-r">
+                <div className="text-muted-foreground text-xs">공급가</div>
+                <div className="font-semibold">{product.supplyPrice.toLocaleString()}원</div>
               </div>
-              <div>
-                <span className="text-muted-foreground">공급가: </span>
-                <span>{product.supplyPrice.toLocaleString()}원</span>
+              <div className="bg-yellow-50 p-2 border-r">
+                <div className="text-muted-foreground text-xs">최소판매가</div>
+                <div className="font-semibold text-yellow-700">
+                  {product.minSellPrice ? `${product.minSellPrice.toLocaleString()}원` : "-"}
+                </div>
+              </div>
+              <div className="bg-green-50 p-2 border-r">
+                <div className="text-muted-foreground text-xs">권장판매가</div>
+                <div className="font-semibold text-green-700">{product.sellPrice.toLocaleString()}원</div>
+              </div>
+              <div className="bg-red-50 p-2">
+                <div className="text-muted-foreground text-xs">최대판매가</div>
+                <div className="font-semibold text-red-700">
+                  {product.maxSellPrice ? `${product.maxSellPrice.toLocaleString()}원` : "-"}
+                </div>
               </div>
             </div>
+            {product.sellPrice > 0 && product.supplyPrice > 0 && (
+              <div className="text-sm text-muted-foreground mt-1">
+                마진: {((product.sellPrice - product.supplyPrice) / product.sellPrice * 100).toFixed(0)}% ({(product.sellPrice - product.supplyPrice).toLocaleString()}원)
+              </div>
+            )}
           </div>
 
           {/* Center Stock Levels */}

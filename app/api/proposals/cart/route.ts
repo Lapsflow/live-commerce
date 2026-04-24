@@ -93,6 +93,20 @@ export async function POST(req: NextRequest) {
       return errors.notFound("상품을 찾을 수 없습니다");
     }
 
+    // 동일 상품 샘플 요청 5회 제한
+    const pastProposalCount = await prisma.proposal.count({
+      where: {
+        submittedBy: session.user.id,
+        productName: product.name,
+      },
+    });
+
+    if (pastProposalCount >= 5) {
+      return errors.badRequest(
+        "동일 상품은 최대 5회까지 샘플 요청 가능합니다"
+      );
+    }
+
     // 장바구니에 이미 있으면 수량 업데이트, 없으면 추가
     const cartItem = await prisma.proposalCart.upsert({
       where: {
