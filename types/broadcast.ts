@@ -1,7 +1,7 @@
 import type { User } from "./user";
 
 export type BroadcastPlatform = "GRIP" | "CLME" | "YOUTUBE" | "TIKTOK" | "BAND" | "OTHER";
-export type BroadcastStatus = "SCHEDULED" | "LIVE" | "ENDED" | "CANCELED";
+export type BroadcastStatus = "REQUESTED" | "SCHEDULED" | "LIVE" | "ENDED" | "CANCELED" | "REJECTED";
 
 export interface Center {
   id: string;
@@ -23,6 +23,8 @@ export interface Broadcast {
   endedAt: Date | null;
   status: BroadcastStatus;
   memo: string | null;
+  requestMemo: string | null;
+  rejectionReason: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

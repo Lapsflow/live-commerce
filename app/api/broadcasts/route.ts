@@ -8,7 +8,8 @@ const broadcastSchema = z.object({
   scheduledAt: z.string().datetime(),
   startedAt: z.string().datetime().optional(),
   endedAt: z.string().datetime().optional(),
-  status: z.enum(["SCHEDULED", "LIVE", "ENDED", "CANCELED"]).optional(),
+  status: z.enum(["REQUESTED", "SCHEDULED", "LIVE", "ENDED", "CANCELED", "REJECTED"]).optional(),
+  requestMemo: z.string().max(500).optional(),
   memo: z.string().max(500).optional(),
 });
 
