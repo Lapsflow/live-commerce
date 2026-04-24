@@ -22,7 +22,7 @@ export function PRICING_ANALYSIS_PROMPT(context: PricingContext): string {
 - 시장 평균가: ${context.marketAvgPrice.toLocaleString()}원
 - 시장 최저가: ${context.marketMinPrice.toLocaleString()}원
 - 네이버 평균가: ${context.naverAvgPrice.toLocaleString()}원
-- 쿠팡 평균가: ${context.coupangAvgPrice.toLocaleString()}원
+- 네이버 최저가: ${context.naverMinPrice.toLocaleString()}원
 
 다음 JSON 형식으로 **정확하게** 응답해주세요:
 
@@ -47,7 +47,7 @@ export function PRICING_ANALYSIS_PROMPT(context: PricingContext): string {
     "묶음 구매 시 배송비 무료 혜택 강조",
     "선착순 100명 한정 특가 진행"
   ],
-  "broadcastScript": "여러분! 지금 보시는 이 상품, 시장 최저가보다도 저렴한 ${context.ourPrice.toLocaleString()}원입니다! 네이버, 쿠팡 다 찾아봐도 이 가격 없어요. 게다가 오늘 방송 보시는 분들만! 추가 5% 할인까지 드립니다. 지금 바로 주문하세요!",
+  "broadcastScript": "여러분! 지금 보시는 이 상품, 시장 최저가보다도 저렴한 ${context.ourPrice.toLocaleString()}원입니다! 네이버 어디서 찾아봐도 이 가격 없어요. 게다가 오늘 방송 보시는 분들만! 추가 5% 할인까지 드립니다. 지금 바로 주문하세요!",
   "targetCustomers": [
     "가격 비교를 꼼꼼히 하는 합리적 소비자",
     "온라인 쇼핑 경험이 많은 30-40대",

@@ -73,19 +73,6 @@ const ENV_RULES: EnvValidationRule[] = [
     env: "production",
     description: "Naver Shopping API Client Secret",
   },
-  {
-    key: "COUPANG_ACCESS_KEY",
-    required: true,
-    env: "production",
-    description: "Coupang Partners API Access Key",
-  },
-  {
-    key: "COUPANG_SECRET_KEY",
-    required: true,
-    env: "production",
-    description: "Coupang Partners API Secret Key",
-  },
-
   // AI Services
   {
     key: "GEMINI_KEY",

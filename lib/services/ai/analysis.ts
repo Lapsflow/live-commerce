@@ -102,7 +102,7 @@ export async function analyzeProduct(
     marketAvgPrice: pricing.market.avgPrice,
     marketMinPrice: pricing.market.minPrice,
     naverAvgPrice: pricing.naver?.avgPrice || 0,
-    coupangAvgPrice: pricing.coupang?.avgPrice || 0,
+    naverMinPrice: pricing.naver?.minPrice || 0,
     stockQuantity: product.totalStock,
   };
 

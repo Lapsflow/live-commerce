@@ -41,12 +41,10 @@ export function getRedisClient(): Redis {
 export const CACHE_KEYS = {
   // Pricing cache keys (TTL: 6 hours)
   NAVER_PRICING: (barcode: string) => `pricing:barcode:${barcode}:naver`,
-  COUPANG_PRICING: (barcode: string) => `pricing:barcode:${barcode}:coupang`,
   UNIFIED_PRICING: (barcode: string) => `pricing:barcode:${barcode}:unified`,
 
   // Product search cache (TTL: 1 hour)
   NAVER_SEARCH: (query: string) => `search:naver:${query}`,
-  COUPANG_SEARCH: (query: string) => `search:coupang:${query}`,
 } as const;
 
 /**

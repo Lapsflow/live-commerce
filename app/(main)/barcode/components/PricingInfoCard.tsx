@@ -27,12 +27,6 @@ interface PricingData {
     avgPrice: number;
     count: number;
   } | null;
-  coupang: {
-    minPrice: number;
-    maxPrice: number;
-    avgPrice: number;
-    count: number;
-  } | null;
   market: {
     minPrice: number;
     maxPrice: number;
@@ -164,28 +158,6 @@ export function PricingInfoCard({ barcode, ourPrice }: PricingInfoCardProps) {
                 </div>
                 <div className="text-lg font-bold">
                   {pricingData.naver.avgPrice.toLocaleString()}원
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Coupang */}
-          {pricingData.coupang && (
-            <>
-              <div>
-                <div className="text-xs text-muted-foreground mb-1">
-                  쿠팡 최저가
-                </div>
-                <div className="text-lg font-bold">
-                  {pricingData.coupang.minPrice.toLocaleString()}원
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground mb-1">
-                  쿠팡 평균
-                </div>
-                <div className="text-lg font-bold">
-                  {pricingData.coupang.avgPrice.toLocaleString()}원
                 </div>
               </div>
             </>

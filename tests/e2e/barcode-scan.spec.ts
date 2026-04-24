@@ -1,6 +1,6 @@
 /**
  * Barcode Scan Feature E2E Tests
- * Tests barcode lookup, price comparison (Naver/Coupang), and AI analysis (Gemini)
+ * Tests barcode lookup, price comparison (Naver), and AI analysis (Gemini)
  * Uses EAN-13 barcodes with sellPrice > 0 for real market data
  */
 import { test, expect } from '@playwright/test';
@@ -80,7 +80,7 @@ test.describe('Barcode Scan Feature', () => {
     await context.close();
   });
 
-  test('API: price comparison with real Naver/Coupang data', async ({ browser }) => {
+  test('API: price comparison with real Naver data', async ({ browser }) => {
     const { context, page } = await loginAsMaster(browser);
 
     const product = await findEanProduct(page);
@@ -113,15 +113,8 @@ test.describe('Barcode Scan Feature', () => {
       console.log('  naver: no results');
     }
 
-    if (pricing.coupang) {
-      console.log(`  coupang: count=${pricing.coupang.count}, min=${pricing.coupang.minPrice}, avg=${pricing.coupang.avgPrice}, max=${pricing.coupang.maxPrice}`);
-      expect(pricing.coupang.count).toBeGreaterThan(0);
-    } else {
-      console.log('  coupang: no results');
-    }
-
-    // At least one marketplace should have data for EAN barcodes
-    const hasMarketData = pricing.naver || pricing.coupang;
+    // At least Naver should have data for EAN barcodes
+    const hasMarketData = pricing.naver;
     console.log(`  Has market data: ${!!hasMarketData}`);
 
     // Competitiveness should be valid
@@ -269,12 +262,10 @@ test.describe('Barcode Scan Feature', () => {
     console.log('Waiting for price data...');
     await page.waitForTimeout(15000);
 
-    // Check for Naver / Coupang sections
+    // Check for Naver section
     const naverVisible = await page.getByText('네이버 쇼핑').isVisible({ timeout: 3000 }).catch(() => false);
-    const coupangVisible = await page.getByText('쿠팡').first().isVisible({ timeout: 3000 }).catch(() => false);
     const ourPriceVisible = await page.getByText('우리 판매가').isVisible({ timeout: 3000 }).catch(() => false);
     console.log(`Naver section: ${naverVisible ? '✓' : '✗'}`);
-    console.log(`Coupang section: ${coupangVisible ? '✓' : '✗'}`);
     console.log(`Our price display: ${ourPriceVisible ? '✓' : '✗'}`);
 
     // Check competitiveness badge

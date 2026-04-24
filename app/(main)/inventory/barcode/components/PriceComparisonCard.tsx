@@ -159,7 +159,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                 )}
                 {data.competitiveness === "POOR" && (
                   <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded text-sm text-red-800 font-medium">
-                    ⚠️ 쿠팡보다 20% 이상 비쌉니다. 가격 조정을 고려하세요.
+                    ⚠️ 시장 평균보다 비쌉니다. 가격 조정을 고려하세요.
                   </div>
                 )}
                 {data.competitiveness === "GOOD" && (
@@ -211,38 +211,6 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                       <div className="text-xs text-grey-500 mb-1">최고가</div>
                       <div className="text-sm font-semibold text-grey-900">
                         {formatPrice(data.naver.maxPrice)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Coupang Section */}
-              {data.coupang && (
-                <div className="border border-grey-200 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="text-sm font-semibold text-grey-700">쿠팡</div>
-                    <div className="text-xs text-grey-500">
-                      ({data.coupang.count || 0}개 상품)
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div>
-                      <div className="text-xs text-grey-500 mb-1">최저가</div>
-                      <div className="text-sm font-semibold text-grey-900">
-                        {formatPrice(data.coupang.minPrice)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-grey-500 mb-1">평균가</div>
-                      <div className="text-sm font-semibold text-grey-900">
-                        {formatPrice(data.coupang.avgPrice)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-grey-500 mb-1">최고가</div>
-                      <div className="text-sm font-semibold text-grey-900">
-                        {formatPrice(data.coupang.maxPrice)}
                       </div>
                     </div>
                   </div>

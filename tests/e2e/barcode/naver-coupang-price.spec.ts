@@ -2,14 +2,14 @@ import { test, expect } from '@playwright/test';
 
 /**
  * @barcode @integration
- * Phase 2: Naver/Coupang Price Comparison Auto-Load Tests
+ * Phase 2: Naver Price Comparison Auto-Load Tests
  *
  * Tests:
  * 1. Naver price comparison auto-loads via React Query
- * 2. Coupang price comparison displays in parallel
+ * 2. Price data displays correctly
  */
 
-test.describe('Naver/Coupang Price Comparison', () => {
+test.describe('Naver Price Comparison', () => {
   test.use({ storageState: 'playwright/.auth/seller.json' });
 
   test.beforeEach(async ({ page }) => {
@@ -33,7 +33,6 @@ test.describe('Naver/Coupang Price Comparison', () => {
     await expect(naverSection).toBeVisible({ timeout: 8000 });
 
     // Check for price information elements
-    // Note: Exact text depends on API response, so we check for common patterns
     const hasPriceInfo = await page.locator('text=최저가')
       .or(page.locator('text=평균가'))
       .or(page.locator('text=원'))
@@ -55,7 +54,7 @@ test.describe('Naver/Coupang Price Comparison', () => {
     expect(hasPriceInfo || hasLoadingState || hasErrorState).toBeTruthy();
   });
 
-  test('should display Coupang price comparison results', async ({ page }) => {
+  test('should display Naver price comparison results', async ({ page }) => {
     // Enter barcode
     const barcodeInput = page.locator('input[placeholder*="바코드"]');
     await barcodeInput.fill('8801234567890');
@@ -64,13 +63,12 @@ test.describe('Naver/Coupang Price Comparison', () => {
     // Wait for product info
     await page.waitForTimeout(1000);
 
-    // Coupang section should appear (parallel API call with Naver)
-    const coupangSection = page.locator('text=쿠팡').first();
-    await expect(coupangSection).toBeVisible({ timeout: 8000 });
+    // Naver section should appear
+    const naverSection = page.locator('text=네이버').first();
+    await expect(naverSection).toBeVisible({ timeout: 8000 });
 
-    // Check for Coupang-specific content
-    // Note: API might return empty results, but section should still render
-    const hasCoupangContent = await page.locator('text=상품')
+    // Check for Naver-specific content
+    const hasNaverContent = await page.locator('text=상품')
       .or(page.locator('text=가격'))
       .or(page.locator('text=원'))
       .isVisible({ timeout: 3000 })
@@ -82,31 +80,7 @@ test.describe('Naver/Coupang Price Comparison', () => {
       .isVisible({ timeout: 1000 })
       .catch(() => false);
 
-    expect(hasCoupangContent || hasLoadingOrError).toBeTruthy();
-  });
-
-  test('should show both Naver and Coupang sections simultaneously', async ({ page }) => {
-    // Enter barcode
-    const barcodeInput = page.locator('input[placeholder*="바코드"]');
-    await barcodeInput.fill('8801234567890');
-    await barcodeInput.press('Enter');
-
-    // Wait for initial load
-    await page.waitForTimeout(2000);
-
-    // Both sections should be visible (parallel fetching)
-    const naverVisible = await page.locator('text=네이버').isVisible({ timeout: 5000 }).catch(() => false);
-    const coupangVisible = await page.locator('text=쿠팡').isVisible({ timeout: 5000 }).catch(() => false);
-
-    // At least one should be visible (API might fail for one source)
-    expect(naverVisible || coupangVisible).toBeTruthy();
-
-    // If both are visible, verify they're on the same page
-    if (naverVisible && coupangVisible) {
-      const pageContent = await page.content();
-      expect(pageContent).toContain('네이버');
-      expect(pageContent).toContain('쿠팡');
-    }
+    expect(hasNaverContent || hasLoadingOrError).toBeTruthy();
   });
 
   test('should handle barcode with no price data gracefully', async ({ page }) => {
@@ -125,11 +99,10 @@ test.describe('Naver/Coupang Price Comparison', () => {
       .catch(() => false);
 
     const hasPriceSection = await page.locator('text=네이버')
-      .or(page.locator('text=쿠팡'))
       .isVisible({ timeout: 3000 })
       .catch(() => false);
 
-    // Should either show not found or price sections (one of them)
+    // Should either show not found or price section
     expect(hasNotFoundMessage || hasPriceSection).toBeTruthy();
   });
 });

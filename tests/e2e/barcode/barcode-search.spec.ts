@@ -70,12 +70,9 @@ test.describe('바코드 검색 플로우', () => {
 
     // 시세 정보가 로드되면 내용 확인
     if (await pricingCard.isVisible()) {
-      // 네이버/쿠팡 시세가 있으면 표시되어야 함
+      // 네이버 시세가 있으면 표시되어야 함
       const hasNaverPrice = await page.locator('text=네이버').count() > 0;
-      const hasCoupangPrice = await page.locator('text=쿠팡').count() > 0;
-
-      // 최소한 하나는 표시되어야 함
-      expect(hasNaverPrice || hasCoupangPrice).toBeTruthy();
+      expect(hasNaverPrice).toBeTruthy();
     }
   });
 

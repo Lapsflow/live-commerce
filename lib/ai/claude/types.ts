@@ -24,7 +24,7 @@ export interface PricingContext {
   marketAvgPrice: number;
   marketMinPrice: number;
   naverAvgPrice: number;
-  coupangAvgPrice: number;
+  naverMinPrice: number;
   stockQuantity: number;
 }
 
