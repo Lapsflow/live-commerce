@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePriceComparison } from "../hooks/usePriceComparison";
-import { ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
+import { ChevronDown, ChevronUp, RefreshCw, ExternalLink } from "lucide-react";
 
 interface PriceComparisonCardProps {
   barcode: string;
@@ -194,7 +194,7 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                       ({data.naver.count || 0}개 상품)
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-3 mb-3">
                     <div>
                       <div className="text-xs text-grey-500 mb-1">최저가</div>
                       <div className="text-sm font-semibold text-grey-900">
@@ -214,6 +214,40 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                       </div>
                     </div>
                   </div>
+
+                  {/* Naver Product Listings (PDF p3) */}
+                  {data.naver.products && data.naver.products.length > 0 && (
+                    <div className="border-t border-grey-100 pt-3">
+                      <div className="text-xs font-medium text-grey-600 mb-2">상품 목록</div>
+                      <div className="space-y-2 max-h-48 overflow-y-auto">
+                        {data.naver.products.slice(0, 5).map((p: any, i: number) => (
+                          <a
+                            key={i}
+                            href={p.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-2 rounded hover:bg-grey-50 transition-colors group"
+                          >
+                            <div className="flex-1 min-w-0 mr-2">
+                              <div
+                                className="text-xs font-medium text-grey-900 truncate"
+                                dangerouslySetInnerHTML={{
+                                  __html: p.title,
+                                }}
+                              />
+                              <div className="text-xs text-grey-500">{p.mallName}</div>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                              <span className="text-xs font-semibold text-grey-900">
+                                {parseInt(p.lprice).toLocaleString()}원
+                              </span>
+                              <ExternalLink className="w-3 h-3 text-grey-400 opacity-0 group-hover:opacity-100" />
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

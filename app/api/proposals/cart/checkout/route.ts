@@ -52,6 +52,29 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // 센터별 월간 요청 수 제한 (PDF p13: 센터별 요청 수 제한)
+    const userCenterId = (session.user as any)?.centerId;
+    if (userCenterId) {
+      const MONTHLY_CENTER_LIMIT = 50;
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      // 해당 센터 소속 모든 사용자의 이번 달 요청 수
+      const centerMonthlyCount = await prisma.proposal.count({
+        where: {
+          user: { centerId: userCenterId },
+          createdAt: { gte: startOfMonth },
+        },
+      });
+
+      if (centerMonthlyCount + cartItems.length > MONTHLY_CENTER_LIMIT) {
+        return errors.badRequest(
+          `센터 월간 샘플 요청 한도(${MONTHLY_CENTER_LIMIT}건)를 초과합니다. 현재 ${centerMonthlyCount}건 사용 중`
+        );
+      }
+    }
+
     // Transaction으로 일괄 처리
     const result = await prisma.$transaction(async (tx) => {
       // 각 장바구니 아이템을 Proposal로 생성

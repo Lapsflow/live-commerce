@@ -13,7 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Package, MapPin, ExternalLink, ShoppingCart, ScanLine } from "lucide-react";
+import { CheckCircle, Package, MapPin, ExternalLink, ShoppingCart, ScanLine, Radio } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 import { PriceComparisonCard } from "./PriceComparisonCard";
@@ -57,6 +58,7 @@ export function ProductDetailsModal({
   onClose,
   onProductUpdate,
 }: ProductDetailsModalProps) {
+  const router = useRouter();
   const { data: session } = useSession();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState<number>(1);
@@ -517,6 +519,17 @@ export function ProductDetailsModal({
                     주문 접수
                   </Button>
                 )}
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    onClose();
+                    router.push("/broadcasts/calendar");
+                  }}
+                  className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                >
+                  <Radio className="mr-2 h-4 w-4" />
+                  방송 시작
+                </Button>
                 <Link href={`/admin/products/${product.id}`}>
                   <Button>
                     상세 정보 보기

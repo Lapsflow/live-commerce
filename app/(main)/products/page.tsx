@@ -6,10 +6,12 @@ import type { Product } from "@/types/product";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, Package, FileSpreadsheet } from "lucide-react";
+import { Plus, Package, FileSpreadsheet, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { StockSyncButton } from "./components/stock-sync-button";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 const columns: ColumnDef<Product>[] = [
   {
@@ -89,11 +91,45 @@ const columns: ColumnDef<Product>[] = [
 ];
 
 export default function ProductsPage() {
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role;
+  const userCenterId = (session?.user as any)?.centerId;
+  const canResetStock = ["MASTER", "SUB_MASTER", "ADMIN"].includes(userRole);
+
   const [productTypeFilter, setProductTypeFilter] = useState<"ALL" | "HEADQUARTERS" | "CENTER">("ALL");
+  const [resetting, setResetting] = useState(false);
   const apiPath = productTypeFilter === "ALL"
     ? "/api/products"
     : `/api/products?productType=${productTypeFilter}`;
   const { dataSource, refresh } = useApiCrud<Product>(apiPath);
+
+  const handleResetStock = async () => {
+    if (!userCenterId) {
+      toast.error("센터가 지정되지 않았습니다");
+      return;
+    }
+    if (!confirm("해당 센터의 모든 상품 재고를 0으로 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.")) return;
+
+    setResetting(true);
+    try {
+      const res = await fetch("/api/products/reset-stock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ centerId: userCenterId }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.data?.message || "재고가 초기화되었습니다");
+        refresh();
+      } else {
+        toast.error(data.error?.message || "재고 초기화 실패");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다");
+    } finally {
+      setResetting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -106,6 +142,17 @@ export default function ProductsPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          {canResetStock && userCenterId && (
+            <Button
+              variant="outline"
+              onClick={handleResetStock}
+              disabled={resetting}
+              className="text-red-600 border-red-300 hover:bg-red-50"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              {resetting ? "초기화 중..." : "재고 초기화"}
+            </Button>
+          )}
           <Link href="/products/upload">
             <Button variant="outline">
               <FileSpreadsheet className="mr-2 h-4 w-4" />
