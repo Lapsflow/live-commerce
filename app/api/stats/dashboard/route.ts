@@ -105,21 +105,26 @@ export async function GET(req: NextRequest) {
       take: 10,
     });
 
-    // 셀러 정보 조회
+    // 셀러 정보 조회 (담당 관리자 포함)
     const sellerIds = sellerRankingRaw.map((item) => item.sellerId);
     const sellers = await prisma.user.findMany({
       where: { id: { in: sellerIds } },
-      select: { id: true, name: true },
+      select: { id: true, name: true, adminId: true, admin: { select: { name: true } } },
     });
 
-    const sellerMap = new Map(sellers.map((s) => [s.id, s.name]));
+    const sellerMap = new Map(sellers.map((s) => [s.id, s]));
 
-    const sellerRanking = sellerRankingRaw.map((item) => ({
-      sellerId: item.sellerId,
-      sellerName: sellerMap.get(item.sellerId) || "알 수 없음",
-      totalSales: item._sum.totalPrice || 0,
-      count: item._count,
-    }));
+    const sellerRanking = sellerRankingRaw.map((item) => {
+      const seller = sellerMap.get(item.sellerId);
+      return {
+        sellerId: item.sellerId,
+        sellerName: seller?.name || "알 수 없음",
+        adminId: seller?.adminId || null,
+        adminName: seller?.admin?.name || null,
+        totalSales: item._sum.totalPrice || 0,
+        count: item._count,
+      };
+    });
 
     // 4. 총 마진 계산 (판매가 - 공급가)
     const salesWithProducts = await prisma.sale.findMany({

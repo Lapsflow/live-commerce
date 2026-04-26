@@ -6,14 +6,15 @@ interface StatCardProps {
   value: string;
   trend?: number;
   icon?: React.ReactNode;
+  onClick?: () => void;
 }
 
-export function StatCard({ label, value, trend, icon }: StatCardProps) {
+export function StatCard({ label, value, trend, icon, onClick }: StatCardProps) {
   const isPositive = trend && trend > 0;
   const isNegative = trend && trend < 0;
 
   return (
-    <Card className="p-6">
+    <Card className={`p-6${onClick ? " cursor-pointer hover:shadow-md transition-shadow" : ""}`} onClick={onClick}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-muted-foreground">{label}</p>

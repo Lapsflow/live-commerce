@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { SalesChart } from "@/components/dashboard/sales-chart";
 import { RankingTable } from "@/components/dashboard/ranking-table";
 import { RecommendedProductsCard } from "@/components/dashboard/recommended-products-card";
+import { DrilldownModal } from "@/components/dashboard/drilldown-modal";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import {
   TrendingUpIcon,
@@ -31,6 +32,8 @@ interface DashboardStats {
   sellerRanking: Array<{
     sellerId: string;
     sellerName: string;
+    adminId?: string | null;
+    adminName?: string | null;
     totalSales: number;
     count: number;
   }>;
@@ -55,6 +58,8 @@ export default function DashboardPage() {
   const [onewmsStats, setOnewmsStats] = useState<OnewmsStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [adminFilter, setAdminFilter] = useState<string>("all");
+  const [drilldownType, setDrilldownType] = useState<"sales" | "count" | "avgPrice" | "margin" | null>(null);
 
   // 날짜 범위 상태 (기본: 최근 30일)
   const defaultTo = new Date().toISOString().split("T")[0];
@@ -90,6 +95,23 @@ export default function DashboardPage() {
     setFromDate(newFrom);
     setToDate(newTo);
   };
+
+  // 관리자 목록 추출 (셀러 랭킹에서)
+  const adminOptions = useMemo(() => {
+    if (!stats) return [];
+    const map = new Map<string, string>();
+    for (const s of stats.sellerRanking) {
+      if (s.adminId && s.adminName) map.set(s.adminId, s.adminName);
+    }
+    return Array.from(map, ([id, name]) => ({ id, name }));
+  }, [stats]);
+
+  // 관리자 필터 적용된 랭킹
+  const filteredRanking = useMemo(() => {
+    if (!stats) return [];
+    if (adminFilter === "all") return stats.sellerRanking;
+    return stats.sellerRanking.filter((s) => s.adminId === adminFilter);
+  }, [stats, adminFilter]);
 
   if (loading) {
     return (
@@ -138,22 +160,26 @@ export default function DashboardPage() {
           value={`${stats.totalSales.toLocaleString()}원`}
           trend={stats.salesTrend}
           icon={<DollarSignIcon className="h-8 w-8" />}
+          onClick={() => setDrilldownType("sales")}
         />
         <StatCard
           label="판매 건수"
           value={`${stats.totalCount.toLocaleString()}건`}
           trend={stats.countTrend}
           icon={<ShoppingCartIcon className="h-8 w-8" />}
+          onClick={() => setDrilldownType("count")}
         />
         <StatCard
           label="평균 단가"
           value={`${stats.avgPrice.toLocaleString()}원`}
           icon={<TrendingUpIcon className="h-8 w-8" />}
+          onClick={() => setDrilldownType("avgPrice")}
         />
         <StatCard
           label="총 마진"
           value={`${stats.totalMargin.toLocaleString()}원`}
           icon={<PercentIcon className="h-8 w-8" />}
+          onClick={() => setDrilldownType("margin")}
         />
       </div>
 
@@ -174,8 +200,24 @@ export default function DashboardPage() {
         <RecommendedProductsCard sellerId={userId} />
       ) : (
         <Card className="p-6">
-          <h2 className="text-xl font-bold mb-4">셀러 랭킹 (Top 10)</h2>
-          <RankingTable data={stats.sellerRanking} />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">셀러 랭킹 (Top 10)</h2>
+            {adminOptions.length > 0 && (
+              <select
+                value={adminFilter}
+                onChange={(e) => setAdminFilter(e.target.value)}
+                className="border rounded-md px-3 py-1.5 text-sm bg-background"
+              >
+                <option value="all">전체 관리자</option>
+                {adminOptions.map((admin) => (
+                  <option key={admin.id} value={admin.id}>
+                    {admin.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+          <RankingTable data={filteredRanking} />
         </Card>
       )}
 
@@ -221,6 +263,15 @@ export default function DashboardPage() {
           )}
         </Card>
       )}
+
+      {/* 드릴다운 모달 */}
+      <DrilldownModal
+        open={drilldownType !== null}
+        onClose={() => setDrilldownType(null)}
+        type={drilldownType}
+        fromDate={fromDate}
+        toDate={toDate}
+      />
     </div>
   );
 }
