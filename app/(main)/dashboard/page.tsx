@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { SalesChart } from "@/components/dashboard/sales-chart";
 import { RankingTable } from "@/components/dashboard/ranking-table";
 import { RecommendedProductsCard } from "@/components/dashboard/recommended-products-card";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
 import {
   TrendingUpIcon,
   ShoppingCartIcon,
@@ -55,9 +56,17 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  // 날짜 범위 상태 (기본: 최근 30일)
+  const defaultTo = new Date().toISOString().split("T")[0];
+  const defaultFrom = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+  const [fromDate, setFromDate] = useState(defaultFrom);
+  const [toDate, setToDate] = useState(defaultTo);
+
+  const fetchDashboard = useCallback(() => {
+    setLoading(true);
+    setError(null);
     Promise.all([
-      fetch("/api/stats/dashboard").then((res) => res.ok ? res.json() : Promise.reject()),
+      fetch(`/api/stats/dashboard?fromDate=${fromDate}&toDate=${toDate}`).then((res) => res.ok ? res.json() : Promise.reject()),
       fetch("/api/onewms/stats").then((res) => res.ok ? res.json() : Promise.reject()).catch(() => null)
     ])
       .then(([dashboardData, onewmsData]) => {
@@ -71,7 +80,16 @@ export default function DashboardPage() {
         setError(err.message || "Failed to fetch dashboard stats");
         setLoading(false);
       });
-  }, []);
+  }, [fromDate, toDate]);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, [fetchDashboard]);
+
+  const handleDateChange = (newFrom: string, newTo: string) => {
+    setFromDate(newFrom);
+    setToDate(newTo);
+  };
 
   if (loading) {
     return (
@@ -104,7 +122,14 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <h1 className="text-3xl font-bold">통계 대시보드</h1>
+      <div className="flex flex-col gap-4">
+        <h1 className="text-3xl font-bold">통계 대시보드</h1>
+        <DateRangePicker
+          fromDate={fromDate}
+          toDate={toDate}
+          onDateChange={handleDateChange}
+        />
+      </div>
 
       {/* KPI 카드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -134,7 +159,7 @@ export default function DashboardPage() {
 
       {/* 매출 추이 차트 */}
       <Card className="p-6">
-        <h2 className="text-xl font-bold mb-4">일별 매출 추이 (최근 30일)</h2>
+        <h2 className="text-xl font-bold mb-4">일별 매출 추이 ({fromDate} ~ {toDate})</h2>
         {stats.dailySales.length > 0 ? (
           <SalesChart data={stats.dailySales} />
         ) : (

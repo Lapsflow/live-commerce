@@ -17,6 +17,7 @@ import {
   BarChart3,
   UserCheck,
   Shield,
+  Building2,
 } from "lucide-react";
 
 type User = {
@@ -121,6 +122,28 @@ export default function UsersPage() {
     });
   }, [users]);
 
+  // Center groups for center tab
+  const centerGroups = useMemo(() => {
+    const groups: Record<string, { centerName: string; centerCode: string; users: User[] }> = {};
+    const noCenter: User[] = [];
+    for (const u of filterBySearch(users)) {
+      if (u.center) {
+        const key = u.center.code;
+        if (!groups[key]) {
+          groups[key] = { centerName: u.center.name, centerCode: u.center.code, users: [] };
+        }
+        groups[key].users.push(u);
+      } else {
+        noCenter.push(u);
+      }
+    }
+    const sorted = Object.values(groups).sort((a, b) => a.centerCode.localeCompare(b.centerCode));
+    if (noCenter.length > 0) {
+      sorted.push({ centerName: "미배정", centerCode: "-", users: noCenter });
+    }
+    return sorted;
+  }, [users, searchQuery]);
+
   if (!hasAccess) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -199,6 +222,10 @@ export default function UsersPage() {
               <Shield className="h-4 w-4" />
               관리자 ({users.filter((u) => u.role === "ADMIN").length})
             </TabsTrigger>
+            <TabsTrigger value="centers" className="gap-1.5">
+              <Building2 className="h-4 w-4" />
+              센터
+            </TabsTrigger>
             <TabsTrigger value="dashboard" className="gap-1.5">
               <BarChart3 className="h-4 w-4" />
               관리자 대시보드
@@ -237,6 +264,56 @@ export default function UsersPage() {
               getAdminName={getAdminName}
               allUsers={users}
             />
+          </TabsContent>
+
+          {/* 센터별 탭 */}
+          <TabsContent value="centers">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {centerGroups.length === 0 ? (
+                <Card className="col-span-full p-8 text-center text-grey-500">
+                  검색 결과가 없습니다
+                </Card>
+              ) : (
+                centerGroups.map((group) => (
+                  <Card
+                    key={group.centerCode}
+                    className="p-5 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold text-lg">{group.centerName}</h3>
+                        <span className="text-xs text-grey-500 font-mono">{group.centerCode}</span>
+                      </div>
+                      <span className="text-sm font-semibold text-blue-600">
+                        {group.users.length}명
+                      </span>
+                    </div>
+                    <div className="space-y-1.5">
+                      {group.users.slice(0, 8).map((u) => (
+                        <div
+                          key={u.id}
+                          className="flex items-center justify-between text-sm cursor-pointer hover:bg-grey-50 rounded px-2 py-1"
+                          onClick={() => router.push(`/users/${u.id}`)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-grey-900">{u.name}</span>
+                            <RoleBadge role={u.role} />
+                          </div>
+                          <span className="text-grey-400 text-xs">
+                            {u.avgSales ? `${u.avgSales.toLocaleString()}원` : ""}
+                          </span>
+                        </div>
+                      ))}
+                      {group.users.length > 8 && (
+                        <div className="text-xs text-grey-400 text-center pt-1">
+                          +{group.users.length - 8}명 더
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                ))
+              )}
+            </div>
           </TabsContent>
 
           {/* 관리자 대시보드 */}

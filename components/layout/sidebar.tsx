@@ -17,6 +17,7 @@ import {
   Calendar,
   FileText,
   ClipboardCheck,
+  Building2,
 } from "lucide-react";
 import { useState } from "react";
 import { NavItem } from "./nav-item";
@@ -51,6 +52,7 @@ const menuByRole: Record<string, MenuItem[]> = {
   MASTER: [
     { href: "/dashboard", label: "전체 통계", icon: BarChart },
     { href: "/users", label: "사용자 관리", icon: Users },
+    { href: "/centers", label: "센터 관리", icon: Building2 },
     { href: "/admin/contracts", label: "계약 승인", icon: ClipboardCheck },
     { href: "/orders", label: "발주 관리", icon: ShoppingCart },
     { href: "/broadcasts", label: "방송 관리", icon: Radio },

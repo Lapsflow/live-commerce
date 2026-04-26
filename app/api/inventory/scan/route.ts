@@ -3,6 +3,7 @@ import { z } from "zod";
 import { withRole } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { syncProductStock } from "@/lib/services/onewms/stockSync";
 
 const scanSchema = z.object({
   barcode: z.string().min(1),
@@ -154,6 +155,17 @@ export const POST = withRole(
       return scanLog;
     });
 
+    // ONEWMS 실시간 동기화 (비동기, 논블로킹)
+    let wmsSyncStatus: "triggered" | "skipped" | "no_wms_code" = "skipped";
+    if (scanType !== "LOOKUP" && product.onewmsCode) {
+      wmsSyncStatus = "triggered";
+      syncProductStock(product.id).catch((err) =>
+        console.error("[Scan] ONEWMS sync failed (non-blocking):", err)
+      );
+    } else if (scanType !== "LOOKUP" && !product.onewmsCode) {
+      wmsSyncStatus = "no_wms_code";
+    }
+
     // Fetch updated product with all center stocks
     const updatedProduct = await prisma.product.findUnique({
       where: { id: product.id },
@@ -178,6 +190,7 @@ export const POST = withRole(
       previousStock,
       updatedStock: updatedProduct?.centerStocks.find(s => s.centerId === centerId)?.stock ?? null,
       totalStock: updatedProduct?.totalStock ?? product.totalStock,
+      wmsSync: wmsSyncStatus,
       product: updatedProduct ? {
         id: updatedProduct.id,
         code: updatedProduct.code,
