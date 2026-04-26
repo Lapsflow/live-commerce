@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Lock, Pencil, Trash2, Save, X } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
 interface Product {
@@ -38,6 +39,9 @@ interface Center {
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role;
+  const isMaster = userRole === "MASTER";
   const { update, remove } = useApiCrud("/api/products");
 
   const [productId, setProductId] = useState<string>("");
@@ -288,8 +292,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
           <CardDescription>
             {product.productType === "HEADQUARTERS"
-              ? "본사 WMS 상품은 바코드가 필수이며 가격은 읽기 전용입니다"
-              : "센터 자사몰 상품은 센터별로 관리되며 가격 수정이 가능합니다"}
+              ? "본사 WMS 상품은 바코드가 필수입니다"
+              : "센터 자사몰 상품은 센터별로 관리됩니다"}
+            {!isMaster && " (가격은 마스터만 변경 가능)"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -373,18 +378,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     type="number"
                     value={sellPrice}
                     onChange={(e) => setSellPrice(e.target.value)}
-                    disabled={!isEditing || product.productType === "HEADQUARTERS"}
-                    className={
-                      product.productType === "HEADQUARTERS" ? "bg-grey-100" : ""
-                    }
+                    disabled={!isEditing || !isMaster}
+                    className={!isMaster ? "bg-grey-100" : ""}
                     min="0"
                   />
-                  {product.productType === "HEADQUARTERS" && (
+                  {!isMaster && (
                     <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
-                {product.productType === "HEADQUARTERS" && (
-                  <p className="text-sm text-muted-foreground">WMS 상품은 가격 수정이 불가합니다</p>
+                {!isMaster && (
+                  <p className="text-sm text-muted-foreground">가격은 마스터만 변경 가능합니다</p>
                 )}
               </div>
 
@@ -396,13 +399,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     type="number"
                     value={supplyPrice}
                     onChange={(e) => setSupplyPrice(e.target.value)}
-                    disabled={!isEditing || product.productType === "HEADQUARTERS"}
-                    className={
-                      product.productType === "HEADQUARTERS" ? "bg-grey-100" : ""
-                    }
+                    disabled={!isEditing || !isMaster}
+                    className={!isMaster ? "bg-grey-100" : ""}
                     min="0"
                   />
-                  {product.productType === "HEADQUARTERS" && (
+                  {!isMaster && (
                     <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   )}
                 </div>

@@ -14,7 +14,6 @@ import {
   TrendingUp,
   ShoppingCart,
   Users,
-  Calendar,
 } from "lucide-react";
 
 interface UserStats {
