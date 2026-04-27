@@ -6,6 +6,8 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = 'https://supermujin.ai';
 
 test.describe('ONEWMS Full Import', () => {
+  test.setTimeout(600000); // 10 min for full import (1044 products across 11 pages)
+
   test('Import ALL products (all pages)', async ({ browser }) => {
     const context = await browser.newContext();
     const page = await context.newPage();

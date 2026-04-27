@@ -36,20 +36,16 @@ export default defineConfig({
       testMatch: /auth-seller\.setup\.ts/,
     },
     {
+      name: 'setup-master',
+      testMatch: /auth-master\.setup\.ts/,
+    },
+    {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/admin.json',
       },
-      dependencies: ['setup'],
-    },
-    {
-      name: 'chromium-seller',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/seller.json',
-      },
-      dependencies: ['setup-seller'],
+      dependencies: ['setup', 'setup-seller', 'setup-master'],
     },
   ],
 });

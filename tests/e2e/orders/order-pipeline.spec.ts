@@ -8,10 +8,10 @@ test.describe('Order Pipeline Cards', () => {
 
   test('4개 파이프라인 카드 표시', async ({ page }) => {
     await navigateToOrders(page);
-    await expect(page.getByText('입금대기')).toBeVisible();
-    await expect(page.getByText('입금완료')).toBeVisible();
-    await expect(page.getByText('출고완료')).toBeVisible();
-    await expect(page.getByText('취소/만료')).toBeVisible();
+    await expect(page.getByText('입금대기').first()).toBeVisible();
+    await expect(page.getByText('입금완료').first()).toBeVisible();
+    await expect(page.getByText('출고완료').first()).toBeVisible();
+    await expect(page.getByText('취소/만료').first()).toBeVisible();
   });
 
   test('각 카드에 숫자와 "건" 표시', async ({ page }) => {
@@ -32,7 +32,7 @@ test.describe('Order Pipeline Cards', () => {
     await page.waitForTimeout(2000);
 
     // Check 입금대기 card has correct count
-    const pendingCard = page.locator('text=입금대기').locator('..');
+    const pendingCard = page.locator('text=입금대기').first().locator('..');
     await expect(pendingCard.locator(`text=${stats.pendingUnpaid}`).first()).toBeVisible();
   });
 
@@ -55,7 +55,7 @@ test.describe('Order Pipeline Cards', () => {
     await page.waitForTimeout(2000);
 
     // Click the first pipeline card (입금대기)
-    const card = page.getByText('입금대기').locator('..').locator('..');
+    const card = page.getByText('입금대기').first().locator('..').locator('..');
     await card.click();
 
     // After click, card should have border-2 (active state)
@@ -70,7 +70,7 @@ test.describe('Order Pipeline Cards', () => {
     await page.waitForTimeout(2000);
 
     // Click 출고완료 card
-    const shippedCard = page.getByText('출고완료').locator('..').locator('..');
+    const shippedCard = page.getByText('출고완료').first().locator('..').locator('..');
     await shippedCard.click();
     await page.waitForTimeout(500);
 

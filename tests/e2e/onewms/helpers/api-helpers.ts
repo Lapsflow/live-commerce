@@ -172,12 +172,11 @@ export function parseKoreanDateTime(dateTimeString: string): Date | null {
 export function validateStatsStructure(data: any) {
   const errors: string[] = [];
 
-  // Check top-level structure
-  if (!data.success) errors.push('Missing success field');
+  // Check top-level structure - API uses ok() helper which returns {data: ...}
   if (!data.data) errors.push('Missing data field');
-  if (!data.data.orders) errors.push('Missing data.orders field');
-  if (!data.data.stock) errors.push('Missing data.stock field');
-  if (!data.data.timestamp) errors.push('Missing data.timestamp field');
+  if (!data.data?.orders) errors.push('Missing data.orders field');
+  if (!data.data?.stock) errors.push('Missing data.stock field');
+  if (!data.data?.timestamp) errors.push('Missing data.timestamp field');
 
   // Check orders structure
   if (typeof data.data.orders.total !== 'number') {

@@ -8,6 +8,8 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = 'https://supermujin.ai';
 
 test.describe('ONEWMS Import API', () => {
+  test.setTimeout(120000); // 2 min for API imports
+
   test('POST /api/onewms/products/import - import products page 1', async ({ browser }) => {
     const context = await browser.newContext();
     const page = await context.newPage();

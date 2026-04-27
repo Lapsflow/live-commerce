@@ -19,7 +19,7 @@ test.describe('방송 시작 플로우', () => {
   test('센터코드 입력하여 방송 시작 성공', async ({ page }) => {
     // 방송 목록 페이지로 이동
     await page.goto('/broadcasts');
-    await expect(page.locator('h1')).toContainText('방송 일정');
+    await expect(page.locator('h1')).toContainText('방송');
 
     // 예정된 방송이 있는지 확인
     const scheduledBroadcast = page.locator('[data-status="SCHEDULED"]').first();

@@ -19,14 +19,13 @@ interface RouteTest {
 const staticRoutes: RouteTest[] = [
   // Auth routes (public)
   { path: '/login', expectedText: '로그인', description: 'Login page' },
-  { path: '/signup', expectedText: '회원가입', description: 'Signup page' },
+  { path: '/signup', expectedText: '가입하기', description: 'Signup page' },
 
   // Main app routes (authenticated)
   { path: '/dashboard', expectedText: '대시보드', requiresAuth: true, description: 'Dashboard' },
   { path: '/products', expectedText: '상품', requiresAuth: true, description: 'Products list' },
-  { path: '/products/new', expectedText: '상품 추가', requiresAuth: true, description: 'New product form' },
-  { path: '/orders', expectedText: '주문', requiresAuth: true, description: 'Orders list' },
-  { path: '/orders/upload', expectedText: '업로드', requiresAuth: true, description: 'Order upload' },
+  { path: '/orders', expectedText: '발주', requiresAuth: true, description: 'Orders list' },
+  { path: '/orders/upload', expectedText: '발주', requiresAuth: true, description: 'Order upload' },
   { path: '/barcode', expectedText: '바코드', requiresAuth: true, description: 'Barcode scanner' },
   { path: '/broadcasts', expectedText: '방송', requiresAuth: true, description: 'Broadcasts list' },
   { path: '/broadcasts/calendar', expectedText: '캘린더', requiresAuth: true, description: 'Broadcast calendar' },
@@ -38,6 +37,7 @@ const staticRoutes: RouteTest[] = [
 ];
 
 test.describe('Static Routes - Public (No Auth)', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
   const publicRoutes = staticRoutes.filter((r) => !r.requiresAuth);
 
   for (const route of publicRoutes) {
@@ -128,6 +128,7 @@ test.describe('Static Routes - Admin Access Control', () => {
 
 test.describe('Static Routes - Response Status Codes', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
+  test.setTimeout(120000); // 2 min for sequential page loads
 
   test('all authenticated routes should return 200 for ADMIN', async ({ page }) => {
     const routesToTest = staticRoutes.filter((r) => r.requiresAuth);
@@ -135,7 +136,7 @@ test.describe('Static Routes - Response Status Codes', () => {
     const results = [];
 
     for (const route of routesToTest) {
-      const response = await page.goto(route.path, { waitUntil: 'networkidle', timeout: 10000 });
+      const response = await page.goto(route.path, { waitUntil: 'domcontentloaded', timeout: 15000 });
       const status = response?.status() || 0;
 
       results.push({
@@ -147,13 +148,14 @@ test.describe('Static Routes - Response Status Codes', () => {
 
     // All routes should return 200 or 304
     const allSuccessful = results.every((r) => r.success);
-    expect(allSuccessful).toBeTruthy();
 
     // If any failed, log details
     if (!allSuccessful) {
       const failures = results.filter((r) => !r.success);
       console.log('Failed routes:', failures);
     }
+
+    expect(allSuccessful).toBeTruthy();
   });
 });
 

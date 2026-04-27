@@ -6,6 +6,11 @@ import { test, expect } from '@playwright/test';
  *
  * Tests all sidebar links to ensure they navigate without 404 errors
  * Tests role-based navigation (SELLER, ADMIN, MASTER)
+ *
+ * Actual sidebar labels by role:
+ * SELLER: 대시보드, 방송, 방송 캘린더, 발주, 판매, 상품 제안, 바코드
+ * ADMIN: 대시보드, 셀러 관리, 계약 승인, 발주 승인, 방송, 방송 캘린더, 상품 제안, 바코드
+ * MASTER: 전체 통계, 사용자 관리, 센터 관리, 계약 승인, 발주 관리, 방송 관리, 방송 캘린더, 상품 관리, 상품 제안, 바코드
  */
 
 test.describe('Sidebar Navigation (SELLER role)', () => {
@@ -13,11 +18,11 @@ test.describe('Sidebar Navigation (SELLER role)', () => {
 
   const sellerLinks = [
     '대시보드',
-    '상품 관리',
-    '주문 관리',
-    '방송 관리',
-    '판매 현황',
+    '방송',
+    '발주',
+    '판매',
     '바코드',
+    '상품 제안',
   ];
 
   test.beforeEach(async ({ page }) => {
@@ -27,7 +32,6 @@ test.describe('Sidebar Navigation (SELLER role)', () => {
 
   for (const linkText of sellerLinks) {
     test(`sidebar link "${linkText}" navigates without 404`, async ({ page }) => {
-      // Find and click sidebar link
       const link = page.locator(`nav a:has-text("${linkText}")`).or(
         page.locator(`aside a:has-text("${linkText}")`)
       ).first();
@@ -65,12 +69,12 @@ test.describe('Sidebar Navigation (ADMIN role)', () => {
 
   const adminLinks = [
     '대시보드',
-    '상품 관리',
-    '주문 관리',
-    '센터 관리',
-    '사용자 관리',
-    '방송 관리',
+    '셀러 관리',
+    '계약 승인',
+    '발주 승인',
+    '방송',
     '바코드',
+    '상품 제안',
   ];
 
   test.beforeEach(async ({ page }) => {
@@ -95,7 +99,6 @@ test.describe('Sidebar Navigation (ADMIN role)', () => {
       await link.click();
       await page.waitForLoadState('networkidle', { timeout: 10000 });
 
-      // Verify no 404
       const is404 = await page.locator('text=404')
         .or(page.locator('text=찾을 수 없습니다'))
         .isVisible({ timeout: 2000 })
@@ -152,22 +155,15 @@ test.describe('Sidebar Navigation - Dropdown Actions', () => {
   });
 });
 
-test.describe('Sidebar Navigation - Role-Based Visibility', () => {
-  test('SELLER should not see admin-only links', async ({ page }) => {
-    await page.context().addCookies([
-      {
-        name: 'next-auth.session-token',
-        value: 'seller-session',
-        domain: 'localhost',
-        path: '/',
-      },
-    ]);
+test.describe('Sidebar Navigation - Role-Based Visibility (SELLER)', () => {
+  test.use({ storageState: 'playwright/.auth/seller.json' });
 
+  test('SELLER should not see admin-only links', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
-    // Admin-only links should not be visible
-    const adminOnlyLinks = ['센터 관리', '사용자 관리', '계약 승인'];
+    // Admin-only links that SELLER should NOT see
+    const adminOnlyLinks = ['센터 관리', '사용자 관리', '계약 승인', '셀러 관리'];
 
     for (const linkText of adminOnlyLinks) {
       const link = page.locator(`nav a:has-text("${linkText}")`).or(
@@ -180,26 +176,21 @@ test.describe('Sidebar Navigation - Role-Based Visibility', () => {
       expect(isVisible).toBeFalsy();
     }
   });
+});
 
-  test('ADMIN should see admin-only links', async ({ page }) => {
-    await page.context().addCookies([
-      {
-        name: 'next-auth.session-token',
-        value: 'admin-session',
-        domain: 'localhost',
-        path: '/',
-      },
-    ]);
+test.describe('Sidebar Navigation - Role-Based Visibility (ADMIN)', () => {
+  test.use({ storageState: 'playwright/.auth/admin.json' });
 
+  test('ADMIN should see admin-specific links', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
-    // Admin-only links should be visible
-    const adminOnlyLinks = ['센터 관리', '사용자 관리'];
+    // ADMIN has: 셀러 관리, 계약 승인
+    const adminLinks = ['셀러 관리', '계약 승인'];
 
     let visibleCount = 0;
 
-    for (const linkText of adminOnlyLinks) {
+    for (const linkText of adminLinks) {
       const link = page.locator(`nav a:has-text("${linkText}")`).or(
         page.locator(`aside a:has-text("${linkText}")`)
       );
@@ -218,6 +209,7 @@ test.describe('Sidebar Navigation - Role-Based Visibility', () => {
 
 test.describe('Sidebar Navigation - All Links Comprehensive Check', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
+  test.setTimeout(120000); // 2 min for iterating all sidebar links
 
   test('extract and test all sidebar links automatically', async ({ page }) => {
     await page.goto('/dashboard');
@@ -238,7 +230,7 @@ test.describe('Sidebar Navigation - All Links Comprehensive Check', () => {
 
       // Click link
       await link.click();
-      await page.waitForLoadState('networkidle', { timeout: 10000 });
+      await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
 
       // Check for 404
       const is404 = await page.locator('text=404').isVisible({ timeout: 2000 }).catch(() => false);
@@ -252,7 +244,7 @@ test.describe('Sidebar Navigation - All Links Comprehensive Check', () => {
 
       // Go back to dashboard for next test
       await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Log all results

@@ -60,7 +60,7 @@ test.describe('Order List Page - Admin', () => {
   test.describe('데이터 테이블', () => {
     test('테이블 컬럼 헤더 표시', async ({ page }) => {
       await navigateToOrders(page);
-      const headers = ['주문번호', '판매자', '입금상태', '남은시간', '출고상태', '승인상태', '총금액', '등록일', '액션'];
+      const headers = ['주문번호', '판매자', '입금상태', '남은시간', '출고상태', '승인상태', '공급가합계', '등록일', '액션'];
       for (const header of headers) {
         await expect(page.locator('th, [role="columnheader"]').filter({ hasText: header }).first()).toBeVisible();
       }

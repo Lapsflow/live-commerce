@@ -1,13 +1,12 @@
 import { Page } from '@playwright/test';
 
 export async function mockOnewmsAPIs(page: Page) {
-  // Mock stats API
+  // Mock stats API (matches ok() response format: {data: ...})
   await page.route('**/api/onewms/stats', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        success: true,
         data: {
           orders: {
             total: 156,
@@ -32,7 +31,6 @@ export async function mockOnewmsAPIs(page: Page) {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        success: true,
         data: [],
         count: 0,
       }),
@@ -45,7 +43,6 @@ export async function mockOnewmsAPIs(page: Page) {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        success: true,
         data: [],
       }),
     });

@@ -15,15 +15,7 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('샘플 쇼핑몰 플로우', () => {
-  test.beforeEach(async ({ page }) => {
-    // 로그인
-    await page.goto('/auth/signin');
-    await page.fill('input[name="email"]', process.env.TEST_SELLER_EMAIL || 'seller@test.com');
-    await page.fill('input[name="password"]', process.env.TEST_SELLER_PASSWORD || 'password123');
-    await page.click('button[type="submit"]');
-
-    await page.waitForURL('/dashboard', { timeout: 10000 });
-  });
+  test.use({ storageState: 'playwright/.auth/seller.json' });
 
   test('샘플 상품 검색 및 장바구니 담기', async ({ page }) => {
     // 샘플 쇼핑몰 페이지로 이동

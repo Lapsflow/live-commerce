@@ -8,7 +8,7 @@
  * not in browser context.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../../../lib/generated/prisma/client';
 
 // Singleton Prisma client for test environment
 let prisma: PrismaClient | null = null;

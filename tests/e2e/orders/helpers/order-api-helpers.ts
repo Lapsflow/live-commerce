@@ -26,21 +26,24 @@ export class OrderApiHelper {
 
   async getOrder(orderId: string) {
     const response = await this.request.get(`/api/orders/${orderId}`);
-    return { response, data: await response.json() };
+    const data = response.ok() ? await response.json().catch(() => null) : null;
+    return { response, data };
   }
 
   async confirmPayment(orderId: string) {
     const response = await this.request.post(`/api/orders/${orderId}/confirm-payment`, {
       headers: POST_HEADERS,
     });
-    return { response, data: await response.json() };
+    const data = await response.json().catch(() => null);
+    return { response, data };
   }
 
   async cancelOrder(orderId: string) {
     const response = await this.request.post(`/api/orders/${orderId}/cancel`, {
       headers: POST_HEADERS,
     });
-    return { response, data: await response.json() };
+    const data = await response.json().catch(() => null);
+    return { response, data };
   }
 
   async exportOrders(type: 'wms' | 'center') {

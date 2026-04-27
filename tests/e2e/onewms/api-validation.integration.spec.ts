@@ -27,8 +27,7 @@ test.describe('ONEWMS API Integration - Connectivity @integration', () => {
     // Fetch stats
     const response = await api.getStats();
 
-    // Verify success
-    expect(response.success).toBe(true);
+    // API uses ok() helper which returns {data: ...} (no success field)
     expect(response.data).toBeDefined();
 
     // Verify it's NOT mocked data
@@ -36,9 +35,9 @@ test.describe('ONEWMS API Integration - Connectivity @integration', () => {
     expect(isReal).toBe(true);
 
     console.log('✅ Real ONEWMS data received:');
-    console.log(`   Total orders: ${response.data.orders.total}`);
-    console.log(`   Success rate: ${response.data.orders.successRate}%`);
-    console.log(`   Stock conflicts: ${response.data.stock.conflicts}`);
+    console.log(`   Total orders: ${response.data?.orders?.total}`);
+    console.log(`   Success rate: ${response.data?.orders?.successRate}%`);
+    console.log(`   Stock conflicts: ${response.data?.stock?.conflicts}`);
   });
 
   test('I2: Stats response has valid structure', async ({ request }) => {
@@ -72,14 +71,13 @@ test.describe('ONEWMS API Integration - Connectivity @integration', () => {
     expect(isRecent).toBe(true);
   });
 
-  test('I3: Unauthorized request returns 401', async ({ request }) => {
-    // Create new request context WITHOUT authentication
-    const unauthRequest = await request.newContext({
-      // No auth cookies
-    });
+  test('I3: Unauthorized request returns 401', async ({ browser }) => {
+    // Create a new browser context WITHOUT authentication
+    const unauthContext = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+    const unauthPage = await unauthContext.newPage();
 
-    // Attempt to fetch stats without auth
-    const response = await unauthRequest.get('/api/onewms/stats');
+    // Attempt to fetch stats without auth via page.request
+    const response = await unauthPage.request.get('/api/onewms/stats');
 
     // Verify 401 Unauthorized
     expect(response.status()).toBe(401);
@@ -87,7 +85,7 @@ test.describe('ONEWMS API Integration - Connectivity @integration', () => {
     const body = await response.json();
     expect(body.error).toBeDefined();
 
-    await unauthRequest.dispose();
+    await unauthContext.close();
   });
 
   test('I4: Environment variables are loaded', async () => {

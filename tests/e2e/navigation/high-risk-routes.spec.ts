@@ -149,10 +149,7 @@ test.describe('High-Risk Routes Investigation', () => {
   });
 
   test('investigate /admin/centers/new (ADMIN)', async ({ page }) => {
-    // Switch to admin auth
-    await page.context().addCookies([
-      { name: 'next-auth.session-token', value: 'admin-token', domain: 'localhost', path: '/' },
-    ]);
+    // Uses seller auth from describe block - admin center pages may redirect
 
     console.log('\n========== INVESTIGATING /admin/centers/new ==========');
 

@@ -1,0 +1,35 @@
+{
+  "cookies": [
+    {
+      "name": "__Host-authjs.csrf-token",
+      "value": "c6106cdb434ed34c5838198007f8550690ef960f7923dd71f86797b8e2d8dbd6%7Cd72cca75df5488868b4e42c21760b3491c638c6780c995ad7b1e67afac8d3c91",
+      "domain": "live-commerce-opal.vercel.app",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__Secure-authjs.callback-url",
+      "value": "https%3A%2F%2Flive-commerce-opal.vercel.app%2Flogin",
+      "domain": "live-commerce-opal.vercel.app",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__Secure-authjs.session-token",
+      "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoibV9FU2M5bVdYY3k1QVA3TFczUjk0bE4zakNYVldtVGNtRHkzczl4c2tKdElKcWFoZmd0QmgwanVNSGZfNHZmbVdaNF9kNDJUOUVaN09YT1dVTTZVR3cifQ..2KJIOMLfHnryWmfOz9V5xQ.s8cyPwfHbTHQyD3Uu3fXIZQWzKmDQRuQk5amFLVcB912Di9jJMo9z_6AejGY5CUXG6RVM698r0FlRQuUxbNEyK4g3a947gtB8Rzdn_xozpejXkXbfIGNnNwd9QwO66zIjGpSpp_cuoFooRv7pOdlnnI8y87EUD8leDnFy706LMwFyzyHrQkaZXpc5UF_-1Eal98ptNWz2CpjuJ3OyCdDfXm3DXAX3texY8xZvQC8T17evJFEg961kIlpTQ-zUN63lzwP8OK7OVnLbkcjFa9DxK1XBp7lsI62HO_CE3vXmwBOa0GxPfCU1PG7C3egbmUW.2MRn3MqL7DhkBoV9FLaBjGy3G3SXzKcTSj4BIPvePZw",
+      "domain": "live-commerce-opal.vercel.app",
+      "path": "/",
+      "expires": 1777318966.041473,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}
