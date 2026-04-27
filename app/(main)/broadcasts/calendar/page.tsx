@@ -121,7 +121,7 @@ export default function BroadcastCalendarPage() {
         : new Date(start.getTime() + 2 * 60 * 60 * 1000);
       return {
         id: b.id,
-        title: `${b.code} - ${platformLabels[b.platform] || b.platform}`,
+        title: `${b.seller.name} - ${platformLabels[b.platform] || b.platform}`,
         start,
         end,
         resource: {

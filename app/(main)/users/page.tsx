@@ -19,6 +19,7 @@ import {
   Shield,
   Building2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 type User = {
   id: string;
@@ -29,6 +30,7 @@ type User = {
   adminId: string | null;
   channels: string[];
   avgSales: number | null;
+  isActive: boolean;
   createdAt: string;
   center?: { name: string; code: string } | null;
   admin?: { name: string } | null;
@@ -73,6 +75,27 @@ export default function UsersPage() {
   const handleEditUser = (user: User) => {
     setEditingUser(user);
     setEditDialogOpen(true);
+  };
+
+  const handleToggleActive = async (user: User) => {
+    const newActive = !user.isActive;
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: newActive }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error?.message || "상태 변경 실패");
+      }
+      setUsers((prev) =>
+        prev.map((u) => (u.id === user.id ? { ...u, isActive: newActive } : u))
+      );
+      toast.success(newActive ? "계정이 활성화되었습니다" : "계정이 비활성화되었습니다");
+    } catch (err: any) {
+      toast.error(err.message || "상태 변경 중 오류가 발생했습니다");
+    }
   };
 
   const adminList = useMemo(
@@ -236,10 +259,11 @@ export default function UsersPage() {
           <TabsContent value="all">
             <UserTable
               users={allUsers}
-              columns={["name", "email", "phone", "role", "channels", "avgSales", "createdAt"]}
+              columns={["name", "email", "phone", "role", "isActive", "channels", "avgSales", "createdAt"]}
               onEdit={handleEditUser}
               onRowClick={(user) => router.push(`/users/${user.id}`)}
               getAdminName={getAdminName}
+              onToggleActive={handleToggleActive}
             />
           </TabsContent>
 
@@ -247,10 +271,11 @@ export default function UsersPage() {
           <TabsContent value="sellers">
             <UserTable
               users={sellers}
-              columns={["name", "phone", "admin", "channels", "avgSales", "createdAt"]}
+              columns={["name", "phone", "admin", "isActive", "channels", "avgSales", "createdAt"]}
               onEdit={handleEditUser}
               onRowClick={(user) => router.push(`/users/${user.id}`)}
               getAdminName={getAdminName}
+              onToggleActive={handleToggleActive}
             />
           </TabsContent>
 
@@ -258,11 +283,12 @@ export default function UsersPage() {
           <TabsContent value="admins">
             <UserTable
               users={admins}
-              columns={["name", "email", "phone", "sellerCount", "createdAt"]}
+              columns={["name", "email", "phone", "isActive", "sellerCount", "createdAt"]}
               onEdit={handleEditUser}
               onRowClick={(user) => router.push(`/users/${user.id}`)}
               getAdminName={getAdminName}
               allUsers={users}
+              onToggleActive={handleToggleActive}
             />
           </TabsContent>
 
@@ -404,9 +430,10 @@ type ColumnKey =
   | "channels"
   | "avgSales"
   | "sellerCount"
+  | "isActive"
   | "createdAt";
 
-const columnConfig: Record<ColumnKey, { label: string; align?: "right" }> = {
+const columnConfig: Record<ColumnKey, { label: string; align?: "right" | "center" }> = {
   name: { label: "이름" },
   email: { label: "이메일" },
   phone: { label: "전화번호" },
@@ -415,6 +442,7 @@ const columnConfig: Record<ColumnKey, { label: string; align?: "right" }> = {
   channels: { label: "활동 채널" },
   avgSales: { label: "평균 매출", align: "right" },
   sellerCount: { label: "관리 셀러", align: "right" },
+  isActive: { label: "상태", align: "center" },
   createdAt: { label: "가입일" },
 };
 
@@ -425,6 +453,7 @@ function UserTable({
   onRowClick,
   getAdminName,
   allUsers,
+  onToggleActive,
 }: {
   users: User[];
   columns: ColumnKey[];
@@ -432,6 +461,7 @@ function UserTable({
   onRowClick: (user: User) => void;
   getAdminName: (adminId: string | null) => string;
   allUsers?: User[];
+  onToggleActive?: (user: User) => void;
 }) {
   const getSellerCount = (userId: string) =>
     (allUsers || []).filter((u) => u.adminId === userId).length;
@@ -446,7 +476,7 @@ function UserTable({
                 <th
                   key={col}
                   className={`px-4 py-3 text-xs font-medium text-grey-500 uppercase ${
-                    columnConfig[col].align === "right" ? "text-right" : "text-left"
+                    columnConfig[col].align === "right" ? "text-right" : columnConfig[col].align === "center" ? "text-center" : "text-left"
                   }`}
                 >
                   {columnConfig[col].label}
@@ -480,7 +510,9 @@ function UserTable({
                       className={`px-4 py-3 text-sm ${
                         columnConfig[col].align === "right"
                           ? "text-right"
-                          : "text-left"
+                          : columnConfig[col].align === "center"
+                            ? "text-center"
+                            : "text-left"
                       } ${col === "name" ? "font-medium text-blue-600" : "text-grey-600"}`}
                     >
                       {col === "name" && user.name}
@@ -496,6 +528,21 @@ function UserTable({
                         (user.avgSales
                           ? `${user.avgSales.toLocaleString()}원`
                           : "-")}
+                      {col === "isActive" && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleActive?.(user);
+                          }}
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                            user.isActive
+                              ? "bg-green-100 text-green-700 hover:bg-green-200"
+                              : "bg-red-100 text-red-700 hover:bg-red-200"
+                          } transition-colors`}
+                        >
+                          {user.isActive ? "활성" : "비활성"}
+                        </button>
+                      )}
                       {col === "sellerCount" && (
                         <span className="font-semibold">
                           {getSellerCount(user.id)}명

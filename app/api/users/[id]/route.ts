@@ -12,6 +12,7 @@ const userUpdateSchema = z.object({
   adminId: z.string().nullable().optional(),
   channels: z.array(z.string()).optional(),
   avgSales: z.number().nullable().optional(),
+  isActive: z.boolean().optional(),
 });
 
 /**
@@ -40,6 +41,7 @@ export const GET = withRole(
           adminId: true,
           channels: true,
           avgSales: true,
+          isActive: true,
           createdAt: true,
         },
       });
@@ -98,6 +100,7 @@ export const PUT = withRole(
           ...(data.adminId !== undefined && { adminId: data.adminId }),
           ...(data.channels !== undefined && { channels: data.channels }),
           ...(data.avgSales !== undefined && { avgSales: data.avgSales }),
+          ...(data.isActive !== undefined && { isActive: data.isActive }),
         },
         select: {
           id: true,
@@ -108,6 +111,7 @@ export const PUT = withRole(
           adminId: true,
           channels: true,
           avgSales: true,
+          isActive: true,
           createdAt: true,
         },
       });

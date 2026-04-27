@@ -77,10 +77,20 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
       prisma.order.count({ where }),
     ]);
 
-    return paginated(orders, total, pageSize);
+    // null-safe: 삭제된 seller/product 처리
+    const safeOrders = orders.map((order) => ({
+      ...order,
+      seller: order.seller ?? { id: "", name: "삭제된 사용자", email: "" },
+      items: order.items.map((item) => ({
+        ...item,
+        product: item.product ?? { id: "", name: "삭제된 상품", productType: "HEADQUARTERS" as const },
+      })),
+    }));
+
+    return paginated(safeOrders, total, pageSize);
   } catch (err: any) {
-    console.error("[ORDERS GET ERROR]", err);
-    return error("FETCH_FAILED", err.message, 500);
+    console.error("[ORDERS GET ERROR]", err?.message, err?.stack);
+    return error("FETCH_FAILED", err?.message || "주문 목록 조회 실패", 500);
   }
 });
 

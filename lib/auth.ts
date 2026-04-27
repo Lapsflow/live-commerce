@@ -81,6 +81,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
         }
 
+        // isActive 체크 (비활성 계정 로그인 차단)
+        if (user.isActive === false) {
+          securityLogger.authFailed({
+            reason: "account_deactivated",
+            username,
+          });
+          throw new Error("ACCOUNT_DEACTIVATED");
+        }
+
         // Phase 1: Contract status validation for SELLER role
         if (user.role === "SELLER") {
           if (user.contractStatus === "PENDING") {

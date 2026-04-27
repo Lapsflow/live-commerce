@@ -3640,6 +3640,7 @@ export namespace Prisma {
     contractApprovedAt: Date | null
     contractApprovedBy: string | null
     contractRejectionReason: string | null
+    isActive: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -3659,6 +3660,7 @@ export namespace Prisma {
     contractApprovedAt: Date | null
     contractApprovedBy: string | null
     contractRejectionReason: string | null
+    isActive: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -3682,6 +3684,7 @@ export namespace Prisma {
     contractApprovedAt: number
     contractApprovedBy: number
     contractRejectionReason: number
+    isActive: number
     _all: number
   }
 
@@ -3711,6 +3714,7 @@ export namespace Prisma {
     contractApprovedAt?: true
     contractApprovedBy?: true
     contractRejectionReason?: true
+    isActive?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -3730,6 +3734,7 @@ export namespace Prisma {
     contractApprovedAt?: true
     contractApprovedBy?: true
     contractRejectionReason?: true
+    isActive?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -3753,6 +3758,7 @@ export namespace Prisma {
     contractApprovedAt?: true
     contractApprovedBy?: true
     contractRejectionReason?: true
+    isActive?: true
     _all?: true
   }
 
@@ -3863,6 +3869,7 @@ export namespace Prisma {
     contractApprovedAt: Date | null
     contractApprovedBy: string | null
     contractRejectionReason: string | null
+    isActive: boolean
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -3905,6 +3912,7 @@ export namespace Prisma {
     contractApprovedAt?: boolean
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
+    isActive?: boolean
     admin?: boolean | User$adminArgs<ExtArgs>
     sellers?: boolean | User$sellersArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
@@ -3940,6 +3948,7 @@ export namespace Prisma {
     contractApprovedAt?: boolean
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
+    isActive?: boolean
     admin?: boolean | User$adminArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -3965,6 +3974,7 @@ export namespace Prisma {
     contractApprovedAt?: boolean
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
+    isActive?: boolean
     admin?: boolean | User$adminArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -3990,9 +4000,10 @@ export namespace Prisma {
     contractApprovedAt?: boolean
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
+    isActive?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "adminId" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "adminId" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason" | "isActive", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | User$adminArgs<ExtArgs>
     sellers?: boolean | User$sellersArgs<ExtArgs>
@@ -4052,6 +4063,7 @@ export namespace Prisma {
       contractApprovedAt: Date | null
       contractApprovedBy: string | null
       contractRejectionReason: string | null
+      isActive: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -4506,6 +4518,7 @@ export namespace Prisma {
     readonly contractApprovedAt: FieldRef<"User", 'DateTime'>
     readonly contractApprovedBy: FieldRef<"User", 'String'>
     readonly contractRejectionReason: FieldRef<"User", 'String'>
+    readonly isActive: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -32970,7 +32983,8 @@ export namespace Prisma {
     contractStatus: 'contractStatus',
     contractApprovedAt: 'contractApprovedAt',
     contractApprovedBy: 'contractApprovedBy',
-    contractRejectionReason: 'contractRejectionReason'
+    contractRejectionReason: 'contractRejectionReason',
+    isActive: 'isActive'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -33494,6 +33508,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'ProductType'
    */
   export type EnumProductTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductType'>
@@ -33504,13 +33525,6 @@ export namespace Prisma {
    * Reference to a field of type 'ProductType[]'
    */
   export type ListEnumProductTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -33709,6 +33723,7 @@ export namespace Prisma {
     contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     sellers?: UserListRelationFilter
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
@@ -33743,6 +33758,7 @@ export namespace Prisma {
     contractApprovedAt?: SortOrderInput | SortOrder
     contractApprovedBy?: SortOrderInput | SortOrder
     contractRejectionReason?: SortOrderInput | SortOrder
+    isActive?: SortOrder
     admin?: UserOrderByWithRelationInput
     sellers?: UserOrderByRelationAggregateInput
     center?: CenterOrderByWithRelationInput
@@ -33780,6 +33796,7 @@ export namespace Prisma {
     contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     sellers?: UserListRelationFilter
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
@@ -33814,6 +33831,7 @@ export namespace Prisma {
     contractApprovedAt?: SortOrderInput | SortOrder
     contractApprovedBy?: SortOrderInput | SortOrder
     contractRejectionReason?: SortOrderInput | SortOrder
+    isActive?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -33845,6 +33863,7 @@ export namespace Prisma {
     contractApprovedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     contractApprovedBy?: StringNullableWithAggregatesFilter<"User"> | string | null
     contractRejectionReason?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isActive?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type ProductWhereInput = {
@@ -35982,6 +36001,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -36016,6 +36036,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -36046,6 +36067,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -36080,6 +36102,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -36112,6 +36135,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -36133,6 +36157,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -36156,6 +36181,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductCreateInput = {
@@ -38589,6 +38615,11 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -38705,6 +38736,7 @@ export namespace Prisma {
     contractApprovedAt?: SortOrder
     contractApprovedBy?: SortOrder
     contractRejectionReason?: SortOrder
+    isActive?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -38728,6 +38760,7 @@ export namespace Prisma {
     contractApprovedAt?: SortOrder
     contractApprovedBy?: SortOrder
     contractRejectionReason?: SortOrder
+    isActive?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -38747,6 +38780,7 @@ export namespace Prisma {
     contractApprovedAt?: SortOrder
     contractApprovedBy?: SortOrder
     contractRejectionReason?: SortOrder
+    isActive?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -38853,6 +38887,14 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -38869,11 +38911,6 @@ export namespace Prisma {
     in?: $Enums.ProductType[] | ListEnumProductTypeFieldRefInput<$PrismaModel>
     notIn?: $Enums.ProductType[] | ListEnumProductTypeFieldRefInput<$PrismaModel>
     not?: NestedEnumProductTypeFilter<$PrismaModel> | $Enums.ProductType
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type EnumSampleCategoryNullableFilter<$PrismaModel = never> = {
@@ -39099,14 +39136,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumProductTypeFilter<$PrismaModel>
     _max?: NestedEnumProductTypeFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type EnumSampleCategoryNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -40747,6 +40776,10 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type UserUpdateOneWithoutSellersNestedInput = {
     create?: XOR<UserCreateWithoutSellersInput, UserUncheckedCreateWithoutSellersInput>
     connectOrCreate?: UserCreateOrConnectWithoutSellersInput
@@ -41183,10 +41216,6 @@ export namespace Prisma {
 
   export type EnumProductTypeFieldUpdateOperationsInput = {
     set?: $Enums.ProductType
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type NullableEnumSampleCategoryFieldUpdateOperationsInput = {
@@ -42724,6 +42753,11 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -42844,16 +42878,19 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedEnumProductTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ProductType | EnumProductTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ProductType[] | ListEnumProductTypeFieldRefInput<$PrismaModel>
     notIn?: $Enums.ProductType[] | ListEnumProductTypeFieldRefInput<$PrismaModel>
     not?: NestedEnumProductTypeFilter<$PrismaModel> | $Enums.ProductType
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedEnumSampleCategoryNullableFilter<$PrismaModel = never> = {
@@ -42905,14 +42942,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumProductTypeFilter<$PrismaModel>
     _max?: NestedEnumProductTypeFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedEnumSampleCategoryNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -43169,6 +43198,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
@@ -43202,6 +43232,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
@@ -43236,6 +43267,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
@@ -43268,6 +43300,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -43734,6 +43767,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
@@ -43767,6 +43801,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
@@ -43817,6 +43852,7 @@ export namespace Prisma {
     contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
   }
 
   export type CenterUpsertWithoutUsersInput = {
@@ -44798,6 +44834,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     orders?: OrderCreateNestedManyWithoutSellerInput
@@ -44830,6 +44867,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -45477,6 +45515,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -45510,6 +45549,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -45715,6 +45755,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -45748,6 +45789,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -45866,6 +45908,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -45899,6 +45942,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
@@ -45933,6 +45977,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -45966,6 +46011,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
@@ -46229,6 +46275,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -46262,6 +46309,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
@@ -46302,6 +46350,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -46335,6 +46384,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
@@ -47177,6 +47227,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -47210,6 +47261,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -47338,6 +47390,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -47371,6 +47424,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -47471,6 +47525,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -47504,6 +47559,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -47671,6 +47727,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -47704,6 +47761,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -47867,6 +47925,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -47900,6 +47959,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -47945,6 +48005,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -47978,6 +48039,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -48007,6 +48069,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -48040,6 +48103,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -48168,6 +48232,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -48201,6 +48266,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -49795,6 +49861,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     admin?: UserCreateNestedOneWithoutSellersInput
     sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
@@ -49828,6 +49895,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
@@ -50005,6 +50073,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
@@ -50038,6 +50107,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -50212,6 +50282,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
   }
 
   export type OrderCreateManySellerInput = {
@@ -50365,6 +50436,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
@@ -50397,6 +50469,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -50428,6 +50501,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderUpdateWithoutSellerInput = {
@@ -51372,6 +51446,7 @@ export namespace Prisma {
     contractApprovedAt?: Date | string | null
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
+    isActive?: boolean
   }
 
   export type ProductCenterStockCreateManyCenterInput = {
@@ -51457,6 +51532,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     admin?: UserUpdateOneWithoutSellersNestedInput
     sellers?: UserUpdateManyWithoutAdminNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
@@ -51489,6 +51565,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
@@ -51520,6 +51597,7 @@ export namespace Prisma {
     contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductCenterStockUpdateWithoutCenterInput = {

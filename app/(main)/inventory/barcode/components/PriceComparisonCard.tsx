@@ -228,6 +228,13 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                             rel="noopener noreferrer"
                             className="flex items-center justify-between p-2 rounded hover:bg-grey-50 transition-colors group"
                           >
+                            {p.image && (
+                              <img
+                                src={p.image}
+                                alt=""
+                                className="w-10 h-10 object-cover rounded shrink-0 mr-2"
+                              />
+                            )}
                             <div className="flex-1 min-w-0 mr-2">
                               <div
                                 className="text-xs font-medium text-grey-900 truncate"

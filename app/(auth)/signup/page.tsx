@@ -45,6 +45,7 @@ export default function SignupPage() {
   // Step 1: 기본 정보
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -147,6 +148,12 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (password !== passwordConfirm) {
+      setError("비밀번호가 일치하지 않습니다.");
+      setLoading(false);
+      return;
+    }
 
     const phoneDigits = phone.replace(/-/g, "");
     if (phoneDigits.length < 10 || phoneDigits.length > 11) {
@@ -318,6 +325,26 @@ export default function SignupPage() {
                 required
                 minLength={8}
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-grey-700 mb-1.5">
+                비밀번호 확인 <span className="text-red">*</span>
+              </label>
+              <Input
+                type="password"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                placeholder="비밀번호를 다시 입력하세요"
+                required
+                minLength={8}
+              />
+              {passwordConfirm && password !== passwordConfirm && (
+                <p className="text-xs text-red mt-1">비밀번호가 일치하지 않습니다</p>
+              )}
+              {passwordConfirm && password === passwordConfirm && (
+                <p className="text-xs text-green-600 mt-1">비밀번호가 일치합니다</p>
+              )}
             </div>
 
             <div>

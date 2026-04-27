@@ -40,6 +40,9 @@ model User {
   contractApprovedBy      String? // Admin user ID
   contractRejectionReason String?
 
+  // ✨ 활성/비활성 토글 (수정 요청 #3)
+  isActive Boolean @default(true)
+
   // Self-referential relation: Admin → Sellers
   admin   User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
   sellers User[] @relation("AdminSellers")

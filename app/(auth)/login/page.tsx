@@ -19,6 +19,7 @@ export default function LoginPage() {
     INVALID_CREDENTIALS: "아이디 또는 비밀번호가 올바르지 않습니다",
     CONTRACT_PENDING: "계약 승인 대기 중입니다. 관리자 승인 후 로그인 가능합니다",
     CONTRACT_REJECTED: "계약이 거절되었습니다. 관리자에게 문의하세요",
+    ACCOUNT_DEACTIVATED: "비활성화된 계정입니다. 관리자에게 문의하세요",
     CredentialsSignin: "아이디 또는 비밀번호가 올바르지 않습니다",
   };
 

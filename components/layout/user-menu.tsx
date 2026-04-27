@@ -1,7 +1,8 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, KeyRound } from "lucide-react";
+import Link from "next/link";
 
 const roleLabels: Record<string, string> = {
   MASTER: "마스터",
@@ -31,6 +32,19 @@ export function UserMenu() {
           <p className="text-xs text-grey-500">{roleLabel}</p>
         </div>
       </div>
+
+      {/* Change Password */}
+      <Link
+        href="/settings"
+        className="
+          flex items-center w-full px-3 py-2 text-sm font-medium
+          text-grey-700 hover:bg-grey-100 hover:text-grey-900
+          rounded-md transition-colors duration-150 ease-in-out
+        "
+      >
+        <KeyRound className="h-5 w-5 mr-3" />
+        비밀번호 변경
+      </Link>
 
       {/* Logout Button */}
       <button

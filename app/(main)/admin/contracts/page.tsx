@@ -33,7 +33,7 @@ export default function AdminContractsPage() {
 
   const fetchPendingContracts = async () => {
     try {
-      const res = await fetch("/api/users?role=SELLER&contractStatus=PENDING");
+      const res = await fetch("/api/admin/contracts");
       const data = await res.json();
       if (data.data) {
         setContracts(data.data);

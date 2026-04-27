@@ -155,6 +155,20 @@ export const POST = withRole(
       return scanLog;
     });
 
+    // LOOKUP 모드에서도 totalStock 정합성 체크 + 자동 보정
+    if (scanType === "LOOKUP") {
+      const allStocks = await prisma.productCenterStock.findMany({
+        where: { productId: product.id },
+      });
+      const calculatedTotal = allStocks.reduce((sum, s) => sum + s.stock, 0);
+      if (calculatedTotal !== product.totalStock) {
+        await prisma.product.update({
+          where: { id: product.id },
+          data: { totalStock: calculatedTotal },
+        });
+      }
+    }
+
     // ONEWMS 실시간 동기화 (비동기, 논블로킹)
     let wmsSyncStatus: "triggered" | "skipped" | "no_wms_code" = "skipped";
     if (scanType !== "LOOKUP" && product.onewmsCode) {
