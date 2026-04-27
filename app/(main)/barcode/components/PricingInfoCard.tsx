@@ -10,6 +10,7 @@ import {
   Minus,
   AlertTriangle,
   RefreshCw,
+  ExternalLink,
 } from "lucide-react";
 import useSWR from "swr";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,13 @@ interface PricingData {
     maxPrice: number;
     avgPrice: number;
     count: number;
+    products?: Array<{
+      title: string;
+      link: string;
+      image: string;
+      lprice: string;
+      mallName: string;
+    }>;
   } | null;
   market: {
     minPrice: number;
@@ -161,6 +169,47 @@ export function PricingInfoCard({ barcode, ourPrice }: PricingInfoCardProps) {
                 </div>
               </div>
             </>
+          )}
+
+          {/* Naver Product Listings with Images */}
+          {pricingData.naver?.products && pricingData.naver.products.length > 0 && (
+            <div className="col-span-2 border-t pt-3 mt-1">
+              <div className="text-xs font-medium text-muted-foreground mb-2">
+                네이버 상품 목록 ({pricingData.naver.count}개)
+              </div>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {pricingData.naver.products.slice(0, 5).map((p, i) => (
+                  <a
+                    key={i}
+                    href={p.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-2 rounded hover:bg-muted/50 transition-colors group"
+                  >
+                    {p.image && (
+                      <img
+                        src={p.image}
+                        alt=""
+                        className="w-12 h-12 object-cover rounded border shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div
+                        className="text-xs font-medium truncate"
+                        dangerouslySetInnerHTML={{ __html: p.title }}
+                      />
+                      <div className="text-xs text-muted-foreground">{p.mallName}</div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="text-xs font-semibold">
+                        {parseInt(p.lprice).toLocaleString()}원
+                      </span>
+                      <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Market Average */}
