@@ -257,13 +257,12 @@ export default function OrdersPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">발주 관리</h1>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => toast.info("발주 매뉴얼은 현재 준비 중입니다.")}
-          >
-            <FileText className="mr-2 h-4 w-4" />
-            발주 매뉴얼
-          </Button>
+          <Link href="/orders/manual" target="_blank">
+            <Button variant="outline">
+              <FileText className="mr-2 h-4 w-4" />
+              발주 매뉴얼
+            </Button>
+          </Link>
           <Button variant="outline" onClick={handleExportWMS}>
             <FileSpreadsheet className="mr-2 h-4 w-4" />
             슈퍼무진 주문서
