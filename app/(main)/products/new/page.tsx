@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Lock } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { validateProductCode, getProductCodeHint } from "@/lib/validators/product";
 
 type ProductType = "HEADQUARTERS" | "CENTER";
 
@@ -73,6 +74,13 @@ export default function NewProductPage() {
       // Validation
       if (!code.trim()) {
         toast.error("상품코드를 입력하세요");
+        return;
+      }
+
+      // PRODUCT-02: 상품코드 형식 검증
+      const codeCheck = validateProductCode(code.trim(), productType);
+      if (!codeCheck.valid) {
+        toast.error(codeCheck.message);
         return;
       }
       if (!name.trim()) {
@@ -199,10 +207,13 @@ export default function NewProductPage() {
                 id="code"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="예: PROD-001"
+                placeholder={productType === "HEADQUARTERS" ? "예: [33]" : "예: [C01-001]"}
                 maxLength={50}
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                {getProductCodeHint(productType)}
+              </p>
             </div>
 
             {/* Name */}

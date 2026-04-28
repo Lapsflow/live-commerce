@@ -3,6 +3,7 @@ import { withRole, AuthUser } from "@/lib/api/middleware";
 import { ok, errors, paginated } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
+import { validateProductCode } from "@/lib/validators/product";
 
 // Phase 2: Product Type Validation Schema
 const productSchema = z.object({
@@ -99,6 +100,12 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
     if (!user.centerId) {
       return errors.forbidden("센터가 배정되지 않았습니다.");
     }
+  }
+
+  // PRODUCT-02: Product code format validation
+  const codeCheck = validateProductCode(data.code, productType);
+  if (!codeCheck.valid) {
+    return errors.badRequest(codeCheck.message);
   }
 
   // Phase 2: Product type validation
