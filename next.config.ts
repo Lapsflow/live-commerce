@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "v5.airtableusercontent.com",
       },
+      {
+        protocol: "https",
+        hostname: "shopping-phinf.pstatic.net",
+      },
+      {
+        protocol: "https",
+        hostname: "*.pstatic.net",
+      },
     ],
   },
   async headers() {
@@ -39,8 +47,8 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value: process.env.NODE_ENV === "development"
-              ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://dl.airtable.com https://v5.airtableusercontent.com; font-src 'self'; connect-src 'self'; frame-ancestors 'none'"
-              : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://dl.airtable.com https://v5.airtableusercontent.com; font-src 'self'; connect-src 'self'; frame-ancestors 'none'",
+              ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://dl.airtable.com https://v5.airtableusercontent.com https://*.pstatic.net https://*.vercel-storage.com; font-src 'self'; connect-src 'self'; frame-ancestors 'none'"
+              : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://dl.airtable.com https://v5.airtableusercontent.com https://*.pstatic.net https://*.vercel-storage.com; font-src 'self'; connect-src 'self'; frame-ancestors 'none'",
           },
         ],
       },

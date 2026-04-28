@@ -232,7 +232,11 @@ export function PriceComparisonCard({ barcode, ourPrice }: PriceComparisonCardPr
                               <img
                                 src={p.image}
                                 alt=""
+                                referrerPolicy="no-referrer"
                                 className="w-10 h-10 object-cover rounded shrink-0 mr-2"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = "none";
+                                }}
                               />
                             )}
                             <div className="flex-1 min-w-0 mr-2">
