@@ -6,7 +6,7 @@ import type { Product } from "@/types/product";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, Package, FileSpreadsheet, RotateCcw } from "lucide-react";
+import { Plus, Package, FileSpreadsheet, RotateCcw, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { StockSyncButton } from "./components/stock-sync-button";
 import { useState } from "react";
@@ -78,6 +78,25 @@ const columns: ColumnDef<Product>[] = [
     },
   },
   {
+    accessorKey: "isActive",
+    header: "상태",
+    cell: ({ row }) => {
+      const active = row.original.isActive !== false;
+      return (
+        <Badge
+          variant="outline"
+          className={
+            active
+              ? "bg-green-500/10 text-green-700 dark:text-green-400"
+              : "bg-gray-500/10 text-gray-500 dark:text-gray-400"
+          }
+        >
+          {active ? "���성" : "비활성"}
+        </Badge>
+      );
+    },
+  },
+  {
     id: "actions",
     header: "작업",
     cell: ({ row }) => (
@@ -102,10 +121,14 @@ export default function ProductsPage() {
   const canUploadExcel = isMasterOrSub || isAdmin;
 
   const [productTypeFilter, setProductTypeFilter] = useState<"ALL" | "HEADQUARTERS" | "CENTER">("ALL");
+  const [showInactive, setShowInactive] = useState(false);
   const [resetting, setResetting] = useState(false);
-  const apiPath = productTypeFilter === "ALL"
-    ? "/api/products"
-    : `/api/products?productType=${productTypeFilter}`;
+
+  const params = new URLSearchParams();
+  if (productTypeFilter !== "ALL") params.set("productType", productTypeFilter);
+  if (showInactive) params.set("showInactive", "true");
+  const qs = params.toString();
+  const apiPath = `/api/products${qs ? `?${qs}` : ""}`;
   const { dataSource, refresh } = useApiCrud<Product>(apiPath);
 
   const handleResetStock = async () => {
@@ -180,7 +203,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Product Type Filter */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <Button
           variant={productTypeFilter === "ALL" ? "default" : "outline"}
           size="sm"
@@ -202,6 +225,19 @@ export default function ProductsPage() {
         >
           관리메이트 (센터)
         </Button>
+        {!isSeller && (
+          <>
+            <div className="w-px h-6 bg-border mx-1" />
+            <Button
+              variant={showInactive ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowInactive(!showInactive)}
+            >
+              {showInactive ? <Eye className="mr-1 h-3 w-3" /> : <EyeOff className="mr-1 h-3 w-3" />}
+              {showInactive ? "비활성 포함" : "활성만"}
+            </Button>
+          </>
+        )}
       </div>
 
       {/* Data Table */}

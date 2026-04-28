@@ -25,10 +25,16 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
   const { searchParams } = new URL(req.url);
   const productType = searchParams.get("productType") as "HEADQUARTERS" | "CENTER" | null;
   const search = searchParams.get("search");
+  const showInactive = searchParams.get("showInactive") === "true";
   const pageIndex = Math.max(0, parseInt(searchParams.get("pageIndex") || "0"));
   const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") || "50")));
 
   const where: Record<string, unknown> = {};
+
+  // PRODUCT-05: 기본적으로 활성 상품만 조회, showInactive=true 시 전체
+  if (!showInactive) {
+    where.isActive = true;
+  }
 
   // Filter by productType if specified
   if (productType) {

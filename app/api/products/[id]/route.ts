@@ -19,6 +19,7 @@ const productUpdateSchema = z.object({
   stock3: z.number().int().min(0).optional(),
   productType: z.enum(["HEADQUARTERS", "CENTER"]).optional(),
   managedBy: z.string().optional(),
+  isActive: z.boolean().optional(), // PRODUCT-05: 재활성화 지원
 });
 
 // GET: Get single product
@@ -166,6 +167,11 @@ export const PUT = withRole(["MASTER", "ADMIN", "SELLER"], async (
       updateData.managedBy = data.managedBy;
     }
 
+    // PRODUCT-05: isActive (MASTER/ADMIN only, SELLER cannot reactivate)
+    if (data.isActive !== undefined && user.role !== "SELLER") {
+      updateData.isActive = data.isActive;
+    }
+
     const product = await prisma.product.update({
       where: { id },
       data: updateData,
@@ -181,8 +187,7 @@ export const PUT = withRole(["MASTER", "ADMIN", "SELLER"], async (
   }
 });
 
-// DELETE: Delete product
-// Phase 2: withRole() middleware applied (ADMIN only)
+// DELETE: Soft-delete product (비활성화 — PRODUCT-05 정책: hard delete 금지)
 export const DELETE = withRole(["MASTER", "ADMIN"], async (
   req: NextRequest,
   user: AuthUser,
@@ -191,11 +196,26 @@ export const DELETE = withRole(["MASTER", "ADMIN"], async (
   try {
     const { id } = await params;
 
-    await prisma.product.delete({
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) {
+      return error("NOT_FOUND", "상품을 찾을 수 없습니다.", 404);
+    }
+
+    // 센터담당자는 자기 센터 상품만 비활성화 가능
+    if (user.role === "ADMIN") {
+      const session = await auth();
+      const centerId = session?.user?.centerId;
+      if (product.productType === "CENTER" && product.managedBy !== centerId) {
+        return error("FORBIDDEN", "다른 센터의 상품은 비활성화할 수 없습니다.", 403);
+      }
+    }
+
+    await prisma.product.update({
       where: { id },
+      data: { isActive: false },
     });
 
-    return ok({ message: "상품이 삭제되었습니다." });
+    return ok({ message: "상품이 비활성화되었습니다." });
   } catch (err: any) {
     console.error("[PRODUCT DELETE ERROR]", err);
     return error("DELETE_FAILED", err.message, 500);

@@ -14,6 +14,7 @@ export interface Product {
   productType: "HEADQUARTERS" | "CENTER"; // Changed: required enum
   managedBy: string | null; // Added: center ID for CENTER products
   isWmsProduct: boolean; // Added: true if HEADQUARTERS product
+  isActive: boolean; // PRODUCT-05: soft delete flag
   createdAt: string; // Changed: string for API responses
   updatedAt: string; // Changed: string for API responses
 }

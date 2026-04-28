@@ -106,6 +106,9 @@ model Product {
   managedBy   String? // centerId for CENTER products, null for HEADQUARTERS
   isWmsProduct Boolean @default(true) // true for HEADQUARTERS, false for CENTER
 
+  // ✨ PRODUCT-05: Soft delete (비활성화만, hard delete 금지)
+  isActive    Boolean  @default(true)
+
   // ✨ Phase 3: Sample Shopping Mall
   isSample        Boolean         @default(false)
   sampleCategory  SampleCategory?
@@ -127,6 +130,7 @@ model Product {
 
   @@index([productType])
   @@index([managedBy])
+  @@index([isActive])
 }
 
 enum ProductType {

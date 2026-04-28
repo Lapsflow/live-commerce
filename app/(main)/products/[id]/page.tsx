@@ -187,12 +187,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     }
   };
 
-  const handleDelete = async () => {
-    if (!confirm("정말 이 상품을 삭제하시겠습니까?")) return;
+  const handleDeactivate = async () => {
+    if (!confirm("이 상품을 비활성화하시겠습니까?\n비활성화된 상품은 신규 발주에서 비노출됩니다.")) return;
 
     const success = await remove(productId);
     if (success) {
       router.push("/products");
+    }
+  };
+
+  const handleReactivate = async () => {
+    if (!confirm("이 상품을 다시 활성화하시겠습니까?")) return;
+
+    try {
+      const res = await fetch(`/api/products/${productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: true }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProduct(data.data);
+        toast.success("상품이 활성화되었습니다");
+      } else {
+        toast.error("활성화에 실패했습니다");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다");
     }
   };
 
@@ -254,10 +275,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <Pencil className="mr-2 h-4 w-4" />
                 수정
               </Button>
-              <Button variant="destructive" onClick={handleDelete}>
-                <Trash2 className="mr-2 h-4 w-4" />
-                삭제
-              </Button>
+              {(product as any).isActive !== false ? (
+                <Button variant="destructive" onClick={handleDeactivate}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  비활성화
+                </Button>
+              ) : (
+                <Button variant="outline" className="text-green-600 border-green-300" onClick={handleReactivate}>
+                  활성화
+                </Button>
+              )}
             </>
           ) : (
             <>
