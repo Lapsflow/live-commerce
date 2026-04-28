@@ -63,6 +63,12 @@ export const GET = withRole(
           select: { id: true },
         });
         where.sellerId = { in: sellers.map((s) => s.id) };
+      } else if (userRole === "SUB_MASTER") {
+        // CAL-02: SUB_MASTER 센터 격리
+        const userCenterId = (session.user as any).centerId;
+        if (userCenterId) {
+          where.centerId = userCenterId;
+        }
       }
 
       // CAL-04: 채널 필터

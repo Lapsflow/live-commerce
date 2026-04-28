@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { sendNotification } from "@/lib/services/notifications";
 
 /**
  * POST /api/proposals/cart/checkout
@@ -104,6 +105,33 @@ export async function POST(req: NextRequest) {
 
       return proposals;
     });
+
+    // PROPOSAL-09: 샘플 결제 완료 알림 → 관리자
+    try {
+      const admins = await prisma.user.findMany({
+        where: { role: { in: ["MASTER", "SUB_MASTER"] } },
+        select: { name: true, phone: true, email: true },
+      });
+      const requesterName = cartItems[0]?.user?.name || "알 수 없음";
+      for (const admin of admins) {
+        if (admin.phone) {
+          sendNotification({
+            type: "SAMPLE_CHECKOUT",
+            recipient: {
+              name: admin.name,
+              phone: admin.phone,
+              email: admin.email || undefined,
+            },
+            variables: {
+              requesterName,
+              itemCount: String(result.length),
+            },
+          }).catch((err) => console.error("[SAMPLE_NOTIFICATION]", err));
+        }
+      }
+    } catch (notifErr) {
+      console.error("[SAMPLE_NOTIFICATION]", notifErr);
+    }
 
     return ok({
       message: "샘플 요청이 완료되었습니다",

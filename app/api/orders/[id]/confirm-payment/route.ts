@@ -10,6 +10,7 @@ import { ok, error } from "@/lib/api/response";
 import { withRole } from "@/lib/api/middleware";
 import { convertReservation } from "@/lib/services/stock/reservation";
 import { syncOrderToOnewms } from "@/lib/services/onewms/orderSync";
+import { prisma } from "@/lib/db/prisma";
 
 export const POST = withRole(
   ["MASTER", "SUB_MASTER", "ADMIN"],

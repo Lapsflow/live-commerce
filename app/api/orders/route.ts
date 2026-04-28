@@ -39,7 +39,10 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
     const pageIndex = parseInt(searchParams.get("pageIndex") || "0");
     const pageSize = parseInt(searchParams.get("pageSize") || "50");
 
-    const where: any = {};
+    const where: any = {
+      // CANCELLED 주문은 기본적으로 제외 (soft delete)
+      status: { not: "CANCELLED" },
+    };
 
     // Phase 2: Filter by productType
     if (productType) {
@@ -202,9 +205,12 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
       for (const order of createdOrders) {
         const reserveResult = await reserveStock(order.id);
         if (!reserveResult.success) {
-          // 실패 시 생성된 주문 모두 삭제
+          // 실패 시 생성된 주문 soft cancel
           for (const o of createdOrders) {
-            await prisma.order.delete({ where: { id: o.id } }).catch(() => {});
+            await prisma.order.update({
+              where: { id: o.id },
+              data: { status: "CANCELLED", cancelledAt: new Date(), cancelReason: "STOCK_RESERVE_FAILED" },
+            }).catch(() => {});
           }
           return error(
             "STOCK_RESERVE_FAILED",
@@ -246,8 +252,11 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
     for (const order of createdOrders) {
       const reserveResult = await reserveStock(order.id);
       if (!reserveResult.success) {
-        // 선점 실패 시 주문 삭제 (롤백)
-        await prisma.order.delete({ where: { id: order.id } });
+        // 선점 실패 시 주문 soft cancel (hard delete 금지)
+        await prisma.order.update({
+          where: { id: order.id },
+          data: { status: "CANCELLED", cancelledAt: new Date(), cancelReason: "STOCK_RESERVE_FAILED" },
+        });
         return error(
           "STOCK_RESERVE_FAILED",
           reserveResult.error || "재고 선점 실패",

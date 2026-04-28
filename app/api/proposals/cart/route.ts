@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { calculateShippingFee } from "@/lib/constants/shipping";
 
 /**
  * GET /api/proposals/cart
@@ -44,6 +45,7 @@ export async function GET(req: NextRequest) {
       (sum, item) => sum + item.samplePrice * item.quantity,
       0
     );
+    const shippingFee = calculateShippingFee(totalAmount);
 
     return ok({
       items: cartItems,
@@ -51,6 +53,8 @@ export async function GET(req: NextRequest) {
         totalItems,
         totalQuantity,
         totalAmount,
+        shippingFee,
+        grandTotal: totalAmount + shippingFee,
       },
     });
   } catch (error) {

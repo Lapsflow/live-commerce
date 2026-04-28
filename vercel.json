@@ -15,6 +15,14 @@
     {
       "path": "/api/cron/order-auto-cancel",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/broadcast-reminder",
+      "schedule": "0 22 * * *"
+    },
+    {
+      "path": "/api/cron/broadcast-1h-reminder",
+      "schedule": "0 * * * *"
     }
   ]
 }

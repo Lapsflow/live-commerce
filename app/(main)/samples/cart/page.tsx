@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Trash2, Loader2, Package, ArrowLeft, Minus, Plus } from "lucide-react";
+import { ShoppingCart, Trash2, Loader2, Package, ArrowLeft, Minus, Plus, CreditCard, Copy, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface CartItem {
   id: string;
@@ -29,6 +30,8 @@ interface CartSummary {
   totalItems: number;
   totalQuantity: number;
   totalAmount: number;
+  shippingFee: number;
+  grandTotal: number;
 }
 
 export default function SamplesCartPage() {
@@ -39,9 +42,20 @@ export default function SamplesCartPage() {
     totalItems: 0,
     totalQuantity: 0,
     totalAmount: 0,
+    shippingFee: 0,
+    grandTotal: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [virtualAccount, setVirtualAccount] = useState<{
+    accountNumber: string;
+    bank: string;
+    amount: number;
+    expiryAt: string;
+    isMock?: boolean;
+  } | null>(null);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     loadCart();
@@ -108,12 +122,36 @@ export default function SamplesCartPage() {
 
       const data = await res.json();
 
+      // 유료 샘플인 경우 가상계좌 발급
+      if (paidTotal > 0 && data.data.proposals?.length) {
+        try {
+          const vaRes = await fetch("/api/proposals/payment/virtual-account", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              proposalIds: data.data.proposals.map((p: any) => p.id),
+              totalAmount: summary.grandTotal,
+            }),
+          });
+          if (vaRes.ok) {
+            const vaData = await vaRes.json();
+            setVirtualAccount(vaData.data);
+            setShowPaymentDialog(true);
+          }
+        } catch {
+          // 가상계좌 실패해도 checkout은 성공
+        }
+      }
+
       toast({
         title: "샘플 요청 완료",
         description: `${data.data.proposalCount}개의 샘플이 요청되었습니다`,
       });
 
-      router.push("/proposals");
+      if (paidTotal <= 0) {
+        router.push("/proposals");
+      }
+      // 유료인 경우 dialog 표시 후 이동
     } catch (err: any) {
       toast({
         title: "오류",
@@ -122,6 +160,17 @@ export default function SamplesCartPage() {
       });
     } finally {
       setIsCheckingOut(false);
+    }
+  };
+
+  const handleCopyAccount = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast({ title: "복사됨", description: "계좌번호가 복사되었습니다" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "오류", description: "복사에 실패했습니다", variant: "destructive" });
     }
   };
 
@@ -238,13 +287,29 @@ export default function SamplesCartPage() {
                 </div>
               )}
 
+              {paidTotal > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">상품 금액</span>
+                  <span className="font-semibold">{paidTotal.toLocaleString()}원</span>
+                </div>
+              )}
+
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">배송비</span>
+                <span className="font-semibold">
+                  {summary.shippingFee > 0
+                    ? `${summary.shippingFee.toLocaleString()}원`
+                    : paidTotal > 0 ? "무료" : "-"}
+                </span>
+              </div>
+
               <Separator />
 
               <div className="flex justify-between items-center">
                 <span className="font-semibold">합계</span>
-                {paidTotal > 0 ? (
+                {summary.grandTotal > 0 ? (
                   <span className="text-2xl font-bold text-blue-600">
-                    {paidTotal.toLocaleString()}원
+                    {summary.grandTotal.toLocaleString()}원
                   </span>
                 ) : (
                   <span className="text-2xl font-bold text-green-600">무료</span>
@@ -282,6 +347,72 @@ export default function SamplesCartPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* 가상계좌 결제 안내 Dialog */}
+      <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5" />
+              가상계좌 입금 안내
+            </DialogTitle>
+          </DialogHeader>
+          {virtualAccount && (
+            <div className="space-y-4">
+              {virtualAccount.isMock && (
+                <div className="text-xs text-yellow-600 bg-yellow-50 px-3 py-2 rounded">
+                  테스트 모드 (실제 입금 불필요)
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-muted-foreground">은행</p>
+                  <p className="font-medium">{virtualAccount.bank}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">입금액</p>
+                  <p className="font-medium text-blue-700">
+                    {virtualAccount.amount.toLocaleString()}원
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">계좌번호</p>
+                <div className="flex items-center gap-2">
+                  <code className="text-lg font-mono font-semibold bg-muted px-3 py-1 rounded">
+                    {virtualAccount.accountNumber}
+                  </code>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleCopyAccount(virtualAccount.accountNumber)}
+                  >
+                    {copied ? (
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <div className="text-sm">
+                <span className="text-muted-foreground">입금 마감: </span>
+                <span>{new Date(virtualAccount.expiryAt).toLocaleString("ko-KR")}</span>
+              </div>
+              <Separator />
+              <Button
+                className="w-full"
+                onClick={() => {
+                  setShowPaymentDialog(false);
+                  router.push("/proposals");
+                }}
+              >
+                확인 (제안 목록으로 이동)
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

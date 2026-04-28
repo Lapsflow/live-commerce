@@ -133,6 +133,11 @@ export type MarketPricing = $Result.DefaultSelection<Prisma.$MarketPricingPayloa
  * 
  */
 export type ScanLog = $Result.DefaultSelection<Prisma.$ScanLogPayload>
+/**
+ * Model NotificationLog
+ * 
+ */
+export type NotificationLog = $Result.DefaultSelection<Prisma.$NotificationLogPayload>
 
 /**
  * Enums
@@ -191,7 +196,8 @@ export type SampleStatus = (typeof SampleStatus)[keyof typeof SampleStatus]
 export const OrderStatus: {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
 };
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
@@ -199,7 +205,8 @@ export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
 export const PaymentStatus: {
   UNPAID: 'UNPAID',
-  PAID: 'PAID'
+  PAID: 'PAID',
+  PAYMENT_FAILED: 'PAYMENT_FAILED'
 };
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
@@ -679,6 +686,16 @@ export class PrismaClient<
     * ```
     */
   get scanLog(): Prisma.ScanLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.notificationLog`: Exposes CRUD operations for the **NotificationLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more NotificationLogs
+    * const notificationLogs = await prisma.notificationLog.findMany()
+    * ```
+    */
+  get notificationLog(): Prisma.NotificationLogDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1136,7 +1153,8 @@ export namespace Prisma {
     AIUsageStats: 'AIUsageStats',
     RateLimit: 'RateLimit',
     MarketPricing: 'MarketPricing',
-    ScanLog: 'ScanLog'
+    ScanLog: 'ScanLog',
+    NotificationLog: 'NotificationLog'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1152,7 +1170,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "center" | "productCenterStock" | "orderSellerMatching" | "order" | "orderItem" | "stockReservation" | "broadcast" | "sale" | "proposal" | "proposalCart" | "onewmsOrderMapping" | "onewmsStockSync" | "onewmsDeliveryLog" | "warehouse" | "barcodeMaster" | "warehouseInventory" | "stockMovement" | "aIAnalysis" | "aIUsageStats" | "rateLimit" | "marketPricing" | "scanLog"
+      modelProps: "user" | "product" | "center" | "productCenterStock" | "orderSellerMatching" | "order" | "orderItem" | "stockReservation" | "broadcast" | "sale" | "proposal" | "proposalCart" | "onewmsOrderMapping" | "onewmsStockSync" | "onewmsDeliveryLog" | "warehouse" | "barcodeMaster" | "warehouseInventory" | "stockMovement" | "aIAnalysis" | "aIUsageStats" | "rateLimit" | "marketPricing" | "scanLog" | "notificationLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2932,6 +2950,80 @@ export namespace Prisma {
           }
         }
       }
+      NotificationLog: {
+        payload: Prisma.$NotificationLogPayload<ExtArgs>
+        fields: Prisma.NotificationLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NotificationLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NotificationLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+          }
+          findFirst: {
+            args: Prisma.NotificationLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NotificationLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+          }
+          findMany: {
+            args: Prisma.NotificationLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>[]
+          }
+          create: {
+            args: Prisma.NotificationLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+          }
+          createMany: {
+            args: Prisma.NotificationLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.NotificationLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>[]
+          }
+          delete: {
+            args: Prisma.NotificationLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+          }
+          update: {
+            args: Prisma.NotificationLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.NotificationLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NotificationLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.NotificationLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.NotificationLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationLogPayload>
+          }
+          aggregate: {
+            args: Prisma.NotificationLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNotificationLog>
+          }
+          groupBy: {
+            args: Prisma.NotificationLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NotificationLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NotificationLogCountArgs<ExtArgs>
+            result: $Utils.Optional<NotificationLogCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3064,6 +3156,7 @@ export namespace Prisma {
     rateLimit?: RateLimitOmit
     marketPricing?: MarketPricingOmit
     scanLog?: ScanLogOmit
+    notificationLog?: NotificationLogOmit
   }
 
   /* Types for Logging */
@@ -6939,6 +7032,8 @@ export namespace Prisma {
     businessNo: string | null
     contractDate: Date | null
     contractDocument: string | null
+    centerNumber: string | null
+    isMasterCenter: boolean | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6957,6 +7052,8 @@ export namespace Prisma {
     businessNo: string | null
     contractDate: Date | null
     contractDocument: string | null
+    centerNumber: string | null
+    isMasterCenter: boolean | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6975,6 +7072,8 @@ export namespace Prisma {
     businessNo: number
     contractDate: number
     contractDocument: number
+    centerNumber: number
+    isMasterCenter: number
     isActive: number
     createdAt: number
     updatedAt: number
@@ -6995,6 +7094,8 @@ export namespace Prisma {
     businessNo?: true
     contractDate?: true
     contractDocument?: true
+    centerNumber?: true
+    isMasterCenter?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -7013,6 +7114,8 @@ export namespace Prisma {
     businessNo?: true
     contractDate?: true
     contractDocument?: true
+    centerNumber?: true
+    isMasterCenter?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -7031,6 +7134,8 @@ export namespace Prisma {
     businessNo?: true
     contractDate?: true
     contractDocument?: true
+    centerNumber?: true
+    isMasterCenter?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -7122,6 +7227,8 @@ export namespace Prisma {
     businessNo: string | null
     contractDate: Date | null
     contractDocument: string | null
+    centerNumber: string | null
+    isMasterCenter: boolean
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -7157,6 +7264,8 @@ export namespace Prisma {
     businessNo?: boolean
     contractDate?: boolean
     contractDocument?: boolean
+    centerNumber?: boolean
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7181,6 +7290,8 @@ export namespace Prisma {
     businessNo?: boolean
     contractDate?: boolean
     contractDocument?: boolean
+    centerNumber?: boolean
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7199,6 +7310,8 @@ export namespace Prisma {
     businessNo?: boolean
     contractDate?: boolean
     contractDocument?: boolean
+    centerNumber?: boolean
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7217,12 +7330,14 @@ export namespace Prisma {
     businessNo?: boolean
     contractDate?: boolean
     contractDocument?: boolean
+    centerNumber?: boolean
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CenterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "regionCode" | "regionName" | "representative" | "representativePhone" | "address" | "addressDetail" | "businessNo" | "contractDate" | "contractDocument" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["center"]>
+  export type CenterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "regionCode" | "regionName" | "representative" | "representativePhone" | "address" | "addressDetail" | "businessNo" | "contractDate" | "contractDocument" | "centerNumber" | "isMasterCenter" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["center"]>
   export type CenterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Center$usersArgs<ExtArgs>
     centerStocks?: boolean | Center$centerStocksArgs<ExtArgs>
@@ -7256,6 +7371,8 @@ export namespace Prisma {
       businessNo: string | null
       contractDate: Date | null
       contractDocument: string | null
+      centerNumber: string | null
+      isMasterCenter: boolean
       isActive: boolean
       createdAt: Date
       updatedAt: Date
@@ -7699,6 +7816,8 @@ export namespace Prisma {
     readonly businessNo: FieldRef<"Center", 'String'>
     readonly contractDate: FieldRef<"Center", 'DateTime'>
     readonly contractDocument: FieldRef<"Center", 'String'>
+    readonly centerNumber: FieldRef<"Center", 'String'>
+    readonly isMasterCenter: FieldRef<"Center", 'Boolean'>
     readonly isActive: FieldRef<"Center", 'Boolean'>
     readonly createdAt: FieldRef<"Center", 'DateTime'>
     readonly updatedAt: FieldRef<"Center", 'DateTime'>
@@ -10644,6 +10763,9 @@ export namespace Prisma {
     cancelReason: string | null
     broadcastId: string | null
     matchType: string | null
+    taxInvoiceIssued: boolean | null
+    taxInvoiceIssuedAt: Date | null
+    taxInvoiceNumber: string | null
   }
 
   export type OrderMaxAggregateOutputType = {
@@ -10675,6 +10797,9 @@ export namespace Prisma {
     cancelReason: string | null
     broadcastId: string | null
     matchType: string | null
+    taxInvoiceIssued: boolean | null
+    taxInvoiceIssuedAt: Date | null
+    taxInvoiceNumber: string | null
   }
 
   export type OrderCountAggregateOutputType = {
@@ -10706,6 +10831,9 @@ export namespace Prisma {
     cancelReason: number
     broadcastId: number
     matchType: number
+    taxInvoiceIssued: number
+    taxInvoiceIssuedAt: number
+    taxInvoiceNumber: number
     _all: number
   }
 
@@ -10749,6 +10877,9 @@ export namespace Prisma {
     cancelReason?: true
     broadcastId?: true
     matchType?: true
+    taxInvoiceIssued?: true
+    taxInvoiceIssuedAt?: true
+    taxInvoiceNumber?: true
   }
 
   export type OrderMaxAggregateInputType = {
@@ -10780,6 +10911,9 @@ export namespace Prisma {
     cancelReason?: true
     broadcastId?: true
     matchType?: true
+    taxInvoiceIssued?: true
+    taxInvoiceIssuedAt?: true
+    taxInvoiceNumber?: true
   }
 
   export type OrderCountAggregateInputType = {
@@ -10811,6 +10945,9 @@ export namespace Prisma {
     cancelReason?: true
     broadcastId?: true
     matchType?: true
+    taxInvoiceIssued?: true
+    taxInvoiceIssuedAt?: true
+    taxInvoiceNumber?: true
     _all?: true
   }
 
@@ -10929,6 +11066,9 @@ export namespace Prisma {
     cancelReason: string | null
     broadcastId: string | null
     matchType: string | null
+    taxInvoiceIssued: boolean
+    taxInvoiceIssuedAt: Date | null
+    taxInvoiceNumber: string | null
     _count: OrderCountAggregateOutputType | null
     _avg: OrderAvgAggregateOutputType | null
     _sum: OrderSumAggregateOutputType | null
@@ -10979,6 +11119,9 @@ export namespace Prisma {
     cancelReason?: boolean
     broadcastId?: boolean
     matchType?: boolean
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: boolean
+    taxInvoiceNumber?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
@@ -11020,6 +11163,9 @@ export namespace Prisma {
     cancelReason?: boolean
     broadcastId?: boolean
     matchType?: boolean
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: boolean
+    taxInvoiceNumber?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
@@ -11055,6 +11201,9 @@ export namespace Prisma {
     cancelReason?: boolean
     broadcastId?: boolean
     matchType?: boolean
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: boolean
+    taxInvoiceNumber?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
@@ -11090,9 +11239,12 @@ export namespace Prisma {
     cancelReason?: boolean
     broadcastId?: boolean
     matchType?: boolean
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: boolean
+    taxInvoiceNumber?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "adminId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "broadcastId" | "matchType", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "adminId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "broadcastId" | "matchType" | "taxInvoiceIssued" | "taxInvoiceIssuedAt" | "taxInvoiceNumber", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
@@ -11160,6 +11312,9 @@ export namespace Prisma {
       cancelReason: string | null
       broadcastId: string | null
       matchType: string | null
+      taxInvoiceIssued: boolean
+      taxInvoiceIssuedAt: Date | null
+      taxInvoiceNumber: string | null
     }, ExtArgs["result"]["order"]>
     composites: {}
   }
@@ -11620,6 +11775,9 @@ export namespace Prisma {
     readonly cancelReason: FieldRef<"Order", 'String'>
     readonly broadcastId: FieldRef<"Order", 'String'>
     readonly matchType: FieldRef<"Order", 'String'>
+    readonly taxInvoiceIssued: FieldRef<"Order", 'Boolean'>
+    readonly taxInvoiceIssuedAt: FieldRef<"Order", 'DateTime'>
+    readonly taxInvoiceNumber: FieldRef<"Order", 'String'>
   }
     
 
@@ -14573,6 +14731,7 @@ export namespace Prisma {
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
+    reminder1hSentAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14590,6 +14749,7 @@ export namespace Prisma {
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
+    reminder1hSentAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14607,6 +14767,7 @@ export namespace Prisma {
     memo: number
     requestMemo: number
     rejectionReason: number
+    reminder1hSentAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -14626,6 +14787,7 @@ export namespace Prisma {
     memo?: true
     requestMemo?: true
     rejectionReason?: true
+    reminder1hSentAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14643,6 +14805,7 @@ export namespace Prisma {
     memo?: true
     requestMemo?: true
     rejectionReason?: true
+    reminder1hSentAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14660,6 +14823,7 @@ export namespace Prisma {
     memo?: true
     requestMemo?: true
     rejectionReason?: true
+    reminder1hSentAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -14750,6 +14914,7 @@ export namespace Prisma {
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
+    reminder1hSentAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: BroadcastCountAggregateOutputType | null
@@ -14784,6 +14949,7 @@ export namespace Prisma {
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
+    reminder1hSentAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
@@ -14806,6 +14972,7 @@ export namespace Prisma {
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
+    reminder1hSentAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
@@ -14825,6 +14992,7 @@ export namespace Prisma {
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
+    reminder1hSentAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
@@ -14844,11 +15012,12 @@ export namespace Prisma {
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
+    reminder1hSentAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type BroadcastOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "sellerId" | "centerId" | "platform" | "scheduledAt" | "startedAt" | "endedAt" | "status" | "memo" | "requestMemo" | "rejectionReason" | "createdAt" | "updatedAt", ExtArgs["result"]["broadcast"]>
+  export type BroadcastOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "sellerId" | "centerId" | "platform" | "scheduledAt" | "startedAt" | "endedAt" | "status" | "memo" | "requestMemo" | "rejectionReason" | "reminder1hSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["broadcast"]>
   export type BroadcastInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
@@ -14886,6 +15055,7 @@ export namespace Prisma {
       memo: string | null
       requestMemo: string | null
       rejectionReason: string | null
+      reminder1hSentAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["broadcast"]>
@@ -15327,6 +15497,7 @@ export namespace Prisma {
     readonly memo: FieldRef<"Broadcast", 'String'>
     readonly requestMemo: FieldRef<"Broadcast", 'String'>
     readonly rejectionReason: FieldRef<"Broadcast", 'String'>
+    readonly reminder1hSentAt: FieldRef<"Broadcast", 'DateTime'>
     readonly createdAt: FieldRef<"Broadcast", 'DateTime'>
     readonly updatedAt: FieldRef<"Broadcast", 'DateTime'>
   }
@@ -33208,6 +33379,1058 @@ export namespace Prisma {
 
 
   /**
+   * Model NotificationLog
+   */
+
+  export type AggregateNotificationLog = {
+    _count: NotificationLogCountAggregateOutputType | null
+    _min: NotificationLogMinAggregateOutputType | null
+    _max: NotificationLogMaxAggregateOutputType | null
+  }
+
+  export type NotificationLogMinAggregateOutputType = {
+    id: string | null
+    type: string | null
+    recipient: string | null
+    channel: string | null
+    content: string | null
+    status: string | null
+    orderId: string | null
+    broadcastId: string | null
+    createdAt: Date | null
+  }
+
+  export type NotificationLogMaxAggregateOutputType = {
+    id: string | null
+    type: string | null
+    recipient: string | null
+    channel: string | null
+    content: string | null
+    status: string | null
+    orderId: string | null
+    broadcastId: string | null
+    createdAt: Date | null
+  }
+
+  export type NotificationLogCountAggregateOutputType = {
+    id: number
+    type: number
+    recipient: number
+    channel: number
+    content: number
+    status: number
+    orderId: number
+    broadcastId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type NotificationLogMinAggregateInputType = {
+    id?: true
+    type?: true
+    recipient?: true
+    channel?: true
+    content?: true
+    status?: true
+    orderId?: true
+    broadcastId?: true
+    createdAt?: true
+  }
+
+  export type NotificationLogMaxAggregateInputType = {
+    id?: true
+    type?: true
+    recipient?: true
+    channel?: true
+    content?: true
+    status?: true
+    orderId?: true
+    broadcastId?: true
+    createdAt?: true
+  }
+
+  export type NotificationLogCountAggregateInputType = {
+    id?: true
+    type?: true
+    recipient?: true
+    channel?: true
+    content?: true
+    status?: true
+    orderId?: true
+    broadcastId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type NotificationLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NotificationLog to aggregate.
+     */
+    where?: NotificationLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationLogs to fetch.
+     */
+    orderBy?: NotificationLogOrderByWithRelationInput | NotificationLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NotificationLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned NotificationLogs
+    **/
+    _count?: true | NotificationLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NotificationLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NotificationLogMaxAggregateInputType
+  }
+
+  export type GetNotificationLogAggregateType<T extends NotificationLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateNotificationLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNotificationLog[P]>
+      : GetScalarType<T[P], AggregateNotificationLog[P]>
+  }
+
+
+
+
+  export type NotificationLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationLogWhereInput
+    orderBy?: NotificationLogOrderByWithAggregationInput | NotificationLogOrderByWithAggregationInput[]
+    by: NotificationLogScalarFieldEnum[] | NotificationLogScalarFieldEnum
+    having?: NotificationLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NotificationLogCountAggregateInputType | true
+    _min?: NotificationLogMinAggregateInputType
+    _max?: NotificationLogMaxAggregateInputType
+  }
+
+  export type NotificationLogGroupByOutputType = {
+    id: string
+    type: string
+    recipient: string
+    channel: string
+    content: string
+    status: string
+    orderId: string | null
+    broadcastId: string | null
+    createdAt: Date
+    _count: NotificationLogCountAggregateOutputType | null
+    _min: NotificationLogMinAggregateOutputType | null
+    _max: NotificationLogMaxAggregateOutputType | null
+  }
+
+  type GetNotificationLogGroupByPayload<T extends NotificationLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NotificationLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NotificationLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NotificationLogGroupByOutputType[P]>
+            : GetScalarType<T[P], NotificationLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NotificationLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    recipient?: boolean
+    channel?: boolean
+    content?: boolean
+    status?: boolean
+    orderId?: boolean
+    broadcastId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["notificationLog"]>
+
+  export type NotificationLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    recipient?: boolean
+    channel?: boolean
+    content?: boolean
+    status?: boolean
+    orderId?: boolean
+    broadcastId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["notificationLog"]>
+
+  export type NotificationLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    recipient?: boolean
+    channel?: boolean
+    content?: boolean
+    status?: boolean
+    orderId?: boolean
+    broadcastId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["notificationLog"]>
+
+  export type NotificationLogSelectScalar = {
+    id?: boolean
+    type?: boolean
+    recipient?: boolean
+    channel?: boolean
+    content?: boolean
+    status?: boolean
+    orderId?: boolean
+    broadcastId?: boolean
+    createdAt?: boolean
+  }
+
+  export type NotificationLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "recipient" | "channel" | "content" | "status" | "orderId" | "broadcastId" | "createdAt", ExtArgs["result"]["notificationLog"]>
+
+  export type $NotificationLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "NotificationLog"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: string
+      recipient: string
+      channel: string
+      content: string
+      status: string
+      orderId: string | null
+      broadcastId: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["notificationLog"]>
+    composites: {}
+  }
+
+  type NotificationLogGetPayload<S extends boolean | null | undefined | NotificationLogDefaultArgs> = $Result.GetResult<Prisma.$NotificationLogPayload, S>
+
+  type NotificationLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<NotificationLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: NotificationLogCountAggregateInputType | true
+    }
+
+  export interface NotificationLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['NotificationLog'], meta: { name: 'NotificationLog' } }
+    /**
+     * Find zero or one NotificationLog that matches the filter.
+     * @param {NotificationLogFindUniqueArgs} args - Arguments to find a NotificationLog
+     * @example
+     * // Get one NotificationLog
+     * const notificationLog = await prisma.notificationLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NotificationLogFindUniqueArgs>(args: SelectSubset<T, NotificationLogFindUniqueArgs<ExtArgs>>): Prisma__NotificationLogClient<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one NotificationLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {NotificationLogFindUniqueOrThrowArgs} args - Arguments to find a NotificationLog
+     * @example
+     * // Get one NotificationLog
+     * const notificationLog = await prisma.notificationLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NotificationLogFindUniqueOrThrowArgs>(args: SelectSubset<T, NotificationLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NotificationLogClient<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NotificationLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationLogFindFirstArgs} args - Arguments to find a NotificationLog
+     * @example
+     * // Get one NotificationLog
+     * const notificationLog = await prisma.notificationLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NotificationLogFindFirstArgs>(args?: SelectSubset<T, NotificationLogFindFirstArgs<ExtArgs>>): Prisma__NotificationLogClient<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NotificationLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationLogFindFirstOrThrowArgs} args - Arguments to find a NotificationLog
+     * @example
+     * // Get one NotificationLog
+     * const notificationLog = await prisma.notificationLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NotificationLogFindFirstOrThrowArgs>(args?: SelectSubset<T, NotificationLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__NotificationLogClient<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more NotificationLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all NotificationLogs
+     * const notificationLogs = await prisma.notificationLog.findMany()
+     * 
+     * // Get first 10 NotificationLogs
+     * const notificationLogs = await prisma.notificationLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const notificationLogWithIdOnly = await prisma.notificationLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NotificationLogFindManyArgs>(args?: SelectSubset<T, NotificationLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a NotificationLog.
+     * @param {NotificationLogCreateArgs} args - Arguments to create a NotificationLog.
+     * @example
+     * // Create one NotificationLog
+     * const NotificationLog = await prisma.notificationLog.create({
+     *   data: {
+     *     // ... data to create a NotificationLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends NotificationLogCreateArgs>(args: SelectSubset<T, NotificationLogCreateArgs<ExtArgs>>): Prisma__NotificationLogClient<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many NotificationLogs.
+     * @param {NotificationLogCreateManyArgs} args - Arguments to create many NotificationLogs.
+     * @example
+     * // Create many NotificationLogs
+     * const notificationLog = await prisma.notificationLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NotificationLogCreateManyArgs>(args?: SelectSubset<T, NotificationLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many NotificationLogs and returns the data saved in the database.
+     * @param {NotificationLogCreateManyAndReturnArgs} args - Arguments to create many NotificationLogs.
+     * @example
+     * // Create many NotificationLogs
+     * const notificationLog = await prisma.notificationLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many NotificationLogs and only return the `id`
+     * const notificationLogWithIdOnly = await prisma.notificationLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends NotificationLogCreateManyAndReturnArgs>(args?: SelectSubset<T, NotificationLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a NotificationLog.
+     * @param {NotificationLogDeleteArgs} args - Arguments to delete one NotificationLog.
+     * @example
+     * // Delete one NotificationLog
+     * const NotificationLog = await prisma.notificationLog.delete({
+     *   where: {
+     *     // ... filter to delete one NotificationLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NotificationLogDeleteArgs>(args: SelectSubset<T, NotificationLogDeleteArgs<ExtArgs>>): Prisma__NotificationLogClient<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one NotificationLog.
+     * @param {NotificationLogUpdateArgs} args - Arguments to update one NotificationLog.
+     * @example
+     * // Update one NotificationLog
+     * const notificationLog = await prisma.notificationLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NotificationLogUpdateArgs>(args: SelectSubset<T, NotificationLogUpdateArgs<ExtArgs>>): Prisma__NotificationLogClient<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more NotificationLogs.
+     * @param {NotificationLogDeleteManyArgs} args - Arguments to filter NotificationLogs to delete.
+     * @example
+     * // Delete a few NotificationLogs
+     * const { count } = await prisma.notificationLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NotificationLogDeleteManyArgs>(args?: SelectSubset<T, NotificationLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NotificationLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many NotificationLogs
+     * const notificationLog = await prisma.notificationLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NotificationLogUpdateManyArgs>(args: SelectSubset<T, NotificationLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NotificationLogs and returns the data updated in the database.
+     * @param {NotificationLogUpdateManyAndReturnArgs} args - Arguments to update many NotificationLogs.
+     * @example
+     * // Update many NotificationLogs
+     * const notificationLog = await prisma.notificationLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more NotificationLogs and only return the `id`
+     * const notificationLogWithIdOnly = await prisma.notificationLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends NotificationLogUpdateManyAndReturnArgs>(args: SelectSubset<T, NotificationLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one NotificationLog.
+     * @param {NotificationLogUpsertArgs} args - Arguments to update or create a NotificationLog.
+     * @example
+     * // Update or create a NotificationLog
+     * const notificationLog = await prisma.notificationLog.upsert({
+     *   create: {
+     *     // ... data to create a NotificationLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the NotificationLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NotificationLogUpsertArgs>(args: SelectSubset<T, NotificationLogUpsertArgs<ExtArgs>>): Prisma__NotificationLogClient<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of NotificationLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationLogCountArgs} args - Arguments to filter NotificationLogs to count.
+     * @example
+     * // Count the number of NotificationLogs
+     * const count = await prisma.notificationLog.count({
+     *   where: {
+     *     // ... the filter for the NotificationLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends NotificationLogCountArgs>(
+      args?: Subset<T, NotificationLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NotificationLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a NotificationLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NotificationLogAggregateArgs>(args: Subset<T, NotificationLogAggregateArgs>): Prisma.PrismaPromise<GetNotificationLogAggregateType<T>>
+
+    /**
+     * Group by NotificationLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NotificationLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NotificationLogGroupByArgs['orderBy'] }
+        : { orderBy?: NotificationLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NotificationLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNotificationLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the NotificationLog model
+   */
+  readonly fields: NotificationLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for NotificationLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NotificationLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the NotificationLog model
+   */
+  interface NotificationLogFieldRefs {
+    readonly id: FieldRef<"NotificationLog", 'String'>
+    readonly type: FieldRef<"NotificationLog", 'String'>
+    readonly recipient: FieldRef<"NotificationLog", 'String'>
+    readonly channel: FieldRef<"NotificationLog", 'String'>
+    readonly content: FieldRef<"NotificationLog", 'String'>
+    readonly status: FieldRef<"NotificationLog", 'String'>
+    readonly orderId: FieldRef<"NotificationLog", 'String'>
+    readonly broadcastId: FieldRef<"NotificationLog", 'String'>
+    readonly createdAt: FieldRef<"NotificationLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * NotificationLog findUnique
+   */
+  export type NotificationLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * Filter, which NotificationLog to fetch.
+     */
+    where: NotificationLogWhereUniqueInput
+  }
+
+  /**
+   * NotificationLog findUniqueOrThrow
+   */
+  export type NotificationLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * Filter, which NotificationLog to fetch.
+     */
+    where: NotificationLogWhereUniqueInput
+  }
+
+  /**
+   * NotificationLog findFirst
+   */
+  export type NotificationLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * Filter, which NotificationLog to fetch.
+     */
+    where?: NotificationLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationLogs to fetch.
+     */
+    orderBy?: NotificationLogOrderByWithRelationInput | NotificationLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NotificationLogs.
+     */
+    cursor?: NotificationLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationLogs.
+     */
+    distinct?: NotificationLogScalarFieldEnum | NotificationLogScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationLog findFirstOrThrow
+   */
+  export type NotificationLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * Filter, which NotificationLog to fetch.
+     */
+    where?: NotificationLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationLogs to fetch.
+     */
+    orderBy?: NotificationLogOrderByWithRelationInput | NotificationLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NotificationLogs.
+     */
+    cursor?: NotificationLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationLogs.
+     */
+    distinct?: NotificationLogScalarFieldEnum | NotificationLogScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationLog findMany
+   */
+  export type NotificationLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * Filter, which NotificationLogs to fetch.
+     */
+    where?: NotificationLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationLogs to fetch.
+     */
+    orderBy?: NotificationLogOrderByWithRelationInput | NotificationLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing NotificationLogs.
+     */
+    cursor?: NotificationLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationLogs.
+     */
+    distinct?: NotificationLogScalarFieldEnum | NotificationLogScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationLog create
+   */
+  export type NotificationLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * The data needed to create a NotificationLog.
+     */
+    data: XOR<NotificationLogCreateInput, NotificationLogUncheckedCreateInput>
+  }
+
+  /**
+   * NotificationLog createMany
+   */
+  export type NotificationLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many NotificationLogs.
+     */
+    data: NotificationLogCreateManyInput | NotificationLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * NotificationLog createManyAndReturn
+   */
+  export type NotificationLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many NotificationLogs.
+     */
+    data: NotificationLogCreateManyInput | NotificationLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * NotificationLog update
+   */
+  export type NotificationLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * The data needed to update a NotificationLog.
+     */
+    data: XOR<NotificationLogUpdateInput, NotificationLogUncheckedUpdateInput>
+    /**
+     * Choose, which NotificationLog to update.
+     */
+    where: NotificationLogWhereUniqueInput
+  }
+
+  /**
+   * NotificationLog updateMany
+   */
+  export type NotificationLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update NotificationLogs.
+     */
+    data: XOR<NotificationLogUpdateManyMutationInput, NotificationLogUncheckedUpdateManyInput>
+    /**
+     * Filter which NotificationLogs to update
+     */
+    where?: NotificationLogWhereInput
+    /**
+     * Limit how many NotificationLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * NotificationLog updateManyAndReturn
+   */
+  export type NotificationLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * The data used to update NotificationLogs.
+     */
+    data: XOR<NotificationLogUpdateManyMutationInput, NotificationLogUncheckedUpdateManyInput>
+    /**
+     * Filter which NotificationLogs to update
+     */
+    where?: NotificationLogWhereInput
+    /**
+     * Limit how many NotificationLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * NotificationLog upsert
+   */
+  export type NotificationLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * The filter to search for the NotificationLog to update in case it exists.
+     */
+    where: NotificationLogWhereUniqueInput
+    /**
+     * In case the NotificationLog found by the `where` argument doesn't exist, create a new NotificationLog with this data.
+     */
+    create: XOR<NotificationLogCreateInput, NotificationLogUncheckedCreateInput>
+    /**
+     * In case the NotificationLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NotificationLogUpdateInput, NotificationLogUncheckedUpdateInput>
+  }
+
+  /**
+   * NotificationLog delete
+   */
+  export type NotificationLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+    /**
+     * Filter which NotificationLog to delete.
+     */
+    where: NotificationLogWhereUniqueInput
+  }
+
+  /**
+   * NotificationLog deleteMany
+   */
+  export type NotificationLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NotificationLogs to delete
+     */
+    where?: NotificationLogWhereInput
+    /**
+     * Limit how many NotificationLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * NotificationLog without action
+   */
+  export type NotificationLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationLog
+     */
+    select?: NotificationLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationLog
+     */
+    omit?: NotificationLogOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -33294,6 +34517,8 @@ export namespace Prisma {
     businessNo: 'businessNo',
     contractDate: 'contractDate',
     contractDocument: 'contractDocument',
+    centerNumber: 'centerNumber',
+    isMasterCenter: 'isMasterCenter',
     isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -33362,7 +34587,10 @@ export namespace Prisma {
     cancelledAt: 'cancelledAt',
     cancelReason: 'cancelReason',
     broadcastId: 'broadcastId',
-    matchType: 'matchType'
+    matchType: 'matchType',
+    taxInvoiceIssued: 'taxInvoiceIssued',
+    taxInvoiceIssuedAt: 'taxInvoiceIssuedAt',
+    taxInvoiceNumber: 'taxInvoiceNumber'
   };
 
   export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
@@ -33412,6 +34640,7 @@ export namespace Prisma {
     memo: 'memo',
     requestMemo: 'requestMemo',
     rejectionReason: 'rejectionReason',
+    reminder1hSentAt: 'reminder1hSentAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -33652,6 +34881,21 @@ export namespace Prisma {
   };
 
   export type ScanLogScalarFieldEnum = (typeof ScanLogScalarFieldEnum)[keyof typeof ScanLogScalarFieldEnum]
+
+
+  export const NotificationLogScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    recipient: 'recipient',
+    channel: 'channel',
+    content: 'content',
+    status: 'status',
+    orderId: 'orderId',
+    broadcastId: 'broadcastId',
+    createdAt: 'createdAt'
+  };
+
+  export type NotificationLogScalarFieldEnum = (typeof NotificationLogScalarFieldEnum)[keyof typeof NotificationLogScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -34349,6 +35593,8 @@ export namespace Prisma {
     businessNo?: StringNullableFilter<"Center"> | string | null
     contractDate?: DateTimeNullableFilter<"Center"> | Date | string | null
     contractDocument?: StringNullableFilter<"Center"> | string | null
+    centerNumber?: StringNullableFilter<"Center"> | string | null
+    isMasterCenter?: BoolFilter<"Center"> | boolean
     isActive?: BoolFilter<"Center"> | boolean
     createdAt?: DateTimeFilter<"Center"> | Date | string
     updatedAt?: DateTimeFilter<"Center"> | Date | string
@@ -34372,6 +35618,8 @@ export namespace Prisma {
     businessNo?: SortOrderInput | SortOrder
     contractDate?: SortOrderInput | SortOrder
     contractDocument?: SortOrderInput | SortOrder
+    centerNumber?: SortOrderInput | SortOrder
+    isMasterCenter?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -34398,6 +35646,8 @@ export namespace Prisma {
     businessNo?: StringNullableFilter<"Center"> | string | null
     contractDate?: DateTimeNullableFilter<"Center"> | Date | string | null
     contractDocument?: StringNullableFilter<"Center"> | string | null
+    centerNumber?: StringNullableFilter<"Center"> | string | null
+    isMasterCenter?: BoolFilter<"Center"> | boolean
     isActive?: BoolFilter<"Center"> | boolean
     createdAt?: DateTimeFilter<"Center"> | Date | string
     updatedAt?: DateTimeFilter<"Center"> | Date | string
@@ -34421,6 +35671,8 @@ export namespace Prisma {
     businessNo?: SortOrderInput | SortOrder
     contractDate?: SortOrderInput | SortOrder
     contractDocument?: SortOrderInput | SortOrder
+    centerNumber?: SortOrderInput | SortOrder
+    isMasterCenter?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -34445,6 +35697,8 @@ export namespace Prisma {
     businessNo?: StringNullableWithAggregatesFilter<"Center"> | string | null
     contractDate?: DateTimeNullableWithAggregatesFilter<"Center"> | Date | string | null
     contractDocument?: StringNullableWithAggregatesFilter<"Center"> | string | null
+    centerNumber?: StringNullableWithAggregatesFilter<"Center"> | string | null
+    isMasterCenter?: BoolWithAggregatesFilter<"Center"> | boolean
     isActive?: BoolWithAggregatesFilter<"Center"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Center"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Center"> | Date | string
@@ -34657,6 +35911,9 @@ export namespace Prisma {
     cancelReason?: StringNullableFilter<"Order"> | string | null
     broadcastId?: StringNullableFilter<"Order"> | string | null
     matchType?: StringNullableFilter<"Order"> | string | null
+    taxInvoiceIssued?: BoolFilter<"Order"> | boolean
+    taxInvoiceIssuedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    taxInvoiceNumber?: StringNullableFilter<"Order"> | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processingCenter?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
@@ -34697,6 +35954,9 @@ export namespace Prisma {
     cancelReason?: SortOrderInput | SortOrder
     broadcastId?: SortOrderInput | SortOrder
     matchType?: SortOrderInput | SortOrder
+    taxInvoiceIssued?: SortOrder
+    taxInvoiceIssuedAt?: SortOrderInput | SortOrder
+    taxInvoiceNumber?: SortOrderInput | SortOrder
     seller?: UserOrderByWithRelationInput
     admin?: UserOrderByWithRelationInput
     processingCenter?: CenterOrderByWithRelationInput
@@ -34740,6 +36000,9 @@ export namespace Prisma {
     cancelReason?: StringNullableFilter<"Order"> | string | null
     broadcastId?: StringNullableFilter<"Order"> | string | null
     matchType?: StringNullableFilter<"Order"> | string | null
+    taxInvoiceIssued?: BoolFilter<"Order"> | boolean
+    taxInvoiceIssuedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    taxInvoiceNumber?: StringNullableFilter<"Order"> | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processingCenter?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
@@ -34780,6 +36043,9 @@ export namespace Prisma {
     cancelReason?: SortOrderInput | SortOrder
     broadcastId?: SortOrderInput | SortOrder
     matchType?: SortOrderInput | SortOrder
+    taxInvoiceIssued?: SortOrder
+    taxInvoiceIssuedAt?: SortOrderInput | SortOrder
+    taxInvoiceNumber?: SortOrderInput | SortOrder
     _count?: OrderCountOrderByAggregateInput
     _avg?: OrderAvgOrderByAggregateInput
     _max?: OrderMaxOrderByAggregateInput
@@ -34819,6 +36085,9 @@ export namespace Prisma {
     cancelReason?: StringNullableWithAggregatesFilter<"Order"> | string | null
     broadcastId?: StringNullableWithAggregatesFilter<"Order"> | string | null
     matchType?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    taxInvoiceIssued?: BoolWithAggregatesFilter<"Order"> | boolean
+    taxInvoiceIssuedAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    taxInvoiceNumber?: StringNullableWithAggregatesFilter<"Order"> | string | null
   }
 
   export type OrderItemWhereInput = {
@@ -35002,6 +36271,7 @@ export namespace Prisma {
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
+    reminder1hSentAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -35023,6 +36293,7 @@ export namespace Prisma {
     memo?: SortOrderInput | SortOrder
     requestMemo?: SortOrderInput | SortOrder
     rejectionReason?: SortOrderInput | SortOrder
+    reminder1hSentAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     seller?: UserOrderByWithRelationInput
@@ -35047,6 +36318,7 @@ export namespace Prisma {
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
+    reminder1hSentAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -35068,6 +36340,7 @@ export namespace Prisma {
     memo?: SortOrderInput | SortOrder
     requestMemo?: SortOrderInput | SortOrder
     rejectionReason?: SortOrderInput | SortOrder
+    reminder1hSentAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: BroadcastCountOrderByAggregateInput
@@ -35091,6 +36364,7 @@ export namespace Prisma {
     memo?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
+    reminder1hSentAt?: DateTimeNullableWithAggregatesFilter<"Broadcast"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Broadcast"> | Date | string
   }
@@ -36320,6 +37594,78 @@ export namespace Prisma {
     metadata?: JsonNullableWithAggregatesFilter<"ScanLog">
   }
 
+  export type NotificationLogWhereInput = {
+    AND?: NotificationLogWhereInput | NotificationLogWhereInput[]
+    OR?: NotificationLogWhereInput[]
+    NOT?: NotificationLogWhereInput | NotificationLogWhereInput[]
+    id?: StringFilter<"NotificationLog"> | string
+    type?: StringFilter<"NotificationLog"> | string
+    recipient?: StringFilter<"NotificationLog"> | string
+    channel?: StringFilter<"NotificationLog"> | string
+    content?: StringFilter<"NotificationLog"> | string
+    status?: StringFilter<"NotificationLog"> | string
+    orderId?: StringNullableFilter<"NotificationLog"> | string | null
+    broadcastId?: StringNullableFilter<"NotificationLog"> | string | null
+    createdAt?: DateTimeFilter<"NotificationLog"> | Date | string
+  }
+
+  export type NotificationLogOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    recipient?: SortOrder
+    channel?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    orderId?: SortOrderInput | SortOrder
+    broadcastId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type NotificationLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: NotificationLogWhereInput | NotificationLogWhereInput[]
+    OR?: NotificationLogWhereInput[]
+    NOT?: NotificationLogWhereInput | NotificationLogWhereInput[]
+    type?: StringFilter<"NotificationLog"> | string
+    recipient?: StringFilter<"NotificationLog"> | string
+    channel?: StringFilter<"NotificationLog"> | string
+    content?: StringFilter<"NotificationLog"> | string
+    status?: StringFilter<"NotificationLog"> | string
+    orderId?: StringNullableFilter<"NotificationLog"> | string | null
+    broadcastId?: StringNullableFilter<"NotificationLog"> | string | null
+    createdAt?: DateTimeFilter<"NotificationLog"> | Date | string
+  }, "id">
+
+  export type NotificationLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    recipient?: SortOrder
+    channel?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    orderId?: SortOrderInput | SortOrder
+    broadcastId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: NotificationLogCountOrderByAggregateInput
+    _max?: NotificationLogMaxOrderByAggregateInput
+    _min?: NotificationLogMinOrderByAggregateInput
+  }
+
+  export type NotificationLogScalarWhereWithAggregatesInput = {
+    AND?: NotificationLogScalarWhereWithAggregatesInput | NotificationLogScalarWhereWithAggregatesInput[]
+    OR?: NotificationLogScalarWhereWithAggregatesInput[]
+    NOT?: NotificationLogScalarWhereWithAggregatesInput | NotificationLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"NotificationLog"> | string
+    type?: StringWithAggregatesFilter<"NotificationLog"> | string
+    recipient?: StringWithAggregatesFilter<"NotificationLog"> | string
+    channel?: StringWithAggregatesFilter<"NotificationLog"> | string
+    content?: StringWithAggregatesFilter<"NotificationLog"> | string
+    status?: StringWithAggregatesFilter<"NotificationLog"> | string
+    orderId?: StringNullableWithAggregatesFilter<"NotificationLog"> | string | null
+    broadcastId?: StringNullableWithAggregatesFilter<"NotificationLog"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"NotificationLog"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username: string
@@ -36789,6 +38135,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -36812,6 +38160,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -36835,6 +38185,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36858,6 +38210,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36881,6 +38235,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -36899,6 +38255,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36917,6 +38275,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37124,6 +38484,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
@@ -37164,6 +38527,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -37196,6 +38562,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
@@ -37236,6 +38605,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -37272,6 +38644,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
   }
 
   export type OrderUpdateManyMutationInput = {
@@ -37299,6 +38674,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUncheckedUpdateManyInput = {
@@ -37330,6 +38708,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemCreateInput = {
@@ -37514,6 +38895,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
@@ -37535,6 +38917,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
@@ -37552,6 +38935,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
@@ -37573,6 +38957,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
@@ -37592,6 +38977,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37607,6 +38993,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37624,6 +39011,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38955,6 +40343,90 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
+  export type NotificationLogCreateInput = {
+    id?: string
+    type: string
+    recipient: string
+    channel: string
+    content: string
+    status: string
+    orderId?: string | null
+    broadcastId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type NotificationLogUncheckedCreateInput = {
+    id?: string
+    type: string
+    recipient: string
+    channel: string
+    content: string
+    status: string
+    orderId?: string | null
+    broadcastId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type NotificationLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    recipient?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    recipient?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationLogCreateManyInput = {
+    id?: string
+    type: string
+    recipient: string
+    channel: string
+    content: string
+    status: string
+    orderId?: string | null
+    broadcastId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type NotificationLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    recipient?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    recipient?: StringFieldUpdateOperationsInput | string
+    channel?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -39599,6 +41071,8 @@ export namespace Prisma {
     businessNo?: SortOrder
     contractDate?: SortOrder
     contractDocument?: SortOrder
+    centerNumber?: SortOrder
+    isMasterCenter?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -39617,6 +41091,8 @@ export namespace Prisma {
     businessNo?: SortOrder
     contractDate?: SortOrder
     contractDocument?: SortOrder
+    centerNumber?: SortOrder
+    isMasterCenter?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -39635,6 +41111,8 @@ export namespace Prisma {
     businessNo?: SortOrder
     contractDate?: SortOrder
     contractDocument?: SortOrder
+    centerNumber?: SortOrder
+    isMasterCenter?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -39874,6 +41352,9 @@ export namespace Prisma {
     cancelReason?: SortOrder
     broadcastId?: SortOrder
     matchType?: SortOrder
+    taxInvoiceIssued?: SortOrder
+    taxInvoiceIssuedAt?: SortOrder
+    taxInvoiceNumber?: SortOrder
   }
 
   export type OrderAvgOrderByAggregateInput = {
@@ -39910,6 +41391,9 @@ export namespace Prisma {
     cancelReason?: SortOrder
     broadcastId?: SortOrder
     matchType?: SortOrder
+    taxInvoiceIssued?: SortOrder
+    taxInvoiceIssuedAt?: SortOrder
+    taxInvoiceNumber?: SortOrder
   }
 
   export type OrderMinOrderByAggregateInput = {
@@ -39941,6 +41425,9 @@ export namespace Prisma {
     cancelReason?: SortOrder
     broadcastId?: SortOrder
     matchType?: SortOrder
+    taxInvoiceIssued?: SortOrder
+    taxInvoiceIssuedAt?: SortOrder
+    taxInvoiceNumber?: SortOrder
   }
 
   export type OrderSumOrderByAggregateInput = {
@@ -40129,6 +41616,7 @@ export namespace Prisma {
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
+    reminder1hSentAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -40146,6 +41634,7 @@ export namespace Prisma {
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
+    reminder1hSentAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -40163,6 +41652,7 @@ export namespace Prisma {
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
+    reminder1hSentAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -41039,6 +42529,42 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type NotificationLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    recipient?: SortOrder
+    channel?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    orderId?: SortOrder
+    broadcastId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type NotificationLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    recipient?: SortOrder
+    channel?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    orderId?: SortOrder
+    broadcastId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type NotificationLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    recipient?: SortOrder
+    channel?: SortOrder
+    content?: SortOrder
+    status?: SortOrder
+    orderId?: SortOrder
+    broadcastId?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type UserCreatechannelsInput = {
@@ -43864,6 +45390,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43886,6 +45414,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43925,6 +45455,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
@@ -43963,6 +45496,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -44005,6 +45541,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
@@ -44043,6 +45582,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -44071,6 +45613,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     center?: CenterCreateNestedOneWithoutBroadcastsInput
@@ -44090,6 +45633,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
@@ -44436,6 +45980,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44458,6 +46004,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44515,6 +46063,9 @@ export namespace Prisma {
     cancelReason?: StringNullableFilter<"Order"> | string | null
     broadcastId?: StringNullableFilter<"Order"> | string | null
     matchType?: StringNullableFilter<"Order"> | string | null
+    taxInvoiceIssued?: BoolFilter<"Order"> | boolean
+    taxInvoiceIssuedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    taxInvoiceNumber?: StringNullableFilter<"Order"> | string | null
   }
 
   export type OrderUpsertWithWhereUniqueWithoutAdminInput = {
@@ -44565,6 +46116,7 @@ export namespace Prisma {
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
+    reminder1hSentAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
   }
@@ -45510,6 +47062,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
@@ -45548,6 +47103,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -45576,6 +47134,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
@@ -45595,6 +47154,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
@@ -45821,6 +47381,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -45843,6 +47405,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -45972,6 +47536,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45994,6 +47560,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -46028,6 +47596,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
@@ -46067,6 +47638,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -46268,6 +47842,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
@@ -46307,6 +47884,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -46630,6 +48210,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -46652,6 +48234,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -46677,6 +48261,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
@@ -46697,6 +48282,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
@@ -47050,6 +48636,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -47072,6 +48660,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -47103,6 +48693,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
@@ -47123,6 +48714,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
@@ -47271,6 +48863,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
@@ -47310,6 +48905,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
@@ -47442,6 +49040,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
@@ -47481,6 +49082,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
@@ -47603,6 +49207,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
@@ -47642,6 +49249,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -47774,6 +49384,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
@@ -47813,6 +49426,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -47992,6 +49608,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48014,6 +49632,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48087,6 +49707,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
@@ -48125,6 +49748,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -48241,6 +49867,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48263,6 +49891,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48469,6 +50099,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
@@ -48489,6 +50120,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutBroadcastInput
@@ -48687,6 +50319,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
@@ -48707,6 +50340,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutBroadcastNestedInput
@@ -49201,6 +50835,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
@@ -49240,6 +50877,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
@@ -49287,6 +50927,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
@@ -49326,6 +50969,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
@@ -49533,6 +51179,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
@@ -49572,6 +51221,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
@@ -49619,6 +51271,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
@@ -49658,6 +51313,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
@@ -50851,6 +52509,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -50873,6 +52533,8 @@ export namespace Prisma {
     businessNo?: string | null
     contractDate?: Date | string | null
     contractDocument?: string | null
+    centerNumber?: string | null
+    isMasterCenter?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -51077,6 +52739,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -51099,6 +52763,8 @@ export namespace Prisma {
     businessNo?: NullableStringFieldUpdateOperationsInput | string | null
     contractDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contractDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    centerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isMasterCenter?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -51159,6 +52825,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
   }
 
   export type OrderCreateManyAdminInput = {
@@ -51189,6 +52858,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
   }
 
   export type BroadcastCreateManySellerInput = {
@@ -51203,6 +52875,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -51388,6 +53061,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
@@ -51426,6 +53102,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -51461,6 +53140,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUpdateWithoutAdminInput = {
@@ -51488,6 +53170,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
@@ -51526,6 +53211,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -51561,6 +53249,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BroadcastUpdateWithoutSellerInput = {
@@ -51574,6 +53265,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
@@ -51593,6 +53285,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
@@ -51611,6 +53304,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -52386,6 +54080,9 @@ export namespace Prisma {
     cancelReason?: string | null
     broadcastId?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
   }
 
   export type BroadcastCreateManyCenterInput = {
@@ -52400,6 +54097,7 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -52554,6 +54252,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
@@ -52592,6 +54293,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -52627,6 +54331,9 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BroadcastUpdateWithoutCenterInput = {
@@ -52640,6 +54347,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
@@ -52659,6 +54367,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
@@ -52677,6 +54386,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -52942,6 +54652,9 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     cancelReason?: string | null
     matchType?: string | null
+    taxInvoiceIssued?: boolean
+    taxInvoiceIssuedAt?: Date | string | null
+    taxInvoiceNumber?: string | null
   }
 
   export type SaleUpdateWithoutBroadcastInput = {
@@ -53005,6 +54718,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
@@ -53043,6 +54759,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -53078,6 +54797,9 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
+    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WarehouseInventoryCreateManyWarehouseInput = {

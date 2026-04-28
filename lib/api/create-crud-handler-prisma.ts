@@ -33,6 +33,8 @@ interface CrudConfig<TData = Record<string, unknown>> {
   searchFields?: string[];
   excludeFields?: string[];
   transformRecord?: (record: TData) => unknown;
+  softDelete?: { field: string; value: unknown }; // soft delete: update field instead of hard delete
+  include?: Record<string, unknown>; // Prisma include for list/get queries
 }
 
 /**
@@ -88,6 +90,8 @@ export function createCrudHandler<TData = Record<string, unknown>>(
     searchFields,
     excludeFields,
     transformRecord,
+    softDelete,
+    include,
   } = config;
 
   const omit = excludeFields?.length
@@ -181,6 +185,7 @@ export function createCrudHandler<TData = Record<string, unknown>>(
           skip: params.pageIndex * params.pageSize,
           orderBy,
           ...(omit && { omit }),
+          ...(include && { include }),
         }),
         delegate.count({ where }),
       ]);
@@ -230,6 +235,7 @@ export function createCrudHandler<TData = Record<string, unknown>>(
       const record = await delegate.findUnique({
         where: { id },
         ...(omit && { omit }),
+        ...(include && { include }),
       });
 
       if (!record) return errors.notFound(model);
@@ -280,8 +286,17 @@ export function createCrudHandler<TData = Record<string, unknown>>(
         try {
           // Note: Type assertion needed for union delegate access
           const delegate = prisma[model] as any;
-          await delegate.delete({ where: { id } });
-          logger.info("delete", { model, id, requestId });
+          if (softDelete) {
+            // Soft delete: update field instead of hard delete
+            await delegate.update({
+              where: { id },
+              data: { [softDelete.field]: softDelete.value },
+            });
+            logger.info("soft_delete", { model, id, field: softDelete.field, requestId });
+          } else {
+            await delegate.delete({ where: { id } });
+            logger.info("delete", { model, id, requestId });
+          }
           return ok({ deleted: true });
         } catch (err: unknown) {
           return handlePrismaError(err, model);

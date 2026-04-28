@@ -7,7 +7,8 @@ import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 import { ok, errors } from '@/lib/api/response';
 import { prisma } from '@/lib/db/prisma';
-import { sendNotification } from '@/lib/services/onewms/notifications';
+import { sendNotification as sendOnewmsNotification } from '@/lib/services/onewms/notifications';
+import { sendNotification } from '@/lib/services/notifications';
 
 const TOSS_API_URL = 'https://api.tosspayments.com/v1/virtual-accounts';
 const VALID_HOURS = 3; // 3시간 유효
@@ -116,6 +117,50 @@ export async function POST(req: NextRequest) {
       console.error('[Virtual Account] Toss API error:', errorData);
 
       const errorMessage = errorData?.message || '가상계좌 발급에 실패했습니다';
+
+      // Order 상태를 PAYMENT_FAILED로 변경
+      await prisma.order.update({
+        where: { id: orderId },
+        data: { paymentStatus: "PAYMENT_FAILED" },
+      }).catch((err) => console.error("[VA_FAIL_STATUS_UPDATE]", err));
+
+      // 셀러에게 실패 알림
+      if (order.seller.phone) {
+        sendNotification({
+          type: "ORDER_VA_FAILED",
+          recipient: {
+            name: order.seller.name,
+            phone: order.seller.phone,
+            email: order.seller.email || undefined,
+          },
+          variables: {
+            orderCode: order.orderNo,
+            errorMessage,
+          },
+          orderId,
+        }).catch((err) => console.error("[VA_FAIL_NOTIFICATION]", err));
+      }
+
+      // 관리자에게도 알림
+      try {
+        const admins = await prisma.user.findMany({
+          where: { role: { in: ["MASTER", "SUB_MASTER"] }, isActive: true },
+          select: { name: true, phone: true, email: true },
+        });
+        for (const admin of admins) {
+          if (admin.phone) {
+            sendNotification({
+              type: "ORDER_VA_FAILED",
+              recipient: { name: admin.name, phone: admin.phone, email: admin.email || undefined },
+              variables: { orderCode: order.orderNo, errorMessage: `[관리자용] ${errorMessage}` },
+              orderId,
+            }).catch((err) => console.error("[VA_FAIL_ADMIN_NOTIF]", err));
+          }
+        }
+      } catch (notifErr) {
+        console.error("[VA_FAIL_ADMIN_NOTIF]", notifErr);
+      }
+
       return errors.internal(errorMessage);
     }
 
@@ -139,8 +184,8 @@ export async function POST(req: NextRequest) {
       `${tossResponse.bank} ${tossResponse.accountNumber}`
     );
 
-    // Send deposit notification to seller
-    await sendNotification({
+    // Send deposit notification to seller (legacy email)
+    await sendOnewmsNotification({
       type: 'deposit_request',
       recipient: {
         name: order.seller.name,
@@ -156,6 +201,26 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // ORDER-05: 가상계좌 발급 알림 → 셀러 (AlimTalk/LMS)
+    if (order.seller.phone) {
+      sendNotification({
+        type: "ORDER_CONFIRMED",
+        recipient: {
+          name: order.seller.name,
+          phone: order.seller.phone,
+          email: order.seller.email || undefined,
+        },
+        variables: {
+          orderCode: order.orderNo,
+          amount: order.totalAmount.toLocaleString(),
+          bank: tossResponse.bank,
+          accountNumber: tossResponse.accountNumber,
+          expiryAt: expiryTime.toLocaleString("ko-KR"),
+        },
+        orderId,
+      }).catch((err) => console.error("[VA_NOTIFICATION]", err));
+    }
+
     return ok({
       accountNumber: tossResponse.accountNumber,
       bank: tossResponse.bank,
@@ -167,11 +232,38 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('[Virtual Account] Failed to create virtual account:', error);
+    const message = error instanceof Error ? error.message : '가상계좌 발급 중 오류가 발생했습니다';
 
-    if (error instanceof Error) {
-      return errors.internal(error.message);
+    // 가능한 경우 orderId 기반 상태 업데이트 + 알림
+    try {
+      const body2 = await req.clone().json().catch(() => null);
+      const failOrderId = body2?.orderId;
+      if (failOrderId) {
+        await prisma.order.update({
+          where: { id: failOrderId },
+          data: { paymentStatus: "PAYMENT_FAILED" },
+        });
+        const failOrder = await prisma.order.findUnique({
+          where: { id: failOrderId },
+          include: { seller: { select: { name: true, phone: true, email: true } } },
+        });
+        if (failOrder?.seller?.phone) {
+          await sendNotification({
+            type: "ORDER_VA_FAILED",
+            recipient: {
+              name: failOrder.seller.name,
+              phone: failOrder.seller.phone,
+              email: failOrder.seller.email || undefined,
+            },
+            variables: { orderCode: failOrder.orderNo, errorMessage: message },
+            orderId: failOrderId,
+          });
+        }
+      }
+    } catch (notifErr) {
+      console.error("[VA_CATCH_NOTIFICATION]", notifErr);
     }
 
-    return errors.internal('가상계좌 발급 중 오류가 발생했습니다');
+    return errors.internal(message);
   }
 }

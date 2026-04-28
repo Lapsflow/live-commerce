@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { playBeep } from "@/lib/utils/sound";
 
 interface ProductData {
   id: string;
@@ -44,6 +45,7 @@ export function useBarcodeScanner() {
       const data = await response.json();
 
       if (!response.ok) {
+        playBeep("error"); // BARCODE-02: 실패 사운드
         if (response.status === 404) {
           setError(`바코드 ${barcode}에 해당하는 상품을 찾을 수 없습니다.`);
         } else {
@@ -52,6 +54,7 @@ export function useBarcodeScanner() {
         return;
       }
 
+      playBeep("success"); // BARCODE-02: 성공 사운드
       // ok() response format: { data: T }
       setScannedProduct(data.data);
     } catch (err) {

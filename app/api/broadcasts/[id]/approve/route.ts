@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { withRole } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { sendNotification } from "@/lib/services/notifications";
 
 /**
  * PUT /api/broadcasts/:id/approve
@@ -33,7 +34,27 @@ export const PUT = withRole(
     const updated = await prisma.broadcast.update({
       where: { id: broadcastId },
       data: { status: "SCHEDULED" },
+      include: { seller: { select: { name: true, phone: true, email: true } } },
     });
+
+    // LIVE-09: 방송 승인 알림 → 셀러
+    if (updated.seller?.phone) {
+      sendNotification({
+        type: "BROADCAST_APPROVED",
+        recipient: {
+          name: updated.seller.name,
+          phone: updated.seller.phone,
+          email: updated.seller.email || undefined,
+        },
+        variables: {
+          broadcastTitle: updated.code || broadcastId,
+          scheduledAt: updated.scheduledAt
+            ? new Date(updated.scheduledAt).toLocaleString("ko-KR")
+            : "-",
+        },
+        broadcastId,
+      }).catch((err) => console.error("[BROADCAST_APPROVE_NOTIFICATION]", err));
+    }
 
     return ok(updated);
   }

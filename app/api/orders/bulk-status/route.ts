@@ -2,11 +2,12 @@ import { NextRequest } from "next/server";
 import { withRole } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { sendNotification } from "@/lib/services/notifications";
 import { z } from "zod";
 
 const bulkStatusUpdateSchema = z.object({
   orderIds: z.array(z.string()).min(1, "최소 1개의 주문을 선택해야 합니다"),
-  paymentStatus: z.enum(["UNPAID", "PAID"]).optional(),
+  paymentStatus: z.enum(["UNPAID", "PAID", "PAYMENT_FAILED"]).optional(),
   shippingStatus: z
     .enum(["PENDING", "PREPARING", "SHIPPED", "PARTIAL"])
     .optional(),
@@ -72,7 +73,7 @@ export const PUT = withRole(
             }
 
             // 상태 업데이트
-            await tx.order.update({
+            const updatedOrder = await tx.order.update({
               where: { id: orderId },
               data: {
                 ...(data.paymentStatus && {
@@ -82,7 +83,26 @@ export const PUT = withRole(
                   shippingStatus: data.shippingStatus,
                 }),
               },
+              include: {
+                seller: {
+                  select: { name: true, phone: true, email: true },
+                },
+              },
             });
+
+            // ORDER-06: 출고완료 알림 → 셀러
+            if (data.shippingStatus === "SHIPPED" && updatedOrder.seller?.phone) {
+              sendNotification({
+                type: "ORDER_SHIPPED",
+                recipient: {
+                  name: updatedOrder.seller.name,
+                  phone: updatedOrder.seller.phone,
+                  email: updatedOrder.seller.email || undefined,
+                },
+                variables: { orderCode: updatedOrder.orderNo || orderId },
+                orderId,
+              }).catch((err) => console.error("[BULK_SHIPPED_NOTIFICATION]", err));
+            }
 
             updateResults.push({
               id: orderId,

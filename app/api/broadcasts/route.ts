@@ -3,6 +3,7 @@ import { createCrudHandler } from "@/lib/api/create-crud-handler-prisma";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { created, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { sendNotification } from "@/lib/services/notifications";
 import { z } from "zod";
 
 const broadcastSchema = z.object({
@@ -17,7 +18,7 @@ const broadcastSchema = z.object({
   memo: z.string().max(500).optional(),
 });
 
-// GET은 기존 CRUD factory 사용
+// GET은 기존 CRUD factory 사용 (LIVE-01: seller include 추가)
 export const { list: GET } = createCrudHandler({
   model: "broadcast",
   roles: {
@@ -29,6 +30,10 @@ export const { list: GET } = createCrudHandler({
   sortableFields: ["code", "platform", "status", "scheduledAt", "createdAt"],
   searchFields: ["code"],
   excludeFields: [],
+  include: {
+    seller: { select: { id: true, name: true } },
+    center: { select: { id: true, name: true, code: true } },
+  },
 });
 
 // POST: 충돌 방지 로직 포함 커스텀 핸들러
@@ -90,6 +95,42 @@ export const POST = withRole(
           memo: data.memo,
         },
       });
+
+      // LIVE-09: 셀러 요청접수 → 센터담당자(ADMIN) 알림
+      if (!data.status || data.status === "REQUESTED") {
+        try {
+          const seller = await prisma.user.findUnique({
+            where: { id: data.sellerId },
+            select: { name: true, adminId: true },
+          });
+          // 담당 ADMIN에게 알림 (adminId가 없으면 MASTER/SUB_MASTER에게)
+          const recipients = seller?.adminId
+            ? await prisma.user.findMany({
+                where: { id: seller.adminId, isActive: true },
+                select: { name: true, phone: true, email: true },
+              })
+            : await prisma.user.findMany({
+                where: { role: { in: ["MASTER", "SUB_MASTER"] }, isActive: true },
+                select: { name: true, phone: true, email: true },
+              });
+          for (const r of recipients) {
+            if (r.phone) {
+              sendNotification({
+                type: "BROADCAST_REQUESTED",
+                recipient: { name: r.name, phone: r.phone, email: r.email || undefined },
+                variables: {
+                  sellerName: seller?.name || "-",
+                  broadcastTitle: broadcast.code,
+                  scheduledAt: scheduledAt.toLocaleString("ko-KR"),
+                },
+                broadcastId: broadcast.id,
+              }).catch((err) => console.error("[BROADCAST_REQUESTED_NOTIF]", err));
+            }
+          }
+        } catch (err) {
+          console.error("[BROADCAST_REQUESTED_NOTIF]", err);
+        }
+      }
 
       return created(broadcast);
     } catch (error) {

@@ -160,7 +160,12 @@ export default function ProductUploadPage() {
 
   // 업로드 실행
   const handleUpload = async () => {
-    if (!rawFile || !selectedCenterId) return;
+    // PRODUCT-06: 센터 미선택 시 명확한 안내
+    if (!selectedCenterId) {
+      toast({ title: "센터 미선택", description: "센터를 선택해 주세요", variant: "destructive" });
+      return;
+    }
+    if (!rawFile) return;
 
     setUploading(true);
     setResult(null);
@@ -195,6 +200,11 @@ export default function ProductUploadPage() {
         toast({ title: "업로드 실패", description: errData?.message, variant: "destructive" });
       }
     } catch {
+      // PRODUCT-06: 에러 상태를 result에도 반영
+      setResult({
+        success: false,
+        message: "네트워크 오류가 발생했습니다",
+      });
       toast({ title: "오류", description: "네트워크 오류가 발생했습니다", variant: "destructive" });
     } finally {
       setUploading(false);

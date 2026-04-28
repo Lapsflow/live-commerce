@@ -177,6 +177,10 @@ model Center {
   contractDate     DateTime? // 계약일
   contractDocument String? // 계약서 파일 경로
 
+  // ✨ 내부 관리용
+  centerNumber   String?  // 순차 번호 (C01, C02, ...) - 내부 관리용
+  isMasterCenter Boolean  @default(false) // 본사 센터 여부
+
   // 상태
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -290,6 +294,11 @@ model Order {
   broadcastId  String? // 매칭된 방송 ID (자동 또는 수동)
   matchType    String? // "AUTO" | "MANUAL" | null(미매칭)
 
+  // ✨ ORDER-04: 세금계산서 발행
+  taxInvoiceIssued   Boolean   @default(false)
+  taxInvoiceIssuedAt DateTime?
+  taxInvoiceNumber   String?   // 세금계산서 번호
+
   // Relations
   seller             User                  @relation(fields: [sellerId], references: [id])
   admin              User?                 @relation("AdminOrders", fields: [adminId], references: [id])
@@ -314,11 +323,13 @@ enum OrderStatus {
   PENDING
   APPROVED
   REJECTED
+  CANCELLED // ✨ Soft cancel (hard delete 금지)
 }
 
 enum PaymentStatus {
-  UNPAID // 입금확인전
-  PAID // 입금완료
+  UNPAID         // 입금확인전
+  PAID           // 입금완료
+  PAYMENT_FAILED // 가상계좌 발급 실패
 }
 
 enum ShippingStatus {
@@ -396,6 +407,7 @@ model Broadcast {
   memo        String?
   requestMemo     String? // 셀러 신청 메모
   rejectionReason String? // 반려 사유
+  reminder1hSentAt DateTime? // 1시간 전 리마인더 발송 시각 (중복 방지)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
@@ -735,4 +747,22 @@ enum ScanType {
   INBOUND
   OUTBOUND
   LOOKUP
+}
+
+// ──────────────────────── Notification Log ────────────────────────
+
+model NotificationLog {
+  id          String   @id @default(cuid())
+  type        String   // "ORDER_CONFIRMED" | "BROADCAST_CANCELLED" | "SAMPLE_PAID"
+  recipient   String   // phone or email
+  channel     String   // "SMS" | "ALIMTALK" | "EMAIL"
+  content     String
+  status      String   // "SENT" | "FAILED" | "MOCK"
+  orderId     String?
+  broadcastId String?
+  createdAt   DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([orderId])
+  @@index([broadcastId])
 }

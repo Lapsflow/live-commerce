@@ -2,10 +2,11 @@ import { NextRequest } from "next/server";
 import { withRole } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { sendNotification } from "@/lib/services/notifications";
 import { z } from "zod";
 
 const statusUpdateSchema = z.object({
-  paymentStatus: z.enum(["UNPAID", "PAID"]).optional(),
+  paymentStatus: z.enum(["UNPAID", "PAID", "PAYMENT_FAILED"]).optional(),
   shippingStatus: z.enum(["PENDING", "PREPARING", "SHIPPED", "PARTIAL"]).optional(),
 });
 
@@ -55,10 +56,27 @@ export const PUT = withRole(
               id: true,
               name: true,
               email: true,
+              phone: true,
             },
           },
         },
       });
+
+      // ORDER-06: 출고완료 알림 → 셀러
+      if (data.shippingStatus === "SHIPPED" && updated.seller?.phone) {
+        sendNotification({
+          type: "ORDER_SHIPPED",
+          recipient: {
+            name: updated.seller.name,
+            phone: updated.seller.phone,
+            email: updated.seller.email || undefined,
+          },
+          variables: {
+            orderCode: updated.orderNo || orderId,
+          },
+          orderId,
+        }).catch((err) => console.error("[ORDER_SHIPPED_NOTIFICATION]", err));
+      }
 
       return ok(updated);
     } catch (err: any) {

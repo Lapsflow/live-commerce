@@ -90,6 +90,16 @@ export const PUT = withRole(
         return errors.notFound("user");
       }
 
+      // MASTER 계정 1개 강제 정책
+      if (data.role === "MASTER" && existing.role !== "MASTER") {
+        const masterCount = await prisma.user.count({
+          where: { role: "MASTER" },
+        });
+        if (masterCount >= 1) {
+          return errors.badRequest("마스터 계정은 1개만 허용됩니다");
+        }
+      }
+
       // 사용자 정보 업데이트
       const updatedUser = await prisma.user.update({
         where: { id: userId },

@@ -13,6 +13,7 @@ import {
   CheckCircle,
   XCircle,
   Clock,
+  FileText,
 } from "lucide-react";
 import { toast } from "sonner";
 import OnewmsInfo from "./components/onewms-info";
@@ -53,6 +54,8 @@ type Order = {
   expiresAt: string | null;
   cancelledAt: string | null;
   cancelReason: string | null;
+  taxInvoiceIssued: boolean;
+  taxInvoiceNumber: string | null;
   virtualAccount: string | null;
   virtualAccountBank: string | null;
   virtualAccountExpiry: string | null;
@@ -162,6 +165,28 @@ export default function OrderDetailPage() {
     }
   };
 
+  const handleIssueTaxInvoice = async () => {
+    if (!confirm("세금계산서를 발행하시겠습니까?")) return;
+
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/tax-invoice`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`세금계산서가 발행되었습니다 (${data.data?.invoiceNumber || ""})`);
+        loadOrderDetail();
+      } else {
+        toast.error(data.error?.message || "세금계산서 발행 실패");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleCancel = async () => {
     if (!confirm("발주를 취소하시겠습니까? 선점된 재고가 해제됩니다.")) return;
 
@@ -242,6 +267,17 @@ export default function OrderDetailPage() {
             >
               <CheckCircle className="h-4 w-4 mr-2" />
               {actionLoading ? "처리 중..." : "입금확인"}
+            </Button>
+          )}
+          {isAdmin && order.paymentStatus === "PAID" && !order.taxInvoiceIssued && (
+            <Button
+              onClick={handleIssueTaxInvoice}
+              disabled={actionLoading}
+              variant="outline"
+              className="text-blue-600 border-blue-300 hover:bg-blue-50"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              {actionLoading ? "처리 중..." : "세금계산서 발행"}
             </Button>
           )}
           {canCancel && (
@@ -348,6 +384,21 @@ export default function OrderDetailPage() {
             <p className="font-medium text-grey-900">
               {new Date(order.uploadedAt).toLocaleDateString("ko-KR")}
             </p>
+          </div>
+          <div>
+            <p className="text-sm text-grey-600">
+              <FileText className="h-4 w-4 inline mr-1" />
+              세금계산서
+            </p>
+            {order.taxInvoiceIssued ? (
+              <span className="inline-block px-2 py-1 text-sm rounded-md bg-green-100 text-green-800">
+                발행완료 ({order.taxInvoiceNumber})
+              </span>
+            ) : (
+              <span className="inline-block px-2 py-1 text-sm rounded-md bg-grey-100 text-grey-800">
+                미발행
+              </span>
+            )}
           </div>
         </div>
       </Card>

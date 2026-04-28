@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2 } from "lucide-react";
+// Sound feedback handled by useBarcodeScanner hook
 
 interface ManualInputFallbackProps {
   onSearch: (barcode: string) => void;

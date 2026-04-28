@@ -102,6 +102,10 @@ export default function BroadcastCalendarPage() {
   const [filterCenterId, setFilterCenterId] = useState("");
   const [centers, setCenters] = useState<{ id: string; name: string; code: string }[]>([]);
 
+  // CAL-01: 방송 상세 모달
+  const [selectedBroadcast, setSelectedBroadcast] = useState<Broadcast | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+
   // 방송 신청 모달
   const [requestOpen, setRequestOpen] = useState(false);
   const [requestDate, setRequestDate] = useState("");
@@ -452,7 +456,12 @@ export default function BroadcastCalendarPage() {
             }}
             eventPropGetter={eventStyleGetter}
             onSelectEvent={(event) => {
-              window.location.href = `/broadcasts?code=${event.resource.code}`;
+              // CAL-01: 모달로 상세 정보 표시 (페이지 이동 대신)
+              const bc = broadcasts.find((b) => b.id === event.id);
+              if (bc) {
+                setSelectedBroadcast(bc);
+                setDetailOpen(true);
+              }
             }}
           />
         </div>
@@ -523,6 +532,71 @@ export default function BroadcastCalendarPage() {
             <Button onClick={handleSubmitRequest} disabled={submitting}>
               {submitting ? "신청 중..." : "방송 신청"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* CAL-01: 방송 상세 모달 */}
+      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle>방송 상세 정보</DialogTitle>
+          </DialogHeader>
+          {selectedBroadcast && (
+            <div className="space-y-4 py-2">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-muted-foreground">방송 코드</span>
+                  <p className="font-semibold">{selectedBroadcast.code}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">상태</span>
+                  <p>
+                    <Badge
+                      style={{ backgroundColor: statusColorMap[selectedBroadcast.status] || "#6b7280" }}
+                      className="text-white"
+                    >
+                      {statusLabels[selectedBroadcast.status] || selectedBroadcast.status}
+                    </Badge>
+                  </p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">셀러</span>
+                  <p className="font-semibold">{selectedBroadcast.seller?.name || "-"}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">플랫폼</span>
+                  <p className="font-semibold">{platformLabels[selectedBroadcast.platform] || selectedBroadcast.platform}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">예정일</span>
+                  <p className="font-semibold">
+                    {format(new Date(selectedBroadcast.scheduledAt), "yyyy-MM-dd HH:mm")}
+                  </p>
+                </div>
+                {selectedBroadcast.center && (
+                  <div>
+                    <span className="text-muted-foreground">센터</span>
+                    <p className="font-semibold">{selectedBroadcast.center.name}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDetailOpen(false)}>
+              닫기
+            </Button>
+            {selectedBroadcast && (
+              <Button
+                onClick={() => {
+                  setDetailOpen(false);
+                  window.location.href = `/broadcasts?code=${selectedBroadcast.code}`;
+                }}
+              >
+                편집 페이지로 이동
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

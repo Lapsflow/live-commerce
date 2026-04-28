@@ -4,6 +4,7 @@ import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
+import { sendNotification } from "@/lib/services/notifications";
 
 const cancelSchema = z.object({
   reason: z.string().optional(),
@@ -51,6 +52,7 @@ export const PUT = withRole(
               id: true,
               name: true,
               email: true,
+              phone: true,
               adminId: true,
             },
           },
@@ -102,10 +104,28 @@ export const PUT = withRole(
               id: true,
               name: true,
               email: true,
+              phone: true,
             },
           },
         },
       });
+
+      // LIVE-09: 방송 취소 알림 → 셀러
+      if (updated.seller?.phone) {
+        sendNotification({
+          type: "BROADCAST_CANCELED",
+          recipient: {
+            name: updated.seller.name,
+            phone: updated.seller.phone,
+            email: updated.seller.email || undefined,
+          },
+          variables: {
+            broadcastTitle: updated.code || broadcastId,
+            cancelReason: data.reason || "사유 없음",
+          },
+          broadcastId,
+        }).catch((err) => console.error("[BROADCAST_CANCEL_NOTIFICATION]", err));
+      }
 
       return ok(updated);
     } catch (err: any) {

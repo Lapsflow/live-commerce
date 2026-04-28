@@ -32,8 +32,23 @@ export function getRoleBasedFilter(
     throw new Error("권한 정보가 없습니다. 다시 로그인해주세요.");
   }
 
-  // 마스터, 부마스터: 전체 조회
-  if (user.role === "MASTER" || user.role === "SUB_MASTER") {
+  // 마스터: 전체 조회
+  if (user.role === "MASTER") {
+    return {};
+  }
+
+  // 부마스터: 소속 센터 데이터만
+  if (user.role === "SUB_MASTER") {
+    const centerId = (user as any).centerId;
+    if (centerId) {
+      // 센터 격리: 소속 센터 데이터 + 센터 내 셀러 데이터
+      return {
+        OR: [
+          { seller: { centerId } },
+          { sellerId: (user as any).id },
+        ],
+      };
+    }
     return {};
   }
 

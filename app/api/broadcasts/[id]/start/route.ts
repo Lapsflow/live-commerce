@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { withRole } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { sendNotification } from "@/lib/services/notifications";
 
 /**
  * PUT /api/broadcasts/:id/start
@@ -81,6 +82,7 @@ const startBroadcastHandler = async (req: NextRequest) => {
             id: true,
             name: true,
             email: true,
+            phone: true,
           },
         },
         center: {
@@ -93,6 +95,33 @@ const startBroadcastHandler = async (req: NextRequest) => {
         },
       },
     });
+
+    // LIVE-09: 방송 시작 알림 → 관리자(MASTER/SUB_MASTER)
+    try {
+      const admins = await prisma.user.findMany({
+        where: { role: { in: ["MASTER", "SUB_MASTER"] }, isActive: true },
+        select: { name: true, phone: true, email: true },
+      });
+      for (const admin of admins) {
+        if (admin.phone) {
+          sendNotification({
+            type: "BROADCAST_STARTED",
+            recipient: {
+              name: admin.name,
+              phone: admin.phone,
+              email: admin.email || undefined,
+            },
+            variables: {
+              broadcastTitle: updated.code || broadcastId,
+              sellerName: updated.seller?.name || "-",
+            },
+            broadcastId,
+          }).catch((err) => console.error("[BROADCAST_START_NOTIF]", err));
+        }
+      }
+    } catch (err) {
+      console.error("[BROADCAST_START_NOTIF]", err);
+    }
 
     return ok(updated);
   } catch (err: any) {

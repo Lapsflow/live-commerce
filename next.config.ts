@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // NOTE: serverExternalPackages does NOT work with Turbopack (Next.js 16).
+  // Optional SDKs (solapi, popbill) use eval('require') pattern instead.
+  // See: lib/services/notifications/solapi.client.ts, lib/services/tax-invoice/popbill.client.ts
   turbopack: {
     root: __dirname,
   },
