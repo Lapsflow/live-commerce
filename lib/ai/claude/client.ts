@@ -29,7 +29,7 @@ export class GeminiClient {
   }
 
   private static readonly RETRY_DELAYS = [1000, 3000, 6000];
-  private static readonly FALLBACK_MODEL = 'gemini-2.0-flash';
+  private static readonly FALLBACK_MODEL = 'gemini-2.5-flash-lite';
 
   /**
    * Make API request with retry and fallback
