@@ -3494,10 +3494,12 @@ export namespace Prisma {
 
   export type BroadcastCountOutputType = {
     sales: number
+    orders: number
   }
 
   export type BroadcastCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sales?: boolean | BroadcastCountOutputTypeCountSalesArgs
+    orders?: boolean | BroadcastCountOutputTypeCountOrdersArgs
   }
 
   // Custom InputTypes
@@ -3516,6 +3518,13 @@ export namespace Prisma {
    */
   export type BroadcastCountOutputTypeCountSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SaleWhereInput
+  }
+
+  /**
+   * BroadcastCountOutputType without action
+   */
+  export type BroadcastCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderWhereInput
   }
 
 
@@ -5255,6 +5264,7 @@ export namespace Prisma {
     productType: $Enums.ProductType | null
     managedBy: string | null
     isWmsProduct: boolean | null
+    isActive: boolean | null
     isSample: boolean | null
     sampleCategory: $Enums.SampleCategory | null
     samplePrice: number | null
@@ -5284,6 +5294,7 @@ export namespace Prisma {
     productType: $Enums.ProductType | null
     managedBy: string | null
     isWmsProduct: boolean | null
+    isActive: boolean | null
     isSample: boolean | null
     sampleCategory: $Enums.SampleCategory | null
     samplePrice: number | null
@@ -5313,6 +5324,7 @@ export namespace Prisma {
     productType: number
     managedBy: number
     isWmsProduct: number
+    isActive: number
     isSample: number
     sampleCategory: number
     samplePrice: number
@@ -5372,6 +5384,7 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    isActive?: true
     isSample?: true
     sampleCategory?: true
     samplePrice?: true
@@ -5401,6 +5414,7 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    isActive?: true
     isSample?: true
     sampleCategory?: true
     samplePrice?: true
@@ -5430,6 +5444,7 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    isActive?: true
     isSample?: true
     sampleCategory?: true
     samplePrice?: true
@@ -5546,6 +5561,7 @@ export namespace Prisma {
     productType: $Enums.ProductType
     managedBy: string | null
     isWmsProduct: boolean
+    isActive: boolean
     isSample: boolean
     sampleCategory: $Enums.SampleCategory | null
     samplePrice: number | null
@@ -5594,6 +5610,7 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: boolean
     samplePrice?: boolean
@@ -5635,6 +5652,7 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: boolean
     samplePrice?: boolean
@@ -5664,6 +5682,7 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: boolean
     samplePrice?: boolean
@@ -5693,13 +5712,14 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: boolean
     samplePrice?: boolean
     sampleStatus?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "minSellPrice" | "maxSellPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "minSellPrice" | "maxSellPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "isActive" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
@@ -5755,6 +5775,7 @@ export namespace Prisma {
       productType: $Enums.ProductType
       managedBy: string | null
       isWmsProduct: boolean
+      isActive: boolean
       isSample: boolean
       sampleCategory: $Enums.SampleCategory | null
       samplePrice: number | null
@@ -6215,6 +6236,7 @@ export namespace Prisma {
     readonly productType: FieldRef<"Product", 'ProductType'>
     readonly managedBy: FieldRef<"Product", 'String'>
     readonly isWmsProduct: FieldRef<"Product", 'Boolean'>
+    readonly isActive: FieldRef<"Product", 'Boolean'>
     readonly isSample: FieldRef<"Product", 'Boolean'>
     readonly sampleCategory: FieldRef<"Product", 'SampleCategory'>
     readonly samplePrice: FieldRef<"Product", 'Int'>
@@ -10620,6 +10642,8 @@ export namespace Prisma {
     expiresAt: Date | null
     cancelledAt: Date | null
     cancelReason: string | null
+    broadcastId: string | null
+    matchType: string | null
   }
 
   export type OrderMaxAggregateOutputType = {
@@ -10649,6 +10673,8 @@ export namespace Prisma {
     expiresAt: Date | null
     cancelledAt: Date | null
     cancelReason: string | null
+    broadcastId: string | null
+    matchType: string | null
   }
 
   export type OrderCountAggregateOutputType = {
@@ -10678,6 +10704,8 @@ export namespace Prisma {
     expiresAt: number
     cancelledAt: number
     cancelReason: number
+    broadcastId: number
+    matchType: number
     _all: number
   }
 
@@ -10719,6 +10747,8 @@ export namespace Prisma {
     expiresAt?: true
     cancelledAt?: true
     cancelReason?: true
+    broadcastId?: true
+    matchType?: true
   }
 
   export type OrderMaxAggregateInputType = {
@@ -10748,6 +10778,8 @@ export namespace Prisma {
     expiresAt?: true
     cancelledAt?: true
     cancelReason?: true
+    broadcastId?: true
+    matchType?: true
   }
 
   export type OrderCountAggregateInputType = {
@@ -10777,6 +10809,8 @@ export namespace Prisma {
     expiresAt?: true
     cancelledAt?: true
     cancelReason?: true
+    broadcastId?: true
+    matchType?: true
     _all?: true
   }
 
@@ -10893,6 +10927,8 @@ export namespace Prisma {
     expiresAt: Date | null
     cancelledAt: Date | null
     cancelReason: string | null
+    broadcastId: string | null
+    matchType: string | null
     _count: OrderCountAggregateOutputType | null
     _avg: OrderAvgAggregateOutputType | null
     _sum: OrderSumAggregateOutputType | null
@@ -10941,9 +10977,12 @@ export namespace Prisma {
     expiresAt?: boolean
     cancelledAt?: boolean
     cancelReason?: boolean
+    broadcastId?: boolean
+    matchType?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
+    broadcast?: boolean | Order$broadcastArgs<ExtArgs>
     items?: boolean | Order$itemsArgs<ExtArgs>
     onewmsMapping?: boolean | Order$onewmsMappingArgs<ExtArgs>
     onewmsDeliveryLogs?: boolean | Order$onewmsDeliveryLogsArgs<ExtArgs>
@@ -10979,9 +11018,12 @@ export namespace Prisma {
     expiresAt?: boolean
     cancelledAt?: boolean
     cancelReason?: boolean
+    broadcastId?: boolean
+    matchType?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
+    broadcast?: boolean | Order$broadcastArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11011,9 +11053,12 @@ export namespace Prisma {
     expiresAt?: boolean
     cancelledAt?: boolean
     cancelReason?: boolean
+    broadcastId?: boolean
+    matchType?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
+    broadcast?: boolean | Order$broadcastArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectScalar = {
@@ -11043,13 +11088,16 @@ export namespace Prisma {
     expiresAt?: boolean
     cancelledAt?: boolean
     cancelReason?: boolean
+    broadcastId?: boolean
+    matchType?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "adminId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "adminId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "broadcastId" | "matchType", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
+    broadcast?: boolean | Order$broadcastArgs<ExtArgs>
     items?: boolean | Order$itemsArgs<ExtArgs>
     onewmsMapping?: boolean | Order$onewmsMappingArgs<ExtArgs>
     onewmsDeliveryLogs?: boolean | Order$onewmsDeliveryLogsArgs<ExtArgs>
@@ -11061,11 +11109,13 @@ export namespace Prisma {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
+    broadcast?: boolean | Order$broadcastArgs<ExtArgs>
   }
   export type OrderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
+    broadcast?: boolean | Order$broadcastArgs<ExtArgs>
   }
 
   export type $OrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11074,6 +11124,7 @@ export namespace Prisma {
       seller: Prisma.$UserPayload<ExtArgs>
       admin: Prisma.$UserPayload<ExtArgs> | null
       processingCenter: Prisma.$CenterPayload<ExtArgs> | null
+      broadcast: Prisma.$BroadcastPayload<ExtArgs> | null
       items: Prisma.$OrderItemPayload<ExtArgs>[]
       onewmsMapping: Prisma.$OnewmsOrderMappingPayload<ExtArgs> | null
       onewmsDeliveryLogs: Prisma.$OnewmsDeliveryLogPayload<ExtArgs>[]
@@ -11107,6 +11158,8 @@ export namespace Prisma {
       expiresAt: Date | null
       cancelledAt: Date | null
       cancelReason: string | null
+      broadcastId: string | null
+      matchType: string | null
     }, ExtArgs["result"]["order"]>
     composites: {}
   }
@@ -11504,6 +11557,7 @@ export namespace Prisma {
     seller<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     admin<T extends Order$adminArgs<ExtArgs> = {}>(args?: Subset<T, Order$adminArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     processingCenter<T extends Order$processingCenterArgs<ExtArgs> = {}>(args?: Subset<T, Order$processingCenterArgs<ExtArgs>>): Prisma__CenterClient<$Result.GetResult<Prisma.$CenterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    broadcast<T extends Order$broadcastArgs<ExtArgs> = {}>(args?: Subset<T, Order$broadcastArgs<ExtArgs>>): Prisma__BroadcastClient<$Result.GetResult<Prisma.$BroadcastPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     items<T extends Order$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     onewmsMapping<T extends Order$onewmsMappingArgs<ExtArgs> = {}>(args?: Subset<T, Order$onewmsMappingArgs<ExtArgs>>): Prisma__OnewmsOrderMappingClient<$Result.GetResult<Prisma.$OnewmsOrderMappingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     onewmsDeliveryLogs<T extends Order$onewmsDeliveryLogsArgs<ExtArgs> = {}>(args?: Subset<T, Order$onewmsDeliveryLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OnewmsDeliveryLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -11564,6 +11618,8 @@ export namespace Prisma {
     readonly expiresAt: FieldRef<"Order", 'DateTime'>
     readonly cancelledAt: FieldRef<"Order", 'DateTime'>
     readonly cancelReason: FieldRef<"Order", 'String'>
+    readonly broadcastId: FieldRef<"Order", 'String'>
+    readonly matchType: FieldRef<"Order", 'String'>
   }
     
 
@@ -12000,6 +12056,25 @@ export namespace Prisma {
      */
     include?: CenterInclude<ExtArgs> | null
     where?: CenterWhereInput
+  }
+
+  /**
+   * Order.broadcast
+   */
+  export type Order$broadcastArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Broadcast
+     */
+    select?: BroadcastSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Broadcast
+     */
+    omit?: BroadcastOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BroadcastInclude<ExtArgs> | null
+    where?: BroadcastWhereInput
   }
 
   /**
@@ -14714,6 +14789,7 @@ export namespace Prisma {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
     sales?: boolean | Broadcast$salesArgs<ExtArgs>
+    orders?: boolean | Broadcast$ordersArgs<ExtArgs>
     _count?: boolean | BroadcastCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["broadcast"]>
 
@@ -14777,6 +14853,7 @@ export namespace Prisma {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
     sales?: boolean | Broadcast$salesArgs<ExtArgs>
+    orders?: boolean | Broadcast$ordersArgs<ExtArgs>
     _count?: boolean | BroadcastCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BroadcastIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14794,6 +14871,7 @@ export namespace Prisma {
       seller: Prisma.$UserPayload<ExtArgs>
       center: Prisma.$CenterPayload<ExtArgs> | null
       sales: Prisma.$SalePayload<ExtArgs>[]
+      orders: Prisma.$OrderPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -15207,6 +15285,7 @@ export namespace Prisma {
     seller<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     center<T extends Broadcast$centerArgs<ExtArgs> = {}>(args?: Subset<T, Broadcast$centerArgs<ExtArgs>>): Prisma__CenterClient<$Result.GetResult<Prisma.$CenterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     sales<T extends Broadcast$salesArgs<ExtArgs> = {}>(args?: Subset<T, Broadcast$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    orders<T extends Broadcast$ordersArgs<ExtArgs> = {}>(args?: Subset<T, Broadcast$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15691,6 +15770,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SaleScalarFieldEnum | SaleScalarFieldEnum[]
+  }
+
+  /**
+   * Broadcast.orders
+   */
+  export type Broadcast$ordersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    where?: OrderWhereInput
+    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
+    cursor?: OrderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
   }
 
   /**
@@ -33013,6 +33116,7 @@ export namespace Prisma {
     productType: 'productType',
     managedBy: 'managedBy',
     isWmsProduct: 'isWmsProduct',
+    isActive: 'isActive',
     isSample: 'isSample',
     sampleCategory: 'sampleCategory',
     samplePrice: 'samplePrice',
@@ -33101,7 +33205,9 @@ export namespace Prisma {
     productType: 'productType',
     expiresAt: 'expiresAt',
     cancelledAt: 'cancelledAt',
-    cancelReason: 'cancelReason'
+    cancelReason: 'cancelReason',
+    broadcastId: 'broadcastId',
+    matchType: 'matchType'
   };
 
   export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
@@ -33892,6 +33998,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableFilter<"Product"> | string | null
     isWmsProduct?: BoolFilter<"Product"> | boolean
+    isActive?: BoolFilter<"Product"> | boolean
     isSample?: BoolFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableFilter<"Product"> | $Enums.SampleCategory | null
     samplePrice?: IntNullableFilter<"Product"> | number | null
@@ -33932,6 +34039,7 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrderInput | SortOrder
     isWmsProduct?: SortOrder
+    isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrderInput | SortOrder
     samplePrice?: SortOrderInput | SortOrder
@@ -33975,6 +34083,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableFilter<"Product"> | string | null
     isWmsProduct?: BoolFilter<"Product"> | boolean
+    isActive?: BoolFilter<"Product"> | boolean
     isSample?: BoolFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableFilter<"Product"> | $Enums.SampleCategory | null
     samplePrice?: IntNullableFilter<"Product"> | number | null
@@ -34015,6 +34124,7 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrderInput | SortOrder
     isWmsProduct?: SortOrder
+    isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrderInput | SortOrder
     samplePrice?: SortOrderInput | SortOrder
@@ -34052,6 +34162,7 @@ export namespace Prisma {
     productType?: EnumProductTypeWithAggregatesFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableWithAggregatesFilter<"Product"> | string | null
     isWmsProduct?: BoolWithAggregatesFilter<"Product"> | boolean
+    isActive?: BoolWithAggregatesFilter<"Product"> | boolean
     isSample?: BoolWithAggregatesFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableWithAggregatesFilter<"Product"> | $Enums.SampleCategory | null
     samplePrice?: IntNullableWithAggregatesFilter<"Product"> | number | null
@@ -34380,9 +34491,12 @@ export namespace Prisma {
     expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelReason?: StringNullableFilter<"Order"> | string | null
+    broadcastId?: StringNullableFilter<"Order"> | string | null
+    matchType?: StringNullableFilter<"Order"> | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processingCenter?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
+    broadcast?: XOR<BroadcastNullableScalarRelationFilter, BroadcastWhereInput> | null
     items?: OrderItemListRelationFilter
     onewmsMapping?: XOR<OnewmsOrderMappingNullableScalarRelationFilter, OnewmsOrderMappingWhereInput> | null
     onewmsDeliveryLogs?: OnewmsDeliveryLogListRelationFilter
@@ -34417,9 +34531,12 @@ export namespace Prisma {
     expiresAt?: SortOrderInput | SortOrder
     cancelledAt?: SortOrderInput | SortOrder
     cancelReason?: SortOrderInput | SortOrder
+    broadcastId?: SortOrderInput | SortOrder
+    matchType?: SortOrderInput | SortOrder
     seller?: UserOrderByWithRelationInput
     admin?: UserOrderByWithRelationInput
     processingCenter?: CenterOrderByWithRelationInput
+    broadcast?: BroadcastOrderByWithRelationInput
     items?: OrderItemOrderByRelationAggregateInput
     onewmsMapping?: OnewmsOrderMappingOrderByWithRelationInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogOrderByRelationAggregateInput
@@ -34457,9 +34574,12 @@ export namespace Prisma {
     expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelReason?: StringNullableFilter<"Order"> | string | null
+    broadcastId?: StringNullableFilter<"Order"> | string | null
+    matchType?: StringNullableFilter<"Order"> | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processingCenter?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
+    broadcast?: XOR<BroadcastNullableScalarRelationFilter, BroadcastWhereInput> | null
     items?: OrderItemListRelationFilter
     onewmsMapping?: XOR<OnewmsOrderMappingNullableScalarRelationFilter, OnewmsOrderMappingWhereInput> | null
     onewmsDeliveryLogs?: OnewmsDeliveryLogListRelationFilter
@@ -34494,6 +34614,8 @@ export namespace Prisma {
     expiresAt?: SortOrderInput | SortOrder
     cancelledAt?: SortOrderInput | SortOrder
     cancelReason?: SortOrderInput | SortOrder
+    broadcastId?: SortOrderInput | SortOrder
+    matchType?: SortOrderInput | SortOrder
     _count?: OrderCountOrderByAggregateInput
     _avg?: OrderAvgOrderByAggregateInput
     _max?: OrderMaxOrderByAggregateInput
@@ -34531,6 +34653,8 @@ export namespace Prisma {
     expiresAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     cancelledAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     cancelReason?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    broadcastId?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    matchType?: StringNullableWithAggregatesFilter<"Order"> | string | null
   }
 
   export type OrderItemWhereInput = {
@@ -34719,6 +34843,7 @@ export namespace Prisma {
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     sales?: SaleListRelationFilter
+    orders?: OrderListRelationFilter
   }
 
   export type BroadcastOrderByWithRelationInput = {
@@ -34739,6 +34864,7 @@ export namespace Prisma {
     seller?: UserOrderByWithRelationInput
     center?: CenterOrderByWithRelationInput
     sales?: SaleOrderByRelationAggregateInput
+    orders?: OrderOrderByRelationAggregateInput
   }
 
   export type BroadcastWhereUniqueInput = Prisma.AtLeast<{
@@ -34762,6 +34888,7 @@ export namespace Prisma {
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     sales?: SaleListRelationFilter
+    orders?: OrderListRelationFilter
   }, "id" | "code">
 
   export type BroadcastOrderByWithAggregationInput = {
@@ -36207,6 +36334,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -36247,6 +36375,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -36287,6 +36416,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -36327,6 +36457,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -36367,6 +36498,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -36396,6 +36528,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -36425,6 +36558,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -36778,9 +36912,11 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
@@ -36815,6 +36951,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -36846,9 +36984,11 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
@@ -36883,6 +37023,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -36917,6 +37059,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
   }
 
   export type OrderUpdateManyMutationInput = {
@@ -36943,6 +37087,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUncheckedUpdateManyInput = {
@@ -36972,6 +37117,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemCreateInput = {
@@ -37161,6 +37308,7 @@ export namespace Prisma {
     seller: UserCreateNestedOneWithoutBroadcastsInput
     center?: CenterCreateNestedOneWithoutBroadcastsInput
     sales?: SaleCreateNestedManyWithoutBroadcastInput
+    orders?: OrderCreateNestedManyWithoutBroadcastInput
   }
 
   export type BroadcastUncheckedCreateInput = {
@@ -37179,6 +37327,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBroadcastInput
   }
 
   export type BroadcastUpdateInput = {
@@ -37197,6 +37346,7 @@ export namespace Prisma {
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
     sales?: SaleUpdateManyWithoutBroadcastNestedInput
+    orders?: OrderUpdateManyWithoutBroadcastNestedInput
   }
 
   export type BroadcastUncheckedUpdateInput = {
@@ -37215,6 +37365,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBroadcastNestedInput
   }
 
   export type BroadcastCreateManyInput = {
@@ -39020,6 +39171,7 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
     samplePrice?: SortOrder
@@ -39063,6 +39215,7 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
     samplePrice?: SortOrder
@@ -39092,6 +39245,7 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
     samplePrice?: SortOrder
@@ -39397,6 +39551,11 @@ export namespace Prisma {
     not?: NestedEnumProductTypeNullableFilter<$PrismaModel> | $Enums.ProductType | null
   }
 
+  export type BroadcastNullableScalarRelationFilter = {
+    is?: BroadcastWhereInput | null
+    isNot?: BroadcastWhereInput | null
+  }
+
   export type OnewmsOrderMappingNullableScalarRelationFilter = {
     is?: OnewmsOrderMappingWhereInput | null
     isNot?: OnewmsOrderMappingWhereInput | null
@@ -39439,6 +39598,8 @@ export namespace Prisma {
     expiresAt?: SortOrder
     cancelledAt?: SortOrder
     cancelReason?: SortOrder
+    broadcastId?: SortOrder
+    matchType?: SortOrder
   }
 
   export type OrderAvgOrderByAggregateInput = {
@@ -39473,6 +39634,8 @@ export namespace Prisma {
     expiresAt?: SortOrder
     cancelledAt?: SortOrder
     cancelReason?: SortOrder
+    broadcastId?: SortOrder
+    matchType?: SortOrder
   }
 
   export type OrderMinOrderByAggregateInput = {
@@ -39502,6 +39665,8 @@ export namespace Prisma {
     expiresAt?: SortOrder
     cancelledAt?: SortOrder
     cancelReason?: SortOrder
+    broadcastId?: SortOrder
+    matchType?: SortOrder
   }
 
   export type OrderSumOrderByAggregateInput = {
@@ -39746,11 +39911,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumBroadcastStatusFilter<$PrismaModel>
     _max?: NestedEnumBroadcastStatusFilter<$PrismaModel>
-  }
-
-  export type BroadcastNullableScalarRelationFilter = {
-    is?: BroadcastWhereInput | null
-    isNot?: BroadcastWhereInput | null
   }
 
   export type SaleCountOrderByAggregateInput = {
@@ -41840,6 +42000,12 @@ export namespace Prisma {
     connect?: CenterWhereUniqueInput
   }
 
+  export type BroadcastCreateNestedOneWithoutOrdersInput = {
+    create?: XOR<BroadcastCreateWithoutOrdersInput, BroadcastUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: BroadcastCreateOrConnectWithoutOrdersInput
+    connect?: BroadcastWhereUniqueInput
+  }
+
   export type OrderItemCreateNestedManyWithoutOrderInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -41950,6 +42116,16 @@ export namespace Prisma {
     delete?: CenterWhereInput | boolean
     connect?: CenterWhereUniqueInput
     update?: XOR<XOR<CenterUpdateToOneWithWhereWithoutOrdersInput, CenterUpdateWithoutOrdersInput>, CenterUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type BroadcastUpdateOneWithoutOrdersNestedInput = {
+    create?: XOR<BroadcastCreateWithoutOrdersInput, BroadcastUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: BroadcastCreateOrConnectWithoutOrdersInput
+    upsert?: BroadcastUpsertWithoutOrdersInput
+    disconnect?: BroadcastWhereInput | boolean
+    delete?: BroadcastWhereInput | boolean
+    connect?: BroadcastWhereUniqueInput
+    update?: XOR<XOR<BroadcastUpdateToOneWithWhereWithoutOrdersInput, BroadcastUpdateWithoutOrdersInput>, BroadcastUncheckedUpdateWithoutOrdersInput>
   }
 
   export type OrderItemUpdateManyWithoutOrderNestedInput = {
@@ -42163,11 +42339,25 @@ export namespace Prisma {
     connect?: SaleWhereUniqueInput | SaleWhereUniqueInput[]
   }
 
+  export type OrderCreateNestedManyWithoutBroadcastInput = {
+    create?: XOR<OrderCreateWithoutBroadcastInput, OrderUncheckedCreateWithoutBroadcastInput> | OrderCreateWithoutBroadcastInput[] | OrderUncheckedCreateWithoutBroadcastInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutBroadcastInput | OrderCreateOrConnectWithoutBroadcastInput[]
+    createMany?: OrderCreateManyBroadcastInputEnvelope
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
   export type SaleUncheckedCreateNestedManyWithoutBroadcastInput = {
     create?: XOR<SaleCreateWithoutBroadcastInput, SaleUncheckedCreateWithoutBroadcastInput> | SaleCreateWithoutBroadcastInput[] | SaleUncheckedCreateWithoutBroadcastInput[]
     connectOrCreate?: SaleCreateOrConnectWithoutBroadcastInput | SaleCreateOrConnectWithoutBroadcastInput[]
     createMany?: SaleCreateManyBroadcastInputEnvelope
     connect?: SaleWhereUniqueInput | SaleWhereUniqueInput[]
+  }
+
+  export type OrderUncheckedCreateNestedManyWithoutBroadcastInput = {
+    create?: XOR<OrderCreateWithoutBroadcastInput, OrderUncheckedCreateWithoutBroadcastInput> | OrderCreateWithoutBroadcastInput[] | OrderUncheckedCreateWithoutBroadcastInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutBroadcastInput | OrderCreateOrConnectWithoutBroadcastInput[]
+    createMany?: OrderCreateManyBroadcastInputEnvelope
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
   }
 
   export type EnumBroadcastPlatformFieldUpdateOperationsInput = {
@@ -42210,6 +42400,20 @@ export namespace Prisma {
     deleteMany?: SaleScalarWhereInput | SaleScalarWhereInput[]
   }
 
+  export type OrderUpdateManyWithoutBroadcastNestedInput = {
+    create?: XOR<OrderCreateWithoutBroadcastInput, OrderUncheckedCreateWithoutBroadcastInput> | OrderCreateWithoutBroadcastInput[] | OrderUncheckedCreateWithoutBroadcastInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutBroadcastInput | OrderCreateOrConnectWithoutBroadcastInput[]
+    upsert?: OrderUpsertWithWhereUniqueWithoutBroadcastInput | OrderUpsertWithWhereUniqueWithoutBroadcastInput[]
+    createMany?: OrderCreateManyBroadcastInputEnvelope
+    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    update?: OrderUpdateWithWhereUniqueWithoutBroadcastInput | OrderUpdateWithWhereUniqueWithoutBroadcastInput[]
+    updateMany?: OrderUpdateManyWithWhereWithoutBroadcastInput | OrderUpdateManyWithWhereWithoutBroadcastInput[]
+    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
+  }
+
   export type SaleUncheckedUpdateManyWithoutBroadcastNestedInput = {
     create?: XOR<SaleCreateWithoutBroadcastInput, SaleUncheckedCreateWithoutBroadcastInput> | SaleCreateWithoutBroadcastInput[] | SaleUncheckedCreateWithoutBroadcastInput[]
     connectOrCreate?: SaleCreateOrConnectWithoutBroadcastInput | SaleCreateOrConnectWithoutBroadcastInput[]
@@ -42222,6 +42426,20 @@ export namespace Prisma {
     update?: SaleUpdateWithWhereUniqueWithoutBroadcastInput | SaleUpdateWithWhereUniqueWithoutBroadcastInput[]
     updateMany?: SaleUpdateManyWithWhereWithoutBroadcastInput | SaleUpdateManyWithWhereWithoutBroadcastInput[]
     deleteMany?: SaleScalarWhereInput | SaleScalarWhereInput[]
+  }
+
+  export type OrderUncheckedUpdateManyWithoutBroadcastNestedInput = {
+    create?: XOR<OrderCreateWithoutBroadcastInput, OrderUncheckedCreateWithoutBroadcastInput> | OrderCreateWithoutBroadcastInput[] | OrderUncheckedCreateWithoutBroadcastInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutBroadcastInput | OrderCreateOrConnectWithoutBroadcastInput[]
+    upsert?: OrderUpsertWithWhereUniqueWithoutBroadcastInput | OrderUpsertWithWhereUniqueWithoutBroadcastInput[]
+    createMany?: OrderCreateManyBroadcastInputEnvelope
+    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    update?: OrderUpdateWithWhereUniqueWithoutBroadcastInput | OrderUpdateWithWhereUniqueWithoutBroadcastInput[]
+    updateMany?: OrderUpdateManyWithWhereWithoutBroadcastInput | OrderUpdateManyWithWhereWithoutBroadcastInput[]
+    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSalesInput = {
@@ -43395,8 +43613,10 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
@@ -43430,6 +43650,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -43471,8 +43693,10 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
@@ -43506,6 +43730,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -43538,6 +43764,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     center?: CenterCreateNestedOneWithoutBroadcastsInput
     sales?: SaleCreateNestedManyWithoutBroadcastInput
+    orders?: OrderCreateNestedManyWithoutBroadcastInput
   }
 
   export type BroadcastUncheckedCreateWithoutSellerInput = {
@@ -43555,6 +43782,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBroadcastInput
   }
 
   export type BroadcastCreateOrConnectWithoutSellerInput = {
@@ -43956,6 +44184,8 @@ export namespace Prisma {
     expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelReason?: StringNullableFilter<"Order"> | string | null
+    broadcastId?: StringNullableFilter<"Order"> | string | null
+    matchType?: StringNullableFilter<"Order"> | string | null
   }
 
   export type OrderUpsertWithWhereUniqueWithoutAdminInput = {
@@ -44941,8 +45171,10 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
@@ -44976,6 +45208,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -45008,6 +45242,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
     sales?: SaleCreateNestedManyWithoutBroadcastInput
+    orders?: OrderCreateNestedManyWithoutBroadcastInput
   }
 
   export type BroadcastUncheckedCreateWithoutCenterInput = {
@@ -45025,6 +45260,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBroadcastInput
   }
 
   export type BroadcastCreateOrConnectWithoutCenterInput = {
@@ -45172,6 +45408,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -45211,6 +45448,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -45315,6 +45553,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -45354,6 +45593,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -45449,9 +45689,11 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
@@ -45485,6 +45727,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -45588,6 +45832,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -45627,6 +45872,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -45683,9 +45929,11 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
@@ -45719,6 +45967,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -45834,6 +46084,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -45873,6 +46124,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -46074,6 +46326,47 @@ export namespace Prisma {
   export type CenterCreateOrConnectWithoutOrdersInput = {
     where: CenterWhereUniqueInput
     create: XOR<CenterCreateWithoutOrdersInput, CenterUncheckedCreateWithoutOrdersInput>
+  }
+
+  export type BroadcastCreateWithoutOrdersInput = {
+    id?: string
+    code: string
+    platform: $Enums.BroadcastPlatform
+    scheduledAt: Date | string
+    startedAt?: Date | string | null
+    endedAt?: Date | string | null
+    status?: $Enums.BroadcastStatus
+    memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    seller: UserCreateNestedOneWithoutBroadcastsInput
+    center?: CenterCreateNestedOneWithoutBroadcastsInput
+    sales?: SaleCreateNestedManyWithoutBroadcastInput
+  }
+
+  export type BroadcastUncheckedCreateWithoutOrdersInput = {
+    id?: string
+    code: string
+    sellerId: string
+    centerId?: string | null
+    platform: $Enums.BroadcastPlatform
+    scheduledAt: Date | string
+    startedAt?: Date | string | null
+    endedAt?: Date | string | null
+    status?: $Enums.BroadcastStatus
+    memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
+  }
+
+  export type BroadcastCreateOrConnectWithoutOrdersInput = {
+    where: BroadcastWhereUniqueInput
+    create: XOR<BroadcastCreateWithoutOrdersInput, BroadcastUncheckedCreateWithoutOrdersInput>
   }
 
   export type OrderItemCreateWithoutOrderInput = {
@@ -46450,6 +46743,53 @@ export namespace Prisma {
     scanLogs?: ScanLogUncheckedUpdateManyWithoutCenterNestedInput
   }
 
+  export type BroadcastUpsertWithoutOrdersInput = {
+    update: XOR<BroadcastUpdateWithoutOrdersInput, BroadcastUncheckedUpdateWithoutOrdersInput>
+    create: XOR<BroadcastCreateWithoutOrdersInput, BroadcastUncheckedCreateWithoutOrdersInput>
+    where?: BroadcastWhereInput
+  }
+
+  export type BroadcastUpdateToOneWithWhereWithoutOrdersInput = {
+    where?: BroadcastWhereInput
+    data: XOR<BroadcastUpdateWithoutOrdersInput, BroadcastUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type BroadcastUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    platform?: EnumBroadcastPlatformFieldUpdateOperationsInput | $Enums.BroadcastPlatform
+    scheduledAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
+    center?: CenterUpdateOneWithoutBroadcastsNestedInput
+    sales?: SaleUpdateManyWithoutBroadcastNestedInput
+  }
+
+  export type BroadcastUncheckedUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    sellerId?: StringFieldUpdateOperationsInput | string
+    centerId?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: EnumBroadcastPlatformFieldUpdateOperationsInput | $Enums.BroadcastPlatform
+    scheduledAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
+  }
+
   export type OrderItemUpsertWithWhereUniqueWithoutOrderInput = {
     where: OrderItemWhereUniqueInput
     update: XOR<OrderItemUpdateWithoutOrderInput, OrderItemUncheckedUpdateWithoutOrderInput>
@@ -46592,9 +46932,11 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
@@ -46628,6 +46970,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
@@ -46662,6 +47006,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -46701,6 +47046,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -46757,9 +47103,11 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
@@ -46793,6 +47141,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
@@ -46833,6 +47183,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -46872,6 +47223,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -46912,9 +47264,11 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
@@ -46948,6 +47302,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
@@ -46982,6 +47338,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -47021,6 +47378,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -47077,9 +47435,11 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
@@ -47113,6 +47473,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -47153,6 +47515,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -47192,6 +47555,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -47360,6 +47724,86 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type OrderCreateWithoutBroadcastInput = {
+    id?: string
+    orderNo: string
+    status?: $Enums.OrderStatus
+    totalAmount?: number
+    memo?: string | null
+    uploadedAt?: Date | string
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipient?: string | null
+    phone?: string | null
+    address?: string | null
+    totalMargin?: number
+    paymentStatus?: $Enums.PaymentStatus
+    shippingStatus?: $Enums.ShippingStatus
+    paidAt?: Date | string | null
+    virtualAccount?: string | null
+    virtualAccountBank?: string | null
+    virtualAccountExpiry?: Date | string | null
+    productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
+    matchType?: string | null
+    seller: UserCreateNestedOneWithoutOrdersInput
+    admin?: UserCreateNestedOneWithoutAdminOrdersInput
+    processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    items?: OrderItemCreateNestedManyWithoutOrderInput
+    onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
+    onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
+    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderUncheckedCreateWithoutBroadcastInput = {
+    id?: string
+    orderNo: string
+    sellerId: string
+    adminId?: string | null
+    processingCenterId?: string | null
+    status?: $Enums.OrderStatus
+    totalAmount?: number
+    memo?: string | null
+    uploadedAt?: Date | string
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipient?: string | null
+    phone?: string | null
+    address?: string | null
+    totalMargin?: number
+    paymentStatus?: $Enums.PaymentStatus
+    shippingStatus?: $Enums.ShippingStatus
+    paidAt?: Date | string | null
+    virtualAccount?: string | null
+    virtualAccountBank?: string | null
+    virtualAccountExpiry?: Date | string | null
+    productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
+    matchType?: string | null
+    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+    onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
+    onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
+    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
+    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderCreateOrConnectWithoutBroadcastInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutBroadcastInput, OrderUncheckedCreateWithoutBroadcastInput>
+  }
+
+  export type OrderCreateManyBroadcastInputEnvelope = {
+    data: OrderCreateManyBroadcastInput | OrderCreateManyBroadcastInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutBroadcastsInput = {
     update: XOR<UserUpdateWithoutBroadcastsInput, UserUncheckedUpdateWithoutBroadcastsInput>
     create: XOR<UserCreateWithoutBroadcastsInput, UserUncheckedCreateWithoutBroadcastsInput>
@@ -47506,6 +47950,22 @@ export namespace Prisma {
     data: XOR<SaleUpdateManyMutationInput, SaleUncheckedUpdateManyWithoutBroadcastInput>
   }
 
+  export type OrderUpsertWithWhereUniqueWithoutBroadcastInput = {
+    where: OrderWhereUniqueInput
+    update: XOR<OrderUpdateWithoutBroadcastInput, OrderUncheckedUpdateWithoutBroadcastInput>
+    create: XOR<OrderCreateWithoutBroadcastInput, OrderUncheckedCreateWithoutBroadcastInput>
+  }
+
+  export type OrderUpdateWithWhereUniqueWithoutBroadcastInput = {
+    where: OrderWhereUniqueInput
+    data: XOR<OrderUpdateWithoutBroadcastInput, OrderUncheckedUpdateWithoutBroadcastInput>
+  }
+
+  export type OrderUpdateManyWithWhereWithoutBroadcastInput = {
+    where: OrderScalarWhereInput
+    data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyWithoutBroadcastInput>
+  }
+
   export type UserCreateWithoutSalesInput = {
     id?: string
     username: string
@@ -47598,6 +48058,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -47637,6 +48098,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -47673,6 +48135,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
     center?: CenterCreateNestedOneWithoutBroadcastsInput
+    orders?: OrderCreateNestedManyWithoutBroadcastInput
   }
 
   export type BroadcastUncheckedCreateWithoutSalesInput = {
@@ -47690,6 +48153,7 @@ export namespace Prisma {
     rejectionReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    orders?: OrderUncheckedCreateNestedManyWithoutBroadcastInput
   }
 
   export type BroadcastCreateOrConnectWithoutSalesInput = {
@@ -47806,6 +48270,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -47845,6 +48310,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -47887,6 +48353,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
+    orders?: OrderUpdateManyWithoutBroadcastNestedInput
   }
 
   export type BroadcastUncheckedUpdateWithoutSalesInput = {
@@ -47904,6 +48371,7 @@ export namespace Prisma {
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUncheckedUpdateManyWithoutBroadcastNestedInput
   }
 
   export type UserCreateWithoutProposalsInput = {
@@ -48142,6 +48610,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -48181,6 +48650,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -48311,6 +48781,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -48350,6 +48821,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -48390,9 +48862,11 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
@@ -48426,6 +48900,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
@@ -48472,9 +48948,11 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
@@ -48508,6 +48986,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
@@ -48537,6 +49017,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -48576,6 +49057,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -48631,6 +49113,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -48670,6 +49153,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -48710,9 +49194,11 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    matchType?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
     admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
+    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
@@ -48746,6 +49232,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
@@ -48792,9 +49280,11 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
@@ -48828,6 +49318,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
@@ -49088,6 +49580,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49127,6 +49620,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49254,6 +49748,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49293,6 +49788,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49369,6 +49865,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49408,6 +49905,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49533,6 +50031,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49572,6 +50071,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49693,6 +50193,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49732,6 +50233,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49787,6 +50289,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49826,6 +50329,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49934,6 +50438,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49973,6 +50478,7 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -50152,6 +50658,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -50191,6 +50698,7 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -50311,6 +50819,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
   }
 
   export type OrderCreateManyAdminInput = {
@@ -50339,6 +50849,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
   }
 
   export type BroadcastCreateManySellerInput = {
@@ -50528,8 +51040,10 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
@@ -50563,6 +51077,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -50596,6 +51112,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUpdateWithoutAdminInput = {
@@ -50622,8 +51140,10 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
@@ -50657,6 +51177,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -50690,6 +51212,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BroadcastUpdateWithoutSellerInput = {
@@ -50707,6 +51231,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
     sales?: SaleUpdateManyWithoutBroadcastNestedInput
+    orders?: OrderUpdateManyWithoutBroadcastNestedInput
   }
 
   export type BroadcastUncheckedUpdateWithoutSellerInput = {
@@ -50724,6 +51249,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBroadcastNestedInput
   }
 
   export type BroadcastUncheckedUpdateManyWithoutSellerInput = {
@@ -51484,6 +52010,8 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    broadcastId?: string | null
+    matchType?: string | null
   }
 
   export type BroadcastCreateManyCenterInput = {
@@ -51651,8 +52179,10 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
     admin?: UserUpdateOneWithoutAdminOrdersNestedInput
+    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
@@ -51686,6 +52216,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
     onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -51719,6 +52251,8 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BroadcastUpdateWithoutCenterInput = {
@@ -51736,6 +52270,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
     sales?: SaleUpdateManyWithoutBroadcastNestedInput
+    orders?: OrderUpdateManyWithoutBroadcastNestedInput
   }
 
   export type BroadcastUncheckedUpdateWithoutCenterInput = {
@@ -51753,6 +52288,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBroadcastNestedInput
   }
 
   export type BroadcastUncheckedUpdateManyWithoutCenterInput = {
@@ -52004,6 +52540,36 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type OrderCreateManyBroadcastInput = {
+    id?: string
+    orderNo: string
+    sellerId: string
+    adminId?: string | null
+    processingCenterId?: string | null
+    status?: $Enums.OrderStatus
+    totalAmount?: number
+    memo?: string | null
+    uploadedAt?: Date | string
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recipient?: string | null
+    phone?: string | null
+    address?: string | null
+    totalMargin?: number
+    paymentStatus?: $Enums.PaymentStatus
+    shippingStatus?: $Enums.ShippingStatus
+    paidAt?: Date | string | null
+    virtualAccount?: string | null
+    virtualAccountBank?: string | null
+    virtualAccountExpiry?: Date | string | null
+    productType?: $Enums.ProductType | null
+    expiresAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    cancelReason?: string | null
+    matchType?: string | null
+  }
+
   export type SaleUpdateWithoutBroadcastInput = {
     id?: StringFieldUpdateOperationsInput | string
     saleNo?: StringFieldUpdateOperationsInput | string
@@ -52038,6 +52604,106 @@ export namespace Prisma {
     totalPrice?: IntFieldUpdateOperationsInput | number
     saleDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrderUpdateWithoutBroadcastInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderNo?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    totalAmount?: IntFieldUpdateOperationsInput | number
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipient?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    totalMargin?: IntFieldUpdateOperationsInput | number
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
+    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
+    processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
+    items?: OrderItemUpdateManyWithoutOrderNestedInput
+    onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
+    onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
+    sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutBroadcastInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderNo?: StringFieldUpdateOperationsInput | string
+    sellerId?: StringFieldUpdateOperationsInput | string
+    adminId?: NullableStringFieldUpdateOperationsInput | string | null
+    processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    totalAmount?: IntFieldUpdateOperationsInput | number
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipient?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    totalMargin?: IntFieldUpdateOperationsInput | number
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
+    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+    onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
+    onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
+    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
+    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateManyWithoutBroadcastInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderNo?: StringFieldUpdateOperationsInput | string
+    sellerId?: StringFieldUpdateOperationsInput | string
+    adminId?: NullableStringFieldUpdateOperationsInput | string | null
+    processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    totalAmount?: IntFieldUpdateOperationsInput | number
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recipient?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    totalMargin?: IntFieldUpdateOperationsInput | number
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
+    virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    matchType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WarehouseInventoryCreateManyWarehouseInput = {

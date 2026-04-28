@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { z } from "zod";
 import { reserveStock } from "@/lib/services/stock/reservation";
+import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMatching";
 
 // Phase 2: Order with Items Schema
 const orderItemSchema = z.object({
@@ -64,6 +65,9 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
         include: {
           seller: {
             select: { id: true, name: true, email: true },
+          },
+          broadcast: {
+            select: { id: true, code: true, platform: true, scheduledAt: true, status: true },
           },
           items: {
             include: {
@@ -210,10 +214,23 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
         }
       }
 
+      // ✨ LIVE-03: 발주서→방송 자동 매칭 (split 주문도)
+      const splitMatchResults = [];
+      for (const order of createdOrders) {
+        try {
+          const result = await matchOrderToBroadcast(order.id, sellerId, new Date());
+          splitMatchResults.push({ orderId: order.id, ...result });
+        } catch (err) {
+          console.error("[ORDER-BROADCAST MATCH ERROR]", order.id, err);
+          splitMatchResults.push({ orderId: order.id, matched: false, reason: "매칭 처리 중 오류" });
+        }
+      }
+
       return ok({
         message: "주문이 상품 유형별로 분리되어 생성되었습니다.",
         orders: createdOrders,
         split: true,
+        matchResults: splitMatchResults,
       });
     } else if (wmsItems.length > 0) {
       // Only WMS items
@@ -239,10 +256,23 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
       }
     }
 
+    // ✨ LIVE-03: 발주서→방송 자동 매칭 (실패해도 주문 생성은 유지)
+    const matchResults = [];
+    for (const order of createdOrders) {
+      try {
+        const result = await matchOrderToBroadcast(order.id, sellerId, new Date());
+        matchResults.push({ orderId: order.id, ...result });
+      } catch (err) {
+        console.error("[ORDER-BROADCAST MATCH ERROR]", order.id, err);
+        matchResults.push({ orderId: order.id, matched: false, reason: "매칭 처리 중 오류" });
+      }
+    }
+
     return ok({
       message: "주문이 생성되었습니다.",
       orders: createdOrders,
       split: false,
+      matchResults,
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {

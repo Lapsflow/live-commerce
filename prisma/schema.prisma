@@ -286,10 +286,15 @@ model Order {
   cancelledAt  DateTime? // 취소 시각
   cancelReason String?   // "EXPIRED" | "SELLER_CANCELLED" | "ADMIN_CANCELLED"
 
+  // ✨ LIVE-03: 발주서→방송 자동 매칭
+  broadcastId  String? // 매칭된 방송 ID (자동 또는 수동)
+  matchType    String? // "AUTO" | "MANUAL" | null(미매칭)
+
   // Relations
   seller             User                  @relation(fields: [sellerId], references: [id])
   admin              User?                 @relation("AdminOrders", fields: [adminId], references: [id])
   processingCenter   Center?               @relation(fields: [processingCenterId], references: [id], onDelete: SetNull)
+  broadcast          Broadcast?            @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
   items              OrderItem[]
   onewmsMapping      OnewmsOrderMapping?
   onewmsDeliveryLogs OnewmsDeliveryLog[]
@@ -302,6 +307,7 @@ model Order {
   @@index([paymentStatus, shippingStatus])
   @@index([productType])
   @@index([expiresAt, paymentStatus, status]) // ✨ cron 만료 조회 최적화
+  @@index([broadcastId]) // ✨ LIVE-03: 방송별 발주 조회
 }
 
 enum OrderStatus {
@@ -397,6 +403,7 @@ model Broadcast {
   seller User    @relation(fields: [sellerId], references: [id])
   center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
   sales  Sale[]
+  orders Order[] // ✨ LIVE-03: 매칭된 발주서들
 }
 
 enum BroadcastPlatform {
