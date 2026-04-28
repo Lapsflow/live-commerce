@@ -18,6 +18,7 @@ import {
   FileText,
   ClipboardCheck,
   Building2,
+  FlaskConical,
 } from "lucide-react";
 import { useState } from "react";
 import { NavItem } from "./nav-item";
@@ -59,6 +60,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/products", label: "상품 관리", icon: Package },
     { href: "/proposals", label: "상품 제안", icon: FileText },
+    { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },
   ],
   SUB_MASTER: [
@@ -68,6 +70,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts", label: "방송 관리", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/proposals", label: "상품 제안", icon: FileText },
+    { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },
   ],
 };
