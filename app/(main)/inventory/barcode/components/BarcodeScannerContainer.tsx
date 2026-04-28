@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CameraStream } from "./CameraStream";
 import { ScanOverlay } from "./ScanOverlay";
@@ -20,6 +20,7 @@ interface BarcodeScannerContainerProps {
 
 export function BarcodeScannerContainer({ mode }: BarcodeScannerContainerProps) {
   const [showManualInput, setShowManualInput] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const { hasPermission, requestPermission, permissionDenied } = useCameraPermission();
   const {
     isScanning,
@@ -39,9 +40,11 @@ export function BarcodeScannerContainer({ mode }: BarcodeScannerContainerProps) 
     }
   };
 
-  const handleManualSearch = (barcode: string) => {
-    handleBarcodeScan(barcode);
-    setShowManualInput(false);
+  // BARCODE-03: 스캔 후 결과 표시, 입력 필드는 자동 초기화됨
+  const handleManualSearch = async (barcode: string) => {
+    setIsSearching(true);
+    await handleBarcodeScan(barcode);
+    setIsSearching(false);
   };
 
   return (
@@ -113,7 +116,7 @@ export function BarcodeScannerContainer({ mode }: BarcodeScannerContainerProps) 
           {/* Manual Input Fallback */}
           {showManualInput && (
             <div className="mt-4">
-              <ManualInputFallback onSearch={handleManualSearch} />
+              <ManualInputFallback onSearch={handleManualSearch} isSearching={isSearching} />
             </div>
           )}
 
@@ -123,7 +126,17 @@ export function BarcodeScannerContainer({ mode }: BarcodeScannerContainerProps) 
               <p className="text-sm text-muted-foreground mb-2">
                 카메라를 사용할 수 없는 경우 바코드 번호를 직접 입력하세요:
               </p>
-              <ManualInputFallback onSearch={handleManualSearch} />
+              <ManualInputFallback onSearch={handleManualSearch} isSearching={isSearching} />
+            </div>
+          )}
+
+          {/* BARCODE-02/03: 바코드 스캐너(HID) 전용 입력 — 항상 표시 */}
+          {!showManualInput && !((!hasPermission && permissionDenied)) && (
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground mb-2">
+                바코드 스캐너 또는 수동 입력:
+              </p>
+              <ManualInputFallback onSearch={handleManualSearch} autoFocus isSearching={isSearching} />
             </div>
           )}
         </CardContent>
