@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -19,6 +18,13 @@ import {
   FileText, Plus, CheckCircle, XCircle, Clock,
   Upload, ImageIcon, X, Loader2,
 } from "lucide-react";
+import DOMPurify from "isomorphic-dompurify";
+import dynamic from "next/dynamic";
+
+const TipTapEditor = dynamic(() => import("@/components/editors/TipTapEditor"), {
+  ssr: false,
+  loading: () => <div className="border rounded-md p-3 min-h-[120px] bg-gray-50 text-sm text-muted-foreground">에디터 로딩 중...</div>,
+});
 
 type Proposal = {
   id: string;
@@ -315,7 +321,11 @@ export default function ProposalsPage() {
                 )}
                 <div className="md:col-span-2">
                   <Label>상품 설명 *</Label>
-                  <Textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} required />
+                  <TipTapEditor
+                    value={formData.description}
+                    onChange={(html) => setFormData({ ...formData, description: html })}
+                    placeholder="상품의 특징, 구성, 효과 등을 자유롭게 작성하세요..."
+                  />
                 </div>
               </div>
             </div>
@@ -467,7 +477,10 @@ export default function ProposalsPage() {
                       {proposal.sampleType === "FREE" ? "무료" : `유료 (${proposal.samplePrice?.toLocaleString()}원)`}
                     </p>
                   )}
-                  <p className="text-sm mt-2">{proposal.description}</p>
+                  <div
+                    className="text-sm mt-2 prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(proposal.description) }}
+                  />
                 </div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-3">
                   <span>
