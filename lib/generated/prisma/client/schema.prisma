@@ -453,11 +453,28 @@ model Proposal {
   phone       String
   productName String
   category    String
+  subcategory String? // ✨ PROPOSAL-04: 소분류 카테고리
   description String
   status      ProposalStatus @default(PENDING)
   submittedBy String
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+
+  // ✨ PROPOSAL-06: 상품 이미지
+  imageMain String? // 메인 썸네일 URL
+  imageSubs String? // 서브 이미지 URLs (JSON 배열, 최대 5장)
+
+  // ✨ PROPOSAL-06: 샘플 정책
+  sampleType    String? // "FREE" | "PAID"
+  samplePrice   Int? // 유료 시 샘플 가격
+  quantityLimit Int? // 센터별 수량 제한
+
+  // ✨ PROPOSAL-06: 공급 정책
+  supplyType String? // "SINGLE" | "RECURRING"
+  brand      String? // 브랜드명
+
+  // ✨ PROPOSAL-06: 연관 상품코드
+  productCode String? // 본사 상품 코드 (예: [33])
 
   user User @relation(fields: [submittedBy], references: [id])
 

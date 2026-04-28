@@ -17026,8 +17026,20 @@ export namespace Prisma {
 
   export type AggregateProposal = {
     _count: ProposalCountAggregateOutputType | null
+    _avg: ProposalAvgAggregateOutputType | null
+    _sum: ProposalSumAggregateOutputType | null
     _min: ProposalMinAggregateOutputType | null
     _max: ProposalMaxAggregateOutputType | null
+  }
+
+  export type ProposalAvgAggregateOutputType = {
+    samplePrice: number | null
+    quantityLimit: number | null
+  }
+
+  export type ProposalSumAggregateOutputType = {
+    samplePrice: number | null
+    quantityLimit: number | null
   }
 
   export type ProposalMinAggregateOutputType = {
@@ -17037,11 +17049,20 @@ export namespace Prisma {
     phone: string | null
     productName: string | null
     category: string | null
+    subcategory: string | null
     description: string | null
     status: $Enums.ProposalStatus | null
     submittedBy: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    imageMain: string | null
+    imageSubs: string | null
+    sampleType: string | null
+    samplePrice: number | null
+    quantityLimit: number | null
+    supplyType: string | null
+    brand: string | null
+    productCode: string | null
   }
 
   export type ProposalMaxAggregateOutputType = {
@@ -17051,11 +17072,20 @@ export namespace Prisma {
     phone: string | null
     productName: string | null
     category: string | null
+    subcategory: string | null
     description: string | null
     status: $Enums.ProposalStatus | null
     submittedBy: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    imageMain: string | null
+    imageSubs: string | null
+    sampleType: string | null
+    samplePrice: number | null
+    quantityLimit: number | null
+    supplyType: string | null
+    brand: string | null
+    productCode: string | null
   }
 
   export type ProposalCountAggregateOutputType = {
@@ -17065,14 +17095,33 @@ export namespace Prisma {
     phone: number
     productName: number
     category: number
+    subcategory: number
     description: number
     status: number
     submittedBy: number
     createdAt: number
     updatedAt: number
+    imageMain: number
+    imageSubs: number
+    sampleType: number
+    samplePrice: number
+    quantityLimit: number
+    supplyType: number
+    brand: number
+    productCode: number
     _all: number
   }
 
+
+  export type ProposalAvgAggregateInputType = {
+    samplePrice?: true
+    quantityLimit?: true
+  }
+
+  export type ProposalSumAggregateInputType = {
+    samplePrice?: true
+    quantityLimit?: true
+  }
 
   export type ProposalMinAggregateInputType = {
     id?: true
@@ -17081,11 +17130,20 @@ export namespace Prisma {
     phone?: true
     productName?: true
     category?: true
+    subcategory?: true
     description?: true
     status?: true
     submittedBy?: true
     createdAt?: true
     updatedAt?: true
+    imageMain?: true
+    imageSubs?: true
+    sampleType?: true
+    samplePrice?: true
+    quantityLimit?: true
+    supplyType?: true
+    brand?: true
+    productCode?: true
   }
 
   export type ProposalMaxAggregateInputType = {
@@ -17095,11 +17153,20 @@ export namespace Prisma {
     phone?: true
     productName?: true
     category?: true
+    subcategory?: true
     description?: true
     status?: true
     submittedBy?: true
     createdAt?: true
     updatedAt?: true
+    imageMain?: true
+    imageSubs?: true
+    sampleType?: true
+    samplePrice?: true
+    quantityLimit?: true
+    supplyType?: true
+    brand?: true
+    productCode?: true
   }
 
   export type ProposalCountAggregateInputType = {
@@ -17109,11 +17176,20 @@ export namespace Prisma {
     phone?: true
     productName?: true
     category?: true
+    subcategory?: true
     description?: true
     status?: true
     submittedBy?: true
     createdAt?: true
     updatedAt?: true
+    imageMain?: true
+    imageSubs?: true
+    sampleType?: true
+    samplePrice?: true
+    quantityLimit?: true
+    supplyType?: true
+    brand?: true
+    productCode?: true
     _all?: true
   }
 
@@ -17155,6 +17231,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ProposalAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProposalSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ProposalMinAggregateInputType
@@ -17185,6 +17273,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ProposalCountAggregateInputType | true
+    _avg?: ProposalAvgAggregateInputType
+    _sum?: ProposalSumAggregateInputType
     _min?: ProposalMinAggregateInputType
     _max?: ProposalMaxAggregateInputType
   }
@@ -17196,12 +17286,23 @@ export namespace Prisma {
     phone: string
     productName: string
     category: string
+    subcategory: string | null
     description: string
     status: $Enums.ProposalStatus
     submittedBy: string
     createdAt: Date
     updatedAt: Date
+    imageMain: string | null
+    imageSubs: string | null
+    sampleType: string | null
+    samplePrice: number | null
+    quantityLimit: number | null
+    supplyType: string | null
+    brand: string | null
+    productCode: string | null
     _count: ProposalCountAggregateOutputType | null
+    _avg: ProposalAvgAggregateOutputType | null
+    _sum: ProposalSumAggregateOutputType | null
     _min: ProposalMinAggregateOutputType | null
     _max: ProposalMaxAggregateOutputType | null
   }
@@ -17227,11 +17328,20 @@ export namespace Prisma {
     phone?: boolean
     productName?: boolean
     category?: boolean
+    subcategory?: boolean
     description?: boolean
     status?: boolean
     submittedBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    imageMain?: boolean
+    imageSubs?: boolean
+    sampleType?: boolean
+    samplePrice?: boolean
+    quantityLimit?: boolean
+    supplyType?: boolean
+    brand?: boolean
+    productCode?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
@@ -17242,11 +17352,20 @@ export namespace Prisma {
     phone?: boolean
     productName?: boolean
     category?: boolean
+    subcategory?: boolean
     description?: boolean
     status?: boolean
     submittedBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    imageMain?: boolean
+    imageSubs?: boolean
+    sampleType?: boolean
+    samplePrice?: boolean
+    quantityLimit?: boolean
+    supplyType?: boolean
+    brand?: boolean
+    productCode?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
@@ -17257,11 +17376,20 @@ export namespace Prisma {
     phone?: boolean
     productName?: boolean
     category?: boolean
+    subcategory?: boolean
     description?: boolean
     status?: boolean
     submittedBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    imageMain?: boolean
+    imageSubs?: boolean
+    sampleType?: boolean
+    samplePrice?: boolean
+    quantityLimit?: boolean
+    supplyType?: boolean
+    brand?: boolean
+    productCode?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
@@ -17272,14 +17400,23 @@ export namespace Prisma {
     phone?: boolean
     productName?: boolean
     category?: boolean
+    subcategory?: boolean
     description?: boolean
     status?: boolean
     submittedBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    imageMain?: boolean
+    imageSubs?: boolean
+    sampleType?: boolean
+    samplePrice?: boolean
+    quantityLimit?: boolean
+    supplyType?: boolean
+    brand?: boolean
+    productCode?: boolean
   }
 
-  export type ProposalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "companyName" | "contact" | "phone" | "productName" | "category" | "description" | "status" | "submittedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["proposal"]>
+  export type ProposalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "companyName" | "contact" | "phone" | "productName" | "category" | "subcategory" | "description" | "status" | "submittedBy" | "createdAt" | "updatedAt" | "imageMain" | "imageSubs" | "sampleType" | "samplePrice" | "quantityLimit" | "supplyType" | "brand" | "productCode", ExtArgs["result"]["proposal"]>
   export type ProposalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -17302,11 +17439,20 @@ export namespace Prisma {
       phone: string
       productName: string
       category: string
+      subcategory: string | null
       description: string
       status: $Enums.ProposalStatus
       submittedBy: string
       createdAt: Date
       updatedAt: Date
+      imageMain: string | null
+      imageSubs: string | null
+      sampleType: string | null
+      samplePrice: number | null
+      quantityLimit: number | null
+      supplyType: string | null
+      brand: string | null
+      productCode: string | null
     }, ExtArgs["result"]["proposal"]>
     composites: {}
   }
@@ -17737,11 +17883,20 @@ export namespace Prisma {
     readonly phone: FieldRef<"Proposal", 'String'>
     readonly productName: FieldRef<"Proposal", 'String'>
     readonly category: FieldRef<"Proposal", 'String'>
+    readonly subcategory: FieldRef<"Proposal", 'String'>
     readonly description: FieldRef<"Proposal", 'String'>
     readonly status: FieldRef<"Proposal", 'ProposalStatus'>
     readonly submittedBy: FieldRef<"Proposal", 'String'>
     readonly createdAt: FieldRef<"Proposal", 'DateTime'>
     readonly updatedAt: FieldRef<"Proposal", 'DateTime'>
+    readonly imageMain: FieldRef<"Proposal", 'String'>
+    readonly imageSubs: FieldRef<"Proposal", 'String'>
+    readonly sampleType: FieldRef<"Proposal", 'String'>
+    readonly samplePrice: FieldRef<"Proposal", 'Int'>
+    readonly quantityLimit: FieldRef<"Proposal", 'Int'>
+    readonly supplyType: FieldRef<"Proposal", 'String'>
+    readonly brand: FieldRef<"Proposal", 'String'>
+    readonly productCode: FieldRef<"Proposal", 'String'>
   }
     
 
@@ -33287,11 +33442,20 @@ export namespace Prisma {
     phone: 'phone',
     productName: 'productName',
     category: 'category',
+    subcategory: 'subcategory',
     description: 'description',
     status: 'status',
     submittedBy: 'submittedBy',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    imageMain: 'imageMain',
+    imageSubs: 'imageSubs',
+    sampleType: 'sampleType',
+    samplePrice: 'samplePrice',
+    quantityLimit: 'quantityLimit',
+    supplyType: 'supplyType',
+    brand: 'brand',
+    productCode: 'productCode'
   };
 
   export type ProposalScalarFieldEnum = (typeof ProposalScalarFieldEnum)[keyof typeof ProposalScalarFieldEnum]
@@ -35029,11 +35193,20 @@ export namespace Prisma {
     phone?: StringFilter<"Proposal"> | string
     productName?: StringFilter<"Proposal"> | string
     category?: StringFilter<"Proposal"> | string
+    subcategory?: StringNullableFilter<"Proposal"> | string | null
     description?: StringFilter<"Proposal"> | string
     status?: EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
     submittedBy?: StringFilter<"Proposal"> | string
     createdAt?: DateTimeFilter<"Proposal"> | Date | string
     updatedAt?: DateTimeFilter<"Proposal"> | Date | string
+    imageMain?: StringNullableFilter<"Proposal"> | string | null
+    imageSubs?: StringNullableFilter<"Proposal"> | string | null
+    sampleType?: StringNullableFilter<"Proposal"> | string | null
+    samplePrice?: IntNullableFilter<"Proposal"> | number | null
+    quantityLimit?: IntNullableFilter<"Proposal"> | number | null
+    supplyType?: StringNullableFilter<"Proposal"> | string | null
+    brand?: StringNullableFilter<"Proposal"> | string | null
+    productCode?: StringNullableFilter<"Proposal"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -35044,11 +35217,20 @@ export namespace Prisma {
     phone?: SortOrder
     productName?: SortOrder
     category?: SortOrder
+    subcategory?: SortOrderInput | SortOrder
     description?: SortOrder
     status?: SortOrder
     submittedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageMain?: SortOrderInput | SortOrder
+    imageSubs?: SortOrderInput | SortOrder
+    sampleType?: SortOrderInput | SortOrder
+    samplePrice?: SortOrderInput | SortOrder
+    quantityLimit?: SortOrderInput | SortOrder
+    supplyType?: SortOrderInput | SortOrder
+    brand?: SortOrderInput | SortOrder
+    productCode?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -35062,11 +35244,20 @@ export namespace Prisma {
     phone?: StringFilter<"Proposal"> | string
     productName?: StringFilter<"Proposal"> | string
     category?: StringFilter<"Proposal"> | string
+    subcategory?: StringNullableFilter<"Proposal"> | string | null
     description?: StringFilter<"Proposal"> | string
     status?: EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
     submittedBy?: StringFilter<"Proposal"> | string
     createdAt?: DateTimeFilter<"Proposal"> | Date | string
     updatedAt?: DateTimeFilter<"Proposal"> | Date | string
+    imageMain?: StringNullableFilter<"Proposal"> | string | null
+    imageSubs?: StringNullableFilter<"Proposal"> | string | null
+    sampleType?: StringNullableFilter<"Proposal"> | string | null
+    samplePrice?: IntNullableFilter<"Proposal"> | number | null
+    quantityLimit?: IntNullableFilter<"Proposal"> | number | null
+    supplyType?: StringNullableFilter<"Proposal"> | string | null
+    brand?: StringNullableFilter<"Proposal"> | string | null
+    productCode?: StringNullableFilter<"Proposal"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -35077,14 +35268,25 @@ export namespace Prisma {
     phone?: SortOrder
     productName?: SortOrder
     category?: SortOrder
+    subcategory?: SortOrderInput | SortOrder
     description?: SortOrder
     status?: SortOrder
     submittedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageMain?: SortOrderInput | SortOrder
+    imageSubs?: SortOrderInput | SortOrder
+    sampleType?: SortOrderInput | SortOrder
+    samplePrice?: SortOrderInput | SortOrder
+    quantityLimit?: SortOrderInput | SortOrder
+    supplyType?: SortOrderInput | SortOrder
+    brand?: SortOrderInput | SortOrder
+    productCode?: SortOrderInput | SortOrder
     _count?: ProposalCountOrderByAggregateInput
+    _avg?: ProposalAvgOrderByAggregateInput
     _max?: ProposalMaxOrderByAggregateInput
     _min?: ProposalMinOrderByAggregateInput
+    _sum?: ProposalSumOrderByAggregateInput
   }
 
   export type ProposalScalarWhereWithAggregatesInput = {
@@ -35097,11 +35299,20 @@ export namespace Prisma {
     phone?: StringWithAggregatesFilter<"Proposal"> | string
     productName?: StringWithAggregatesFilter<"Proposal"> | string
     category?: StringWithAggregatesFilter<"Proposal"> | string
+    subcategory?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
     description?: StringWithAggregatesFilter<"Proposal"> | string
     status?: EnumProposalStatusWithAggregatesFilter<"Proposal"> | $Enums.ProposalStatus
     submittedBy?: StringWithAggregatesFilter<"Proposal"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Proposal"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Proposal"> | Date | string
+    imageMain?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
+    imageSubs?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
+    sampleType?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
+    samplePrice?: IntNullableWithAggregatesFilter<"Proposal"> | number | null
+    quantityLimit?: IntNullableWithAggregatesFilter<"Proposal"> | number | null
+    supplyType?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
+    brand?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
+    productCode?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
   }
 
   export type ProposalCartWhereInput = {
@@ -37512,10 +37723,19 @@ export namespace Prisma {
     phone: string
     productName: string
     category: string
+    subcategory?: string | null
     description: string
     status?: $Enums.ProposalStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageMain?: string | null
+    imageSubs?: string | null
+    sampleType?: string | null
+    samplePrice?: number | null
+    quantityLimit?: number | null
+    supplyType?: string | null
+    brand?: string | null
+    productCode?: string | null
     user: UserCreateNestedOneWithoutProposalsInput
   }
 
@@ -37526,11 +37746,20 @@ export namespace Prisma {
     phone: string
     productName: string
     category: string
+    subcategory?: string | null
     description: string
     status?: $Enums.ProposalStatus
     submittedBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageMain?: string | null
+    imageSubs?: string | null
+    sampleType?: string | null
+    samplePrice?: number | null
+    quantityLimit?: number | null
+    supplyType?: string | null
+    brand?: string | null
+    productCode?: string | null
   }
 
   export type ProposalUpdateInput = {
@@ -37540,10 +37769,19 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageMain?: NullableStringFieldUpdateOperationsInput | string | null
+    imageSubs?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    quantityLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyType?: NullableStringFieldUpdateOperationsInput | string | null
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    productCode?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutProposalsNestedInput
   }
 
@@ -37554,11 +37792,20 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
     submittedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageMain?: NullableStringFieldUpdateOperationsInput | string | null
+    imageSubs?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    quantityLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyType?: NullableStringFieldUpdateOperationsInput | string | null
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    productCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProposalCreateManyInput = {
@@ -37568,11 +37815,20 @@ export namespace Prisma {
     phone: string
     productName: string
     category: string
+    subcategory?: string | null
     description: string
     status?: $Enums.ProposalStatus
     submittedBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageMain?: string | null
+    imageSubs?: string | null
+    sampleType?: string | null
+    samplePrice?: number | null
+    quantityLimit?: number | null
+    supplyType?: string | null
+    brand?: string | null
+    productCode?: string | null
   }
 
   export type ProposalUpdateManyMutationInput = {
@@ -37582,10 +37838,19 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageMain?: NullableStringFieldUpdateOperationsInput | string | null
+    imageSubs?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    quantityLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyType?: NullableStringFieldUpdateOperationsInput | string | null
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    productCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProposalUncheckedUpdateManyInput = {
@@ -37595,11 +37860,20 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
     submittedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageMain?: NullableStringFieldUpdateOperationsInput | string | null
+    imageSubs?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    quantityLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyType?: NullableStringFieldUpdateOperationsInput | string | null
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    productCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProposalCartCreateInput = {
@@ -39978,11 +40252,25 @@ export namespace Prisma {
     phone?: SortOrder
     productName?: SortOrder
     category?: SortOrder
+    subcategory?: SortOrder
     description?: SortOrder
     status?: SortOrder
     submittedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageMain?: SortOrder
+    imageSubs?: SortOrder
+    sampleType?: SortOrder
+    samplePrice?: SortOrder
+    quantityLimit?: SortOrder
+    supplyType?: SortOrder
+    brand?: SortOrder
+    productCode?: SortOrder
+  }
+
+  export type ProposalAvgOrderByAggregateInput = {
+    samplePrice?: SortOrder
+    quantityLimit?: SortOrder
   }
 
   export type ProposalMaxOrderByAggregateInput = {
@@ -39992,11 +40280,20 @@ export namespace Prisma {
     phone?: SortOrder
     productName?: SortOrder
     category?: SortOrder
+    subcategory?: SortOrder
     description?: SortOrder
     status?: SortOrder
     submittedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageMain?: SortOrder
+    imageSubs?: SortOrder
+    sampleType?: SortOrder
+    samplePrice?: SortOrder
+    quantityLimit?: SortOrder
+    supplyType?: SortOrder
+    brand?: SortOrder
+    productCode?: SortOrder
   }
 
   export type ProposalMinOrderByAggregateInput = {
@@ -40006,11 +40303,25 @@ export namespace Prisma {
     phone?: SortOrder
     productName?: SortOrder
     category?: SortOrder
+    subcategory?: SortOrder
     description?: SortOrder
     status?: SortOrder
     submittedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageMain?: SortOrder
+    imageSubs?: SortOrder
+    sampleType?: SortOrder
+    samplePrice?: SortOrder
+    quantityLimit?: SortOrder
+    supplyType?: SortOrder
+    brand?: SortOrder
+    productCode?: SortOrder
+  }
+
+  export type ProposalSumOrderByAggregateInput = {
+    samplePrice?: SortOrder
+    quantityLimit?: SortOrder
   }
 
   export type EnumProposalStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -43836,10 +44147,19 @@ export namespace Prisma {
     phone: string
     productName: string
     category: string
+    subcategory?: string | null
     description: string
     status?: $Enums.ProposalStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageMain?: string | null
+    imageSubs?: string | null
+    sampleType?: string | null
+    samplePrice?: number | null
+    quantityLimit?: number | null
+    supplyType?: string | null
+    brand?: string | null
+    productCode?: string | null
   }
 
   export type ProposalUncheckedCreateWithoutUserInput = {
@@ -43849,10 +44169,19 @@ export namespace Prisma {
     phone: string
     productName: string
     category: string
+    subcategory?: string | null
     description: string
     status?: $Enums.ProposalStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageMain?: string | null
+    imageSubs?: string | null
+    sampleType?: string | null
+    samplePrice?: number | null
+    quantityLimit?: number | null
+    supplyType?: string | null
+    brand?: string | null
+    productCode?: string | null
   }
 
   export type ProposalCreateOrConnectWithoutUserInput = {
@@ -44298,11 +44627,20 @@ export namespace Prisma {
     phone?: StringFilter<"Proposal"> | string
     productName?: StringFilter<"Proposal"> | string
     category?: StringFilter<"Proposal"> | string
+    subcategory?: StringNullableFilter<"Proposal"> | string | null
     description?: StringFilter<"Proposal"> | string
     status?: EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
     submittedBy?: StringFilter<"Proposal"> | string
     createdAt?: DateTimeFilter<"Proposal"> | Date | string
     updatedAt?: DateTimeFilter<"Proposal"> | Date | string
+    imageMain?: StringNullableFilter<"Proposal"> | string | null
+    imageSubs?: StringNullableFilter<"Proposal"> | string | null
+    sampleType?: StringNullableFilter<"Proposal"> | string | null
+    samplePrice?: IntNullableFilter<"Proposal"> | number | null
+    quantityLimit?: IntNullableFilter<"Proposal"> | number | null
+    supplyType?: StringNullableFilter<"Proposal"> | string | null
+    brand?: StringNullableFilter<"Proposal"> | string | null
+    productCode?: StringNullableFilter<"Proposal"> | string | null
   }
 
   export type ProposalCartUpsertWithWhereUniqueWithoutUserInput = {
@@ -50888,10 +51226,19 @@ export namespace Prisma {
     phone: string
     productName: string
     category: string
+    subcategory?: string | null
     description: string
     status?: $Enums.ProposalStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageMain?: string | null
+    imageSubs?: string | null
+    sampleType?: string | null
+    samplePrice?: number | null
+    quantityLimit?: number | null
+    supplyType?: string | null
+    brand?: string | null
+    productCode?: string | null
   }
 
   export type ProposalCartCreateManyUserInput = {
@@ -51311,10 +51658,19 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageMain?: NullableStringFieldUpdateOperationsInput | string | null
+    imageSubs?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    quantityLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyType?: NullableStringFieldUpdateOperationsInput | string | null
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    productCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProposalUncheckedUpdateWithoutUserInput = {
@@ -51324,10 +51680,19 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageMain?: NullableStringFieldUpdateOperationsInput | string | null
+    imageSubs?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    quantityLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyType?: NullableStringFieldUpdateOperationsInput | string | null
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    productCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProposalUncheckedUpdateManyWithoutUserInput = {
@@ -51337,10 +51702,19 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageMain?: NullableStringFieldUpdateOperationsInput | string | null
+    imageSubs?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
+    quantityLimit?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyType?: NullableStringFieldUpdateOperationsInput | string | null
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    productCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProposalCartUpdateWithoutUserInput = {

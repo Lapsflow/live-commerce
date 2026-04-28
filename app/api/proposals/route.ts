@@ -11,7 +11,18 @@ const proposalCreateSchema = z.object({
   phone: z.string().min(1, "연락처를 입력하세요"),
   productName: z.string().min(1, "상품명을 입력하세요"),
   category: z.string().min(1, "카테고리를 입력하세요"),
+  subcategory: z.string().optional(),
   description: z.string().min(1, "설명을 입력하세요"),
+  // PROPOSAL-06: 이미지
+  imageMain: z.string().url().optional(),
+  imageSubs: z.string().optional(), // JSON 배열 문자열
+  // PROPOSAL-06: 샘플/공급 정책
+  sampleType: z.enum(["FREE", "PAID"]).optional(),
+  samplePrice: z.number().int().min(0).optional(),
+  quantityLimit: z.number().int().min(1).optional(),
+  supplyType: z.enum(["SINGLE", "RECURRING"]).optional(),
+  brand: z.string().optional(),
+  productCode: z.string().optional(),
 });
 
 /**
