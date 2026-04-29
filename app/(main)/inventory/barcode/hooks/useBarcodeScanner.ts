@@ -21,6 +21,11 @@ interface ProductData {
     stock: number;
     location: string | null;
   }>;
+  // ONEWMS 실시간 재고 필드
+  realtimeStock: number | null;
+  cachedStock: number;
+  stockError: string | null;
+  lastSyncedAt: string | null;
 }
 
 export function useBarcodeScanner() {
@@ -54,9 +59,15 @@ export function useBarcodeScanner() {
         return;
       }
 
-      playBeep("success"); // BARCODE-02: 성공 사운드
+      // BARCODE-02: 상품 조회 성공 사운드
+      playBeep("success");
       // ok() response format: { data: T }
       setScannedProduct(data.data);
+
+      // ONEWMS 재고 조회 실패 시 경고 (상품은 찾았지만 실시간 재고 못 가져옴)
+      if (data.data?.stockError) {
+        setError(`실시간 재고 조회 실패: ${data.data.stockError}`);
+      }
     } catch (err) {
       console.error("[Barcode Scan Error]", err);
       setError("네트워크 오류가 발생했습니다.");

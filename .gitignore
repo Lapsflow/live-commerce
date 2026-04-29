@@ -40,3 +40,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright
+playwright-report/
+tests/screenshots/
+.playwright-mcp/
+playwright/.auth/
+
+# bkit / claude
+docs/.pdca-snapshots/
+docs/.pdca-status*.json
+docs/.pdca-status*.txt
+docs/.bkit-memory.json
+.claude/agent-memory/
