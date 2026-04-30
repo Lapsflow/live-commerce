@@ -102,6 +102,7 @@ test("2. MASTER: 방송 신청 (센터 선택 포함)", async ({ page }) => {
 
   // 방송 생성 API 호출 (centerId 포함)
   const createRes = await page.request.post(`${BASE}/api/broadcasts`, {
+    headers: { Origin: BASE },
     data: {
       code,
       sellerId,
@@ -159,6 +160,7 @@ test("3. MASTER: 방송 거절 + rejectedAt/rejectedBy 기록", async ({ page })
   const rejectRes = await page.request.put(
     `${BASE}/api/broadcasts/${broadcastId}/reject`,
     {
+      headers: { Origin: BASE },
       data: { reason: "Phase B 테스트: 재고 부족" },
     }
   );
@@ -230,6 +232,7 @@ test("4. ADMIN: 다른 센터 방송 거절 시 차단", async ({ page }) => {
   const code = `PB-CROSS-${Date.now().toString(36).toUpperCase()}`;
 
   const createRes = await page.request.post(`${BASE}/api/broadcasts`, {
+    headers: { Origin: BASE },
     data: {
       code,
       sellerId: masterId,
@@ -254,6 +257,7 @@ test("4. ADMIN: 다른 센터 방송 거절 시 차단", async ({ page }) => {
   const rejectRes = await page.request.put(
     `${BASE}/api/broadcasts/${broadcastId}/reject`,
     {
+      headers: { Origin: BASE },
       data: { reason: "권한 격리 테스트" },
     }
   );
@@ -291,6 +295,7 @@ test("5. SELLER: 거절 후 재신청 (무제한)", async ({ page }) => {
   ).toISOString();
 
   const createRes = await page.request.post(`${BASE}/api/broadcasts`, {
+    headers: { Origin: BASE },
     data: {
       code,
       sellerId,
