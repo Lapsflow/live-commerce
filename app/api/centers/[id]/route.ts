@@ -13,6 +13,7 @@ import {
   deactivateCenter,
   type UpdateCenterInput,
 } from '@/lib/services/center/centerService';
+import { logAudit } from '@/lib/services/audit';
 
 /**
  * GET /api/centers/[id]
@@ -95,6 +96,19 @@ export async function PUT(
 
     const center = await updateCenter(id, input);
 
+    logAudit({
+      userId: (session.user as any).userId,
+      userRole: session.user?.role as any,
+      userName: session.user?.name ?? undefined,
+      action: 'UPDATE',
+      entityType: 'Center',
+      entityId: id,
+      entityName: center.name,
+      after: input as Record<string, unknown>,
+      description: `센터 수정: ${center.name}`,
+      request: req,
+    });
+
     return ok({
       center,
       message: '센터 정보가 업데이트되었습니다',
@@ -132,6 +146,20 @@ export async function DELETE(
     }
 
     const center = await deactivateCenter(id);
+
+    logAudit({
+      userId: (session.user as any).userId,
+      userRole: session.user?.role as any,
+      userName: session.user?.name ?? undefined,
+      action: 'SOFT_DELETE',
+      entityType: 'Center',
+      entityId: id,
+      entityName: center.name,
+      before: { isActive: true },
+      after: { isActive: false },
+      description: `센터 비활성화: ${center.name}`,
+      request: req,
+    });
 
     return ok({
       center,

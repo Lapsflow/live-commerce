@@ -19,6 +19,8 @@ import {
   ClipboardCheck,
   Building2,
   FlaskConical,
+  History,
+  Store,
 } from "lucide-react";
 import { useState } from "react";
 import { NavItem } from "./nav-item";
@@ -47,6 +49,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/orders", label: "발주 승인", icon: ShoppingCart },
     { href: "/broadcasts", label: "방송", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
+    { href: "/products", label: "상품 관리", icon: Package },
     { href: "/proposals", label: "상품 제안", icon: FileText },
     { href: "/barcode", label: "바코드", icon: Barcode },
   ],
@@ -59,9 +62,11 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts", label: "방송 관리", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/products", label: "상품 관리", icon: Package },
+    { href: "/admin/center-products", label: "센터 상품 현황", icon: Store },
     { href: "/proposals", label: "상품 제안", icon: FileText },
     { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },
+    { href: "/admin/audit-log", label: "변경 이력", icon: History },
   ],
   SUB_MASTER: [
     { href: "/dashboard", label: "전체 통계", icon: BarChart },
@@ -69,6 +74,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/orders", label: "발주 관리", icon: ShoppingCart },
     { href: "/broadcasts", label: "방송 관리", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
+    { href: "/products", label: "상품 관리", icon: Package },
     { href: "/proposals", label: "상품 제안", icon: FileText },
     { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },

@@ -4,17 +4,18 @@
  */
 
 import { NextRequest } from "next/server";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { issueTaxInvoice, cancelTaxInvoice } from "@/lib/services/tax-invoice";
+import { logAudit } from "@/lib/services/audit";
 
 /** 세금계산서 발행 */
 export const POST = withRole(
   ["MASTER", "SUB_MASTER", "ADMIN"],
   async (
     req: NextRequest,
-    _user,
+    user: AuthUser,
     { params }: { params: Promise<{ id: string }> }
   ) => {
     try {
@@ -70,6 +71,19 @@ export const POST = withRole(
         return errors.internal(result.error || "세금계산��� 발행 실패");
       }
 
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "CREATE",
+        entityType: "TaxInvoice",
+        entityId: orderId,
+        entityName: order.orderNo,
+        after: { invoiceNumber: result.invoiceNumber, totalAmount },
+        description: `세금계산서 발행: ${order.orderNo}`,
+        request: req,
+      });
+
       return ok({
         message: "세금계산서가 발행되었습니다",
         invoiceNumber: result.invoiceNumber,
@@ -86,7 +100,7 @@ export const DELETE = withRole(
   ["MASTER", "SUB_MASTER"],
   async (
     req: NextRequest,
-    _user,
+    user: AuthUser,
     { params }: { params: Promise<{ id: string }> }
   ) => {
     try {
@@ -114,6 +128,18 @@ export const DELETE = withRole(
             taxInvoiceIssuedAt: null,
             taxInvoiceNumber: null,
           },
+        });
+
+        logAudit({
+          userId: user.userId,
+          userRole: user.role,
+          userName: user.name,
+          action: "DELETE",
+          entityType: "TaxInvoice",
+          entityId: orderId,
+          before: { taxInvoiceNumber: order.taxInvoiceNumber },
+          description: `세금계산서 취소: ${order.taxInvoiceNumber}`,
+          request: req,
         });
       }
 

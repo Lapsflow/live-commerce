@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ROLE_LABELS } from "@/lib/constants/role-labels";
 
 type User = {
   id: string;
@@ -181,10 +182,10 @@ export function UserEditDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="MASTER">MASTER</SelectItem>
-                  <SelectItem value="SUB_MASTER">SUB_MASTER</SelectItem>
-                  <SelectItem value="ADMIN">ADMIN</SelectItem>
-                  <SelectItem value="SELLER">SELLER</SelectItem>
+                  <SelectItem value="MASTER">{ROLE_LABELS["MASTER"]}</SelectItem>
+                  <SelectItem value="SUB_MASTER">{ROLE_LABELS["SUB_MASTER"]}</SelectItem>
+                  <SelectItem value="ADMIN">{ROLE_LABELS["ADMIN"]}</SelectItem>
+                  <SelectItem value="SELLER">{ROLE_LABELS["SELLER"]}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

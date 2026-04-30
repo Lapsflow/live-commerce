@@ -4,12 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { User, LogOut, KeyRound } from "lucide-react";
 import Link from "next/link";
 
-const roleLabels: Record<string, string> = {
-  MASTER: "마스터",
-  SUB_MASTER: "부마스터",
-  ADMIN: "관리자",
-  SELLER: "셀러",
-};
+import { ROLE_LABELS } from "@/lib/constants/role-labels";
 
 export function UserMenu() {
   const { data: session } = useSession();
@@ -20,7 +15,7 @@ export function UserMenu() {
 
   const userName = (session.user as any).name || "사용자";
   const userRole = (session.user as any).role || "SELLER";
-  const roleLabel = roleLabels[userRole] || userRole;
+  const roleLabel = ROLE_LABELS[userRole] || userRole;
 
   return (
     <div className="space-y-2">

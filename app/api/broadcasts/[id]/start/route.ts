@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { sendNotification } from "@/lib/services/notifications";
+import { logAudit } from "@/lib/services/audit";
 
 /**
  * PUT /api/broadcasts/:id/start
@@ -122,6 +123,17 @@ const startBroadcastHandler = async (req: NextRequest) => {
     } catch (err) {
       console.error("[BROADCAST_START_NOTIF]", err);
     }
+
+    logAudit({
+      action: "STATUS_CHANGED",
+      entityType: "Broadcast",
+      entityId: broadcastId,
+      entityName: existing.code,
+      before: { status: existing.status },
+      after: { status: "LIVE", startedAt: updated.startedAt },
+      description: `방송 시작: ${existing.code}`,
+      request: req,
+    });
 
     return ok(updated);
   } catch (err: any) {

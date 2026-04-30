@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { sendNotification } from "@/lib/services/notifications";
 import { z } from "zod";
+import { logAudit } from "@/lib/services/audit";
 
 const statusUpdateSchema = z.object({
   paymentStatus: z.enum(["UNPAID", "PAID", "PAYMENT_FAILED"]).optional(),
@@ -18,7 +19,7 @@ const statusUpdateSchema = z.object({
  */
 export const PUT = withRole(
   ["MASTER", "SUB_MASTER", "ADMIN"],
-  async (req: NextRequest) => {
+  async (req: NextRequest, user: AuthUser) => {
     try {
       // URL에서 orderId 추출
       const orderId = req.url.split("/").filter(s => s).slice(-2)[0];
@@ -77,6 +78,20 @@ export const PUT = withRole(
           orderId,
         }).catch((err) => console.error("[ORDER_SHIPPED_NOTIFICATION]", err));
       }
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "STATUS_CHANGED",
+        entityType: "Order",
+        entityId: orderId,
+        entityName: existing.orderNo,
+        before: { paymentStatus: existing.paymentStatus, shippingStatus: existing.shippingStatus },
+        after: data as Record<string, unknown>,
+        description: `발주 상태 변경: ${existing.orderNo} (${data.paymentStatus || ""} ${data.shippingStatus || ""})`,
+        request: req,
+      });
 
       return ok(updated);
     } catch (err: any) {

@@ -57,7 +57,7 @@ export const TEMPLATES: Record<NotificationType, Template> = {
   // ── LIVE-09: 셀러 요청접수 → 센터담당자 ──
   BROADCAST_REQUESTED: {
     templateId: "TPL_BROADCAST_REQUESTED",
-    description: "방송 요청 접수 알림 → 센터담당자(ADMIN)",
+    description: "방송 요청 접수 알림 → 관리자",
     buildMessage: (v) =>
       `[슈퍼무진] 방송 요청 접수\n\n` +
       `셀러: ${v.sellerName || "-"}\n` +

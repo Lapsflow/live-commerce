@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
+import { logAudit } from "@/lib/services/audit";
 
 const rejectSchema = z.object({
   reason: z.string().min(1, "반려 사유를 입력해주세요").max(500),
@@ -14,7 +15,7 @@ const rejectSchema = z.object({
  */
 export const PUT = withRole(
   ["MASTER", "SUB_MASTER", "ADMIN"],
-  async (req: NextRequest) => {
+  async (req: NextRequest, user: AuthUser) => {
     const segments = req.nextUrl.pathname.split("/");
     const rejectIdx = segments.indexOf("reject");
     const broadcastId = segments[rejectIdx - 1];
@@ -44,6 +45,20 @@ export const PUT = withRole(
         status: "REJECTED",
         rejectionReason: reason,
       },
+    });
+
+    logAudit({
+      userId: user.userId,
+      userRole: user.role,
+      userName: user.name,
+      action: "STATUS_CHANGED",
+      entityType: "Broadcast",
+      entityId: broadcastId,
+      entityName: broadcast.code,
+      before: { status: "REQUESTED" },
+      after: { status: "REJECTED", rejectionReason: reason },
+      description: `방송 반려: ${broadcast.code} (${reason})`,
+      request: req,
     });
 
     return ok(updated);

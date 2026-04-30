@@ -163,7 +163,7 @@ async function stockExamples() {
     let totalStock = 0;
     if (entry.stock) {
       for (const wh of Object.values(entry.stock)) {
-        totalStock += (wh.stock || 0);
+        totalStock += Number(wh.stock) || 0;
       }
     }
     console.log(`  ${productId} (barcode: ${entry.barcode}): stock=${totalStock}`);

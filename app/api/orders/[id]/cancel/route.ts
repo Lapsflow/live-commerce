@@ -10,6 +10,7 @@ import { ok, error } from "@/lib/api/response";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { releaseStock } from "@/lib/services/stock/reservation";
 import { prisma } from "@/lib/db/prisma";
+import { logAudit } from "@/lib/services/audit";
 
 export const POST = withRole(
   ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
@@ -61,6 +62,19 @@ export const POST = withRole(
       if (!result.success) {
         return error("CANCEL_FAILED", result.error || "취소 처리 실패", 500);
       }
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "STATUS_CHANGED",
+        entityType: "Order",
+        entityId: orderId,
+        before: { status: order.status, paymentStatus: order.paymentStatus },
+        after: { status: "REJECTED", cancelReason: reason },
+        description: `발주 취소: ${orderId} (${reason})`,
+        request: req,
+      });
 
       return ok({
         message: "발주가 취소되었습니다.",

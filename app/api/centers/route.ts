@@ -11,8 +11,9 @@ import {
   createCenter,
   type CreateCenterInput,
 } from '@/lib/services/center/centerService';
-import { withRole } from '@/lib/api/middleware';
+import { withRole, type AuthUser } from '@/lib/api/middleware';
 import { validateCenterCode } from '@/lib/validators/center';
+import { logAudit } from '@/lib/services/audit';
 
 /**
  * GET /api/centers
@@ -94,6 +95,19 @@ export const POST = withRole(["MASTER", "ADMIN"], async (req: NextRequest, user)
     };
 
     const center = await createCenter(input);
+
+    logAudit({
+      userId: user.userId,
+      userRole: user.role,
+      userName: user.name,
+      action: 'CREATE',
+      entityType: 'Center',
+      entityId: center.id,
+      entityName: center.name,
+      after: { code: center.code, name: center.name, regionCode: input.regionCode, regionName: input.regionName },
+      description: `센터 생성: ${center.name} (${center.code})`,
+      request: req,
+    });
 
     return created({
       center,

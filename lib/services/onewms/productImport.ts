@@ -96,6 +96,7 @@ export async function importProductsFromOnewms(
       const productName = p.name || `WMS Product ${onewmsCode}`;
       const sellPrice = parseInt(String(p.shop_price || '0'), 10) || 0;
       const supplyPrice = parseInt(String(p.supply_price || '0'), 10) || 0;
+      const originalPrice = parseInt(String(p.org_price || '0'), 10) || 0;
 
       // Check if this product already exists in DB
       const existing = await prisma.product.findUnique({
@@ -126,6 +127,7 @@ export async function importProductsFromOnewms(
           barcode: dbBarcode,
           sellPrice,
           supplyPrice,
+          originalPrice,
           onewmsCode,
           onewmsBarcode: originalBarcode || null,
           productType: 'HEADQUARTERS',
@@ -135,6 +137,7 @@ export async function importProductsFromOnewms(
           name: productName,
           sellPrice,
           supplyPrice,
+          originalPrice,
           onewmsBarcode: originalBarcode || null,
         },
       });
@@ -218,7 +221,7 @@ export async function syncStockFromOnewms(
           let totalStock = 0;
           if (stockEntry?.stock) {
             for (const wh of Object.values(stockEntry.stock)) {
-              totalStock += (wh.stock || 0);
+              totalStock += Number(wh.stock) || 0;
             }
           }
 
@@ -247,6 +250,84 @@ export async function syncStockFromOnewms(
 
   console.log(
     `Stock sync batch done: ${result.synced}/${products.length} synced, ${result.errors} errors`
+  );
+
+  return result;
+}
+
+/**
+ * Sync product prices (originalPrice, sellPrice, supplyPrice) from ONEWMS.
+ * Only updates HEADQUARTERS products. CENTER products are never touched.
+ * Called from stock-sync cron alongside stock sync.
+ */
+export async function syncProductPricesFromOnewms(): Promise<{
+  total: number;
+  updated: number;
+  errors: number;
+}> {
+  const result = { total: 0, updated: 0, errors: 0 };
+
+  const client = createOnewmsClient();
+
+  // Fetch all ONEWMS products (paginated)
+  const onewmsProducts = new Map<string, ProductInfo>();
+  for (let page = 1; page <= 20; page++) {
+    const { data: products, total } = await client.getProductList(page, 100);
+    for (const p of products) {
+      if (p.product_id) onewmsProducts.set(p.product_id, p);
+    }
+    if (page * 100 >= total) break;
+  }
+
+  // Get all HEADQUARTERS products with onewmsCode
+  const dbProducts = await prisma.product.findMany({
+    where: {
+      productType: 'HEADQUARTERS',
+      onewmsCode: { not: null },
+    },
+    select: {
+      id: true,
+      onewmsCode: true,
+      sellPrice: true,
+      supplyPrice: true,
+      originalPrice: true,
+    },
+  });
+
+  result.total = dbProducts.length;
+
+  for (const dbProduct of dbProducts) {
+    const onewmsInfo = onewmsProducts.get(dbProduct.onewmsCode!);
+    if (!onewmsInfo) continue;
+
+    const newSellPrice = parseInt(String(onewmsInfo.shop_price || '0'), 10) || 0;
+    const newSupplyPrice = parseInt(String(onewmsInfo.supply_price || '0'), 10) || 0;
+    const newOriginalPrice = parseInt(String(onewmsInfo.org_price || '0'), 10) || 0;
+
+    // Only update if changed
+    if (
+      newSellPrice !== dbProduct.sellPrice ||
+      newSupplyPrice !== dbProduct.supplyPrice ||
+      newOriginalPrice !== (dbProduct.originalPrice ?? 0)
+    ) {
+      try {
+        await prisma.product.update({
+          where: { id: dbProduct.id },
+          data: {
+            sellPrice: newSellPrice,
+            supplyPrice: newSupplyPrice,
+            originalPrice: newOriginalPrice,
+          },
+        });
+        result.updated++;
+      } catch {
+        result.errors++;
+      }
+    }
+  }
+
+  console.log(
+    `Price sync done: ${result.updated}/${result.total} updated, ${result.errors} errors`
   );
 
   return result;

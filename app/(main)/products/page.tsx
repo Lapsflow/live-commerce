@@ -191,12 +191,22 @@ export default function ProductsPage() {
               </Link>
             )}
             {canAddProduct && (
-              <Link href="/products/new">
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  {isAdmin ? "센터 상품 등록" : "상품 추가"}
-                </Button>
-              </Link>
+              <>
+                {isMasterOrSub && userRole === "MASTER" && (
+                  <Link href="/products/new">
+                    <Button variant="outline">
+                      <Plus className="mr-2 h-4 w-4" />
+                      상품 추가
+                    </Button>
+                  </Link>
+                )}
+                <Link href="/products/center-new">
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    센터 상품 등록
+                  </Button>
+                </Link>
+              </>
             )}
           </div>
         )}

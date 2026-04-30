@@ -7,11 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EntityHistory } from "@/components/audit/entity-history";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowLeft, Lock, Pencil, Trash2, Save, X } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { PRODUCT_CATEGORIES } from "@/lib/constants/categories";
 
 interface Product {
   id: string;
@@ -20,6 +30,7 @@ interface Product {
   barcode: string;
   sellPrice: number;
   supplyPrice: number;
+  originalPrice?: number | null;
   totalStock: number;
   stockMujin: number;
   stock1: number;
@@ -27,6 +38,10 @@ interface Product {
   stock3: number;
   productType: "HEADQUARTERS" | "CENTER";
   managedBy?: string;
+  category?: string | null;
+  notes?: string | null;
+  registeredBy?: string | null;
+  isActive?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -41,6 +56,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const router = useRouter();
   const { data: session } = useSession();
   const userRole = (session?.user as any)?.role;
+  const userCenterId = (session?.user as any)?.centerId;
   const isMaster = userRole === "MASTER";
   const { update, remove } = useApiCrud("/api/products");
 
@@ -57,11 +73,28 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [barcode, setBarcode] = useState("");
   const [sellPrice, setSellPrice] = useState("");
   const [supplyPrice, setSupplyPrice] = useState("");
+  const [originalPriceEdit, setOriginalPriceEdit] = useState("");
   const [managedBy, setManagedBy] = useState("");
   const [stockMujin, setStockMujin] = useState("");
   const [stock1, setStock1] = useState("");
   const [stock2, setStock2] = useState("");
   const [stock3, setStock3] = useState("");
+  const [categoryEdit, setCategoryEdit] = useState("");
+  const [notesEdit, setNotesEdit] = useState("");
+
+  // CENTER 상품은 SUB_MASTER/ADMIN도 가격 수정 가능
+  const canEditPrice = isMaster || (
+    product?.productType === "CENTER" &&
+    (userRole === "SUB_MASTER" || userRole === "ADMIN") &&
+    product?.managedBy === userCenterId
+  );
+
+  // SUB_MASTER/ADMIN: 본인 센터 상품만 수정 가능
+  const canEdit = isMaster || (
+    (userRole === "SUB_MASTER" || userRole === "ADMIN") &&
+    product?.productType === "CENTER" &&
+    product?.managedBy === userCenterId
+  );
 
   // Extract params
   useEffect(() => {
@@ -95,10 +128,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         setSellPrice(String(productData.sellPrice));
         setSupplyPrice(String(productData.supplyPrice));
         setManagedBy(productData.managedBy || "");
+        setOriginalPriceEdit(String(productData.originalPrice || ""));
         setStockMujin(String(productData.stockMujin));
         setStock1(String(productData.stock1));
         setStock2(String(productData.stock2));
         setStock3(String(productData.stock3));
+        setCategoryEdit(productData.category || "");
+        setNotesEdit(productData.notes || "");
       } catch (error) {
         console.error("Failed to load product:", error);
         toast.error("상품을 불러오는데 실패했습니다");
@@ -164,18 +200,39 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         return;
       }
 
-      const payload = {
+      // CENTER 상품 가격 0원 차단
+      if (product.productType === "CENTER") {
+        if (sellPriceNum <= 0) {
+          toast.error("센터 상품의 판매가는 0보다 커야 합니다");
+          return;
+        }
+        if (supplyPriceNum <= 0) {
+          toast.error("센터 상품의 공급가는 0보다 커야 합니다");
+          return;
+        }
+      }
+
+      const payload: Record<string, unknown> = {
         code: code.trim(),
         name: name.trim(),
         barcode: barcode.trim() || "",
-        sellPrice: sellPriceNum,
-        supplyPrice: supplyPriceNum,
         managedBy: product.productType === "CENTER" ? managedBy : undefined,
         stockMujin: parseInt(stockMujin) || 0,
         stock1: parseInt(stock1) || 0,
         stock2: parseInt(stock2) || 0,
         stock3: parseInt(stock3) || 0,
+        category: categoryEdit || null,
+        notes: notesEdit.trim() || null,
       };
+
+      // 가격은 권한 있을 때만 전송
+      if (canEditPrice) {
+        payload.sellPrice = sellPriceNum;
+        payload.supplyPrice = supplyPriceNum;
+        if (originalPriceEdit) {
+          payload.originalPrice = parseInt(originalPriceEdit) || 0;
+        }
+      }
 
       const result = await update(productId, payload);
       if (result) {
@@ -188,11 +245,26 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   };
 
   const handleDeactivate = async () => {
-    if (!confirm("이 상품을 비활성화하시겠습니까?\n비활성화된 상품은 신규 발주에서 비노출됩니다.")) return;
+    const reason = prompt("비활성화 사유를 입력하세요:");
+    if (!reason || !reason.trim()) {
+      toast.error("비활성화 사유를 입력해야 합니다");
+      return;
+    }
 
-    const success = await remove(productId);
-    if (success) {
-      router.push("/products");
+    try {
+      const res = await fetch(`/api/products/${productId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: reason.trim() }),
+      });
+      if (res.ok) {
+        toast.success("상품이 비활성화되었습니다");
+        router.push("/products");
+      } else {
+        toast.error("비활성화에 실패했습니다");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다");
     }
   };
 
@@ -227,10 +299,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     setSellPrice(String(product.sellPrice));
     setSupplyPrice(String(product.supplyPrice));
     setManagedBy(product.managedBy || "");
+    setOriginalPriceEdit(String(product.originalPrice || ""));
     setStockMujin(String(product.stockMujin));
     setStock1(String(product.stock1));
     setStock2(String(product.stock2));
     setStock3(String(product.stock3));
+    setCategoryEdit(product.category || "");
+    setNotesEdit(product.notes || "");
     setIsEditing(false);
   };
 
@@ -271,11 +346,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex gap-2">
           {!isEditing ? (
             <>
-              <Button variant="outline" onClick={() => setIsEditing(true)}>
-                <Pencil className="mr-2 h-4 w-4" />
-                수정
-              </Button>
-              {(product as any).isActive !== false ? (
+              {canEdit && (
+                <Button variant="outline" onClick={() => setIsEditing(true)}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  수정
+                </Button>
+              )}
+              {canEdit && (product?.isActive !== false ? (
                 <Button variant="destructive" onClick={handleDeactivate}>
                   <Trash2 className="mr-2 h-4 w-4" />
                   비활성화
@@ -284,7 +361,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <Button variant="outline" className="text-green-600 border-green-300" onClick={handleReactivate}>
                   활성화
                 </Button>
-              )}
+              ))}
             </>
           ) : (
             <>
@@ -397,6 +474,34 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             {/* Prices */}
             <div className="grid grid-cols-2 gap-4">
+              {/* 원가 — MASTER 전용 */}
+              {isMaster && (
+                <div className="col-span-2 space-y-2">
+                  <Label htmlFor="originalPrice">원가</Label>
+                  {isEditing && product.productType === "CENTER" ? (
+                    <Input
+                      id="originalPrice"
+                      type="number"
+                      value={originalPriceEdit}
+                      onChange={(e) => setOriginalPriceEdit(e.target.value)}
+                      min="0"
+                      className="bg-amber-50 dark:bg-amber-950/20"
+                    />
+                  ) : (
+                    <Input
+                      value={product.originalPrice != null ? product.originalPrice.toLocaleString() : "-"}
+                      disabled
+                      className="bg-amber-50 dark:bg-amber-950/20"
+                    />
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    {product.productType === "HEADQUARTERS" ? "ONEWMS org_price 자동 동기화" : "등록자 직접 입력"}
+                    {product.supplyPrice > 0 && product.originalPrice != null && product.originalPrice > 0 && (
+                      <> | 마진율: {((1 - product.originalPrice / product.supplyPrice) * 100).toFixed(1)}%</>
+                    )}
+                  </p>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="sellPrice">판매가</Label>
                 <div className="relative">
@@ -405,16 +510,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     type="number"
                     value={sellPrice}
                     onChange={(e) => setSellPrice(e.target.value)}
-                    disabled={!isEditing || !isMaster}
-                    className={!isMaster ? "bg-grey-100" : ""}
+                    disabled={!isEditing || !canEditPrice}
+                    className={!canEditPrice ? "bg-grey-100" : ""}
                     min="0"
                   />
-                  {!isMaster && (
+                  {!canEditPrice && (
                     <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
-                {!isMaster && (
-                  <p className="text-sm text-muted-foreground">가격은 마스터만 변경 가능합니다</p>
+                {!canEditPrice && (
+                  <p className="text-sm text-muted-foreground">
+                    {product.productType === "HEADQUARTERS" ? "본사 상품 가격은 ONEWMS에서 동기화됩니다" : "가격은 마스터만 변경 가능합니다"}
+                  </p>
                 )}
               </div>
 
@@ -426,11 +533,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     type="number"
                     value={supplyPrice}
                     onChange={(e) => setSupplyPrice(e.target.value)}
-                    disabled={!isEditing || !isMaster}
-                    className={!isMaster ? "bg-grey-100" : ""}
+                    disabled={!isEditing || !canEditPrice}
+                    className={!canEditPrice ? "bg-grey-100" : ""}
                     min="0"
                   />
-                  {!isMaster && (
+                  {!canEditPrice && (
                     <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
@@ -500,6 +607,43 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
 
+            {/* Category & Notes */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>카테고리</Label>
+                {isEditing ? (
+                  <Select value={categoryEdit} onValueChange={(v) => setCategoryEdit(v ?? "")}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="카테고리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">미설정</SelectItem>
+                      {PRODUCT_CATEGORIES.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input value={product.category || "미설정"} disabled />
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>메모</Label>
+                {isEditing ? (
+                  <Textarea
+                    value={notesEdit}
+                    onChange={(e) => setNotesEdit(e.target.value)}
+                    maxLength={500}
+                    rows={2}
+                  />
+                ) : (
+                  <Input value={product.notes || "-"} disabled />
+                )}
+              </div>
+            </div>
+
             {/* Metadata */}
             <div className="grid grid-cols-2 gap-4 pt-4 border-t">
               <div className="space-y-2">
@@ -512,6 +656,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* History */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">변경 이력</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <EntityHistory entityType="Product" entityId={product.id} />
         </CardContent>
       </Card>
     </div>

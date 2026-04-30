@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { logger, securityLogger, sanitizeError } from "@/lib/logger";
+import { logAudit } from "@/lib/services/audit";
 
 export type Role = "MASTER" | "SUB_MASTER" | "ADMIN" | "SELLER";
 
@@ -86,6 +87,15 @@ export function withRole(
         role: user.role,
         requiredRoles: allowedRoles,
         path: new URL(req.url).pathname,
+      });
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "PERMISSION_DENIED",
+        entityType: "API",
+        description: `권한 거부: ${new URL(req.url).pathname} (필요: ${allowedRoles.join(",")}, 보유: ${user.role})`,
+        request: req,
       });
       return NextResponse.json(
         { error: { code: "FORBIDDEN", message: "권한 없음" } },

@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { EntityHistory } from "@/components/audit/entity-history";
 import { RoleBadge } from "@/components/users/role-badge";
 import {
   ArrowLeft,
@@ -14,6 +15,7 @@ import {
   TrendingUp,
   ShoppingCart,
   Users,
+  History,
 } from "lucide-react";
 
 interface UserStats {
@@ -276,6 +278,12 @@ export default function UserDetailPage() {
               관리 셀러
             </TabsTrigger>
           )}
+          {userRole === "MASTER" && (
+            <TabsTrigger value="history" className="gap-1.5">
+              <History className="h-4 w-4" />
+              변경 이력
+            </TabsTrigger>
+          )}
         </TabsList>
 
         {/* 방송 이력 */}
@@ -532,6 +540,19 @@ export default function UserDetailPage() {
                   </table>
                 </div>
               )}
+            </Card>
+          </TabsContent>
+        )}
+
+        {/* 변경 이력 (MASTER만) */}
+        {userRole === "MASTER" && (
+          <TabsContent value="history">
+            <Card className="p-6">
+              <EntityHistory
+                entityType="USER"
+                entityId={id}
+                className="max-h-[600px]"
+              />
             </Card>
           </TabsContent>
         )}

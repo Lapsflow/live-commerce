@@ -3,6 +3,8 @@ import { withRole } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { createOnewmsClient } from "@/lib/onewms";
+import { serializeProduct } from "@/lib/services/products/serializeProduct";
+import { canProductBeBroadcast } from "@/lib/services/products/canBroadcast";
 
 type Params = Promise<{ code: string }>;
 
@@ -41,6 +43,12 @@ export const GET = withRole(
 
     if (!product) {
       return errors.notFound("Product");
+    }
+
+    // 가격 0원 상품: 셀러는 차단, 마스터/관리자는 경고 포함 통과
+    const broadcastEligible = canProductBeBroadcast(product);
+    if (!broadcastEligible && user.role === "SELLER") {
+      return errors.badRequest("이 상품은 아직 가격이 설정되지 않아 방송할 수 없습니다");
     }
 
     // 2. ONEWMS 실시간 재고 조회 (onewmsCode 있을 때만)
@@ -116,6 +124,7 @@ export const GET = withRole(
       barcode: product.barcode,
       sellPrice: product.sellPrice,
       supplyPrice: product.supplyPrice,
+      originalPrice: product.originalPrice,
       minSellPrice: product.minSellPrice,
       maxSellPrice: product.maxSellPrice,
       totalStock: realtimeStock ?? cachedStock,
@@ -131,8 +140,10 @@ export const GET = withRole(
       cachedStock,
       stockError,
       lastSyncedAt,
+      broadcastEligible,
+      priceWarning: !broadcastEligible ? "가격이 설정되지 않은 상품입니다. 가격 설정 후 방송에 사용할 수 있습니다." : null,
     };
 
-    return ok(response);
+    return ok(serializeProduct(response, user.role));
   }
 );

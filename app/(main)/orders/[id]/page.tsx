@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { EntityHistory } from "@/components/audit/entity-history";
 import {
   ArrowLeft,
   Package,
@@ -522,6 +523,14 @@ export default function OrderDetailPage() {
         <Card className="p-6">
           <h2 className="text-xl font-semibold text-grey-900 mb-2">메모</h2>
           <p className="text-grey-700 whitespace-pre-wrap">{order.memo}</p>
+        </Card>
+      )}
+
+      {/* History */}
+      {userRole && ["MASTER", "SUB_MASTER", "ADMIN"].includes(userRole) && (
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-3">변경 이력</h2>
+          <EntityHistory entityType="Order" entityId={order.id} />
         </Card>
       )}
     </div>

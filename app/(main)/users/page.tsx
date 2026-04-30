@@ -172,7 +172,7 @@ export default function UsersPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <Card className="p-6">
           <div className="text-red-600">
-            이 페이지에 접근할 권한이 없습니다. (MASTER 또는 SUB_MASTER만 접근 가능)
+            접근 권한이 없습니다.
           </div>
         </Card>
       </div>

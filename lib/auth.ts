@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 import { securityLogger } from "@/lib/logger";
+import { logAudit } from "@/lib/services/audit";
 
 declare module "next-auth" {
   interface User {
@@ -59,6 +60,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!user) {
           securityLogger.authFailed({ reason: "user_not_found", username });
+          logAudit({
+            action: "LOGIN_FAILED",
+            entityType: "User",
+            description: `로그인 실패 (존재하지 않는 사용자): ${username}`,
+            metadata: { reason: "user_not_found", username },
+          });
           return null;
         }
 
@@ -77,6 +84,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           );
           if (!isValid) {
             securityLogger.authFailed({ reason: "invalid_password", username });
+            logAudit({
+              userId: user.id,
+              userRole: user.role,
+              userName: user.name,
+              action: "LOGIN_FAILED",
+              entityType: "User",
+              entityId: user.id,
+              entityName: user.name,
+              description: `로그인 실패 (비밀번호 불일치): ${username}`,
+              metadata: { reason: "invalid_password" },
+            });
             throw new Error("INVALID_CREDENTIALS");
           }
         }
@@ -110,6 +128,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             throw new Error("CONTRACT_REJECTED");
           }
         }
+
+        logAudit({
+          userId: user.id,
+          userRole: user.role,
+          userName: user.name,
+          action: "LOGIN",
+          entityType: "User",
+          entityId: user.id,
+          entityName: user.name,
+          description: `로그인 성공: ${username}`,
+        });
 
         return {
           id: user.id,

@@ -5,7 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { syncAllStocks } from '@/lib/services/onewms/stockSync';
+import { syncAllStocks, deactivateOrphanProducts } from '@/lib/services/onewms/stockSync';
+import { syncProductPricesFromOnewms } from '@/lib/services/onewms/productImport';
 
 export async function GET(req: NextRequest) {
   try {
@@ -29,17 +30,25 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    console.log('Starting scheduled stock sync...');
+    console.log('Starting scheduled stock + price + orphan sync...');
 
     // Run stock synchronization
     const stats = await syncAllStocks();
 
-    console.log('Scheduled stock sync completed:', stats);
+    // Sync product prices (originalPrice, sellPrice, supplyPrice) — HEADQUARTERS only
+    const priceStats = await syncProductPricesFromOnewms();
+
+    // Deactivate orphan HEADQUARTERS products not in ONEWMS, restore reappeared ones
+    const orphanStats = await deactivateOrphanProducts();
+
+    console.log('Scheduled sync completed:', { stock: stats, prices: priceStats, orphan: orphanStats });
 
     return NextResponse.json({
       success: true,
-      message: 'Stock sync completed',
+      message: 'Stock + price + orphan sync completed',
       stats,
+      priceStats,
+      orphanStats,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

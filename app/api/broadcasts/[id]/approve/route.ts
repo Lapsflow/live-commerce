@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { sendNotification } from "@/lib/services/notifications";
+import { logAudit } from "@/lib/services/audit";
 
 /**
  * PUT /api/broadcasts/:id/approve
@@ -10,7 +11,7 @@ import { sendNotification } from "@/lib/services/notifications";
  */
 export const PUT = withRole(
   ["MASTER", "SUB_MASTER", "ADMIN"],
-  async (req: NextRequest) => {
+  async (req: NextRequest, user: AuthUser) => {
     const segments = req.nextUrl.pathname.split("/");
     const approveIdx = segments.indexOf("approve");
     const broadcastId = segments[approveIdx - 1];
@@ -55,6 +56,20 @@ export const PUT = withRole(
         broadcastId,
       }).catch((err) => console.error("[BROADCAST_APPROVE_NOTIFICATION]", err));
     }
+
+    logAudit({
+      userId: user.userId,
+      userRole: user.role,
+      userName: user.name,
+      action: "STATUS_CHANGED",
+      entityType: "Broadcast",
+      entityId: broadcastId,
+      entityName: broadcast.code,
+      before: { status: "REQUESTED" },
+      after: { status: "SCHEDULED" },
+      description: `방송 승인: ${broadcast.code}`,
+      request: req,
+    });
 
     return ok(updated);
   }

@@ -3,7 +3,6 @@ import { ok, error } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { validateCenterCode } from "@/lib/validators/center";
 
 const signupSchema = z.object({
   username: z.string().min(3).max(50),
@@ -11,7 +10,6 @@ const signupSchema = z.object({
   name: z.string().min(1),
   phone: z.string().min(10).max(13), // 010-1234-1234 형식도 허용
   email: z.string().email(), // PDF 스펙: 필수
-  centerCode: z.string().min(1), // 센터 코드 (예: 01-4213)
 });
 
 export async function POST(req: NextRequest) {
@@ -21,24 +19,6 @@ export async function POST(req: NextRequest) {
 
     // 휴대폰번호에서 하이픈 제거하여 저장
     const phoneDigits = data.phone.replace(/-/g, "");
-
-    // Validate center code format
-    if (!validateCenterCode(data.centerCode)) {
-      return error(
-        "INVALID_CENTER_CODE",
-        "센터 코드 형식이 올바르지 않습니다. 형식: [01-17]-[4자리 숫자]",
-        400
-      );
-    }
-
-    // Find center by code
-    const center = await prisma.center.findUnique({
-      where: { code: data.centerCode },
-    });
-
-    if (!center || !center.isActive) {
-      return error("CENTER_NOT_FOUND", "등록되지 않은 센터 코드입니다.", 400);
-    }
 
     // 중복 확인 (username)
     const existing = await prisma.user.findUnique({
@@ -62,6 +42,7 @@ export async function POST(req: NextRequest) {
     const passwordHash = await bcrypt.hash(data.password, 10);
 
     // 사용자 생성 (회원가입은 항상 SELLER, ADMIN은 수기 등록)
+    // centerId는 가입 후 관리자가 배정
     const user = await prisma.user.create({
       data: {
         username: data.username,
@@ -69,7 +50,6 @@ export async function POST(req: NextRequest) {
         name: data.name,
         phone: phoneDigits,
         role: "SELLER",
-        centerId: center.id,
         contractStatus: "PENDING",
         passwordHash,
       },

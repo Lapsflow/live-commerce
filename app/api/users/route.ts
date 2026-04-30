@@ -4,6 +4,7 @@ import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { errors, created } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
+import { logAudit } from "@/lib/services/audit";
 
 const userSchema = z.object({
   email: z.string().email(),
@@ -48,6 +49,20 @@ export const POST = withRole(
       }
 
       const record = await prisma.user.create({ data: validated as any });
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "CREATE",
+        entityType: "User",
+        entityId: record.id,
+        entityName: record.name,
+        after: validated as Record<string, unknown>,
+        description: `사용자 생성: ${record.name} (${validated.role || "SELLER"})`,
+        request: req,
+      });
+
       return created(record);
     } catch (err: any) {
       if (err instanceof z.ZodError) {

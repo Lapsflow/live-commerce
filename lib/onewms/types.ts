@@ -236,7 +236,7 @@ export type StockInfoType = 'product_id' | 'link_id' | 'barcode' | 'supply_code'
 /** Per-warehouse stock entry */
 export interface StockWarehouseEntry {
   warehouse_seq?: string;
-  stock?: number;
+  stock?: string | number;
   [key: string]: unknown;
 }
 

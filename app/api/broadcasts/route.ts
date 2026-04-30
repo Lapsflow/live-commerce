@@ -5,6 +5,7 @@ import { created, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { sendNotification } from "@/lib/services/notifications";
 import { z } from "zod";
+import { logAudit } from "@/lib/services/audit";
 
 const broadcastSchema = z.object({
   code: z.string().min(1).max(50),
@@ -131,6 +132,19 @@ export const POST = withRole(
           console.error("[BROADCAST_REQUESTED_NOTIF]", err);
         }
       }
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "CREATE",
+        entityType: "Broadcast",
+        entityId: broadcast.id,
+        entityName: broadcast.code,
+        after: { code: broadcast.code, platform: data.platform, scheduledAt: data.scheduledAt, status: broadcast.status },
+        description: `방송 생성: ${broadcast.code} (${data.platform})`,
+        request: req,
+      });
 
       return created(broadcast);
     } catch (error) {

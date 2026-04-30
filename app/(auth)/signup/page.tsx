@@ -49,8 +49,6 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [centerCode, setCenterCode] = useState("");
-
   // Step 2: 추가 정보
   const [channels, setChannels] = useState<string[]>([]);
   const [avgSales, setAvgSales] = useState<string>("");
@@ -66,10 +64,7 @@ export default function SignupPage() {
   // 실시간 유효성 검증 상태
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
   const [emailValid, setEmailValid] = useState<"idle" | "valid" | "invalid">("idle");
-  const [centerStatus, setCenterStatus] = useState<"idle" | "checking" | "valid" | "invalid">("idle");
-  const [centerName, setCenterName] = useState("");
   const usernameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const centerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 아이디 중복 확인 (debounce 500ms)
   const checkUsername = useCallback((value: string) => {
@@ -100,41 +95,6 @@ export default function SignupPage() {
     setEmailValid(emailRegex.test(value) ? "valid" : "invalid");
   }, []);
 
-  // 센터 코드 검증 (debounce 500ms)
-  const checkCenterCode = useCallback((value: string) => {
-    if (centerTimerRef.current) clearTimeout(centerTimerRef.current);
-    // XX-XXXX 형식 (7자) 미만이면 대기
-    if (value.length < 7) {
-      setCenterStatus("idle");
-      setCenterName("");
-      return;
-    }
-    setCenterStatus("checking");
-    centerTimerRef.current = setTimeout(async () => {
-      try {
-        const res = await fetch(`/api/auth/centers/verify?code=${encodeURIComponent(value)}`);
-        const data = await res.json();
-        if (data.data?.valid) {
-          setCenterStatus("valid");
-          setCenterName(data.data.centerName);
-        } else {
-          setCenterStatus("invalid");
-          setCenterName("");
-        }
-      } catch {
-        setCenterStatus("idle");
-        setCenterName("");
-      }
-    }, 500);
-  }, []);
-
-  // 센터 코드 자동 포맷팅 (XX-XXXX)
-  const formatCenterCode = (value: string) => {
-    const digits = value.replace(/[^0-9]/g, "");
-    if (digits.length <= 2) return digits;
-    return `${digits.slice(0, 2)}-${digits.slice(2, 6)}`;
-  };
-
   // 휴대폰번호 자동 포맷팅 (010-1234-1234)
   const formatPhone = (value: string) => {
     const digits = value.replace(/[^0-9]/g, "");
@@ -162,12 +122,6 @@ export default function SignupPage() {
       return;
     }
 
-    if (centerStatus !== "valid") {
-      setError("유효한 센터 코드를 입력해주세요.");
-      setLoading(false);
-      return;
-    }
-
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
@@ -178,7 +132,6 @@ export default function SignupPage() {
           name,
           phone: phoneDigits,
           email,
-          centerCode,
         }),
       });
 
@@ -394,36 +347,6 @@ export default function SignupPage() {
               {emailValid === "invalid" && (
                 <p className="text-xs text-red mt-1">올바르지 않은 이메일 형식입니다</p>
               )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-grey-700 mb-1.5">
-                센터 코드 <span className="text-red">*</span>
-              </label>
-              <Input
-                type="text"
-                value={centerCode}
-                onChange={(e) => {
-                  const formatted = formatCenterCode(e.target.value);
-                  setCenterCode(formatted);
-                  checkCenterCode(formatted);
-                }}
-                placeholder="예: 01-4213"
-                required
-                maxLength={7}
-              />
-              {centerStatus === "checking" && (
-                <p className="text-xs text-grey-400 mt-1">확인 중...</p>
-              )}
-              {centerStatus === "valid" && (
-                <p className="text-xs text-green-600 mt-1">{centerName} 확인됨</p>
-              )}
-              {centerStatus === "invalid" && (
-                <p className="text-xs text-red mt-1">등록되지 않은 센터 코드입니다</p>
-              )}
-              <p className="text-xs text-grey-400 mt-1">
-                센터 코드가 없으신 경우, 본사로 문의해주세요.
-              </p>
             </div>
 
             {error && (

@@ -138,6 +138,11 @@ export type ScanLog = $Result.DefaultSelection<Prisma.$ScanLogPayload>
  * 
  */
 export type NotificationLog = $Result.DefaultSelection<Prisma.$NotificationLogPayload>
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
 
 /**
  * Enums
@@ -272,6 +277,26 @@ export const ScanType: {
 
 export type ScanType = (typeof ScanType)[keyof typeof ScanType]
 
+
+export const AuditAction: {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE',
+  SOFT_DELETE: 'SOFT_DELETE',
+  RESTORE: 'RESTORE',
+  LOGIN: 'LOGIN',
+  LOGOUT: 'LOGOUT',
+  LOGIN_FAILED: 'LOGIN_FAILED',
+  ROLE_CHANGED: 'ROLE_CHANGED',
+  PERMISSION_DENIED: 'PERMISSION_DENIED',
+  EXPORT: 'EXPORT',
+  IMPORT: 'IMPORT',
+  PASSWORD_CHANGED: 'PASSWORD_CHANGED',
+  STATUS_CHANGED: 'STATUS_CHANGED'
+};
+
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
+
 }
 
 export type Role = $Enums.Role
@@ -325,6 +350,10 @@ export const ProposalStatus: typeof $Enums.ProposalStatus
 export type ScanType = $Enums.ScanType
 
 export const ScanType: typeof $Enums.ScanType
+
+export type AuditAction = $Enums.AuditAction
+
+export const AuditAction: typeof $Enums.AuditAction
 
 /**
  * ##  Prisma Client ʲˢ
@@ -696,6 +725,16 @@ export class PrismaClient<
     * ```
     */
   get notificationLog(): Prisma.NotificationLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.auditLog`: Exposes CRUD operations for the **AuditLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AuditLogs
+    * const auditLogs = await prisma.auditLog.findMany()
+    * ```
+    */
+  get auditLog(): Prisma.AuditLogDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1154,7 +1193,8 @@ export namespace Prisma {
     RateLimit: 'RateLimit',
     MarketPricing: 'MarketPricing',
     ScanLog: 'ScanLog',
-    NotificationLog: 'NotificationLog'
+    NotificationLog: 'NotificationLog',
+    AuditLog: 'AuditLog'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1170,7 +1210,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "center" | "productCenterStock" | "orderSellerMatching" | "order" | "orderItem" | "stockReservation" | "broadcast" | "sale" | "proposal" | "proposalCart" | "onewmsOrderMapping" | "onewmsStockSync" | "onewmsDeliveryLog" | "warehouse" | "barcodeMaster" | "warehouseInventory" | "stockMovement" | "aIAnalysis" | "aIUsageStats" | "rateLimit" | "marketPricing" | "scanLog" | "notificationLog"
+      modelProps: "user" | "product" | "center" | "productCenterStock" | "orderSellerMatching" | "order" | "orderItem" | "stockReservation" | "broadcast" | "sale" | "proposal" | "proposalCart" | "onewmsOrderMapping" | "onewmsStockSync" | "onewmsDeliveryLog" | "warehouse" | "barcodeMaster" | "warehouseInventory" | "stockMovement" | "aIAnalysis" | "aIUsageStats" | "rateLimit" | "marketPricing" | "scanLog" | "notificationLog" | "auditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3024,6 +3064,80 @@ export namespace Prisma {
           }
         }
       }
+      AuditLog: {
+        payload: Prisma.$AuditLogPayload<ExtArgs>
+        fields: Prisma.AuditLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AuditLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AuditLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          findFirst: {
+            args: Prisma.AuditLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AuditLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          findMany: {
+            args: Prisma.AuditLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          }
+          create: {
+            args: Prisma.AuditLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          createMany: {
+            args: Prisma.AuditLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AuditLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          }
+          delete: {
+            args: Prisma.AuditLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          update: {
+            args: Prisma.AuditLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.AuditLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AuditLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AuditLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.AuditLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          aggregate: {
+            args: Prisma.AuditLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAuditLog>
+          }
+          groupBy: {
+            args: Prisma.AuditLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AuditLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AuditLogCountArgs<ExtArgs>
+            result: $Utils.Optional<AuditLogCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3157,6 +3271,7 @@ export namespace Prisma {
     marketPricing?: MarketPricingOmit
     scanLog?: ScanLogOmit
     notificationLog?: NotificationLogOmit
+    auditLog?: AuditLogOmit
   }
 
   /* Types for Logging */
@@ -3246,6 +3361,7 @@ export namespace Prisma {
     proposalCarts: number
     sellerMatches: number
     scanLogs: number
+    auditLogs: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3258,6 +3374,7 @@ export namespace Prisma {
     proposalCarts?: boolean | UserCountOutputTypeCountProposalCartsArgs
     sellerMatches?: boolean | UserCountOutputTypeCountSellerMatchesArgs
     scanLogs?: boolean | UserCountOutputTypeCountScanLogsArgs
+    auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
   }
 
   // Custom InputTypes
@@ -3332,6 +3449,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountScanLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ScanLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuditLogWhereInput
   }
 
 
@@ -4026,6 +4150,7 @@ export namespace Prisma {
     proposalCarts?: boolean | User$proposalCartsArgs<ExtArgs>
     sellerMatches?: boolean | User$sellerMatchesArgs<ExtArgs>
     scanLogs?: boolean | User$scanLogsArgs<ExtArgs>
+    auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4118,6 +4243,7 @@ export namespace Prisma {
     proposalCarts?: boolean | User$proposalCartsArgs<ExtArgs>
     sellerMatches?: boolean | User$sellerMatchesArgs<ExtArgs>
     scanLogs?: boolean | User$scanLogsArgs<ExtArgs>
+    auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4143,6 +4269,7 @@ export namespace Prisma {
       proposalCarts: Prisma.$ProposalCartPayload<ExtArgs>[]
       sellerMatches: Prisma.$OrderSellerMatchingPayload<ExtArgs>[]
       scanLogs: Prisma.$ScanLogPayload<ExtArgs>[]
+      auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4571,6 +4698,7 @@ export namespace Prisma {
     proposalCarts<T extends User$proposalCartsArgs<ExtArgs> = {}>(args?: Subset<T, User$proposalCartsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalCartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sellerMatches<T extends User$sellerMatchesArgs<ExtArgs> = {}>(args?: Subset<T, User$sellerMatchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderSellerMatchingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     scanLogs<T extends User$scanLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$scanLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScanLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5276,6 +5404,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.auditLogs
+   */
+  export type User$auditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    where?: AuditLogWhereInput
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    cursor?: AuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5309,6 +5461,7 @@ export namespace Prisma {
   export type ProductAvgAggregateOutputType = {
     sellPrice: number | null
     supplyPrice: number | null
+    originalPrice: number | null
     minSellPrice: number | null
     maxSellPrice: number | null
     totalStock: number | null
@@ -5323,6 +5476,7 @@ export namespace Prisma {
   export type ProductSumAggregateOutputType = {
     sellPrice: number | null
     supplyPrice: number | null
+    originalPrice: number | null
     minSellPrice: number | null
     maxSellPrice: number | null
     totalStock: number | null
@@ -5341,6 +5495,7 @@ export namespace Prisma {
     barcode: string | null
     sellPrice: number | null
     supplyPrice: number | null
+    originalPrice: number | null
     minSellPrice: number | null
     maxSellPrice: number | null
     totalStock: number | null
@@ -5357,6 +5512,9 @@ export namespace Prisma {
     productType: $Enums.ProductType | null
     managedBy: string | null
     isWmsProduct: boolean | null
+    category: string | null
+    registeredBy: string | null
+    notes: string | null
     isActive: boolean | null
     isSample: boolean | null
     sampleCategory: $Enums.SampleCategory | null
@@ -5371,6 +5529,7 @@ export namespace Prisma {
     barcode: string | null
     sellPrice: number | null
     supplyPrice: number | null
+    originalPrice: number | null
     minSellPrice: number | null
     maxSellPrice: number | null
     totalStock: number | null
@@ -5387,6 +5546,9 @@ export namespace Prisma {
     productType: $Enums.ProductType | null
     managedBy: string | null
     isWmsProduct: boolean | null
+    category: string | null
+    registeredBy: string | null
+    notes: string | null
     isActive: boolean | null
     isSample: boolean | null
     sampleCategory: $Enums.SampleCategory | null
@@ -5401,6 +5563,7 @@ export namespace Prisma {
     barcode: number
     sellPrice: number
     supplyPrice: number
+    originalPrice: number
     minSellPrice: number
     maxSellPrice: number
     totalStock: number
@@ -5417,6 +5580,9 @@ export namespace Prisma {
     productType: number
     managedBy: number
     isWmsProduct: number
+    category: number
+    registeredBy: number
+    notes: number
     isActive: number
     isSample: number
     sampleCategory: number
@@ -5429,6 +5595,7 @@ export namespace Prisma {
   export type ProductAvgAggregateInputType = {
     sellPrice?: true
     supplyPrice?: true
+    originalPrice?: true
     minSellPrice?: true
     maxSellPrice?: true
     totalStock?: true
@@ -5443,6 +5610,7 @@ export namespace Prisma {
   export type ProductSumAggregateInputType = {
     sellPrice?: true
     supplyPrice?: true
+    originalPrice?: true
     minSellPrice?: true
     maxSellPrice?: true
     totalStock?: true
@@ -5461,6 +5629,7 @@ export namespace Prisma {
     barcode?: true
     sellPrice?: true
     supplyPrice?: true
+    originalPrice?: true
     minSellPrice?: true
     maxSellPrice?: true
     totalStock?: true
@@ -5477,6 +5646,9 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    category?: true
+    registeredBy?: true
+    notes?: true
     isActive?: true
     isSample?: true
     sampleCategory?: true
@@ -5491,6 +5663,7 @@ export namespace Prisma {
     barcode?: true
     sellPrice?: true
     supplyPrice?: true
+    originalPrice?: true
     minSellPrice?: true
     maxSellPrice?: true
     totalStock?: true
@@ -5507,6 +5680,9 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    category?: true
+    registeredBy?: true
+    notes?: true
     isActive?: true
     isSample?: true
     sampleCategory?: true
@@ -5521,6 +5697,7 @@ export namespace Prisma {
     barcode?: true
     sellPrice?: true
     supplyPrice?: true
+    originalPrice?: true
     minSellPrice?: true
     maxSellPrice?: true
     totalStock?: true
@@ -5537,6 +5714,9 @@ export namespace Prisma {
     productType?: true
     managedBy?: true
     isWmsProduct?: true
+    category?: true
+    registeredBy?: true
+    notes?: true
     isActive?: true
     isSample?: true
     sampleCategory?: true
@@ -5638,6 +5818,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice: number | null
     minSellPrice: number | null
     maxSellPrice: number | null
     totalStock: number
@@ -5654,6 +5835,9 @@ export namespace Prisma {
     productType: $Enums.ProductType
     managedBy: string | null
     isWmsProduct: boolean
+    category: string | null
+    registeredBy: string | null
+    notes: string | null
     isActive: boolean
     isSample: boolean
     sampleCategory: $Enums.SampleCategory | null
@@ -5687,6 +5871,7 @@ export namespace Prisma {
     barcode?: boolean
     sellPrice?: boolean
     supplyPrice?: boolean
+    originalPrice?: boolean
     minSellPrice?: boolean
     maxSellPrice?: boolean
     totalStock?: boolean
@@ -5703,6 +5888,9 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    category?: boolean
+    registeredBy?: boolean
+    notes?: boolean
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: boolean
@@ -5729,6 +5917,7 @@ export namespace Prisma {
     barcode?: boolean
     sellPrice?: boolean
     supplyPrice?: boolean
+    originalPrice?: boolean
     minSellPrice?: boolean
     maxSellPrice?: boolean
     totalStock?: boolean
@@ -5745,6 +5934,9 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    category?: boolean
+    registeredBy?: boolean
+    notes?: boolean
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: boolean
@@ -5759,6 +5951,7 @@ export namespace Prisma {
     barcode?: boolean
     sellPrice?: boolean
     supplyPrice?: boolean
+    originalPrice?: boolean
     minSellPrice?: boolean
     maxSellPrice?: boolean
     totalStock?: boolean
@@ -5775,6 +5968,9 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    category?: boolean
+    registeredBy?: boolean
+    notes?: boolean
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: boolean
@@ -5789,6 +5985,7 @@ export namespace Prisma {
     barcode?: boolean
     sellPrice?: boolean
     supplyPrice?: boolean
+    originalPrice?: boolean
     minSellPrice?: boolean
     maxSellPrice?: boolean
     totalStock?: boolean
@@ -5805,6 +6002,9 @@ export namespace Prisma {
     productType?: boolean
     managedBy?: boolean
     isWmsProduct?: boolean
+    category?: boolean
+    registeredBy?: boolean
+    notes?: boolean
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: boolean
@@ -5812,7 +6012,7 @@ export namespace Prisma {
     sampleStatus?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "minSellPrice" | "maxSellPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "isActive" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "originalPrice" | "minSellPrice" | "maxSellPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "category" | "registeredBy" | "notes" | "isActive" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
@@ -5852,6 +6052,7 @@ export namespace Prisma {
       barcode: string
       sellPrice: number
       supplyPrice: number
+      originalPrice: number | null
       minSellPrice: number | null
       maxSellPrice: number | null
       totalStock: number
@@ -5868,6 +6069,9 @@ export namespace Prisma {
       productType: $Enums.ProductType
       managedBy: string | null
       isWmsProduct: boolean
+      category: string | null
+      registeredBy: string | null
+      notes: string | null
       isActive: boolean
       isSample: boolean
       sampleCategory: $Enums.SampleCategory | null
@@ -6313,6 +6517,7 @@ export namespace Prisma {
     readonly barcode: FieldRef<"Product", 'String'>
     readonly sellPrice: FieldRef<"Product", 'Int'>
     readonly supplyPrice: FieldRef<"Product", 'Int'>
+    readonly originalPrice: FieldRef<"Product", 'Int'>
     readonly minSellPrice: FieldRef<"Product", 'Int'>
     readonly maxSellPrice: FieldRef<"Product", 'Int'>
     readonly totalStock: FieldRef<"Product", 'Int'>
@@ -6329,6 +6534,9 @@ export namespace Prisma {
     readonly productType: FieldRef<"Product", 'ProductType'>
     readonly managedBy: FieldRef<"Product", 'String'>
     readonly isWmsProduct: FieldRef<"Product", 'Boolean'>
+    readonly category: FieldRef<"Product", 'String'>
+    readonly registeredBy: FieldRef<"Product", 'String'>
+    readonly notes: FieldRef<"Product", 'String'>
     readonly isActive: FieldRef<"Product", 'Boolean'>
     readonly isSample: FieldRef<"Product", 'Boolean'>
     readonly sampleCategory: FieldRef<"Product", 'SampleCategory'>
@@ -34431,6 +34639,1215 @@ export namespace Prisma {
 
 
   /**
+   * Model AuditLog
+   */
+
+  export type AggregateAuditLog = {
+    _count: AuditLogCountAggregateOutputType | null
+    _min: AuditLogMinAggregateOutputType | null
+    _max: AuditLogMaxAggregateOutputType | null
+  }
+
+  export type AuditLogMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    userRole: $Enums.Role | null
+    userName: string | null
+    action: $Enums.AuditAction | null
+    entityType: string | null
+    entityId: string | null
+    entityName: string | null
+    ipAddress: string | null
+    userAgent: string | null
+    description: string | null
+    createdAt: Date | null
+  }
+
+  export type AuditLogMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    userRole: $Enums.Role | null
+    userName: string | null
+    action: $Enums.AuditAction | null
+    entityType: string | null
+    entityId: string | null
+    entityName: string | null
+    ipAddress: string | null
+    userAgent: string | null
+    description: string | null
+    createdAt: Date | null
+  }
+
+  export type AuditLogCountAggregateOutputType = {
+    id: number
+    userId: number
+    userRole: number
+    userName: number
+    action: number
+    entityType: number
+    entityId: number
+    entityName: number
+    before: number
+    after: number
+    diff: number
+    ipAddress: number
+    userAgent: number
+    description: number
+    metadata: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AuditLogMinAggregateInputType = {
+    id?: true
+    userId?: true
+    userRole?: true
+    userName?: true
+    action?: true
+    entityType?: true
+    entityId?: true
+    entityName?: true
+    ipAddress?: true
+    userAgent?: true
+    description?: true
+    createdAt?: true
+  }
+
+  export type AuditLogMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    userRole?: true
+    userName?: true
+    action?: true
+    entityType?: true
+    entityId?: true
+    entityName?: true
+    ipAddress?: true
+    userAgent?: true
+    description?: true
+    createdAt?: true
+  }
+
+  export type AuditLogCountAggregateInputType = {
+    id?: true
+    userId?: true
+    userRole?: true
+    userName?: true
+    action?: true
+    entityType?: true
+    entityId?: true
+    entityName?: true
+    before?: true
+    after?: true
+    diff?: true
+    ipAddress?: true
+    userAgent?: true
+    description?: true
+    metadata?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AuditLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AuditLog to aggregate.
+     */
+    where?: AuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuditLogs to fetch.
+     */
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AuditLogs
+    **/
+    _count?: true | AuditLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AuditLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AuditLogMaxAggregateInputType
+  }
+
+  export type GetAuditLogAggregateType<T extends AuditLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateAuditLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAuditLog[P]>
+      : GetScalarType<T[P], AggregateAuditLog[P]>
+  }
+
+
+
+
+  export type AuditLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuditLogWhereInput
+    orderBy?: AuditLogOrderByWithAggregationInput | AuditLogOrderByWithAggregationInput[]
+    by: AuditLogScalarFieldEnum[] | AuditLogScalarFieldEnum
+    having?: AuditLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AuditLogCountAggregateInputType | true
+    _min?: AuditLogMinAggregateInputType
+    _max?: AuditLogMaxAggregateInputType
+  }
+
+  export type AuditLogGroupByOutputType = {
+    id: string
+    userId: string | null
+    userRole: $Enums.Role | null
+    userName: string | null
+    action: $Enums.AuditAction
+    entityType: string
+    entityId: string | null
+    entityName: string | null
+    before: JsonValue | null
+    after: JsonValue | null
+    diff: JsonValue | null
+    ipAddress: string | null
+    userAgent: string | null
+    description: string | null
+    metadata: JsonValue | null
+    createdAt: Date
+    _count: AuditLogCountAggregateOutputType | null
+    _min: AuditLogMinAggregateOutputType | null
+    _max: AuditLogMaxAggregateOutputType | null
+  }
+
+  type GetAuditLogGroupByPayload<T extends AuditLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AuditLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AuditLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AuditLogGroupByOutputType[P]>
+            : GetScalarType<T[P], AuditLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AuditLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    userRole?: boolean
+    userName?: boolean
+    action?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    entityName?: boolean
+    before?: boolean
+    after?: boolean
+    diff?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    description?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }, ExtArgs["result"]["auditLog"]>
+
+  export type AuditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    userRole?: boolean
+    userName?: boolean
+    action?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    entityName?: boolean
+    before?: boolean
+    after?: boolean
+    diff?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    description?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }, ExtArgs["result"]["auditLog"]>
+
+  export type AuditLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    userRole?: boolean
+    userName?: boolean
+    action?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    entityName?: boolean
+    before?: boolean
+    after?: boolean
+    diff?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    description?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }, ExtArgs["result"]["auditLog"]>
+
+  export type AuditLogSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    userRole?: boolean
+    userName?: boolean
+    action?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    entityName?: boolean
+    before?: boolean
+    after?: boolean
+    diff?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    description?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+  }
+
+  export type AuditLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "userRole" | "userName" | "action" | "entityType" | "entityId" | "entityName" | "before" | "after" | "diff" | "ipAddress" | "userAgent" | "description" | "metadata" | "createdAt", ExtArgs["result"]["auditLog"]>
+  export type AuditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }
+  export type AuditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }
+  export type AuditLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }
+
+  export type $AuditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AuditLog"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string | null
+      userRole: $Enums.Role | null
+      userName: string | null
+      action: $Enums.AuditAction
+      entityType: string
+      entityId: string | null
+      entityName: string | null
+      before: Prisma.JsonValue | null
+      after: Prisma.JsonValue | null
+      diff: Prisma.JsonValue | null
+      ipAddress: string | null
+      userAgent: string | null
+      description: string | null
+      metadata: Prisma.JsonValue | null
+      createdAt: Date
+    }, ExtArgs["result"]["auditLog"]>
+    composites: {}
+  }
+
+  type AuditLogGetPayload<S extends boolean | null | undefined | AuditLogDefaultArgs> = $Result.GetResult<Prisma.$AuditLogPayload, S>
+
+  type AuditLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AuditLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AuditLogCountAggregateInputType | true
+    }
+
+  export interface AuditLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AuditLog'], meta: { name: 'AuditLog' } }
+    /**
+     * Find zero or one AuditLog that matches the filter.
+     * @param {AuditLogFindUniqueArgs} args - Arguments to find a AuditLog
+     * @example
+     * // Get one AuditLog
+     * const auditLog = await prisma.auditLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AuditLogFindUniqueArgs>(args: SelectSubset<T, AuditLogFindUniqueArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AuditLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AuditLogFindUniqueOrThrowArgs} args - Arguments to find a AuditLog
+     * @example
+     * // Get one AuditLog
+     * const auditLog = await prisma.auditLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AuditLogFindUniqueOrThrowArgs>(args: SelectSubset<T, AuditLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AuditLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogFindFirstArgs} args - Arguments to find a AuditLog
+     * @example
+     * // Get one AuditLog
+     * const auditLog = await prisma.auditLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AuditLogFindFirstArgs>(args?: SelectSubset<T, AuditLogFindFirstArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AuditLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogFindFirstOrThrowArgs} args - Arguments to find a AuditLog
+     * @example
+     * // Get one AuditLog
+     * const auditLog = await prisma.auditLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AuditLogFindFirstOrThrowArgs>(args?: SelectSubset<T, AuditLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AuditLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AuditLogs
+     * const auditLogs = await prisma.auditLog.findMany()
+     * 
+     * // Get first 10 AuditLogs
+     * const auditLogs = await prisma.auditLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const auditLogWithIdOnly = await prisma.auditLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AuditLogFindManyArgs>(args?: SelectSubset<T, AuditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AuditLog.
+     * @param {AuditLogCreateArgs} args - Arguments to create a AuditLog.
+     * @example
+     * // Create one AuditLog
+     * const AuditLog = await prisma.auditLog.create({
+     *   data: {
+     *     // ... data to create a AuditLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends AuditLogCreateArgs>(args: SelectSubset<T, AuditLogCreateArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AuditLogs.
+     * @param {AuditLogCreateManyArgs} args - Arguments to create many AuditLogs.
+     * @example
+     * // Create many AuditLogs
+     * const auditLog = await prisma.auditLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AuditLogCreateManyArgs>(args?: SelectSubset<T, AuditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AuditLogs and returns the data saved in the database.
+     * @param {AuditLogCreateManyAndReturnArgs} args - Arguments to create many AuditLogs.
+     * @example
+     * // Create many AuditLogs
+     * const auditLog = await prisma.auditLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AuditLogs and only return the `id`
+     * const auditLogWithIdOnly = await prisma.auditLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AuditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, AuditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AuditLog.
+     * @param {AuditLogDeleteArgs} args - Arguments to delete one AuditLog.
+     * @example
+     * // Delete one AuditLog
+     * const AuditLog = await prisma.auditLog.delete({
+     *   where: {
+     *     // ... filter to delete one AuditLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AuditLogDeleteArgs>(args: SelectSubset<T, AuditLogDeleteArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AuditLog.
+     * @param {AuditLogUpdateArgs} args - Arguments to update one AuditLog.
+     * @example
+     * // Update one AuditLog
+     * const auditLog = await prisma.auditLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AuditLogUpdateArgs>(args: SelectSubset<T, AuditLogUpdateArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AuditLogs.
+     * @param {AuditLogDeleteManyArgs} args - Arguments to filter AuditLogs to delete.
+     * @example
+     * // Delete a few AuditLogs
+     * const { count } = await prisma.auditLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AuditLogDeleteManyArgs>(args?: SelectSubset<T, AuditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AuditLogs
+     * const auditLog = await prisma.auditLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AuditLogUpdateManyArgs>(args: SelectSubset<T, AuditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AuditLogs and returns the data updated in the database.
+     * @param {AuditLogUpdateManyAndReturnArgs} args - Arguments to update many AuditLogs.
+     * @example
+     * // Update many AuditLogs
+     * const auditLog = await prisma.auditLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AuditLogs and only return the `id`
+     * const auditLogWithIdOnly = await prisma.auditLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AuditLogUpdateManyAndReturnArgs>(args: SelectSubset<T, AuditLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AuditLog.
+     * @param {AuditLogUpsertArgs} args - Arguments to update or create a AuditLog.
+     * @example
+     * // Update or create a AuditLog
+     * const auditLog = await prisma.auditLog.upsert({
+     *   create: {
+     *     // ... data to create a AuditLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AuditLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AuditLogUpsertArgs>(args: SelectSubset<T, AuditLogUpsertArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogCountArgs} args - Arguments to filter AuditLogs to count.
+     * @example
+     * // Count the number of AuditLogs
+     * const count = await prisma.auditLog.count({
+     *   where: {
+     *     // ... the filter for the AuditLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends AuditLogCountArgs>(
+      args?: Subset<T, AuditLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AuditLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AuditLogAggregateArgs>(args: Subset<T, AuditLogAggregateArgs>): Prisma.PrismaPromise<GetAuditLogAggregateType<T>>
+
+    /**
+     * Group by AuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AuditLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AuditLogGroupByArgs['orderBy'] }
+        : { orderBy?: AuditLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AuditLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAuditLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AuditLog model
+   */
+  readonly fields: AuditLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AuditLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AuditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends AuditLog$userArgs<ExtArgs> = {}>(args?: Subset<T, AuditLog$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AuditLog model
+   */
+  interface AuditLogFieldRefs {
+    readonly id: FieldRef<"AuditLog", 'String'>
+    readonly userId: FieldRef<"AuditLog", 'String'>
+    readonly userRole: FieldRef<"AuditLog", 'Role'>
+    readonly userName: FieldRef<"AuditLog", 'String'>
+    readonly action: FieldRef<"AuditLog", 'AuditAction'>
+    readonly entityType: FieldRef<"AuditLog", 'String'>
+    readonly entityId: FieldRef<"AuditLog", 'String'>
+    readonly entityName: FieldRef<"AuditLog", 'String'>
+    readonly before: FieldRef<"AuditLog", 'Json'>
+    readonly after: FieldRef<"AuditLog", 'Json'>
+    readonly diff: FieldRef<"AuditLog", 'Json'>
+    readonly ipAddress: FieldRef<"AuditLog", 'String'>
+    readonly userAgent: FieldRef<"AuditLog", 'String'>
+    readonly description: FieldRef<"AuditLog", 'String'>
+    readonly metadata: FieldRef<"AuditLog", 'Json'>
+    readonly createdAt: FieldRef<"AuditLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AuditLog findUnique
+   */
+  export type AuditLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLog to fetch.
+     */
+    where: AuditLogWhereUniqueInput
+  }
+
+  /**
+   * AuditLog findUniqueOrThrow
+   */
+  export type AuditLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLog to fetch.
+     */
+    where: AuditLogWhereUniqueInput
+  }
+
+  /**
+   * AuditLog findFirst
+   */
+  export type AuditLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLog to fetch.
+     */
+    where?: AuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuditLogs to fetch.
+     */
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AuditLogs.
+     */
+    cursor?: AuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuditLogs.
+     */
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AuditLog findFirstOrThrow
+   */
+  export type AuditLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLog to fetch.
+     */
+    where?: AuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuditLogs to fetch.
+     */
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AuditLogs.
+     */
+    cursor?: AuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuditLogs.
+     */
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AuditLog findMany
+   */
+  export type AuditLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLogs to fetch.
+     */
+    where?: AuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuditLogs to fetch.
+     */
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AuditLogs.
+     */
+    cursor?: AuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuditLogs.
+     */
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AuditLog create
+   */
+  export type AuditLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AuditLog.
+     */
+    data: XOR<AuditLogCreateInput, AuditLogUncheckedCreateInput>
+  }
+
+  /**
+   * AuditLog createMany
+   */
+  export type AuditLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AuditLogs.
+     */
+    data: AuditLogCreateManyInput | AuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AuditLog createManyAndReturn
+   */
+  export type AuditLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many AuditLogs.
+     */
+    data: AuditLogCreateManyInput | AuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AuditLog update
+   */
+  export type AuditLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AuditLog.
+     */
+    data: XOR<AuditLogUpdateInput, AuditLogUncheckedUpdateInput>
+    /**
+     * Choose, which AuditLog to update.
+     */
+    where: AuditLogWhereUniqueInput
+  }
+
+  /**
+   * AuditLog updateMany
+   */
+  export type AuditLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AuditLogs.
+     */
+    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AuditLogs to update
+     */
+    where?: AuditLogWhereInput
+    /**
+     * Limit how many AuditLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuditLog updateManyAndReturn
+   */
+  export type AuditLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to update AuditLogs.
+     */
+    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AuditLogs to update
+     */
+    where?: AuditLogWhereInput
+    /**
+     * Limit how many AuditLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AuditLog upsert
+   */
+  export type AuditLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AuditLog to update in case it exists.
+     */
+    where: AuditLogWhereUniqueInput
+    /**
+     * In case the AuditLog found by the `where` argument doesn't exist, create a new AuditLog with this data.
+     */
+    create: XOR<AuditLogCreateInput, AuditLogUncheckedCreateInput>
+    /**
+     * In case the AuditLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AuditLogUpdateInput, AuditLogUncheckedUpdateInput>
+  }
+
+  /**
+   * AuditLog delete
+   */
+  export type AuditLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter which AuditLog to delete.
+     */
+    where: AuditLogWhereUniqueInput
+  }
+
+  /**
+   * AuditLog deleteMany
+   */
+  export type AuditLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AuditLogs to delete
+     */
+    where?: AuditLogWhereInput
+    /**
+     * Limit how many AuditLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuditLog.user
+   */
+  export type AuditLog$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * AuditLog without action
+   */
+  export type AuditLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -34478,6 +35895,7 @@ export namespace Prisma {
     barcode: 'barcode',
     sellPrice: 'sellPrice',
     supplyPrice: 'supplyPrice',
+    originalPrice: 'originalPrice',
     minSellPrice: 'minSellPrice',
     maxSellPrice: 'maxSellPrice',
     totalStock: 'totalStock',
@@ -34494,6 +35912,9 @@ export namespace Prisma {
     productType: 'productType',
     managedBy: 'managedBy',
     isWmsProduct: 'isWmsProduct',
+    category: 'category',
+    registeredBy: 'registeredBy',
+    notes: 'notes',
     isActive: 'isActive',
     isSample: 'isSample',
     sampleCategory: 'sampleCategory',
@@ -34898,6 +36319,28 @@ export namespace Prisma {
   export type NotificationLogScalarFieldEnum = (typeof NotificationLogScalarFieldEnum)[keyof typeof NotificationLogScalarFieldEnum]
 
 
+  export const AuditLogScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    userRole: 'userRole',
+    userName: 'userName',
+    action: 'action',
+    entityType: 'entityType',
+    entityId: 'entityId',
+    entityName: 'entityName',
+    before: 'before',
+    after: 'after',
+    diff: 'diff',
+    ipAddress: 'ipAddress',
+    userAgent: 'userAgent',
+    description: 'description',
+    metadata: 'metadata',
+    createdAt: 'createdAt'
+  };
+
+  export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -35208,6 +36651,20 @@ export namespace Prisma {
    */
   export type ListEnumScanTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScanType[]'>
     
+
+
+  /**
+   * Reference to a field of type 'AuditAction'
+   */
+  export type EnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuditAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'AuditAction[]'
+   */
+  export type ListEnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuditAction[]'>
+    
   /**
    * Deep Input Types
    */
@@ -35249,6 +36706,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartListRelationFilter
     sellerMatches?: OrderSellerMatchingListRelationFilter
     scanLogs?: ScanLogListRelationFilter
+    auditLogs?: AuditLogListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -35284,6 +36742,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartOrderByRelationAggregateInput
     sellerMatches?: OrderSellerMatchingOrderByRelationAggregateInput
     scanLogs?: ScanLogOrderByRelationAggregateInput
+    auditLogs?: AuditLogOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -35322,6 +36781,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartListRelationFilter
     sellerMatches?: OrderSellerMatchingListRelationFilter
     scanLogs?: ScanLogListRelationFilter
+    auditLogs?: AuditLogListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -35390,6 +36850,7 @@ export namespace Prisma {
     barcode?: StringFilter<"Product"> | string
     sellPrice?: IntFilter<"Product"> | number
     supplyPrice?: IntFilter<"Product"> | number
+    originalPrice?: IntNullableFilter<"Product"> | number | null
     minSellPrice?: IntNullableFilter<"Product"> | number | null
     maxSellPrice?: IntNullableFilter<"Product"> | number | null
     totalStock?: IntFilter<"Product"> | number
@@ -35406,6 +36867,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableFilter<"Product"> | string | null
     isWmsProduct?: BoolFilter<"Product"> | boolean
+    category?: StringNullableFilter<"Product"> | string | null
+    registeredBy?: StringNullableFilter<"Product"> | string | null
+    notes?: StringNullableFilter<"Product"> | string | null
     isActive?: BoolFilter<"Product"> | boolean
     isSample?: BoolFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableFilter<"Product"> | $Enums.SampleCategory | null
@@ -35431,6 +36895,7 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    originalPrice?: SortOrderInput | SortOrder
     minSellPrice?: SortOrderInput | SortOrder
     maxSellPrice?: SortOrderInput | SortOrder
     totalStock?: SortOrder
@@ -35447,6 +36912,9 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrderInput | SortOrder
     isWmsProduct?: SortOrder
+    category?: SortOrderInput | SortOrder
+    registeredBy?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
     isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrderInput | SortOrder
@@ -35476,6 +36944,7 @@ export namespace Prisma {
     name?: StringFilter<"Product"> | string
     sellPrice?: IntFilter<"Product"> | number
     supplyPrice?: IntFilter<"Product"> | number
+    originalPrice?: IntNullableFilter<"Product"> | number | null
     minSellPrice?: IntNullableFilter<"Product"> | number | null
     maxSellPrice?: IntNullableFilter<"Product"> | number | null
     totalStock?: IntFilter<"Product"> | number
@@ -35491,6 +36960,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableFilter<"Product"> | string | null
     isWmsProduct?: BoolFilter<"Product"> | boolean
+    category?: StringNullableFilter<"Product"> | string | null
+    registeredBy?: StringNullableFilter<"Product"> | string | null
+    notes?: StringNullableFilter<"Product"> | string | null
     isActive?: BoolFilter<"Product"> | boolean
     isSample?: BoolFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableFilter<"Product"> | $Enums.SampleCategory | null
@@ -35516,6 +36988,7 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    originalPrice?: SortOrderInput | SortOrder
     minSellPrice?: SortOrderInput | SortOrder
     maxSellPrice?: SortOrderInput | SortOrder
     totalStock?: SortOrder
@@ -35532,6 +37005,9 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrderInput | SortOrder
     isWmsProduct?: SortOrder
+    category?: SortOrderInput | SortOrder
+    registeredBy?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
     isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrderInput | SortOrder
@@ -35554,6 +37030,7 @@ export namespace Prisma {
     barcode?: StringWithAggregatesFilter<"Product"> | string
     sellPrice?: IntWithAggregatesFilter<"Product"> | number
     supplyPrice?: IntWithAggregatesFilter<"Product"> | number
+    originalPrice?: IntNullableWithAggregatesFilter<"Product"> | number | null
     minSellPrice?: IntNullableWithAggregatesFilter<"Product"> | number | null
     maxSellPrice?: IntNullableWithAggregatesFilter<"Product"> | number | null
     totalStock?: IntWithAggregatesFilter<"Product"> | number
@@ -35570,6 +37047,9 @@ export namespace Prisma {
     productType?: EnumProductTypeWithAggregatesFilter<"Product"> | $Enums.ProductType
     managedBy?: StringNullableWithAggregatesFilter<"Product"> | string | null
     isWmsProduct?: BoolWithAggregatesFilter<"Product"> | boolean
+    category?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    registeredBy?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"Product"> | string | null
     isActive?: BoolWithAggregatesFilter<"Product"> | boolean
     isSample?: BoolWithAggregatesFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableWithAggregatesFilter<"Product"> | $Enums.SampleCategory | null
@@ -37666,6 +39146,116 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"NotificationLog"> | Date | string
   }
 
+  export type AuditLogWhereInput = {
+    AND?: AuditLogWhereInput | AuditLogWhereInput[]
+    OR?: AuditLogWhereInput[]
+    NOT?: AuditLogWhereInput | AuditLogWhereInput[]
+    id?: StringFilter<"AuditLog"> | string
+    userId?: StringNullableFilter<"AuditLog"> | string | null
+    userRole?: EnumRoleNullableFilter<"AuditLog"> | $Enums.Role | null
+    userName?: StringNullableFilter<"AuditLog"> | string | null
+    action?: EnumAuditActionFilter<"AuditLog"> | $Enums.AuditAction
+    entityType?: StringFilter<"AuditLog"> | string
+    entityId?: StringNullableFilter<"AuditLog"> | string | null
+    entityName?: StringNullableFilter<"AuditLog"> | string | null
+    before?: JsonNullableFilter<"AuditLog">
+    after?: JsonNullableFilter<"AuditLog">
+    diff?: JsonNullableFilter<"AuditLog">
+    ipAddress?: StringNullableFilter<"AuditLog"> | string | null
+    userAgent?: StringNullableFilter<"AuditLog"> | string | null
+    description?: StringNullableFilter<"AuditLog"> | string | null
+    metadata?: JsonNullableFilter<"AuditLog">
+    createdAt?: DateTimeFilter<"AuditLog"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type AuditLogOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    userRole?: SortOrderInput | SortOrder
+    userName?: SortOrderInput | SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrderInput | SortOrder
+    entityName?: SortOrderInput | SortOrder
+    before?: SortOrderInput | SortOrder
+    after?: SortOrderInput | SortOrder
+    diff?: SortOrderInput | SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type AuditLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AuditLogWhereInput | AuditLogWhereInput[]
+    OR?: AuditLogWhereInput[]
+    NOT?: AuditLogWhereInput | AuditLogWhereInput[]
+    userId?: StringNullableFilter<"AuditLog"> | string | null
+    userRole?: EnumRoleNullableFilter<"AuditLog"> | $Enums.Role | null
+    userName?: StringNullableFilter<"AuditLog"> | string | null
+    action?: EnumAuditActionFilter<"AuditLog"> | $Enums.AuditAction
+    entityType?: StringFilter<"AuditLog"> | string
+    entityId?: StringNullableFilter<"AuditLog"> | string | null
+    entityName?: StringNullableFilter<"AuditLog"> | string | null
+    before?: JsonNullableFilter<"AuditLog">
+    after?: JsonNullableFilter<"AuditLog">
+    diff?: JsonNullableFilter<"AuditLog">
+    ipAddress?: StringNullableFilter<"AuditLog"> | string | null
+    userAgent?: StringNullableFilter<"AuditLog"> | string | null
+    description?: StringNullableFilter<"AuditLog"> | string | null
+    metadata?: JsonNullableFilter<"AuditLog">
+    createdAt?: DateTimeFilter<"AuditLog"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type AuditLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    userRole?: SortOrderInput | SortOrder
+    userName?: SortOrderInput | SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrderInput | SortOrder
+    entityName?: SortOrderInput | SortOrder
+    before?: SortOrderInput | SortOrder
+    after?: SortOrderInput | SortOrder
+    diff?: SortOrderInput | SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: AuditLogCountOrderByAggregateInput
+    _max?: AuditLogMaxOrderByAggregateInput
+    _min?: AuditLogMinOrderByAggregateInput
+  }
+
+  export type AuditLogScalarWhereWithAggregatesInput = {
+    AND?: AuditLogScalarWhereWithAggregatesInput | AuditLogScalarWhereWithAggregatesInput[]
+    OR?: AuditLogScalarWhereWithAggregatesInput[]
+    NOT?: AuditLogScalarWhereWithAggregatesInput | AuditLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AuditLog"> | string
+    userId?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+    userRole?: EnumRoleNullableWithAggregatesFilter<"AuditLog"> | $Enums.Role | null
+    userName?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+    action?: EnumAuditActionWithAggregatesFilter<"AuditLog"> | $Enums.AuditAction
+    entityType?: StringWithAggregatesFilter<"AuditLog"> | string
+    entityId?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+    entityName?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+    before?: JsonNullableWithAggregatesFilter<"AuditLog">
+    after?: JsonNullableWithAggregatesFilter<"AuditLog">
+    diff?: JsonNullableWithAggregatesFilter<"AuditLog">
+    ipAddress?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+    description?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"AuditLog">
+    createdAt?: DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username: string
@@ -37697,6 +39287,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -37730,6 +39321,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -37763,6 +39355,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -37796,6 +39389,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -37875,6 +39469,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -37891,6 +39486,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -37916,6 +39514,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -37932,6 +39531,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -37957,6 +39559,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -37973,6 +39576,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -37998,6 +39604,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -38014,6 +39621,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -38039,6 +39649,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -38055,6 +39666,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -38069,6 +39683,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -38085,6 +39700,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -38099,6 +39717,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -38115,6 +39734,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -40427,6 +42049,138 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AuditLogCreateInput = {
+    id?: string
+    userRole?: $Enums.Role | null
+    userName?: string | null
+    action: $Enums.AuditAction
+    entityType: string
+    entityId?: string | null
+    entityName?: string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    description?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    user?: UserCreateNestedOneWithoutAuditLogsInput
+  }
+
+  export type AuditLogUncheckedCreateInput = {
+    id?: string
+    userId?: string | null
+    userRole?: $Enums.Role | null
+    userName?: string | null
+    action: $Enums.AuditAction
+    entityType: string
+    entityId?: string | null
+    entityName?: string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    description?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AuditLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userRole?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityName?: NullableStringFieldUpdateOperationsInput | string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutAuditLogsNestedInput
+  }
+
+  export type AuditLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userRole?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityName?: NullableStringFieldUpdateOperationsInput | string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogCreateManyInput = {
+    id?: string
+    userId?: string | null
+    userRole?: $Enums.Role | null
+    userName?: string | null
+    action: $Enums.AuditAction
+    entityType: string
+    entityId?: string | null
+    entityName?: string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    description?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AuditLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userRole?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityName?: NullableStringFieldUpdateOperationsInput | string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userRole?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityName?: NullableStringFieldUpdateOperationsInput | string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -40575,6 +42329,12 @@ export namespace Prisma {
     none?: ScanLogWhereInput
   }
 
+  export type AuditLogListRelationFilter = {
+    every?: AuditLogWhereInput
+    some?: AuditLogWhereInput
+    none?: AuditLogWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -40609,6 +42369,10 @@ export namespace Prisma {
   }
 
   export type ScanLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AuditLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -40901,6 +42665,7 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    originalPrice?: SortOrder
     minSellPrice?: SortOrder
     maxSellPrice?: SortOrder
     totalStock?: SortOrder
@@ -40917,6 +42682,9 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    category?: SortOrder
+    registeredBy?: SortOrder
+    notes?: SortOrder
     isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
@@ -40927,6 +42695,7 @@ export namespace Prisma {
   export type ProductAvgOrderByAggregateInput = {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    originalPrice?: SortOrder
     minSellPrice?: SortOrder
     maxSellPrice?: SortOrder
     totalStock?: SortOrder
@@ -40945,6 +42714,7 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    originalPrice?: SortOrder
     minSellPrice?: SortOrder
     maxSellPrice?: SortOrder
     totalStock?: SortOrder
@@ -40961,6 +42731,9 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    category?: SortOrder
+    registeredBy?: SortOrder
+    notes?: SortOrder
     isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
@@ -40975,6 +42748,7 @@ export namespace Prisma {
     barcode?: SortOrder
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    originalPrice?: SortOrder
     minSellPrice?: SortOrder
     maxSellPrice?: SortOrder
     totalStock?: SortOrder
@@ -40991,6 +42765,9 @@ export namespace Prisma {
     productType?: SortOrder
     managedBy?: SortOrder
     isWmsProduct?: SortOrder
+    category?: SortOrder
+    registeredBy?: SortOrder
+    notes?: SortOrder
     isActive?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
@@ -41001,6 +42778,7 @@ export namespace Prisma {
   export type ProductSumOrderByAggregateInput = {
     sellPrice?: SortOrder
     supplyPrice?: SortOrder
+    originalPrice?: SortOrder
     minSellPrice?: SortOrder
     maxSellPrice?: SortOrder
     totalStock?: SortOrder
@@ -42567,6 +44345,89 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumRoleNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumRoleNullableFilter<$PrismaModel> | $Enums.Role | null
+  }
+
+  export type EnumAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction
+  }
+
+  export type AuditLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    userRole?: SortOrder
+    userName?: SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    entityName?: SortOrder
+    before?: SortOrder
+    after?: SortOrder
+    diff?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    description?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AuditLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    userRole?: SortOrder
+    userName?: SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    entityName?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AuditLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    userRole?: SortOrder
+    userName?: SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    entityName?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumRoleNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumRoleNullableWithAggregatesFilter<$PrismaModel> | $Enums.Role | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumRoleNullableFilter<$PrismaModel>
+    _max?: NestedEnumRoleNullableFilter<$PrismaModel>
+  }
+
+  export type EnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.AuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumAuditActionFilter<$PrismaModel>
+  }
+
   export type UserCreatechannelsInput = {
     set: string[]
   }
@@ -42658,6 +44519,13 @@ export namespace Prisma {
     connect?: ScanLogWhereUniqueInput | ScanLogWhereUniqueInput[]
   }
 
+  export type AuditLogCreateNestedManyWithoutUserInput = {
+    create?: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput> | AuditLogCreateWithoutUserInput[] | AuditLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
+    createMany?: AuditLogCreateManyUserInputEnvelope
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutAdminInput = {
     create?: XOR<UserCreateWithoutAdminInput, UserUncheckedCreateWithoutAdminInput> | UserCreateWithoutAdminInput[] | UserUncheckedCreateWithoutAdminInput[]
     connectOrCreate?: UserCreateOrConnectWithoutAdminInput | UserCreateOrConnectWithoutAdminInput[]
@@ -42719,6 +44587,13 @@ export namespace Prisma {
     connectOrCreate?: ScanLogCreateOrConnectWithoutUserInput | ScanLogCreateOrConnectWithoutUserInput[]
     createMany?: ScanLogCreateManyUserInputEnvelope
     connect?: ScanLogWhereUniqueInput | ScanLogWhereUniqueInput[]
+  }
+
+  export type AuditLogUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput> | AuditLogCreateWithoutUserInput[] | AuditLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
+    createMany?: AuditLogCreateManyUserInputEnvelope
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -42923,6 +44798,20 @@ export namespace Prisma {
     deleteMany?: ScanLogScalarWhereInput | ScanLogScalarWhereInput[]
   }
 
+  export type AuditLogUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput> | AuditLogCreateWithoutUserInput[] | AuditLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
+    upsert?: AuditLogUpsertWithWhereUniqueWithoutUserInput | AuditLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AuditLogCreateManyUserInputEnvelope
+    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    update?: AuditLogUpdateWithWhereUniqueWithoutUserInput | AuditLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AuditLogUpdateManyWithWhereWithoutUserInput | AuditLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutAdminNestedInput = {
     create?: XOR<UserCreateWithoutAdminInput, UserUncheckedCreateWithoutAdminInput> | UserCreateWithoutAdminInput[] | UserUncheckedCreateWithoutAdminInput[]
     connectOrCreate?: UserCreateOrConnectWithoutAdminInput | UserCreateOrConnectWithoutAdminInput[]
@@ -43047,6 +44936,20 @@ export namespace Prisma {
     update?: ScanLogUpdateWithWhereUniqueWithoutUserInput | ScanLogUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ScanLogUpdateManyWithWhereWithoutUserInput | ScanLogUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ScanLogScalarWhereInput | ScanLogScalarWhereInput[]
+  }
+
+  export type AuditLogUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput> | AuditLogCreateWithoutUserInput[] | AuditLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
+    upsert?: AuditLogUpsertWithWhereUniqueWithoutUserInput | AuditLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AuditLogCreateManyUserInputEnvelope
+    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    update?: AuditLogUpdateWithWhereUniqueWithoutUserInput | AuditLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AuditLogUpdateManyWithWhereWithoutUserInput | AuditLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
   export type OrderItemCreateNestedManyWithoutProductInput = {
@@ -44733,6 +46636,30 @@ export namespace Prisma {
     update?: XOR<XOR<CenterUpdateToOneWithWhereWithoutScanLogsInput, CenterUpdateWithoutScanLogsInput>, CenterUncheckedUpdateWithoutScanLogsInput>
   }
 
+  export type UserCreateNestedOneWithoutAuditLogsInput = {
+    create?: XOR<UserCreateWithoutAuditLogsInput, UserUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuditLogsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type NullableEnumRoleFieldUpdateOperationsInput = {
+    set?: $Enums.Role | null
+  }
+
+  export type EnumAuditActionFieldUpdateOperationsInput = {
+    set?: $Enums.AuditAction
+  }
+
+  export type UserUpdateOneWithoutAuditLogsNestedInput = {
+    create?: XOR<UserCreateWithoutAuditLogsInput, UserUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuditLogsInput
+    upsert?: UserUpsertWithoutAuditLogsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuditLogsInput, UserUpdateWithoutAuditLogsInput>, UserUncheckedUpdateWithoutAuditLogsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -45234,6 +47161,40 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedEnumRoleNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumRoleNullableFilter<$PrismaModel> | $Enums.Role | null
+  }
+
+  export type NestedEnumAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction
+  }
+
+  export type NestedEnumRoleNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumRoleNullableWithAggregatesFilter<$PrismaModel> | $Enums.Role | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumRoleNullableFilter<$PrismaModel>
+    _max?: NestedEnumRoleNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.AuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumAuditActionFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutSellersInput = {
     id?: string
     username: string
@@ -45264,6 +47225,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSellersInput = {
@@ -45296,6 +47258,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSellersInput = {
@@ -45333,6 +47296,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAdminInput = {
@@ -45365,6 +47329,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAdminInput = {
@@ -45838,6 +47803,52 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type AuditLogCreateWithoutUserInput = {
+    id?: string
+    userRole?: $Enums.Role | null
+    userName?: string | null
+    action: $Enums.AuditAction
+    entityType: string
+    entityId?: string | null
+    entityName?: string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    description?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AuditLogUncheckedCreateWithoutUserInput = {
+    id?: string
+    userRole?: $Enums.Role | null
+    userName?: string | null
+    action: $Enums.AuditAction
+    entityType: string
+    entityId?: string | null
+    entityName?: string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    description?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AuditLogCreateOrConnectWithoutUserInput = {
+    where: AuditLogWhereUniqueInput
+    create: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type AuditLogCreateManyUserInputEnvelope = {
+    data: AuditLogCreateManyUserInput | AuditLogCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutSellersInput = {
     update: XOR<UserUpdateWithoutSellersInput, UserUncheckedUpdateWithoutSellersInput>
     create: XOR<UserCreateWithoutSellersInput, UserUncheckedCreateWithoutSellersInput>
@@ -45879,6 +47890,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSellersInput = {
@@ -45911,6 +47923,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithWhereUniqueWithoutAdminInput = {
@@ -46288,6 +48301,44 @@ export namespace Prisma {
     centerId?: StringNullableFilter<"ScanLog"> | string | null
     scannedAt?: DateTimeFilter<"ScanLog"> | Date | string
     metadata?: JsonNullableFilter<"ScanLog">
+  }
+
+  export type AuditLogUpsertWithWhereUniqueWithoutUserInput = {
+    where: AuditLogWhereUniqueInput
+    update: XOR<AuditLogUpdateWithoutUserInput, AuditLogUncheckedUpdateWithoutUserInput>
+    create: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type AuditLogUpdateWithWhereUniqueWithoutUserInput = {
+    where: AuditLogWhereUniqueInput
+    data: XOR<AuditLogUpdateWithoutUserInput, AuditLogUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AuditLogUpdateManyWithWhereWithoutUserInput = {
+    where: AuditLogScalarWhereInput
+    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type AuditLogScalarWhereInput = {
+    AND?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+    OR?: AuditLogScalarWhereInput[]
+    NOT?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+    id?: StringFilter<"AuditLog"> | string
+    userId?: StringNullableFilter<"AuditLog"> | string | null
+    userRole?: EnumRoleNullableFilter<"AuditLog"> | $Enums.Role | null
+    userName?: StringNullableFilter<"AuditLog"> | string | null
+    action?: EnumAuditActionFilter<"AuditLog"> | $Enums.AuditAction
+    entityType?: StringFilter<"AuditLog"> | string
+    entityId?: StringNullableFilter<"AuditLog"> | string | null
+    entityName?: StringNullableFilter<"AuditLog"> | string | null
+    before?: JsonNullableFilter<"AuditLog">
+    after?: JsonNullableFilter<"AuditLog">
+    diff?: JsonNullableFilter<"AuditLog">
+    ipAddress?: StringNullableFilter<"AuditLog"> | string | null
+    userAgent?: StringNullableFilter<"AuditLog"> | string | null
+    description?: StringNullableFilter<"AuditLog"> | string | null
+    metadata?: JsonNullableFilter<"AuditLog">
+    createdAt?: DateTimeFilter<"AuditLog"> | Date | string
   }
 
   export type OrderItemCreateWithoutProductInput = {
@@ -46965,6 +49016,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCenterInput = {
@@ -46997,6 +49049,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCenterInput = {
@@ -47290,6 +49343,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -47306,6 +49360,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -47330,6 +49387,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -47346,6 +49404,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -47439,6 +49500,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -47455,6 +49517,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -47479,6 +49544,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -47495,6 +49561,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -47682,6 +49751,7 @@ export namespace Prisma {
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSellerMatchesInput = {
@@ -47714,6 +49784,7 @@ export namespace Prisma {
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSellerMatchesInput = {
@@ -47728,6 +49799,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -47744,6 +49816,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -47768,6 +49843,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -47784,6 +49860,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -47934,6 +50013,7 @@ export namespace Prisma {
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSellerMatchesInput = {
@@ -47966,6 +50046,7 @@ export namespace Prisma {
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProductUpsertWithoutSellerMatchesInput = {
@@ -47986,6 +50067,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -48002,6 +50084,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -48026,6 +50111,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -48042,6 +50128,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -48089,6 +50178,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOrdersInput = {
@@ -48121,6 +50211,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOrdersInput = {
@@ -48158,6 +50249,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAdminOrdersInput = {
@@ -48190,6 +50282,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAdminOrdersInput = {
@@ -48503,6 +50596,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -48535,6 +50629,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutAdminOrdersInput = {
@@ -48578,6 +50673,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAdminOrdersInput = {
@@ -48610,6 +50706,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CenterUpsertWithoutOrdersInput = {
@@ -48926,6 +51023,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -48942,6 +51040,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -48966,6 +51067,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -48982,6 +51084,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -49109,6 +51214,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -49125,6 +51231,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -49149,6 +51258,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -49165,6 +51275,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -49270,6 +51383,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -49286,6 +51400,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -49310,6 +51427,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -49326,6 +51444,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -49453,6 +51574,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -49469,6 +51591,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -49493,6 +51618,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -49509,6 +51635,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -49556,6 +51685,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBroadcastsInput = {
@@ -49588,6 +51718,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBroadcastsInput = {
@@ -49809,6 +51940,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBroadcastsInput = {
@@ -49841,6 +51973,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CenterUpsertWithoutBroadcastsInput = {
@@ -49964,6 +52097,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSalesInput = {
@@ -49996,6 +52130,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSalesInput = {
@@ -50010,6 +52145,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -50026,6 +52162,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -50050,6 +52189,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -50066,6 +52206,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -50172,6 +52315,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSalesInput = {
@@ -50204,6 +52348,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProductUpsertWithoutSalesInput = {
@@ -50224,6 +52369,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -50240,6 +52386,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -50264,6 +52413,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -50280,6 +52430,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -50376,6 +52529,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProposalsInput = {
@@ -50408,6 +52562,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProposalsInput = {
@@ -50456,6 +52611,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProposalsInput = {
@@ -50488,6 +52644,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutProposalCartsInput = {
@@ -50520,6 +52677,7 @@ export namespace Prisma {
     proposals?: ProposalCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProposalCartsInput = {
@@ -50552,6 +52710,7 @@ export namespace Prisma {
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProposalCartsInput = {
@@ -50566,6 +52725,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -50582,6 +52742,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -50606,6 +52769,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -50622,6 +52786,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -50685,6 +52852,7 @@ export namespace Prisma {
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProposalCartsInput = {
@@ -50717,6 +52885,7 @@ export namespace Prisma {
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProductUpsertWithoutProposalCartsInput = {
@@ -50737,6 +52906,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -50753,6 +52923,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -50777,6 +52950,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -50793,6 +52967,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -50985,6 +53162,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -51001,6 +53179,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -51025,6 +53206,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -51041,6 +53223,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -51081,6 +53266,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -51097,6 +53283,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -51121,6 +53310,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -51137,6 +53327,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -51560,6 +53753,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -51576,6 +53770,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -51600,6 +53797,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -51616,6 +53814,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -51728,6 +53929,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -51744,6 +53946,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -51768,6 +53973,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -51784,6 +53990,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -51845,6 +54054,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -51861,6 +54071,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -51885,6 +54098,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -51901,6 +54115,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -52011,6 +54228,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -52027,6 +54245,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -52051,6 +54272,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -52067,6 +54289,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -52173,6 +54398,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -52189,6 +54415,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -52213,6 +54442,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -52229,6 +54459,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -52269,6 +54502,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -52285,6 +54519,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -52309,6 +54546,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -52325,6 +54563,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -52372,6 +54613,7 @@ export namespace Prisma {
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutScanLogsInput = {
@@ -52404,6 +54646,7 @@ export namespace Prisma {
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutScanLogsInput = {
@@ -52418,6 +54661,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -52434,6 +54678,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -52458,6 +54705,7 @@ export namespace Prisma {
     barcode: string
     sellPrice: number
     supplyPrice: number
+    originalPrice?: number | null
     minSellPrice?: number | null
     maxSellPrice?: number | null
     totalStock?: number
@@ -52474,6 +54722,9 @@ export namespace Prisma {
     productType?: $Enums.ProductType
     managedBy?: string | null
     isWmsProduct?: boolean
+    category?: string | null
+    registeredBy?: string | null
+    notes?: string | null
     isActive?: boolean
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
@@ -52590,6 +54841,7 @@ export namespace Prisma {
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutScanLogsInput = {
@@ -52622,6 +54874,7 @@ export namespace Prisma {
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProductUpsertWithoutScanLogsInput = {
@@ -52642,6 +54895,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -52658,6 +54912,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -52682,6 +54939,7 @@ export namespace Prisma {
     barcode?: StringFieldUpdateOperationsInput | string
     sellPrice?: IntFieldUpdateOperationsInput | number
     supplyPrice?: IntFieldUpdateOperationsInput | number
+    originalPrice?: NullableIntFieldUpdateOperationsInput | number | null
     minSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     maxSellPrice?: NullableIntFieldUpdateOperationsInput | number | null
     totalStock?: IntFieldUpdateOperationsInput | number
@@ -52698,6 +54956,9 @@ export namespace Prisma {
     productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     managedBy?: NullableStringFieldUpdateOperationsInput | string | null
     isWmsProduct?: BoolFieldUpdateOperationsInput | boolean
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
@@ -52772,6 +55033,154 @@ export namespace Prisma {
     centerStocks?: ProductCenterStockUncheckedUpdateManyWithoutCenterNestedInput
     orders?: OrderUncheckedUpdateManyWithoutProcessingCenterNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutCenterNestedInput
+  }
+
+  export type UserCreateWithoutAuditLogsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    name: string
+    phone: string
+    role?: $Enums.Role
+    passwordHash?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channels?: UserCreatechannelsInput | string[]
+    avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
+    isActive?: boolean
+    admin?: UserCreateNestedOneWithoutSellersInput
+    sellers?: UserCreateNestedManyWithoutAdminInput
+    center?: CenterCreateNestedOneWithoutUsersInput
+    orders?: OrderCreateNestedManyWithoutSellerInput
+    adminOrders?: OrderCreateNestedManyWithoutAdminInput
+    broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    sales?: SaleCreateNestedManyWithoutSellerInput
+    proposals?: ProposalCreateNestedManyWithoutUserInput
+    proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
+    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
+    scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAuditLogsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    name: string
+    phone: string
+    role?: $Enums.Role
+    adminId?: string | null
+    centerId?: string | null
+    passwordHash?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channels?: UserCreatechannelsInput | string[]
+    avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
+    isActive?: boolean
+    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
+    orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
+    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
+    broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
+    proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
+    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
+    scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAuditLogsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAuditLogsInput, UserUncheckedCreateWithoutAuditLogsInput>
+  }
+
+  export type UserUpsertWithoutAuditLogsInput = {
+    update: XOR<UserUpdateWithoutAuditLogsInput, UserUncheckedUpdateWithoutAuditLogsInput>
+    create: XOR<UserCreateWithoutAuditLogsInput, UserUncheckedCreateWithoutAuditLogsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAuditLogsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAuditLogsInput, UserUncheckedUpdateWithoutAuditLogsInput>
+  }
+
+  export type UserUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channels?: UserUpdatechannelsInput | string[]
+    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    admin?: UserUpdateOneWithoutSellersNestedInput
+    sellers?: UserUpdateManyWithoutAdminNestedInput
+    center?: CenterUpdateOneWithoutUsersNestedInput
+    orders?: OrderUpdateManyWithoutSellerNestedInput
+    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
+    broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    sales?: SaleUpdateManyWithoutSellerNestedInput
+    proposals?: ProposalUpdateManyWithoutUserNestedInput
+    proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
+    sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
+    scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    adminId?: NullableStringFieldUpdateOperationsInput | string | null
+    centerId?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channels?: UserUpdatechannelsInput | string[]
+    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
+    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
+    broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
+    proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
+    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
+    scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyAdminInput = {
@@ -52949,6 +55358,24 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
+  export type AuditLogCreateManyUserInput = {
+    id?: string
+    userRole?: $Enums.Role | null
+    userName?: string | null
+    action: $Enums.AuditAction
+    entityType: string
+    entityId?: string | null
+    entityName?: string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    description?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
   export type UserUpdateWithoutAdminInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -52979,6 +55406,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAdminInput = {
@@ -53011,6 +55439,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutAdminInput = {
@@ -53514,6 +55943,60 @@ export namespace Prisma {
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     scannedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type AuditLogUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userRole?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityName?: NullableStringFieldUpdateOperationsInput | string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userRole?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityName?: NullableStringFieldUpdateOperationsInput | string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userRole?: NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityName?: NullableStringFieldUpdateOperationsInput | string | null
+    before?: NullableJsonNullValueInput | InputJsonValue
+    after?: NullableJsonNullValueInput | InputJsonValue
+    diff?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OrderItemCreateManyProductInput = {
@@ -54143,6 +56626,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCenterInput = {
@@ -54175,6 +56659,7 @@ export namespace Prisma {
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutCenterInput = {

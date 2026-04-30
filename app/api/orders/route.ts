@@ -6,6 +6,8 @@ import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { z } from "zod";
 import { reserveStock } from "@/lib/services/stock/reservation";
 import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMatching";
+import { logAudit } from "@/lib/services/audit";
+import { validateProductsForBroadcast } from "@/lib/services/products/canBroadcast";
 
 // Phase 2: Order with Items Schema
 const orderItemSchema = z.object({
@@ -116,7 +118,7 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
       data.items.map(async (item) => {
         const product = await prisma.product.findUnique({
           where: { id: item.productId },
-          select: { productType: true, name: true, barcode: true, supplyPrice: true },
+          select: { productType: true, name: true, barcode: true, supplyPrice: true, sellPrice: true, isActive: true },
         });
 
         if (!product) {
@@ -126,9 +128,32 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
         return {
           ...item,
           productType: product.productType,
+          _product: product,
         };
       })
     );
+
+    // 가격 0원 상품 차단: 셀러 발주 시 가격 미설정 상품 거부
+    if (user.role === "SELLER") {
+      const productsToValidate = itemsWithProducts.map((item) => ({
+        id: item.productId,
+        name: item._product.name,
+        barcode: item._product.barcode,
+        sellPrice: item._product.sellPrice,
+        supplyPrice: item._product.supplyPrice,
+        isActive: item._product.isActive,
+      }));
+
+      const { valid, ineligible } = validateProductsForBroadcast(productsToValidate);
+      if (!valid) {
+        const names = ineligible.map((p) => `${p.name} (${p.reason})`).join(", ");
+        return error(
+          "VALIDATION_ERROR",
+          `가격이 설정되지 않은 상품은 발주할 수 없습니다: ${names}`,
+          400
+        );
+      }
+    }
 
     // Group by product type
     const wmsItems = itemsWithProducts.filter((item) => item.productType === "HEADQUARTERS");
@@ -232,6 +257,21 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
         }
       }
 
+      for (const order of createdOrders) {
+        logAudit({
+          userId: user.userId,
+          userRole: user.role,
+          userName: user.name,
+          action: "CREATE",
+          entityType: "Order",
+          entityId: order.id,
+          entityName: order.orderNo,
+          after: { orderNo: order.orderNo, totalAmount: order.totalAmount, productType: order.productType, itemCount: order.items.length },
+          description: `발주 생성 (분할): ${order.orderNo}`,
+          request: req,
+        });
+      }
+
       return ok({
         message: "주문이 상품 유형별로 분리되어 생성되었습니다.",
         orders: createdOrders,
@@ -275,6 +315,21 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
         console.error("[ORDER-BROADCAST MATCH ERROR]", order.id, err);
         matchResults.push({ orderId: order.id, matched: false, reason: "매칭 처리 중 오류" });
       }
+    }
+
+    for (const order of createdOrders) {
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "CREATE",
+        entityType: "Order",
+        entityId: order.id,
+        entityName: order.orderNo,
+        after: { orderNo: order.orderNo, totalAmount: order.totalAmount, productType: order.productType, itemCount: order.items.length },
+        description: `발주 생성: ${order.orderNo}`,
+        request: req,
+      });
     }
 
     return ok({

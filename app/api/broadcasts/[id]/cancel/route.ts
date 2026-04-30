@@ -1,10 +1,11 @@
 import { NextRequest } from "next/server";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { sendNotification } from "@/lib/services/notifications";
+import { logAudit } from "@/lib/services/audit";
 
 const cancelSchema = z.object({
   reason: z.string().optional(),
@@ -126,6 +127,20 @@ export const PUT = withRole(
           broadcastId,
         }).catch((err) => console.error("[BROADCAST_CANCEL_NOTIFICATION]", err));
       }
+
+      logAudit({
+        userId,
+        userRole: userRole,
+        userName: (session.user as any).name,
+        action: "STATUS_CHANGED",
+        entityType: "Broadcast",
+        entityId: broadcastId,
+        entityName: broadcast.code,
+        before: { status: broadcast.status },
+        after: { status: "CANCELED", reason: data.reason },
+        description: `방송 취소: ${broadcast.code}`,
+        request: req,
+      });
 
       return ok(updated);
     } catch (err: any) {

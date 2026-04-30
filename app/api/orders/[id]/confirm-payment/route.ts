@@ -7,16 +7,17 @@
 
 import { NextRequest } from "next/server";
 import { ok, error } from "@/lib/api/response";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { convertReservation } from "@/lib/services/stock/reservation";
 import { syncOrderToOnewms } from "@/lib/services/onewms/orderSync";
 import { prisma } from "@/lib/db/prisma";
+import { logAudit } from "@/lib/services/audit";
 
 export const POST = withRole(
   ["MASTER", "SUB_MASTER", "ADMIN"],
   async (
     req: NextRequest,
-    _user,
+    user: AuthUser,
     { params }: { params: Promise<{ id: string }> }
   ) => {
     try {
@@ -37,6 +38,18 @@ export const POST = withRole(
         console.error("[WMS_SYNC_AFTER_PAYMENT]", wmsErr);
         // WMS 실패 시 기존 retry 메커니즘이 처리
       }
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "STATUS_CHANGED",
+        entityType: "Order",
+        entityId: orderId,
+        description: `입금 확인: ${orderId}`,
+        after: { paymentStatus: "PAID" },
+        request: req,
+      });
 
       return ok({
         message: "입금이 확인되었습니다.",

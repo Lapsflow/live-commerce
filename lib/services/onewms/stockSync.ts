@@ -60,7 +60,7 @@ export async function syncProductStock(productId: string): Promise<{
     let onewmsAvailableQty = 0;
     if (stockEntry?.stock) {
       for (const wh of Object.values(stockEntry.stock)) {
-        onewmsAvailableQty += (wh.stock || 0);
+        onewmsAvailableQty += Number(wh.stock) || 0;
       }
     }
     const onewmsTotalQty = onewmsAvailableQty;
@@ -268,6 +268,106 @@ export async function getStockConflicts(): Promise<ConflictInfo[]> {
     console.error('Failed to fetch stock conflicts:', error);
     throw error;
   }
+}
+
+/**
+ * Deactivate HEADQUARTERS products not found in ONEWMS, restore those that reappear.
+ * CENTER products are NEVER touched.
+ */
+export async function deactivateOrphanProducts(): Promise<{
+  deactivated: number;
+  restored: number;
+  alreadyCorrect: number;
+  onewmsTotal: number;
+  dbTotal: number;
+}> {
+  const result = { deactivated: 0, restored: 0, alreadyCorrect: 0, onewmsTotal: 0, dbTotal: 0 };
+
+  const client = createOnewmsClient();
+
+  // 1. Fetch all ONEWMS product IDs
+  const onewmsProductIds = new Set<string>();
+  for (let page = 1; page <= 20; page++) {
+    const { data: products, total } = await client.getProductList(page, 100);
+    for (const p of products) {
+      if (p.product_id) onewmsProductIds.add(p.product_id);
+    }
+    if (page * 100 >= total) break;
+  }
+  result.onewmsTotal = onewmsProductIds.size;
+
+  // 2. Get all HEADQUARTERS products with onewmsCode
+  const hqProducts = await prisma.product.findMany({
+    where: {
+      productType: 'HEADQUARTERS',
+      onewmsCode: { not: null },
+    },
+    select: { id: true, code: true, name: true, barcode: true, onewmsCode: true, isActive: true },
+  });
+  result.dbTotal = hqProducts.length;
+
+  // 3. Classify and apply
+  for (const product of hqProducts) {
+    const existsInOnewms = onewmsProductIds.has(product.onewmsCode!);
+
+    if (!existsInOnewms && product.isActive) {
+      // Deactivate orphan
+      await prisma.product.update({
+        where: { id: product.id },
+        data: { isActive: false },
+      });
+      await prisma.auditLog.create({
+        data: {
+          userId: null,
+          userName: '시스템',
+          userRole: 'MASTER',
+          action: 'UPDATE',
+          entityType: 'PRODUCT',
+          entityId: product.id,
+          entityName: `${product.barcode} (${product.name})`,
+          before: { isActive: true },
+          after: { isActive: false },
+          diff: { isActive: { from: true, to: false }, reason: 'onewms_orphan' },
+          ipAddress: 'cron',
+          userAgent: 'stock-sync-cron/1.0',
+          description: 'ONEWMS에서 삭제된 본사 상품 자동 비활성화',
+        },
+      });
+      result.deactivated++;
+    } else if (existsInOnewms && !product.isActive) {
+      // Restore reappeared product
+      await prisma.product.update({
+        where: { id: product.id },
+        data: { isActive: true },
+      });
+      await prisma.auditLog.create({
+        data: {
+          userId: null,
+          userName: '시스템',
+          userRole: 'MASTER',
+          action: 'UPDATE',
+          entityType: 'PRODUCT',
+          entityId: product.id,
+          entityName: `${product.barcode} (${product.name})`,
+          before: { isActive: false },
+          after: { isActive: true },
+          diff: { isActive: { from: false, to: true }, reason: 'onewms_restored' },
+          ipAddress: 'cron',
+          userAgent: 'stock-sync-cron/1.0',
+          description: 'ONEWMS에 다시 나타난 본사 상품 자동 복구',
+        },
+      });
+      result.restored++;
+    } else {
+      result.alreadyCorrect++;
+    }
+  }
+
+  console.log(
+    `Orphan check: ${result.deactivated} deactivated, ${result.restored} restored, ${result.alreadyCorrect} correct (ONEWMS: ${result.onewmsTotal}, DB: ${result.dbTotal})`
+  );
+
+  return result;
 }
 
 /**

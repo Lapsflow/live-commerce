@@ -59,6 +59,7 @@ model User {
   proposalCarts ProposalCart[]
   sellerMatches OrderSellerMatching[]
   scanLogs      ScanLog[]
+  auditLogs     AuditLog[]
 }
 
 enum Role {
@@ -83,6 +84,7 @@ model Product {
   barcode     String   @unique
   sellPrice      Int            // 권장 판매가
   supplyPrice    Int            // 공급가
+  originalPrice  Int?           // 원가 (본사: ONEWMS org_price, 센터: 등록자 입력)
   minSellPrice   Int?           // 최소 판매가
   maxSellPrice   Int?           // 최대 판매가
   totalStock    Int      @default(0)
@@ -105,6 +107,11 @@ model Product {
   productType ProductType @default(HEADQUARTERS) // WMS(본사) vs CENTER(센터)
   managedBy   String? // centerId for CENTER products, null for HEADQUARTERS
   isWmsProduct Boolean @default(true) // true for HEADQUARTERS, false for CENTER
+
+  // ✨ 센터 상품 등록 관리
+  category     String?  // 카테고리 (식품/뷰티/생활/가전/패션/기타)
+  registeredBy String?  // 등록한 사용자 ID (CENTER 상품)
+  notes        String?  // 메모
 
   // ✨ PRODUCT-05: Soft delete (비활성화만, hard delete 금지)
   isActive    Boolean  @default(true)
@@ -765,4 +772,59 @@ model NotificationLog {
   @@index([type, createdAt])
   @@index([orderId])
   @@index([broadcastId])
+}
+
+// ──────────────────────── Audit Log ────────────────────────
+
+model AuditLog {
+  id          String   @id @default(cuid())
+
+  // 누가
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userRole    Role?
+  userName    String?
+
+  // 무엇을
+  action      AuditAction
+  entityType  String       // "User" | "Product" | "Order" | "Broadcast" | "Center"
+  entityId    String?
+  entityName  String?
+
+  // 어떻게 바꿨는지
+  before      Json?
+  after       Json?
+  diff        Json?
+
+  // 요청 컨텍스트
+  ipAddress   String?
+  userAgent   String?
+
+  // 설명 및 메타데이터
+  description String?
+  metadata    Json?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([action])
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  SOFT_DELETE
+  RESTORE
+  LOGIN
+  LOGOUT
+  LOGIN_FAILED
+  ROLE_CHANGED
+  PERMISSION_DENIED
+  EXPORT
+  IMPORT
+  PASSWORD_CHANGED
+  STATUS_CHANGED
 }

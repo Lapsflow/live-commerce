@@ -4,6 +4,7 @@ import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { generateCenterBarcodes } from "@/lib/utils/barcode-generator";
 import * as XLSX from "xlsx";
+import { logAudit } from "@/lib/services/audit";
 
 interface ExcelRow {
   상품코드?: string;
@@ -11,17 +12,23 @@ interface ExcelRow {
   바코드?: string;
   판매가?: number | string;
   공급가?: number | string;
+  원가?: number | string;
+  카테고리?: string;
   재고?: number | string;
+  메모?: string;
 }
 
 interface ParsedProduct {
   row: number;
   code: string;
   name: string;
-  barcode: string; // 빈 문자열이면 자동 생성
+  barcode: string;
   sellPrice: number;
   supplyPrice: number;
+  originalPrice: number;
+  category: string;
   stock: number;
+  notes: string;
   error?: string;
 }
 
@@ -43,6 +50,11 @@ export const POST = withRole(
 
     if (!centerId) {
       return errors.badRequest("센터를 선택해주세요");
+    }
+
+    // SUB_MASTER/ADMIN: 본인 센터만 업로드 가능
+    if ((user.role === "SUB_MASTER" || user.role === "ADMIN") && user.centerId && centerId !== user.centerId) {
+      return errors.forbidden("본인 센터의 상품만 업로드할 수 있습니다.");
     }
 
     // 센터 존재 확인
@@ -82,15 +94,19 @@ export const POST = withRole(
       const barcode = String(row["바코드"] ?? "").trim();
       const sellPrice = parseInt(String(row["판매가"] ?? "0")) || 0;
       const supplyPrice = parseInt(String(row["공급가"] ?? "0")) || 0;
+      const originalPrice = parseInt(String(row["원가"] ?? "0")) || 0;
+      const category = String(row["카테고리"] ?? "").trim();
       const stock = parseInt(String(row["재고"] ?? "0")) || 0;
+      const notes = String(row["메모"] ?? "").trim();
 
       let error: string | undefined;
       if (!code) error = "상품코드 누락";
       else if (!name) error = "상품명 누락";
       else if (sellPrice < 0) error = "판매가 음수";
       else if (supplyPrice < 0) error = "공급가 음수";
+      else if (originalPrice < 0) error = "원가 음수";
 
-      return { row: idx + 2, code, name, barcode, sellPrice, supplyPrice, stock, error };
+      return { row: idx + 2, code, name, barcode, sellPrice, supplyPrice, originalPrice, category, stock, notes, error };
     });
 
     // 기본 검증 에러 확인
@@ -161,11 +177,15 @@ export const POST = withRole(
         barcode,
         sellPrice: p.sellPrice,
         supplyPrice: p.supplyPrice,
+        originalPrice: p.originalPrice || null,
+        category: p.category || null,
         totalStock: p.stock,
         stockMujin: p.stock,
         productType: "CENTER" as const,
         managedBy: center.id,
         isWmsProduct: false,
+        registeredBy: user.userId,
+        notes: p.notes || null,
       };
     });
 
@@ -175,6 +195,18 @@ export const POST = withRole(
         prisma.product.create({ data })
       )
     );
+
+    logAudit({
+      userId: user.userId,
+      userRole: user.role,
+      userName: user.name,
+      action: "IMPORT",
+      entityType: "Product",
+      entityName: `${center.name} 상품 일괄등록`,
+      after: { count: created.length, centerId: center.id, centerName: center.name },
+      description: `상품 일괄등록: ${created.length}개 (${center.name})`,
+      request: req,
+    });
 
     return ok({
       message: `${created.length}개 상품이 등록되었습니다`,

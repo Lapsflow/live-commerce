@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { logAudit } from "@/lib/services/audit";
 
 const userUpdateSchema = z.object({
   name: z.string().min(1).optional(),
@@ -126,6 +127,25 @@ export const PUT = withRole(
         },
       });
 
+      // 역할 변경 시 ROLE_CHANGED, 그 외 UPDATE
+      const action = data.role && data.role !== existing.role ? "ROLE_CHANGED" : "UPDATE";
+      const currentUserId = (session.user as any).userId;
+      logAudit({
+        userId: currentUserId,
+        userRole: (session.user as any).role,
+        userName: (session.user as any).name,
+        action,
+        entityType: "User",
+        entityId: userId,
+        entityName: existing.name,
+        before: { name: existing.name, phone: existing.phone, role: existing.role, adminId: existing.adminId, isActive: existing.isActive },
+        after: data as Record<string, unknown>,
+        description: action === "ROLE_CHANGED"
+          ? `역할 변경: ${existing.name} (${existing.role} → ${data.role})`
+          : `사용자 수정: ${existing.name}`,
+        request: req,
+      });
+
       return ok(updatedUser);
     } catch (err: any) {
       if (err instanceof z.ZodError) {
@@ -176,6 +196,19 @@ export const DELETE = withRole(
       // 사용자 삭제
       await prisma.user.delete({
         where: { id: userId },
+      });
+
+      logAudit({
+        userId: currentUserId,
+        userRole: (session.user as any).role,
+        userName: (session.user as any).name,
+        action: "DELETE",
+        entityType: "User",
+        entityId: userId,
+        entityName: existing.name,
+        before: { name: existing.name, role: existing.role, email: existing.email },
+        description: `사용자 삭제: ${existing.name} (${existing.role})`,
+        request: req,
       });
 
       return ok({ message: "사용자가 삭제되었습니다", id: userId });

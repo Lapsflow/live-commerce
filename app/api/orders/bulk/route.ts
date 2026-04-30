@@ -7,6 +7,7 @@ import * as xlsx from "xlsx";
 import { matchOrderItems, type MatchedItem } from "@/lib/services/orders/productMatching";
 import { reserveStock } from "@/lib/services/stock/reservation";
 import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMatching";
+import { logAudit } from "@/lib/services/audit";
 
 const bulkDeleteSchema = z.object({
   orderIds: z.array(z.string()).min(1, "최소 1개의 주문을 선택해야 합니다"),
@@ -178,6 +179,18 @@ export const POST = withRole(
 
         created++;
       }
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "IMPORT",
+        entityType: "Order",
+        entityName: `Excel 발주 업로드`,
+        after: { created, totalItems: items.length },
+        description: `발주 일괄등록: ${created}건 (Excel)`,
+        request: req,
+      });
 
       return ok({
         created,
