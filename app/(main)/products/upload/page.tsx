@@ -71,7 +71,7 @@ export default function ProductUploadPage() {
         const res = await fetch("/api/centers");
         if (res.ok) {
           const data = await res.json();
-          const list = data.centers || [];
+          const list = data.data?.centers || [];
           setCenters(list);
 
           // ADMIN은 자기 센터만

@@ -61,7 +61,7 @@ export default function CenterNewProductPage() {
     if (userRole === "MASTER") {
       fetch("/api/centers")
         .then((r) => r.json())
-        .then((data) => setCenters(data.centers || []))
+        .then((json) => setCenters(json.data?.centers || []))
         .catch(() => {});
     }
   }, [userRole]);

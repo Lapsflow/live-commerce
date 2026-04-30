@@ -52,7 +52,7 @@ export default function NewProductPage() {
         const res = await fetch("/api/centers");
         if (res.ok) {
           const data = await res.json();
-          setCenters(data.centers || []);
+          setCenters(data.data?.centers || []);
         }
       } catch (error) {
         console.error("Failed to load centers:", error);
