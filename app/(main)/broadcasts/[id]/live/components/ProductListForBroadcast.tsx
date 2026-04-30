@@ -70,11 +70,9 @@ export function ProductListForBroadcast({ products, centerId }: ProductListForBr
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-medium truncate">{product.name}</h4>
-                    {isHqProduct && (
-                      <Badge variant="secondary" className="text-xs">
-                        본사
-                      </Badge>
-                    )}
+                    <Badge variant="secondary" className="text-xs">
+                      {isHqProduct ? "본사 (배송·사고: 본사)" : "센터 (배송·사고: 센터)"}
+                    </Badge>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <span>바코드: {product.barcode}</span>

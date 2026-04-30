@@ -51,15 +51,16 @@ model User {
   center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
 
   // Relations
-  orders        Order[]               @relation
-  adminOrders   Order[]               @relation("AdminOrders")
-  broadcasts    Broadcast[]
-  sales         Sale[]
-  proposals     Proposal[]
-  proposalCarts ProposalCart[]
-  sellerMatches OrderSellerMatching[]
-  scanLogs      ScanLog[]
-  auditLogs     AuditLog[]
+  orders             Order[]               @relation
+  adminOrders        Order[]               @relation("AdminOrders")
+  broadcasts         Broadcast[]
+  rejectedBroadcasts Broadcast[]           @relation("BroadcastRejecter")
+  sales              Sale[]
+  proposals          Proposal[]
+  proposalCarts      ProposalCart[]
+  sellerMatches      OrderSellerMatching[]
+  scanLogs           ScanLog[]
+  auditLogs          AuditLog[]
 }
 
 enum Role {
@@ -414,15 +415,18 @@ model Broadcast {
   memo             String?
   requestMemo      String? // 셀러 신청 메모
   rejectionReason  String? // 반려 사유
+  rejectedAt       DateTime? // 반려 시각
+  rejectedBy       String? // 반려한 사용자 ID
   reminder1hSentAt DateTime? // 1시간 전 리마인더 발송 시각 (중복 방지)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
   // Relations
-  seller User    @relation(fields: [sellerId], references: [id])
-  center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
-  sales  Sale[]
-  orders Order[] // ✨ LIVE-03: 매칭된 발주서들
+  seller   User    @relation(fields: [sellerId], references: [id])
+  center   Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
+  rejecter User?   @relation("BroadcastRejecter", fields: [rejectedBy], references: [id], onDelete: SetNull)
+  sales    Sale[]
+  orders   Order[] // ✨ LIVE-03: 매칭된 발주서들
 }
 
 enum BroadcastPlatform {

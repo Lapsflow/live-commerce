@@ -11,6 +11,7 @@ export type NotificationType =
   | "ORDER_SHIPPED"          // ORDER-06: 출고완료 → 셀러
   | "BROADCAST_REQUESTED"    // LIVE-09: 셀러 요청접수 → 센터담당자
   | "BROADCAST_APPROVED"     // LIVE-09: 방송 승인
+  | "BROADCAST_REJECTED"     // LIVE-09: 방송 반려 → 셀러
   | "BROADCAST_CANCELED"     // LIVE-09: 방송 취소
   | "BROADCAST_REMINDER"     // LIVE-09: 방송 당일 일괄 리마인더 (07시)
   | "BROADCAST_REMINDER_1H"  // LIVE-09: 방송 1시간 전 정밀 리마인더 (매시간 cron)

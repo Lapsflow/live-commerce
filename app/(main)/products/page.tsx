@@ -31,17 +31,23 @@ const columns: ColumnDef<Product>[] = [
     header: "상품 유형",
     cell: ({ row }) => {
       const type = row.original.productType;
+      const isHQ = type === "HEADQUARTERS";
       return (
-        <Badge
-          variant="outline"
-          className={
-            type === "HEADQUARTERS"
-              ? "bg-blue-500/10 text-blue-700 dark:text-blue-400"
-              : "bg-purple-500/10 text-purple-700 dark:text-purple-400"
-          }
-        >
-          {type === "HEADQUARTERS" ? "본사 WMS" : "센터 자사몰"}
-        </Badge>
+        <div className="space-y-0.5">
+          <Badge
+            variant="outline"
+            className={
+              isHQ
+                ? "bg-blue-500/10 text-blue-700 dark:text-blue-400"
+                : "bg-purple-500/10 text-purple-700 dark:text-purple-400"
+            }
+          >
+            {isHQ ? "본사 WMS" : "센터 자사몰"}
+          </Badge>
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            {isHQ ? "배송·사고: 본사" : "배송·사고: 센터"}
+          </p>
+        </div>
       );
     },
   },

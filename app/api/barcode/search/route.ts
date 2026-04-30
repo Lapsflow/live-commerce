@@ -3,6 +3,7 @@ import { withRole, AuthUser } from '@/lib/api/middleware';
 import { prisma } from '@/lib/db/prisma';
 import { ok, errors } from '@/lib/api/response';
 import { normBarcode } from '@/lib/utils/barcode';
+import { getActiveCenterIdForSeller } from '@/lib/services/broadcasts';
 
 interface WarehouseStock {
   warehouseId: string;
@@ -31,7 +32,7 @@ interface ProductWithInventory {
  *
  * Returns product information with inventory across all warehouses
  */
-export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, _user: AuthUser) => {
+export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   const { searchParams } = new URL(req.url);
   const barcode = searchParams.get('barcode');
 
@@ -68,6 +69,17 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
 
   if (!product) {
     return errors.notFound('상품');
+  }
+
+  // B-6: 센터 상품 접근 권한 체크 (셀러만)
+  if (user.role === "SELLER" && product.productType === "CENTER" && product.managedBy) {
+    const activeCenterId = await getActiveCenterIdForSeller(user.userId);
+    if (!activeCenterId) {
+      return errors.forbidden("활성 방송이 없어 센터 상품에 접근할 수 없습니다");
+    }
+    if (activeCenterId !== product.managedBy) {
+      return errors.forbidden("현재 방송 센터와 다른 센터의 상품에는 접근할 수 없습니다");
+    }
   }
 
   const totalStock = product.warehouseInventories.reduce(

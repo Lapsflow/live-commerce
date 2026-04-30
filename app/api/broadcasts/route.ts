@@ -10,6 +10,7 @@ import { logAudit } from "@/lib/services/audit";
 const broadcastSchema = z.object({
   code: z.string().min(1).max(50),
   sellerId: z.string().cuid(),
+  centerId: z.string().cuid().optional(),
   platform: z.enum(["GRIP", "CLME", "YOUTUBE", "TIKTOK", "BAND", "OTHER"]),
   scheduledAt: z.string().datetime(),
   startedAt: z.string().datetime().optional(),
@@ -87,6 +88,7 @@ export const POST = withRole(
         data: {
           code: data.code,
           sellerId: data.sellerId,
+          centerId: data.centerId || undefined,
           platform: data.platform,
           scheduledAt: new Date(data.scheduledAt),
           startedAt: data.startedAt ? new Date(data.startedAt) : undefined,

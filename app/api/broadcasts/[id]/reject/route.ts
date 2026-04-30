@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { sendNotification } from "@/lib/services/notifications";
 import { z } from "zod";
 import { logAudit } from "@/lib/services/audit";
 
@@ -12,6 +13,7 @@ const rejectSchema = z.object({
 /**
  * PUT /api/broadcasts/:id/reject
  * REQUESTED → REJECTED (관리자/마스터 반려)
+ * B-3: rejectedAt, rejectedBy 기록 + 셀러 알림
  */
 export const PUT = withRole(
   ["MASTER", "SUB_MASTER", "ADMIN"],
@@ -29,6 +31,9 @@ export const PUT = withRole(
 
     const broadcast = await prisma.broadcast.findUnique({
       where: { id: broadcastId },
+      include: {
+        seller: { select: { id: true, name: true, phone: true, email: true } },
+      },
     });
 
     if (!broadcast) {
@@ -39,13 +44,39 @@ export const PUT = withRole(
       return errors.badRequest("신청 대기 상태의 방송만 반려할 수 있습니다");
     }
 
+    // B-3: ADMIN 센터 소유권 체크 — ADMIN은 자기 센터 방송만 반려 가능
+    if (user.role === "ADMIN" && broadcast.centerId && user.centerId) {
+      if (broadcast.centerId !== user.centerId) {
+        return errors.forbidden("다른 센터의 방송은 반려할 수 없습니다");
+      }
+    }
+
     const updated = await prisma.broadcast.update({
       where: { id: broadcastId },
       data: {
         status: "REJECTED",
         rejectionReason: reason,
+        rejectedAt: new Date(),
+        rejectedBy: user.userId,
       },
     });
+
+    // B-3: 셀러에게 반려 알림 (fire-and-forget)
+    if (broadcast.seller?.phone) {
+      sendNotification({
+        type: "BROADCAST_REJECTED",
+        recipient: {
+          name: broadcast.seller.name,
+          phone: broadcast.seller.phone,
+          email: broadcast.seller.email || undefined,
+        },
+        variables: {
+          broadcastTitle: broadcast.code,
+          rejectionReason: reason,
+        },
+        broadcastId,
+      }).catch((err) => console.error("[BROADCAST_REJECTED_NOTIF]", err));
+    }
 
     logAudit({
       userId: user.userId,
@@ -56,7 +87,7 @@ export const PUT = withRole(
       entityId: broadcastId,
       entityName: broadcast.code,
       before: { status: "REQUESTED" },
-      after: { status: "REJECTED", rejectionReason: reason },
+      after: { status: "REJECTED", rejectionReason: reason, rejectedBy: user.userId },
       description: `방송 반려: ${broadcast.code} (${reason})`,
       request: req,
     });

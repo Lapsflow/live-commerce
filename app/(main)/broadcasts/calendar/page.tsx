@@ -112,22 +112,22 @@ export default function BroadcastCalendarPage() {
   const [requestTime, setRequestTime] = useState("10:00");
   const [requestPlatform, setRequestPlatform] = useState("GRIP");
   const [requestMemo, setRequestMemo] = useState("");
+  const [requestCenterId, setRequestCenterId] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const userRole = (session?.user as any)?.role;
   const userId = (session?.user as any)?.userId;
+  const userCenterId = (session?.user as any)?.centerId;
   const isMaster = userRole === "MASTER" || userRole === "SUB_MASTER";
 
-  // 센터 목록 로드 (마스터만)
+  // 센터 목록 로드 (마스터만 — 필터 + 방송 신청 센터 선택용)
   useEffect(() => {
     if (isMaster) {
       fetch("/api/centers")
         .then((r) => r.json())
-        .then((data) => {
-          if (data.data) {
-            const list = Array.isArray(data.data) ? data.data : data.data.data || [];
-            setCenters(list);
-          }
+        .then((json) => {
+          const list = json.data?.centers || (Array.isArray(json.data) ? json.data : []);
+          setCenters(list);
         })
         .catch(() => {});
     }
@@ -206,8 +206,12 @@ export default function BroadcastCalendarPage() {
     setRequestTime("10:00");
     setRequestPlatform("GRIP");
     setRequestMemo("");
+    setRequestCenterId(isMaster ? "" : userCenterId || "");
     setRequestOpen(true);
   };
+
+  // 방송 신청 시 사용할 effectiveCenterId
+  const effectiveRequestCenterId = isMaster ? requestCenterId : userCenterId;
 
   const handleSubmitRequest = async () => {
     if (!requestDate || !requestTime || !requestPlatform) return;
@@ -227,6 +231,7 @@ export default function BroadcastCalendarPage() {
           scheduledAt,
           status: "REQUESTED",
           requestMemo: requestMemo || undefined,
+          centerId: effectiveRequestCenterId || undefined,
         }),
       });
 
@@ -301,6 +306,7 @@ export default function BroadcastCalendarPage() {
               setRequestTime("10:00");
               setRequestPlatform("GRIP");
               setRequestMemo("");
+              setRequestCenterId(isMaster ? "" : userCenterId || "");
               setRequestOpen(true);
             }}
           >
@@ -511,6 +517,24 @@ export default function BroadcastCalendarPage() {
                 </SelectContent>
               </Select>
             </div>
+            {/* B-2: 센터 선택 */}
+            {isMaster && centers.length > 0 && (
+              <div className="space-y-2">
+                <Label>센터 (선택)</Label>
+                <Select value={requestCenterId} onValueChange={(v) => setRequestCenterId(v || "")}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="센터를 선택하세요" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {centers.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.code} - {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div className="space-y-2">
               <Label>메모 (선택)</Label>
               <Textarea

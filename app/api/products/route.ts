@@ -61,6 +61,10 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (
   let authFilter: Record<string, unknown> = {};
   if (user.role === "SELLER") {
     // 셀러: 본인 센터 CENTER 상품만 (가격 0원 제외)
+    // B-7: centerId 없는 셀러는 상품 접근 불가 (프라이버시 보호)
+    if (!user.centerId) {
+      return paginated([], 0, 0);
+    }
     authFilter = {
       productType: "CENTER",
       managedBy: user.centerId,

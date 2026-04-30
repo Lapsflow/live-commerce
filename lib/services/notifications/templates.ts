@@ -77,6 +77,17 @@ export const TEMPLATES: Record<NotificationType, Template> = {
       `방송이 승인되었습니다. 준비를 진행해 주세요.`,
   },
 
+  // ── LIVE-09: 방송 반려 → 셀러 ──
+  BROADCAST_REJECTED: {
+    templateId: "TPL_BROADCAST_REJECTED",
+    description: "방송 반려 알림 → 셀러",
+    buildMessage: (v) =>
+      `[슈퍼무진] 방송 반려 안내\n\n` +
+      `방송명: ${v.broadcastTitle || "-"}\n` +
+      `반려 사유: ${v.rejectionReason || "사유 없음"}\n` +
+      `일정을 조정하여 재신청할 수 있습니다.`,
+  },
+
   // ── LIVE-09: 방송 취소 ──
   BROADCAST_CANCELED: {
     templateId: "TPL_BROADCAST_CANCELED",

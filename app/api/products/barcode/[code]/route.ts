@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db/prisma";
 import { createOnewmsClient } from "@/lib/onewms";
 import { serializeProduct } from "@/lib/services/products/serializeProduct";
 import { canProductBeBroadcast } from "@/lib/services/products/canBroadcast";
+import { getActiveCenterIdForSeller } from "@/lib/services/broadcasts";
 
 type Params = Promise<{ code: string }>;
 
@@ -49,6 +50,18 @@ export const GET = withRole(
     const broadcastEligible = canProductBeBroadcast(product);
     if (!broadcastEligible && user.role === "SELLER") {
       return errors.badRequest("이 상품은 아직 가격이 설정되지 않아 방송할 수 없습니다");
+    }
+
+    // B-6: 센터 상품 접근 권한 체크 (셀러만)
+    // CENTER 상품은 셀러의 활성 방송 센터와 일치할 때만 접근 가능
+    if (user.role === "SELLER" && product.productType === "CENTER" && product.managedBy) {
+      const activeCenterId = await getActiveCenterIdForSeller(user.userId);
+      if (!activeCenterId) {
+        return errors.forbidden("활성 방송이 없어 센터 상품에 접근할 수 없습니다");
+      }
+      if (activeCenterId !== product.managedBy) {
+        return errors.forbidden("현재 방송 센터와 다른 센터의 상품에는 접근할 수 없습니다");
+      }
     }
 
     // 2. ONEWMS 실시간 재고 조회 (onewmsCode 있을 때만)

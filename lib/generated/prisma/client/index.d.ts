@@ -3356,6 +3356,7 @@ export namespace Prisma {
     orders: number
     adminOrders: number
     broadcasts: number
+    rejectedBroadcasts: number
     sales: number
     proposals: number
     proposalCarts: number
@@ -3369,6 +3370,7 @@ export namespace Prisma {
     orders?: boolean | UserCountOutputTypeCountOrdersArgs
     adminOrders?: boolean | UserCountOutputTypeCountAdminOrdersArgs
     broadcasts?: boolean | UserCountOutputTypeCountBroadcastsArgs
+    rejectedBroadcasts?: boolean | UserCountOutputTypeCountRejectedBroadcastsArgs
     sales?: boolean | UserCountOutputTypeCountSalesArgs
     proposals?: boolean | UserCountOutputTypeCountProposalsArgs
     proposalCarts?: boolean | UserCountOutputTypeCountProposalCartsArgs
@@ -3413,6 +3415,13 @@ export namespace Prisma {
    * UserCountOutputType without action
    */
   export type UserCountOutputTypeCountBroadcastsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BroadcastWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRejectedBroadcastsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BroadcastWhereInput
   }
 
@@ -4145,6 +4154,7 @@ export namespace Prisma {
     orders?: boolean | User$ordersArgs<ExtArgs>
     adminOrders?: boolean | User$adminOrdersArgs<ExtArgs>
     broadcasts?: boolean | User$broadcastsArgs<ExtArgs>
+    rejectedBroadcasts?: boolean | User$rejectedBroadcastsArgs<ExtArgs>
     sales?: boolean | User$salesArgs<ExtArgs>
     proposals?: boolean | User$proposalsArgs<ExtArgs>
     proposalCarts?: boolean | User$proposalCartsArgs<ExtArgs>
@@ -4238,6 +4248,7 @@ export namespace Prisma {
     orders?: boolean | User$ordersArgs<ExtArgs>
     adminOrders?: boolean | User$adminOrdersArgs<ExtArgs>
     broadcasts?: boolean | User$broadcastsArgs<ExtArgs>
+    rejectedBroadcasts?: boolean | User$rejectedBroadcastsArgs<ExtArgs>
     sales?: boolean | User$salesArgs<ExtArgs>
     proposals?: boolean | User$proposalsArgs<ExtArgs>
     proposalCarts?: boolean | User$proposalCartsArgs<ExtArgs>
@@ -4264,6 +4275,7 @@ export namespace Prisma {
       orders: Prisma.$OrderPayload<ExtArgs>[]
       adminOrders: Prisma.$OrderPayload<ExtArgs>[]
       broadcasts: Prisma.$BroadcastPayload<ExtArgs>[]
+      rejectedBroadcasts: Prisma.$BroadcastPayload<ExtArgs>[]
       sales: Prisma.$SalePayload<ExtArgs>[]
       proposals: Prisma.$ProposalPayload<ExtArgs>[]
       proposalCarts: Prisma.$ProposalCartPayload<ExtArgs>[]
@@ -4693,6 +4705,7 @@ export namespace Prisma {
     orders<T extends User$ordersArgs<ExtArgs> = {}>(args?: Subset<T, User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     adminOrders<T extends User$adminOrdersArgs<ExtArgs> = {}>(args?: Subset<T, User$adminOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     broadcasts<T extends User$broadcastsArgs<ExtArgs> = {}>(args?: Subset<T, User$broadcastsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BroadcastPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    rejectedBroadcasts<T extends User$rejectedBroadcastsArgs<ExtArgs> = {}>(args?: Subset<T, User$rejectedBroadcastsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BroadcastPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sales<T extends User$salesArgs<ExtArgs> = {}>(args?: Subset<T, User$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     proposals<T extends User$proposalsArgs<ExtArgs> = {}>(args?: Subset<T, User$proposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     proposalCarts<T extends User$proposalCartsArgs<ExtArgs> = {}>(args?: Subset<T, User$proposalCartsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalCartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5263,6 +5276,30 @@ export namespace Prisma {
    * User.broadcasts
    */
   export type User$broadcastsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Broadcast
+     */
+    select?: BroadcastSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Broadcast
+     */
+    omit?: BroadcastOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BroadcastInclude<ExtArgs> | null
+    where?: BroadcastWhereInput
+    orderBy?: BroadcastOrderByWithRelationInput | BroadcastOrderByWithRelationInput[]
+    cursor?: BroadcastWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BroadcastScalarFieldEnum | BroadcastScalarFieldEnum[]
+  }
+
+  /**
+   * User.rejectedBroadcasts
+   */
+  export type User$rejectedBroadcastsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Broadcast
      */
@@ -14939,6 +14976,8 @@ export namespace Prisma {
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
+    rejectedAt: Date | null
+    rejectedBy: string | null
     reminder1hSentAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -14957,6 +14996,8 @@ export namespace Prisma {
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
+    rejectedAt: Date | null
+    rejectedBy: string | null
     reminder1hSentAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -14975,6 +15016,8 @@ export namespace Prisma {
     memo: number
     requestMemo: number
     rejectionReason: number
+    rejectedAt: number
+    rejectedBy: number
     reminder1hSentAt: number
     createdAt: number
     updatedAt: number
@@ -14995,6 +15038,8 @@ export namespace Prisma {
     memo?: true
     requestMemo?: true
     rejectionReason?: true
+    rejectedAt?: true
+    rejectedBy?: true
     reminder1hSentAt?: true
     createdAt?: true
     updatedAt?: true
@@ -15013,6 +15058,8 @@ export namespace Prisma {
     memo?: true
     requestMemo?: true
     rejectionReason?: true
+    rejectedAt?: true
+    rejectedBy?: true
     reminder1hSentAt?: true
     createdAt?: true
     updatedAt?: true
@@ -15031,6 +15078,8 @@ export namespace Prisma {
     memo?: true
     requestMemo?: true
     rejectionReason?: true
+    rejectedAt?: true
+    rejectedBy?: true
     reminder1hSentAt?: true
     createdAt?: true
     updatedAt?: true
@@ -15122,6 +15171,8 @@ export namespace Prisma {
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
+    rejectedAt: Date | null
+    rejectedBy: string | null
     reminder1hSentAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -15157,11 +15208,14 @@ export namespace Prisma {
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
+    rejectedAt?: boolean
+    rejectedBy?: boolean
     reminder1hSentAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
+    rejecter?: boolean | Broadcast$rejecterArgs<ExtArgs>
     sales?: boolean | Broadcast$salesArgs<ExtArgs>
     orders?: boolean | Broadcast$ordersArgs<ExtArgs>
     _count?: boolean | BroadcastCountOutputTypeDefaultArgs<ExtArgs>
@@ -15180,11 +15234,14 @@ export namespace Prisma {
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
+    rejectedAt?: boolean
+    rejectedBy?: boolean
     reminder1hSentAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
+    rejecter?: boolean | Broadcast$rejecterArgs<ExtArgs>
   }, ExtArgs["result"]["broadcast"]>
 
   export type BroadcastSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -15200,11 +15257,14 @@ export namespace Prisma {
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
+    rejectedAt?: boolean
+    rejectedBy?: boolean
     reminder1hSentAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
+    rejecter?: boolean | Broadcast$rejecterArgs<ExtArgs>
   }, ExtArgs["result"]["broadcast"]>
 
   export type BroadcastSelectScalar = {
@@ -15220,15 +15280,18 @@ export namespace Prisma {
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
+    rejectedAt?: boolean
+    rejectedBy?: boolean
     reminder1hSentAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type BroadcastOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "sellerId" | "centerId" | "platform" | "scheduledAt" | "startedAt" | "endedAt" | "status" | "memo" | "requestMemo" | "rejectionReason" | "reminder1hSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["broadcast"]>
+  export type BroadcastOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "sellerId" | "centerId" | "platform" | "scheduledAt" | "startedAt" | "endedAt" | "status" | "memo" | "requestMemo" | "rejectionReason" | "rejectedAt" | "rejectedBy" | "reminder1hSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["broadcast"]>
   export type BroadcastInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
+    rejecter?: boolean | Broadcast$rejecterArgs<ExtArgs>
     sales?: boolean | Broadcast$salesArgs<ExtArgs>
     orders?: boolean | Broadcast$ordersArgs<ExtArgs>
     _count?: boolean | BroadcastCountOutputTypeDefaultArgs<ExtArgs>
@@ -15236,10 +15299,12 @@ export namespace Prisma {
   export type BroadcastIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
+    rejecter?: boolean | Broadcast$rejecterArgs<ExtArgs>
   }
   export type BroadcastIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
+    rejecter?: boolean | Broadcast$rejecterArgs<ExtArgs>
   }
 
   export type $BroadcastPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15247,6 +15312,7 @@ export namespace Prisma {
     objects: {
       seller: Prisma.$UserPayload<ExtArgs>
       center: Prisma.$CenterPayload<ExtArgs> | null
+      rejecter: Prisma.$UserPayload<ExtArgs> | null
       sales: Prisma.$SalePayload<ExtArgs>[]
       orders: Prisma.$OrderPayload<ExtArgs>[]
     }
@@ -15263,6 +15329,8 @@ export namespace Prisma {
       memo: string | null
       requestMemo: string | null
       rejectionReason: string | null
+      rejectedAt: Date | null
+      rejectedBy: string | null
       reminder1hSentAt: Date | null
       createdAt: Date
       updatedAt: Date
@@ -15662,6 +15730,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     seller<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     center<T extends Broadcast$centerArgs<ExtArgs> = {}>(args?: Subset<T, Broadcast$centerArgs<ExtArgs>>): Prisma__CenterClient<$Result.GetResult<Prisma.$CenterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    rejecter<T extends Broadcast$rejecterArgs<ExtArgs> = {}>(args?: Subset<T, Broadcast$rejecterArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     sales<T extends Broadcast$salesArgs<ExtArgs> = {}>(args?: Subset<T, Broadcast$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     orders<T extends Broadcast$ordersArgs<ExtArgs> = {}>(args?: Subset<T, Broadcast$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -15705,6 +15774,8 @@ export namespace Prisma {
     readonly memo: FieldRef<"Broadcast", 'String'>
     readonly requestMemo: FieldRef<"Broadcast", 'String'>
     readonly rejectionReason: FieldRef<"Broadcast", 'String'>
+    readonly rejectedAt: FieldRef<"Broadcast", 'DateTime'>
+    readonly rejectedBy: FieldRef<"Broadcast", 'String'>
     readonly reminder1hSentAt: FieldRef<"Broadcast", 'DateTime'>
     readonly createdAt: FieldRef<"Broadcast", 'DateTime'>
     readonly updatedAt: FieldRef<"Broadcast", 'DateTime'>
@@ -16125,6 +16196,25 @@ export namespace Prisma {
      */
     include?: CenterInclude<ExtArgs> | null
     where?: CenterWhereInput
+  }
+
+  /**
+   * Broadcast.rejecter
+   */
+  export type Broadcast$rejecterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -36061,6 +36151,8 @@ export namespace Prisma {
     memo: 'memo',
     requestMemo: 'requestMemo',
     rejectionReason: 'rejectionReason',
+    rejectedAt: 'rejectedAt',
+    rejectedBy: 'rejectedBy',
     reminder1hSentAt: 'reminder1hSentAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -36701,6 +36793,7 @@ export namespace Prisma {
     orders?: OrderListRelationFilter
     adminOrders?: OrderListRelationFilter
     broadcasts?: BroadcastListRelationFilter
+    rejectedBroadcasts?: BroadcastListRelationFilter
     sales?: SaleListRelationFilter
     proposals?: ProposalListRelationFilter
     proposalCarts?: ProposalCartListRelationFilter
@@ -36737,6 +36830,7 @@ export namespace Prisma {
     orders?: OrderOrderByRelationAggregateInput
     adminOrders?: OrderOrderByRelationAggregateInput
     broadcasts?: BroadcastOrderByRelationAggregateInput
+    rejectedBroadcasts?: BroadcastOrderByRelationAggregateInput
     sales?: SaleOrderByRelationAggregateInput
     proposals?: ProposalOrderByRelationAggregateInput
     proposalCarts?: ProposalCartOrderByRelationAggregateInput
@@ -36776,6 +36870,7 @@ export namespace Prisma {
     orders?: OrderListRelationFilter
     adminOrders?: OrderListRelationFilter
     broadcasts?: BroadcastListRelationFilter
+    rejectedBroadcasts?: BroadcastListRelationFilter
     sales?: SaleListRelationFilter
     proposals?: ProposalListRelationFilter
     proposalCarts?: ProposalCartListRelationFilter
@@ -37751,11 +37846,14 @@ export namespace Prisma {
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
+    rejectedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
+    rejectedBy?: StringNullableFilter<"Broadcast"> | string | null
     reminder1hSentAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
+    rejecter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     sales?: SaleListRelationFilter
     orders?: OrderListRelationFilter
   }
@@ -37773,11 +37871,14 @@ export namespace Prisma {
     memo?: SortOrderInput | SortOrder
     requestMemo?: SortOrderInput | SortOrder
     rejectionReason?: SortOrderInput | SortOrder
+    rejectedAt?: SortOrderInput | SortOrder
+    rejectedBy?: SortOrderInput | SortOrder
     reminder1hSentAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     seller?: UserOrderByWithRelationInput
     center?: CenterOrderByWithRelationInput
+    rejecter?: UserOrderByWithRelationInput
     sales?: SaleOrderByRelationAggregateInput
     orders?: OrderOrderByRelationAggregateInput
   }
@@ -37798,11 +37899,14 @@ export namespace Prisma {
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
+    rejectedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
+    rejectedBy?: StringNullableFilter<"Broadcast"> | string | null
     reminder1hSentAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
+    rejecter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     sales?: SaleListRelationFilter
     orders?: OrderListRelationFilter
   }, "id" | "code">
@@ -37820,6 +37924,8 @@ export namespace Prisma {
     memo?: SortOrderInput | SortOrder
     requestMemo?: SortOrderInput | SortOrder
     rejectionReason?: SortOrderInput | SortOrder
+    rejectedAt?: SortOrderInput | SortOrder
+    rejectedBy?: SortOrderInput | SortOrder
     reminder1hSentAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -37844,6 +37950,8 @@ export namespace Prisma {
     memo?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
+    rejectedAt?: DateTimeNullableWithAggregatesFilter<"Broadcast"> | Date | string | null
+    rejectedBy?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     reminder1hSentAt?: DateTimeNullableWithAggregatesFilter<"Broadcast"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Broadcast"> | Date | string
@@ -39282,6 +39390,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -39316,6 +39425,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -39350,6 +39460,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -39384,6 +39495,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -40517,11 +40629,13 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
     center?: CenterCreateNestedOneWithoutBroadcastsInput
+    rejecter?: UserCreateNestedOneWithoutRejectedBroadcastsInput
     sales?: SaleCreateNestedManyWithoutBroadcastInput
     orders?: OrderCreateNestedManyWithoutBroadcastInput
   }
@@ -40539,6 +40653,8 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    rejectedBy?: string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40557,11 +40673,13 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
+    rejecter?: UserUpdateOneWithoutRejectedBroadcastsNestedInput
     sales?: SaleUpdateManyWithoutBroadcastNestedInput
     orders?: OrderUpdateManyWithoutBroadcastNestedInput
   }
@@ -40579,6 +40697,8 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40599,6 +40719,8 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    rejectedBy?: string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40615,6 +40737,7 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40633,6 +40756,8 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43394,6 +43519,8 @@ export namespace Prisma {
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
+    rejectedAt?: SortOrder
+    rejectedBy?: SortOrder
     reminder1hSentAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -43412,6 +43539,8 @@ export namespace Prisma {
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
+    rejectedAt?: SortOrder
+    rejectedBy?: SortOrder
     reminder1hSentAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -43430,6 +43559,8 @@ export namespace Prisma {
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
+    rejectedAt?: SortOrder
+    rejectedBy?: SortOrder
     reminder1hSentAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -44484,6 +44615,13 @@ export namespace Prisma {
     connect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
   }
 
+  export type BroadcastCreateNestedManyWithoutRejecterInput = {
+    create?: XOR<BroadcastCreateWithoutRejecterInput, BroadcastUncheckedCreateWithoutRejecterInput> | BroadcastCreateWithoutRejecterInput[] | BroadcastUncheckedCreateWithoutRejecterInput[]
+    connectOrCreate?: BroadcastCreateOrConnectWithoutRejecterInput | BroadcastCreateOrConnectWithoutRejecterInput[]
+    createMany?: BroadcastCreateManyRejecterInputEnvelope
+    connect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+  }
+
   export type SaleCreateNestedManyWithoutSellerInput = {
     create?: XOR<SaleCreateWithoutSellerInput, SaleUncheckedCreateWithoutSellerInput> | SaleCreateWithoutSellerInput[] | SaleUncheckedCreateWithoutSellerInput[]
     connectOrCreate?: SaleCreateOrConnectWithoutSellerInput | SaleCreateOrConnectWithoutSellerInput[]
@@ -44551,6 +44689,13 @@ export namespace Prisma {
     create?: XOR<BroadcastCreateWithoutSellerInput, BroadcastUncheckedCreateWithoutSellerInput> | BroadcastCreateWithoutSellerInput[] | BroadcastUncheckedCreateWithoutSellerInput[]
     connectOrCreate?: BroadcastCreateOrConnectWithoutSellerInput | BroadcastCreateOrConnectWithoutSellerInput[]
     createMany?: BroadcastCreateManySellerInputEnvelope
+    connect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+  }
+
+  export type BroadcastUncheckedCreateNestedManyWithoutRejecterInput = {
+    create?: XOR<BroadcastCreateWithoutRejecterInput, BroadcastUncheckedCreateWithoutRejecterInput> | BroadcastCreateWithoutRejecterInput[] | BroadcastUncheckedCreateWithoutRejecterInput[]
+    connectOrCreate?: BroadcastCreateOrConnectWithoutRejecterInput | BroadcastCreateOrConnectWithoutRejecterInput[]
+    createMany?: BroadcastCreateManyRejecterInputEnvelope
     connect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
   }
 
@@ -44728,6 +44873,20 @@ export namespace Prisma {
     deleteMany?: BroadcastScalarWhereInput | BroadcastScalarWhereInput[]
   }
 
+  export type BroadcastUpdateManyWithoutRejecterNestedInput = {
+    create?: XOR<BroadcastCreateWithoutRejecterInput, BroadcastUncheckedCreateWithoutRejecterInput> | BroadcastCreateWithoutRejecterInput[] | BroadcastUncheckedCreateWithoutRejecterInput[]
+    connectOrCreate?: BroadcastCreateOrConnectWithoutRejecterInput | BroadcastCreateOrConnectWithoutRejecterInput[]
+    upsert?: BroadcastUpsertWithWhereUniqueWithoutRejecterInput | BroadcastUpsertWithWhereUniqueWithoutRejecterInput[]
+    createMany?: BroadcastCreateManyRejecterInputEnvelope
+    set?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+    disconnect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+    delete?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+    connect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+    update?: BroadcastUpdateWithWhereUniqueWithoutRejecterInput | BroadcastUpdateWithWhereUniqueWithoutRejecterInput[]
+    updateMany?: BroadcastUpdateManyWithWhereWithoutRejecterInput | BroadcastUpdateManyWithWhereWithoutRejecterInput[]
+    deleteMany?: BroadcastScalarWhereInput | BroadcastScalarWhereInput[]
+  }
+
   export type SaleUpdateManyWithoutSellerNestedInput = {
     create?: XOR<SaleCreateWithoutSellerInput, SaleUncheckedCreateWithoutSellerInput> | SaleCreateWithoutSellerInput[] | SaleUncheckedCreateWithoutSellerInput[]
     connectOrCreate?: SaleCreateOrConnectWithoutSellerInput | SaleCreateOrConnectWithoutSellerInput[]
@@ -44865,6 +45024,20 @@ export namespace Prisma {
     connect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
     update?: BroadcastUpdateWithWhereUniqueWithoutSellerInput | BroadcastUpdateWithWhereUniqueWithoutSellerInput[]
     updateMany?: BroadcastUpdateManyWithWhereWithoutSellerInput | BroadcastUpdateManyWithWhereWithoutSellerInput[]
+    deleteMany?: BroadcastScalarWhereInput | BroadcastScalarWhereInput[]
+  }
+
+  export type BroadcastUncheckedUpdateManyWithoutRejecterNestedInput = {
+    create?: XOR<BroadcastCreateWithoutRejecterInput, BroadcastUncheckedCreateWithoutRejecterInput> | BroadcastCreateWithoutRejecterInput[] | BroadcastUncheckedCreateWithoutRejecterInput[]
+    connectOrCreate?: BroadcastCreateOrConnectWithoutRejecterInput | BroadcastCreateOrConnectWithoutRejecterInput[]
+    upsert?: BroadcastUpsertWithWhereUniqueWithoutRejecterInput | BroadcastUpsertWithWhereUniqueWithoutRejecterInput[]
+    createMany?: BroadcastCreateManyRejecterInputEnvelope
+    set?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+    disconnect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+    delete?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+    connect?: BroadcastWhereUniqueInput | BroadcastWhereUniqueInput[]
+    update?: BroadcastUpdateWithWhereUniqueWithoutRejecterInput | BroadcastUpdateWithWhereUniqueWithoutRejecterInput[]
+    updateMany?: BroadcastUpdateManyWithWhereWithoutRejecterInput | BroadcastUpdateManyWithWhereWithoutRejecterInput[]
     deleteMany?: BroadcastScalarWhereInput | BroadcastScalarWhereInput[]
   }
 
@@ -46072,6 +46245,12 @@ export namespace Prisma {
     connect?: CenterWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutRejectedBroadcastsInput = {
+    create?: XOR<UserCreateWithoutRejectedBroadcastsInput, UserUncheckedCreateWithoutRejectedBroadcastsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRejectedBroadcastsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type SaleCreateNestedManyWithoutBroadcastInput = {
     create?: XOR<SaleCreateWithoutBroadcastInput, SaleUncheckedCreateWithoutBroadcastInput> | SaleCreateWithoutBroadcastInput[] | SaleUncheckedCreateWithoutBroadcastInput[]
     connectOrCreate?: SaleCreateOrConnectWithoutBroadcastInput | SaleCreateOrConnectWithoutBroadcastInput[]
@@ -46124,6 +46303,16 @@ export namespace Prisma {
     delete?: CenterWhereInput | boolean
     connect?: CenterWhereUniqueInput
     update?: XOR<XOR<CenterUpdateToOneWithWhereWithoutBroadcastsInput, CenterUpdateWithoutBroadcastsInput>, CenterUncheckedUpdateWithoutBroadcastsInput>
+  }
+
+  export type UserUpdateOneWithoutRejectedBroadcastsNestedInput = {
+    create?: XOR<UserCreateWithoutRejectedBroadcastsInput, UserUncheckedCreateWithoutRejectedBroadcastsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRejectedBroadcastsInput
+    upsert?: UserUpsertWithoutRejectedBroadcastsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRejectedBroadcastsInput, UserUpdateWithoutRejectedBroadcastsInput>, UserUncheckedUpdateWithoutRejectedBroadcastsInput>
   }
 
   export type SaleUpdateManyWithoutBroadcastNestedInput = {
@@ -47220,6 +47409,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -47253,6 +47443,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -47291,6 +47482,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -47324,6 +47516,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -47578,10 +47771,12 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     center?: CenterCreateNestedOneWithoutBroadcastsInput
+    rejecter?: UserCreateNestedOneWithoutRejectedBroadcastsInput
     sales?: SaleCreateNestedManyWithoutBroadcastInput
     orders?: OrderCreateNestedManyWithoutBroadcastInput
   }
@@ -47598,6 +47793,8 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    rejectedBy?: string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -47612,6 +47809,58 @@ export namespace Prisma {
 
   export type BroadcastCreateManySellerInputEnvelope = {
     data: BroadcastCreateManySellerInput | BroadcastCreateManySellerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BroadcastCreateWithoutRejecterInput = {
+    id?: string
+    code: string
+    platform: $Enums.BroadcastPlatform
+    scheduledAt: Date | string
+    startedAt?: Date | string | null
+    endedAt?: Date | string | null
+    status?: $Enums.BroadcastStatus
+    memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    reminder1hSentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    seller: UserCreateNestedOneWithoutBroadcastsInput
+    center?: CenterCreateNestedOneWithoutBroadcastsInput
+    sales?: SaleCreateNestedManyWithoutBroadcastInput
+    orders?: OrderCreateNestedManyWithoutBroadcastInput
+  }
+
+  export type BroadcastUncheckedCreateWithoutRejecterInput = {
+    id?: string
+    code: string
+    sellerId: string
+    centerId?: string | null
+    platform: $Enums.BroadcastPlatform
+    scheduledAt: Date | string
+    startedAt?: Date | string | null
+    endedAt?: Date | string | null
+    status?: $Enums.BroadcastStatus
+    memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    reminder1hSentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sales?: SaleUncheckedCreateNestedManyWithoutBroadcastInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBroadcastInput
+  }
+
+  export type BroadcastCreateOrConnectWithoutRejecterInput = {
+    where: BroadcastWhereUniqueInput
+    create: XOR<BroadcastCreateWithoutRejecterInput, BroadcastUncheckedCreateWithoutRejecterInput>
+  }
+
+  export type BroadcastCreateManyRejecterInputEnvelope = {
+    data: BroadcastCreateManyRejecterInput | BroadcastCreateManyRejecterInput[]
     skipDuplicates?: boolean
   }
 
@@ -47885,6 +48134,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -47918,6 +48168,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -48129,9 +48380,27 @@ export namespace Prisma {
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
+    rejectedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
+    rejectedBy?: StringNullableFilter<"Broadcast"> | string | null
     reminder1hSentAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     createdAt?: DateTimeFilter<"Broadcast"> | Date | string
     updatedAt?: DateTimeFilter<"Broadcast"> | Date | string
+  }
+
+  export type BroadcastUpsertWithWhereUniqueWithoutRejecterInput = {
+    where: BroadcastWhereUniqueInput
+    update: XOR<BroadcastUpdateWithoutRejecterInput, BroadcastUncheckedUpdateWithoutRejecterInput>
+    create: XOR<BroadcastCreateWithoutRejecterInput, BroadcastUncheckedCreateWithoutRejecterInput>
+  }
+
+  export type BroadcastUpdateWithWhereUniqueWithoutRejecterInput = {
+    where: BroadcastWhereUniqueInput
+    data: XOR<BroadcastUpdateWithoutRejecterInput, BroadcastUncheckedUpdateWithoutRejecterInput>
+  }
+
+  export type BroadcastUpdateManyWithWhereWithoutRejecterInput = {
+    where: BroadcastScalarWhereInput
+    data: XOR<BroadcastUpdateManyMutationInput, BroadcastUncheckedUpdateManyWithoutRejecterInput>
   }
 
   export type SaleUpsertWithWhereUniqueWithoutSellerInput = {
@@ -49011,6 +49280,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -49044,6 +49314,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -49187,10 +49458,12 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
+    rejecter?: UserCreateNestedOneWithoutRejectedBroadcastsInput
     sales?: SaleCreateNestedManyWithoutBroadcastInput
     orders?: OrderCreateNestedManyWithoutBroadcastInput
   }
@@ -49207,6 +49480,8 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    rejectedBy?: string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49747,6 +50022,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -49780,6 +50056,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -50009,6 +50286,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -50042,6 +50320,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -50173,6 +50452,7 @@ export namespace Prisma {
     center?: CenterCreateNestedOneWithoutUsersInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -50206,6 +50486,7 @@ export namespace Prisma {
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -50244,6 +50525,7 @@ export namespace Prisma {
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -50277,6 +50559,7 @@ export namespace Prisma {
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -50354,11 +50637,13 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
     center?: CenterCreateNestedOneWithoutBroadcastsInput
+    rejecter?: UserCreateNestedOneWithoutRejectedBroadcastsInput
     sales?: SaleCreateNestedManyWithoutBroadcastInput
   }
 
@@ -50375,6 +50660,8 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    rejectedBy?: string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -50591,6 +50878,7 @@ export namespace Prisma {
     center?: CenterUpdateOneWithoutUsersNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -50624,6 +50912,7 @@ export namespace Prisma {
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -50668,6 +50957,7 @@ export namespace Prisma {
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -50701,6 +50991,7 @@ export namespace Prisma {
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -50790,11 +51081,13 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
+    rejecter?: UserUpdateOneWithoutRejectedBroadcastsNestedInput
     sales?: SaleUpdateManyWithoutBroadcastNestedInput
   }
 
@@ -50811,6 +51104,8 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -51680,6 +51975,7 @@ export namespace Prisma {
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -51713,6 +52009,7 @@ export namespace Prisma {
     sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -51777,6 +52074,79 @@ export namespace Prisma {
   export type CenterCreateOrConnectWithoutBroadcastsInput = {
     where: CenterWhereUniqueInput
     create: XOR<CenterCreateWithoutBroadcastsInput, CenterUncheckedCreateWithoutBroadcastsInput>
+  }
+
+  export type UserCreateWithoutRejectedBroadcastsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    name: string
+    phone: string
+    role?: $Enums.Role
+    passwordHash?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channels?: UserCreatechannelsInput | string[]
+    avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
+    isActive?: boolean
+    admin?: UserCreateNestedOneWithoutSellersInput
+    sellers?: UserCreateNestedManyWithoutAdminInput
+    center?: CenterCreateNestedOneWithoutUsersInput
+    orders?: OrderCreateNestedManyWithoutSellerInput
+    adminOrders?: OrderCreateNestedManyWithoutAdminInput
+    broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    sales?: SaleCreateNestedManyWithoutSellerInput
+    proposals?: ProposalCreateNestedManyWithoutUserInput
+    proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
+    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
+    scanLogs?: ScanLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutRejectedBroadcastsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    name: string
+    phone: string
+    role?: $Enums.Role
+    adminId?: string | null
+    centerId?: string | null
+    passwordHash?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channels?: UserCreatechannelsInput | string[]
+    avgSales?: number | null
+    categories?: UserCreatecategoriesInput | string[]
+    regions?: UserCreateregionsInput | string[]
+    timeSlots?: UserCreatetimeSlotsInput | string[]
+    contractStatus?: $Enums.ContractStatus
+    contractApprovedAt?: Date | string | null
+    contractApprovedBy?: string | null
+    contractRejectionReason?: string | null
+    isActive?: boolean
+    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
+    orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
+    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
+    broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
+    proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
+    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
+    scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutRejectedBroadcastsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRejectedBroadcastsInput, UserUncheckedCreateWithoutRejectedBroadcastsInput>
   }
 
   export type SaleCreateWithoutBroadcastInput = {
@@ -51935,6 +52305,7 @@ export namespace Prisma {
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -51968,6 +52339,7 @@ export namespace Prisma {
     sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -52035,6 +52407,85 @@ export namespace Prisma {
     scanLogs?: ScanLogUncheckedUpdateManyWithoutCenterNestedInput
   }
 
+  export type UserUpsertWithoutRejectedBroadcastsInput = {
+    update: XOR<UserUpdateWithoutRejectedBroadcastsInput, UserUncheckedUpdateWithoutRejectedBroadcastsInput>
+    create: XOR<UserCreateWithoutRejectedBroadcastsInput, UserUncheckedCreateWithoutRejectedBroadcastsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutRejectedBroadcastsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutRejectedBroadcastsInput, UserUncheckedUpdateWithoutRejectedBroadcastsInput>
+  }
+
+  export type UserUpdateWithoutRejectedBroadcastsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channels?: UserUpdatechannelsInput | string[]
+    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    admin?: UserUpdateOneWithoutSellersNestedInput
+    sellers?: UserUpdateManyWithoutAdminNestedInput
+    center?: CenterUpdateOneWithoutUsersNestedInput
+    orders?: OrderUpdateManyWithoutSellerNestedInput
+    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
+    broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    sales?: SaleUpdateManyWithoutSellerNestedInput
+    proposals?: ProposalUpdateManyWithoutUserNestedInput
+    proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
+    sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
+    scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRejectedBroadcastsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    adminId?: NullableStringFieldUpdateOperationsInput | string | null
+    centerId?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channels?: UserUpdatechannelsInput | string[]
+    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
+    categories?: UserUpdatecategoriesInput | string[]
+    regions?: UserUpdateregionsInput | string[]
+    timeSlots?: UserUpdatetimeSlotsInput | string[]
+    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
+    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
+    broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
+    proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
+    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
+    scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type SaleUpsertWithWhereUniqueWithoutBroadcastInput = {
     where: SaleWhereUniqueInput
     update: XOR<SaleUpdateWithoutBroadcastInput, SaleUncheckedUpdateWithoutBroadcastInput>
@@ -52093,6 +52544,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
@@ -52126,6 +52578,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
@@ -52242,11 +52695,13 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     seller: UserCreateNestedOneWithoutBroadcastsInput
     center?: CenterCreateNestedOneWithoutBroadcastsInput
+    rejecter?: UserCreateNestedOneWithoutRejectedBroadcastsInput
     orders?: OrderCreateNestedManyWithoutBroadcastInput
   }
 
@@ -52263,6 +52718,8 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    rejectedBy?: string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52311,6 +52768,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
@@ -52344,6 +52802,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
@@ -52472,11 +52931,13 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
+    rejecter?: UserUpdateOneWithoutRejectedBroadcastsNestedInput
     orders?: OrderUpdateManyWithoutBroadcastNestedInput
   }
 
@@ -52493,6 +52954,8 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52525,6 +52988,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
@@ -52558,6 +53022,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
@@ -52607,6 +53072,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
@@ -52640,6 +53106,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
@@ -52673,6 +53140,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
@@ -52706,6 +53174,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
@@ -52848,6 +53317,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
@@ -52881,6 +53351,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
@@ -54609,6 +55080,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -54642,6 +55114,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -54837,6 +55310,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -54870,6 +55344,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -55061,6 +55536,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutSellerInput
     adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
@@ -55094,6 +55570,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
+    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
     proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
@@ -55143,6 +55620,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -55176,6 +55654,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -55284,6 +55763,27 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    rejectedBy?: string | null
+    reminder1hSentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BroadcastCreateManyRejecterInput = {
+    id?: string
+    code: string
+    sellerId: string
+    centerId?: string | null
+    platform: $Enums.BroadcastPlatform
+    scheduledAt: Date | string
+    startedAt?: Date | string | null
+    endedAt?: Date | string | null
+    status?: $Enums.BroadcastStatus
+    memo?: string | null
+    requestMemo?: string | null
+    rejectionReason?: string | null
+    rejectedAt?: Date | string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55401,6 +55901,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -55434,6 +55935,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -55694,10 +56196,12 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     center?: CenterUpdateOneWithoutBroadcastsNestedInput
+    rejecter?: UserUpdateOneWithoutRejectedBroadcastsNestedInput
     sales?: SaleUpdateManyWithoutBroadcastNestedInput
     orders?: OrderUpdateManyWithoutBroadcastNestedInput
   }
@@ -55714,6 +56218,8 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55733,6 +56239,69 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BroadcastUpdateWithoutRejecterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    platform?: EnumBroadcastPlatformFieldUpdateOperationsInput | $Enums.BroadcastPlatform
+    scheduledAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
+    center?: CenterUpdateOneWithoutBroadcastsNestedInput
+    sales?: SaleUpdateManyWithoutBroadcastNestedInput
+    orders?: OrderUpdateManyWithoutBroadcastNestedInput
+  }
+
+  export type BroadcastUncheckedUpdateWithoutRejecterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    sellerId?: StringFieldUpdateOperationsInput | string
+    centerId?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: EnumBroadcastPlatformFieldUpdateOperationsInput | $Enums.BroadcastPlatform
+    scheduledAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sales?: SaleUncheckedUpdateManyWithoutBroadcastNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBroadcastNestedInput
+  }
+
+  export type BroadcastUncheckedUpdateManyWithoutRejecterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    sellerId?: StringFieldUpdateOperationsInput | string
+    centerId?: NullableStringFieldUpdateOperationsInput | string | null
+    platform?: EnumBroadcastPlatformFieldUpdateOperationsInput | $Enums.BroadcastPlatform
+    scheduledAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    memo?: NullableStringFieldUpdateOperationsInput | string | null
+    requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -56580,6 +57149,8 @@ export namespace Prisma {
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
+    rejectedAt?: Date | string | null
+    rejectedBy?: string | null
     reminder1hSentAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -56621,6 +57192,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
@@ -56654,6 +57226,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
+    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
     proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
@@ -56832,10 +57405,12 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutBroadcastsNestedInput
+    rejecter?: UserUpdateOneWithoutRejectedBroadcastsNestedInput
     sales?: SaleUpdateManyWithoutBroadcastNestedInput
     orders?: OrderUpdateManyWithoutBroadcastNestedInput
   }
@@ -56852,6 +57427,8 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -56871,6 +57448,8 @@ export namespace Prisma {
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    rejectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reminder1hSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

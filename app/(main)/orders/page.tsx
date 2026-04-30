@@ -290,8 +290,8 @@ export default function OrdersPage() {
       <Tabs value={orderTypeTab} onValueChange={setOrderTypeTab} className="mb-4">
         <TabsList>
           <TabsTrigger value="all">전체</TabsTrigger>
-          <TabsTrigger value="HEADQUARTERS">업체발주서</TabsTrigger>
-          <TabsTrigger value="CENTER">관리메이트</TabsTrigger>
+          <TabsTrigger value="HEADQUARTERS">업체발주서 (본사 책임)</TabsTrigger>
+          <TabsTrigger value="CENTER">관리메이트 (센터 책임)</TabsTrigger>
         </TabsList>
       </Tabs>
 
