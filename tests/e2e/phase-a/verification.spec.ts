@@ -86,7 +86,7 @@ test("3. MASTER: 센터 상품 등록 폼 + 코드 미리보기", async ({ page 
   await page.waitForLoadState("networkidle");
 
   // 센터 표시 (MASTER는 센터 선택 드롭다운)
-  await expect(page.getByText("소속 센터").or(page.getByText("센터를 선택하세요"))).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText("소속 센터", { exact: true }).or(page.getByText("센터를 선택하세요")).first()).toBeVisible({ timeout: 10000 });
 
   // 자동 코드 미리보기 — [C숫자-숫자] 패턴
   const codePreview = page.locator(".font-mono");
