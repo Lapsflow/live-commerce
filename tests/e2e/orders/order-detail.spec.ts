@@ -4,14 +4,14 @@ import { navigateToOrderDetail } from './helpers/order-ui-helpers';
 
 test.use({ storageState: 'playwright/.auth/admin.json' });
 
-test.describe('Order Detail Page - Admin', () => {
+test.describe('Order Detail Page - Master', () => {
   let api: OrderApiHelper;
 
   test.beforeEach(async ({ request }) => {
     api = new OrderApiHelper(request);
   });
 
-  // Helper: find an order that ADMIN can actually access via detail API
+  // Helper: find an order accessible via detail API
   async function findAccessibleOrder(): Promise<string | null> {
     const { data } = await api.getOrders({ pageSize: 20 });
     if (!data?.data?.length) return null;

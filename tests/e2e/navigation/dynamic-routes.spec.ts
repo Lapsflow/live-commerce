@@ -123,7 +123,7 @@ test.describe('Dynamic Routes - Valid IDs (SELLER)', () => {
   });
 });
 
-test.describe('Dynamic Routes - Valid IDs (ADMIN)', () => {
+test.describe('Dynamic Routes - Valid IDs (MASTER)', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
 
   test('valid center ID should show center detail page', async ({ page, request }) => {

@@ -5,11 +5,10 @@ import { test, expect } from '@playwright/test';
  * Phase 3: Sidebar Navigation Tests
  *
  * Tests all sidebar links to ensure they navigate without 404 errors
- * Tests role-based navigation (SELLER, ADMIN, MASTER)
+ * Tests role-based navigation (SELLER, MASTER)
  *
  * Actual sidebar labels by role:
  * SELLER: 대시보드, 방송, 방송 캘린더, 발주, 판매, 상품 제안, 바코드
- * ADMIN: 대시보드, 셀러 관리, 계약 승인, 발주 승인, 방송, 방송 캘린더, 상품 제안, 바코드
  * MASTER: 전체 통계, 사용자 관리, 센터 관리, 계약 승인, 발주 관리, 방송 관리, 방송 캘린더, 상품 관리, 상품 제안, 바코드
  */
 
@@ -64,14 +63,14 @@ test.describe('Sidebar Navigation (SELLER role)', () => {
   }
 });
 
-test.describe('Sidebar Navigation (ADMIN role)', () => {
+test.describe('Sidebar Navigation (MASTER role)', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
 
-  const adminLinks = [
+  const masterLinks = [
     '대시보드',
-    '셀러 관리',
+    '사용자 관리',
+    '센터 관리',
     '계약 승인',
-    '발주 승인',
     '방송',
     '바코드',
     '상품 제안',
@@ -82,7 +81,7 @@ test.describe('Sidebar Navigation (ADMIN role)', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  for (const linkText of adminLinks) {
+  for (const linkText of masterLinks) {
     test(`sidebar link "${linkText}" navigates without 404`, async ({ page }) => {
       const link = page.locator(`nav a:has-text("${linkText}")`).or(
         page.locator(`aside a:has-text("${linkText}")`)
@@ -91,8 +90,8 @@ test.describe('Sidebar Navigation (ADMIN role)', () => {
       const isVisible = await link.isVisible({ timeout: 5000 }).catch(() => false);
 
       if (!isVisible) {
-        console.warn(`Link "${linkText}" not found in sidebar - may not be visible for ADMIN`);
-        test.skip(true, `Link not visible for ADMIN role`);
+        console.warn(`Link "${linkText}" not found in sidebar - may not be visible for MASTER`);
+        test.skip(true, `Link not visible for MASTER role`);
         return;
       }
 
@@ -178,15 +177,15 @@ test.describe('Sidebar Navigation - Role-Based Visibility (SELLER)', () => {
   });
 });
 
-test.describe('Sidebar Navigation - Role-Based Visibility (ADMIN)', () => {
+test.describe('Sidebar Navigation - Role-Based Visibility (MASTER)', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
 
-  test('ADMIN should see admin-specific links', async ({ page }) => {
+  test('MASTER should see management links', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
-    // ADMIN has: 셀러 관리, 계약 승인
-    const adminLinks = ['셀러 관리', '계약 승인'];
+    // MASTER has: 사용자 관리, 센터 관리, 계약 승인
+    const adminLinks = ['사용자 관리', '계약 승인'];
 
     let visibleCount = 0;
 

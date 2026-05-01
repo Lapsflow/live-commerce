@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('상품 상세 가격 잠금 — ADMIN', () => {
-  test.use({ storageState: 'playwright/.auth/admin.json' });
+test.describe('상품 상세 가격 잠금 — SUB_MASTER', () => {
+  test.use({ storageState: 'playwright/.auth/seller.json' });
 
-  test('ADMIN은 가격 필드가 잠금 상태이며 안내 문구 표시', async ({ page }) => {
+  test('SUB_MASTER/SELLER는 가격 필드가 잠금 상태이며 안내 문구 표시', async ({ page }) => {
     await page.goto('/products');
     await page.waitForTimeout(3000);
 

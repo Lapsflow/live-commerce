@@ -5,7 +5,6 @@ import { test, expect, type Page } from "@playwright/test";
  *
  * 계정:
  * - MASTER: master / master1234
- * - ADMIN (센터 소속): admin1 / admin1234
  * - SELLER: seller1 / seller1234
  *
  * 각 테스트가 서로 다른 역할로 로그인하므로 storageState를 비움.
@@ -55,10 +54,10 @@ test("1. MASTER: 센터 상품 현황 메뉴 접근 + 페이지 렌더링", asyn
 });
 
 // ────────────────────────────────────────────────────────
-// 2. ADMIN: "상품 관리" 메뉴 + 센터 상품 등록 버튼 확인
+// 2. MASTER: "상품 관리" 메뉴 + 센터 상품 등록 버튼 확인
 // ────────────────────────────────────────────────────────
-test("2. ADMIN: 상품 관리 메뉴 + 센터 상품 등록 버튼", async ({ page }) => {
-  await login(page, "admin1", "admin1234");
+test("2. MASTER: 상품 관리 메뉴 + 센터 상품 등록 버튼", async ({ page }) => {
+  await login(page, "master", "master1234");
 
   // 사이드바에 "상품 관리" 메뉴 존재
   const menu = page.getByRole("link", { name: "상품 관리" });
@@ -72,22 +71,22 @@ test("2. ADMIN: 상품 관리 메뉴 + 센터 상품 등록 버튼", async ({ pa
   await expect(centerNewBtn).toBeVisible({ timeout: 10000 });
 
   await page.screenshot({
-    path: "test-results/02-admin-products-page.png",
+    path: "test-results/02-master-products-page.png",
     fullPage: true,
   });
 });
 
 // ────────────────────────────────────────────────────────
-// 3. ADMIN: 센터 상품 등록 폼 진입 + 코드 미리보기
+// 3. MASTER: 센터 상품 등록 폼 진입 + 코드 미리보기
 // ────────────────────────────────────────────────────────
-test("3. ADMIN: 센터 상품 등록 폼 + 코드 미리보기", async ({ page }) => {
-  await login(page, "admin1", "admin1234");
+test("3. MASTER: 센터 상품 등록 폼 + 코드 미리보기", async ({ page }) => {
+  await login(page, "master", "master1234");
 
   await page.goto(`${BASE}/products/center-new`);
   await page.waitForLoadState("networkidle");
 
-  // 센터 표시 (ADMIN은 본인 센터 고정)
-  await expect(page.getByText("소속 센터")).toBeVisible({ timeout: 10000 });
+  // 센터 표시 (MASTER는 센터 선택 드롭다운)
+  await expect(page.getByText("소속 센터").or(page.getByText("센터를 선택하세요"))).toBeVisible({ timeout: 10000 });
 
   // 자동 코드 미리보기 — [C숫자-숫자] 패턴
   const codePreview = page.locator(".font-mono");
@@ -104,7 +103,7 @@ test("3. ADMIN: 센터 상품 등록 폼 + 코드 미리보기", async ({ page }
   await expect(page.locator("#totalStock")).toBeVisible();
 
   await page.screenshot({
-    path: "test-results/03-admin-center-new-form.png",
+    path: "test-results/03-master-center-new-form.png",
     fullPage: true,
   });
 });

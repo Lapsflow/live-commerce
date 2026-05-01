@@ -82,13 +82,13 @@ test.describe('Static Routes - Authenticated (SELLER)', () => {
   }
 });
 
-test.describe('Static Routes - Admin Only (ADMIN)', () => {
+test.describe('Static Routes - Admin Only (MASTER)', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
 
   const adminRoutes = staticRoutes.filter((r) => r.requiresAdmin);
 
   for (const route of adminRoutes) {
-    test(`${route.path} should load for ADMIN without 404`, async ({ page }) => {
+    test(`${route.path} should load for MASTER without 404`, async ({ page }) => {
       const is404 = await navigateAndCheck404(page, route.path);
       expect(is404).toBeFalsy();
 
@@ -130,7 +130,7 @@ test.describe('Static Routes - Response Status Codes', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
   test.setTimeout(120000); // 2 min for sequential page loads
 
-  test('all authenticated routes should return 200 for ADMIN', async ({ page }) => {
+  test('all authenticated routes should return 200 for MASTER', async ({ page }) => {
     const routesToTest = staticRoutes.filter((r) => r.requiresAuth);
 
     const results = [];

@@ -27,8 +27,8 @@ test.describe('Post-Deployment Health Checks @post-deploy', () => {
     await page.locator('input[type="text"]').first().waitFor({ state: 'visible', timeout: 15000 });
 
     // Fill credentials and submit
-    await page.fill('input[type="text"]', 'admin1');
-    await page.fill('input[type="password"]', 'admin1234');
+    await page.fill('input[type="text"]', 'master');
+    await page.fill('input[type="password"]', 'master1234');
     await page.click('button[type="submit"]');
 
     // Wait for redirect to dashboard

@@ -15,19 +15,16 @@ test.describe('상품 관리 — SELLER 역할', () => {
   });
 });
 
-test.describe('상품 관리 — ADMIN 역할', () => {
+test.describe('상품 관리 — MASTER 역할 (센터 상품)', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
 
-  test('ADMIN은 "센터 상품 등록" 버튼이 보인다', async ({ page }) => {
+  test('MASTER는 "센터 상품 등록" 버튼이 보인다', async ({ page }) => {
     await page.goto('/products');
     await expect(page.getByRole('heading', { name: '상품 관리', exact: true }).first()).toBeVisible({ timeout: 10000 });
 
     // "센터 상품 등록" 표시
     await expect(page.getByText('센터 상품 등록')).toBeVisible();
     await expect(page.getByText('엑셀 업로드')).toBeVisible();
-
-    // "상품 추가" (MASTER 전용)는 없어야 함
-    await expect(page.getByText('상품 추가', { exact: true })).not.toBeVisible();
   });
 });
 

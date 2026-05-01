@@ -5,13 +5,12 @@ import { test, expect, type Page } from "@playwright/test";
  *
  * 계정:
  * - MASTER: master / master1234
- * - ADMIN (센터 소속): admin1 / admin1234
  * - SELLER: seller1 / seller1234
  *
  * 테스트 시나리오:
  * 1. MASTER: 방송 등록 시 센터 선택 가능 (B-2)
  * 2. MASTER: 방송 거절 → rejectedAt/rejectedBy 기록 (B-3)
- * 3. ADMIN: 다른 센터 방송 거절 차단 (B-3 권한 격리)
+ * 3. (제거됨) 센터 격리 테스트 — ADMIN role 제거로 비활성
  * 4. SELLER: 거절 후 재신청 가능 (B-4)
  * 5. SELLER: 센터 상품 바코드 스캔 차단 (활성 방송 없음) (B-6)
  * 6. 상품 목록: 본사/센터 책임 라벨 (B-9)
@@ -190,86 +189,12 @@ test("3. MASTER: 방송 거절 + rejectedAt/rejectedBy 기록", async ({ page })
 });
 
 // ────────────────────────────────────────────────────────
-// 4. ADMIN: 다른 센터 방송 거절 차단 (B-3 권한 격리)
+// 4. (SKIPPED) 센터 격리 테스트 — ADMIN role 제거로 비활성
+//    이전: admin1(ADMIN)이 다른 센터 방송 거절 시 403 확인
+//    admin1이 SUB_MASTER로 변환 + 비활성화되어 테스트 불가
 // ────────────────────────────────────────────────────────
-test("4. ADMIN: 다른 센터 방송 거절 시 차단", async ({ page }) => {
-  await login(page, "master", "master1234");
-
-  // 먼저 새 REQUESTED 방송 생성 (다른 센터용)
-  const centersRes = await page.request.get(`${BASE}/api/centers`);
-  const centersJson = await centersRes.json();
-  const centers = centersJson.data?.centers || [];
-
-  if (centers.length < 2) {
-    console.log("센터가 2개 미만이어 권한 격리 테스트 스킵");
-    return;
-  }
-
-  // admin1의 센터 ID 확인
-  const admin1Res = await page.request.get(
-    `${BASE}/api/users?search=admin1&pageSize=1`
-  );
-  const admin1Json = await admin1Res.json();
-  const admin1 = admin1Json.data?.[0];
-  const admin1CenterId = admin1?.centerId;
-
-  if (!admin1CenterId) {
-    console.log("admin1 centerId가 없어 테스트 스킵");
-    return;
-  }
-
-  // admin1과 다른 센터 찾기
-  const otherCenter = centers.find((c: any) => c.id !== admin1CenterId);
-  if (!otherCenter) {
-    console.log("다른 센터를 찾을 수 없어 테스트 스킵");
-    return;
-  }
-
-  // 다른 센터의 방송 생성 (MASTER로)
-  const sessionRes = await page.request.get(`${BASE}/api/auth/session`);
-  const sessionJson = await sessionRes.json();
-  const masterId = sessionJson?.user?.userId;
-  const code = `PB-CROSS-${Date.now().toString(36).toUpperCase()}`;
-
-  const createRes = await page.request.post(`${BASE}/api/broadcasts`, {
-    headers: { Origin: BASE },
-    data: {
-      code,
-      sellerId: masterId,
-      centerId: otherCenter.id,
-      platform: "GRIP",
-      scheduledAt: new Date(Date.now() + 7 * 86400000).toISOString(),
-      status: "REQUESTED",
-    },
-  });
-
-  if (createRes.status() !== 201) {
-    console.log("방송 생성 실패:", await createRes.text());
-    return;
-  }
-
-  const createdBroadcast = await createRes.json();
-  const broadcastId = createdBroadcast.data?.id || createdBroadcast.id;
-
-  // admin1으로 로그인하여 다른 센터 방송 거절 시도
-  await login(page, "admin1", "admin1234");
-
-  const rejectRes = await page.request.put(
-    `${BASE}/api/broadcasts/${broadcastId}/reject`,
-    {
-      headers: { Origin: BASE },
-      data: { reason: "권한 격리 테스트" },
-    }
-  );
-
-  // 403 응답 확인 (다른 센터이므로 거절 불가)
-  console.log(`다른 센터 거절 응답: ${rejectRes.status()}`);
-  expect(rejectRes.status()).toBe(403);
-
-  await page.screenshot({
-    path: "test-results/pb-04-cross-center-reject-blocked.png",
-    fullPage: true,
-  });
+test("4. 센터 격리: ADMIN 제거로 스킵", async () => {
+  test.skip(true, "ADMIN role 제거됨 — admin1 계정 비활성화로 센터 격리 테스트 불가");
 });
 
 // ────────────────────────────────────────────────────────

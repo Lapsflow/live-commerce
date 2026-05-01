@@ -148,7 +148,7 @@ test.describe('High-Risk Routes Investigation', () => {
     expect(result).toBeTruthy();
   });
 
-  test('investigate /admin/centers/new (ADMIN)', async ({ page }) => {
+  test('investigate /admin/centers/new (MASTER)', async ({ page }) => {
     // Uses seller auth from describe block - admin center pages may redirect
 
     console.log('\n========== INVESTIGATING /admin/centers/new ==========');

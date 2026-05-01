@@ -35,7 +35,7 @@ const DESCRIPTIONS: Record<string, string[]> = {
   UPDATE: ["정보 수정됨", "필드 변경됨", "데이터 업데이트"],
   DELETE: ["삭제됨", "시스템에서 제거됨"],
   SOFT_DELETE: ["비활성화됨", "소프트 삭제 처리"],
-  ROLE_CHANGED: ["역할이 SELLER에서 ADMIN으로 변경", "역할이 ADMIN에서 SELLER로 변경"],
+  ROLE_CHANGED: ["역할이 SELLER에서 SUB_MASTER로 변경", "역할이 SUB_MASTER에서 SELLER로 변경"],
   STATUS_CHANGED: ["상태가 PENDING에서 CONFIRMED로 변경", "상태가 SCHEDULED에서 LIVE로 변경", "상태가 LIVE에서 ENDED로 변경"],
   LOGIN: ["로그인 성공"],
   LOGIN_FAILED: ["잘못된 비밀번호로 로그인 실패", "존재하지 않는 사용자 로그인 시도"],
@@ -48,7 +48,7 @@ const SAMPLE_DIFFS: Record<string, Record<string, { from: unknown; to: unknown }
     phone: { from: "010-1234-5678", to: "010-9876-5432" },
   },
   ROLE_CHANGED: {
-    role: { from: "SELLER", to: "ADMIN" },
+    role: { from: "SELLER", to: "SUB_MASTER" },
   },
   STATUS_CHANGED: {
     status: { from: "PENDING", to: "CONFIRMED" },

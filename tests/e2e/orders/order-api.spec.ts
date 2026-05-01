@@ -3,7 +3,7 @@ import { OrderApiHelper } from './helpers/order-api-helpers';
 
 test.use({ storageState: 'playwright/.auth/admin.json' });
 
-test.describe('Orders API - Admin', () => {
+test.describe('Orders API - Master', () => {
   let api: OrderApiHelper;
 
   test.beforeEach(async ({ request }) => {
@@ -82,7 +82,7 @@ test.describe('Orders API - Admin', () => {
       const { data: list } = await api.getOrders({ pageSize: 20 });
       test.skip(list.data.length === 0, 'No orders available');
 
-      // ADMIN can only see orders from assigned sellers, try multiple
+      // Try multiple orders to find one accessible
       let found = false;
       for (const order of list.data) {
         const { response, data } = await api.getOrder(order.id);

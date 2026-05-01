@@ -97,8 +97,8 @@ test.describe('마이그레이션 검증', () => {
     // Wait for input to be interactive (hydration)
     await page.locator('input[type="text"]').first().waitFor({ state: 'visible', timeout: 15000 });
 
-    await page.locator('input[type="text"]').first().fill('admin1');
-    await page.locator('input[type="password"]').fill('admin1234');
+    await page.locator('input[type="text"]').first().fill('seller1');
+    await page.locator('input[type="password"]').fill('seller1234');
     await page.locator('button[type="submit"]').click();
 
     // Should redirect to dashboard
