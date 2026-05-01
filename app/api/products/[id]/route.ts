@@ -29,7 +29,7 @@ const productUpdateSchema = z.object({
 
 // GET: Get single product
 // Phase 2: withRole() middleware applied
-export const GET = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (
+export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (
   req: NextRequest,
   user: AuthUser,
   { params }: { params: Promise<{ id: string }> }
@@ -76,7 +76,7 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (
 
 // PUT: Update product
 // Phase 2: withRole() middleware applied
-export const PUT = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (
+export const PUT = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (
   req: NextRequest,
   user: AuthUser,
   { params }: { params: Promise<{ id: string }> }
@@ -161,18 +161,18 @@ export const PUT = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (
     if (data.stock2 !== undefined) updateData.stock2 = data.stock2;
     if (data.stock3 !== undefined) updateData.stock3 = data.stock3;
 
-    // Only ADMIN can change productType
+    // Only MASTER/SUB_MASTER can change productType
     if (data.productType && user.role !== "SELLER") {
       updateData.productType = data.productType;
       updateData.isWmsProduct = data.productType === "HEADQUARTERS";
     }
 
-    // Only ADMIN can change managedBy
+    // Only MASTER/SUB_MASTER can change managedBy
     if (data.managedBy && user.role !== "SELLER") {
       updateData.managedBy = data.managedBy;
     }
 
-    // PRODUCT-05: isActive (MASTER/SUB_MASTER/ADMIN only, SELLER cannot reactivate)
+    // PRODUCT-05: isActive (MASTER/SUB_MASTER only, SELLER cannot reactivate)
     if (data.isActive !== undefined && user.role !== "SELLER") {
       updateData.isActive = data.isActive;
     }
@@ -225,7 +225,7 @@ export const PUT = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (
 });
 
 // DELETE: Soft-delete product (비활성화 — PRODUCT-05 정책: hard delete 금지)
-export const DELETE = withRole(["MASTER", "SUB_MASTER", "ADMIN"], async (
+export const DELETE = withRole(["MASTER", "SUB_MASTER"], async (
   req: NextRequest,
   user: AuthUser,
   { params }: { params: Promise<{ id: string }> }
@@ -247,8 +247,8 @@ export const DELETE = withRole(["MASTER", "SUB_MASTER", "ADMIN"], async (
       return error("NOT_FOUND", "상품을 찾을 수 없습니다.", 404);
     }
 
-    // SUB_MASTER/ADMIN: 본인 센터 상품만 비활성화 가능
-    if (user.role === "SUB_MASTER" || user.role === "ADMIN") {
+    // SUB_MASTER: 본인 센터 상품만 비활성화 가능
+    if (user.role === "SUB_MASTER") {
       if (product.productType === "CENTER" && product.managedBy !== user.centerId) {
         return error("FORBIDDEN", "다른 센터의 상품은 비활성화할 수 없습니다.", 403);
       }

@@ -74,8 +74,8 @@ export default function ProductUploadPage() {
           const list = data.data?.centers || [];
           setCenters(list);
 
-          // ADMIN은 자기 센터만
-          if (userRole === "ADMIN" && userCenterId) {
+          // SUB_MASTER는 자기 센터만
+          if (userRole === "SUB_MASTER" && userCenterId) {
             setSelectedCenterId(userCenterId);
           }
         }
@@ -243,7 +243,7 @@ export default function ProductUploadPage() {
             <Select
               value={selectedCenterId}
               onValueChange={(v) => v && setSelectedCenterId(v)}
-              disabled={loadingCenters || userRole === "ADMIN"}
+              disabled={loadingCenters || userRole === "SUB_MASTER"}
             >
               <SelectTrigger>
                 <SelectValue placeholder={loadingCenters ? "로딩 중..." : "센터를 선택하세요"} />
@@ -256,7 +256,7 @@ export default function ProductUploadPage() {
                 ))}
               </SelectContent>
             </Select>
-            {userRole === "ADMIN" && (
+            {userRole === "SUB_MASTER" && (
               <p className="text-sm text-muted-foreground mt-1">
                 관리자는 소속 센터에만 등록할 수 있습니다
               </p>

@@ -14,8 +14,6 @@ import { TrophyIcon } from "lucide-react";
 interface RankingData {
   sellerId: string;
   sellerName: string;
-  adminId?: string | null;
-  adminName?: string | null;
   totalSales: number;
   count: number;
 }
@@ -59,7 +57,6 @@ export function RankingTable({ data }: RankingTableProps) {
         <TableRow>
           <TableHead className="w-20">순위</TableHead>
           <TableHead>셀러명</TableHead>
-          <TableHead>담당 관리자</TableHead>
           <TableHead className="text-right">판매건수</TableHead>
           <TableHead className="text-right">총 매출</TableHead>
         </TableRow>
@@ -67,7 +64,7 @@ export function RankingTable({ data }: RankingTableProps) {
       <TableBody>
         {data.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={5} className="text-center text-muted-foreground">
+            <TableCell colSpan={4} className="text-center text-muted-foreground">
               데이터가 없습니다
             </TableCell>
           </TableRow>
@@ -76,9 +73,6 @@ export function RankingTable({ data }: RankingTableProps) {
             <TableRow key={item.sellerId}>
               <TableCell>{getRankBadge(index + 1)}</TableCell>
               <TableCell className="font-medium">{item.sellerName}</TableCell>
-              <TableCell className="text-sm text-muted-foreground">
-                {item.adminName || "-"}
-              </TableCell>
               <TableCell className="text-right">
                 {item.count.toLocaleString()}건
               </TableCell>

@@ -17,9 +17,9 @@ export async function POST(
     const { userId } = await params;
     const body = await req.json();
 
-    // Only MASTER or ADMIN can reject contracts
+    // Only MASTER or SUB_MASTER can reject contracts
     const role = session?.user?.role;
-    if (!session?.user || !role || !["MASTER", "ADMIN"].includes(role)) {
+    if (!session?.user || !role || !["MASTER", "SUB_MASTER"].includes(role)) {
       return error("UNAUTHORIZED", "권한이 없습니다.", 403);
     }
 

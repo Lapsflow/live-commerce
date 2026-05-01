@@ -9,7 +9,7 @@ export default function AdminDashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // 권한 체크: MASTER, SUB_MASTER, ADMIN만 접근 가능
+  // 권한 체크: MASTER, SUB_MASTER만 접근 가능
   useEffect(() => {
     if (status === 'loading') return;
 
@@ -18,7 +18,7 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    const allowedRoles = ['MASTER', 'SUB_MASTER', 'ADMIN'];
+    const allowedRoles = ['MASTER', 'SUB_MASTER'];
     if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
       router.push('/');
     }

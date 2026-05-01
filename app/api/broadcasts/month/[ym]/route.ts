@@ -19,7 +19,7 @@ import { auth } from "@/lib/auth";
  * - sellerName: 셀러명 검색 (부분 일치)
  */
 export const GET = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -57,12 +57,6 @@ export const GET = withRole(
       // 역할 기반 필터
       if (userRole === "SELLER") {
         where.sellerId = userId;
-      } else if (userRole === "ADMIN") {
-        const sellers = await prisma.user.findMany({
-          where: { adminId: userId },
-          select: { id: true },
-        });
-        where.sellerId = { in: sellers.map((s) => s.id) };
       } else if (userRole === "SUB_MASTER") {
         // CAL-02: SUB_MASTER 센터 격리
         const userCenterId = (session.user as any).centerId;

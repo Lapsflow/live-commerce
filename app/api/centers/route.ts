@@ -1,7 +1,7 @@
 /**
  * GET /api/centers - 센터 목록 조회
  * POST /api/centers - 센터 생성
- * Phase 2: withRole() middleware applied (ADMIN only for now)
+ * Phase 2: withRole() middleware applied (MASTER, SUB_MASTER)
  */
 
 import { NextRequest } from 'next/server';
@@ -17,10 +17,10 @@ import { logAudit } from '@/lib/services/audit';
 
 /**
  * GET /api/centers
- * 센터 목록 조회 (ADMIN만 접근 가능)
+ * 센터 목록 조회 (MASTER, SUB_MASTER 접근 가능)
  * Phase 2: withRole() middleware applied
  */
-export const GET = withRole(["MASTER", "ADMIN"], async (req: NextRequest, user) => {
+export const GET = withRole(["MASTER", "SUB_MASTER"], async (req: NextRequest, user) => {
   try {
 
     // Query parameters
@@ -48,10 +48,10 @@ export const GET = withRole(["MASTER", "ADMIN"], async (req: NextRequest, user) 
 
 /**
  * POST /api/centers
- * 센터 생성 (ADMIN만 가능)
+ * 센터 생성 (MASTER, SUB_MASTER만 가능)
  * Phase 2: withRole() middleware applied
  */
-export const POST = withRole(["MASTER", "ADMIN"], async (req: NextRequest, user) => {
+export const POST = withRole(["MASTER", "SUB_MASTER"], async (req: NextRequest, user) => {
   try {
 
     const body = await req.json();

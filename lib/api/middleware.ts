@@ -3,16 +3,15 @@ import { auth } from "@/lib/auth";
 import { logger, securityLogger, sanitizeError } from "@/lib/logger";
 import { logAudit } from "@/lib/services/audit";
 
-export type Role = "MASTER" | "SUB_MASTER" | "ADMIN" | "SELLER";
+export type Role = "MASTER" | "SUB_MASTER" | "SELLER";
 
-const VALID_ROLES: readonly string[] = ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"];
+const VALID_ROLES: readonly string[] = ["MASTER", "SUB_MASTER", "SELLER"];
 
 export interface AuthUser {
   userId: string;
   name: string;
   email: string;
   role: Role;
-  adminId?: string;
   centerId?: string;
 }
 
@@ -20,7 +19,7 @@ type NextHandler = (req: NextRequest, context?: any) => Promise<NextResponse>;
 type AuthHandler = (req: NextRequest, user: AuthUser, context?: any) => Promise<NextResponse>;
 
 function toAuthUser(user: Record<string, unknown>): AuthUser | null {
-  const { userId, name, email, role, adminId, centerId } = user;
+  const { userId, name, email, role, centerId } = user;
   if (typeof userId !== "string" || typeof name !== "string" || typeof email !== "string") return null;
   if (typeof role !== "string" || !VALID_ROLES.includes(role)) return null;
   return {
@@ -28,7 +27,6 @@ function toAuthUser(user: Record<string, unknown>): AuthUser | null {
     name,
     email,
     role: role as Role,
-    adminId: typeof adminId === "string" ? adminId : undefined,
     centerId: typeof centerId === "string" ? centerId : undefined,
   };
 }

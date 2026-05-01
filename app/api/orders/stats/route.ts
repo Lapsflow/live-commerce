@@ -9,7 +9,7 @@ import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { prisma } from "@/lib/db/prisma";
 
 export const GET = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest, user: AuthUser) => {
     try {
       // 역할별 필터

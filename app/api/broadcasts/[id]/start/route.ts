@@ -13,7 +13,7 @@ import { logAudit } from "@/lib/services/audit";
  * - startedAt 타임스탬프 기록
  * - centerId 연결 (센터 기반 상품 로드용)
  *
- * 권한: MASTER, SUB_MASTER, ADMIN, SELLER
+ * 권한: MASTER, SUB_MASTER, SELLER
  */
 const startBroadcastHandler = async (req: NextRequest) => {
   try {
@@ -142,12 +142,12 @@ const startBroadcastHandler = async (req: NextRequest) => {
 };
 
 export const PUT = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   startBroadcastHandler
 );
 
 // POST alias for Phase 4 compatibility
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   startBroadcastHandler
 );

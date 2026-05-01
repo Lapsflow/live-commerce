@@ -9,8 +9,7 @@ import { logAudit } from "@/lib/services/audit";
 const userUpdateSchema = z.object({
   name: z.string().min(1).optional(),
   phone: z.string().optional(),
-  role: z.enum(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"]).optional(),
-  adminId: z.string().nullable().optional(),
+  role: z.enum(["MASTER", "SUB_MASTER", "SELLER"]).optional(),
   channels: z.array(z.string()).optional(),
   avgSales: z.number().nullable().optional(),
   isActive: z.boolean().optional(),
@@ -39,7 +38,6 @@ export const GET = withRole(
           name: true,
           phone: true,
           role: true,
-          adminId: true,
           channels: true,
           avgSales: true,
           isActive: true,
@@ -108,7 +106,6 @@ export const PUT = withRole(
           ...(data.name !== undefined && { name: data.name }),
           ...(data.phone !== undefined && { phone: data.phone }),
           ...(data.role !== undefined && { role: data.role }),
-          ...(data.adminId !== undefined && { adminId: data.adminId }),
           ...(data.channels !== undefined && { channels: data.channels }),
           ...(data.avgSales !== undefined && { avgSales: data.avgSales }),
           ...(data.isActive !== undefined && { isActive: data.isActive }),
@@ -119,7 +116,6 @@ export const PUT = withRole(
           name: true,
           phone: true,
           role: true,
-          adminId: true,
           channels: true,
           avgSales: true,
           isActive: true,
@@ -138,7 +134,7 @@ export const PUT = withRole(
         entityType: "User",
         entityId: userId,
         entityName: existing.name,
-        before: { name: existing.name, phone: existing.phone, role: existing.role, adminId: existing.adminId, isActive: existing.isActive },
+        before: { name: existing.name, phone: existing.phone, role: existing.role, isActive: existing.isActive },
         after: data as Record<string, unknown>,
         description: action === "ROLE_CHANGED"
           ? `역할 변경: ${existing.name} (${existing.role} → ${data.role})`

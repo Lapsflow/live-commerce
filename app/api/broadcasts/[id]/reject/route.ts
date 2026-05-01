@@ -16,7 +16,7 @@ const rejectSchema = z.object({
  * B-3: rejectedAt, rejectedBy 기록 + 셀러 알림
  */
 export const PUT = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest, user: AuthUser) => {
     const segments = req.nextUrl.pathname.split("/");
     const rejectIdx = segments.indexOf("reject");
@@ -42,13 +42,6 @@ export const PUT = withRole(
 
     if (broadcast.status !== "REQUESTED") {
       return errors.badRequest("신청 대기 상태의 방송만 반려할 수 있습니다");
-    }
-
-    // B-3: ADMIN 센터 소유권 체크 — ADMIN은 자기 센터 방송만 반려 가능
-    if (user.role === "ADMIN" && broadcast.centerId && user.centerId) {
-      if (broadcast.centerId !== user.centerId) {
-        return errors.forbidden("다른 센터의 방송은 반려할 수 없습니다");
-      }
     }
 
     const updated = await prisma.broadcast.update({

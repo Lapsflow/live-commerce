@@ -7,8 +7,8 @@ import { auth } from "@/lib/auth";
 /**
  * GET /api/stats/admin/:id
  *
- * Admin 상세 통계 조회
- * - 특정 Admin의 소속 Seller별 매출, 건수, 마진
+ * 관리자(SUB_MASTER) 소속 센터 Seller 통계 조회
+ * - 특정 관리자의 centerId 기반 소속 Seller별 매출, 건수, 마진
  * - 날짜 범위 필터링 지원 (fromDate, toDate)
  *
  * Query Parameters:
@@ -16,11 +16,10 @@ import { auth } from "@/lib/auth";
  * - toDate?: YYYY-MM-DD (기본값: 오늘)
  *
  * 권한:
- * - ADMIN: 본인 ID만 조회 가능
- * - MASTER, SUB_MASTER: 모든 Admin 조회 가능
+ * - MASTER, SUB_MASTER: 모든 사용자 조회 가능
  */
 export const GET = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -28,10 +27,10 @@ export const GET = withRole(
         return errors.unauthorized();
       }
 
-      // URL에서 adminId 추출
-      const adminId = req.url.split("/").pop()?.split("?")[0];
-      if (!adminId) {
-        return errors.badRequest("Admin ID가 필요합니다");
+      // URL에서 managerId 추출
+      const managerId = req.url.split("/").pop()?.split("?")[0];
+      if (!managerId) {
+        return errors.badRequest("Manager ID가 필요합니다");
       }
       const { searchParams } = new URL(req.url);
 
@@ -45,36 +44,25 @@ export const GET = withRole(
         ? new Date(fromDateStr)
         : new Date(toDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-      // 권한 검증: ADMIN은 본인만 조회 가능
-      const userRole = (session.user as any).role;
-      const userId = (session.user as any).userId;
-
-      if (userRole === "ADMIN" && userId !== adminId) {
-        return errors.forbidden("본인의 통계만 조회할 수 있습니다");
-      }
-
-      // Admin 정보 조회
-      const admin = await prisma.user.findUnique({
-        where: { id: adminId },
+      // 관리자 정보 조회
+      const manager = await prisma.user.findUnique({
+        where: { id: managerId },
         select: {
           id: true,
           name: true,
           email: true,
           role: true,
+          centerId: true,
         },
       });
 
-      if (!admin) {
-        return errors.notFound("admin");
+      if (!manager) {
+        return errors.notFound("manager");
       }
 
-      if (admin.role !== "ADMIN") {
-        return errors.badRequest("ADMIN 역할의 사용자만 조회 가능합니다");
-      }
-
-      // 소속 Seller 목록 조회
+      // centerId 기반 소속 Seller 목록 조회
       const sellers = await prisma.user.findMany({
-        where: { adminId: adminId },
+        where: { centerId: manager.centerId, role: "SELLER" },
         select: {
           id: true,
           name: true,
@@ -84,10 +72,10 @@ export const GET = withRole(
 
       if (sellers.length === 0) {
         return ok({
-          admin: {
-            id: admin.id,
-            name: admin.name,
-            email: admin.email,
+          manager: {
+            id: manager.id,
+            name: manager.name,
+            email: manager.email,
           },
           sellers: [],
           summary: {
@@ -194,10 +182,10 @@ export const GET = withRole(
           : 0;
 
       return ok({
-        admin: {
-          id: admin.id,
-          name: admin.name,
-          email: admin.email,
+        manager: {
+          id: manager.id,
+          name: manager.name,
+          email: manager.email,
         },
         sellers: sellerDetails,
         summary,

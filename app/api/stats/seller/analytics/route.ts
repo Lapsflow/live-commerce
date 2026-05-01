@@ -16,7 +16,6 @@ import { auth } from "@/lib/auth";
  *
  * 권한:
  * - SELLER: 본인 ID만 조회 가능
- * - ADMIN: 관리하는 Seller만 조회 가능
  * - MASTER, SUB_MASTER: 모든 Seller 조회 가능
  */
 export async function GET(req: NextRequest) {
@@ -50,7 +49,6 @@ export async function GET(req: NextRequest) {
         name: true,
         email: true,
         role: true,
-        adminId: true,
       },
     });
 
@@ -60,11 +58,6 @@ export async function GET(req: NextRequest) {
 
     if (seller.role !== "SELLER") {
       return errors.badRequest("SELLER 역할의 사용자만 조회 가능합니다");
-    }
-
-    // ADMIN은 자신이 관리하는 Seller만 조회
-    if (userRole === "ADMIN" && seller.adminId !== userId) {
-      return errors.forbidden("관리하는 Seller의 통계만 조회할 수 있습니다");
     }
 
     // 주간 경계 계산 (월요일 시작)

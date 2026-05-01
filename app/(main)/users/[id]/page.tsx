@@ -14,7 +14,6 @@ import {
   Radio,
   TrendingUp,
   ShoppingCart,
-  Users,
   History,
 } from "lucide-react";
 
@@ -25,7 +24,6 @@ interface UserStats {
     role: string;
     centerName: string | null;
     centerCode: string | null;
-    adminName: string | null;
   };
   stats: {
     broadcastCount: number;
@@ -75,7 +73,6 @@ interface UserDetail {
   name: string;
   phone: string | null;
   role: string;
-  adminId: string | null;
   channels: string[];
   avgSales: number | null;
   createdAt: string;
@@ -166,8 +163,6 @@ export default function UserDetailPage() {
   }
 
   const s = stats.stats;
-  const isAdmin = stats.user.role === "ADMIN";
-
   return (
     <div className="space-y-6">
       {/* Back button */}
@@ -206,9 +201,8 @@ export default function UserDetailPage() {
                 </span>
               </div>
               <div>
-                <span className="text-grey-500">
-                  {isAdmin ? "역할" : "소속 관리자"}: </span>
-                <span>{isAdmin ? "관리자" : stats.user.adminName || "-"}</span>
+                <span className="text-grey-500">역할: </span>
+                <span><RoleBadge role={userDetail.role} /></span>
               </div>
               <div>
                 <span className="text-grey-500">활동 채널: </span>
@@ -247,13 +241,6 @@ export default function UserDetailPage() {
             label="발주 건수"
             value={`${s.orderCount}건`}
           />
-          {isAdmin && (
-            <StatCard
-              icon={<Users className="h-5 w-5 text-purple-600" />}
-              label="관리 셀러"
-              value={`${s.sellerCount}명`}
-            />
-          )}
         </div>
       </Card>
 
@@ -272,12 +259,6 @@ export default function UserDetailPage() {
             <ShoppingCart className="h-4 w-4" />
             발주 내역
           </TabsTrigger>
-          {isAdmin && (
-            <TabsTrigger value="sellers" className="gap-1.5">
-              <Users className="h-4 w-4" />
-              관리 셀러
-            </TabsTrigger>
-          )}
           {userRole === "MASTER" && (
             <TabsTrigger value="history" className="gap-1.5">
               <History className="h-4 w-4" />
@@ -468,81 +449,6 @@ export default function UserDetailPage() {
           </Card>
         </TabsContent>
 
-        {/* 관리 셀러 (ADMIN만) */}
-        {isAdmin && (
-          <TabsContent value="sellers">
-            <Card className="p-6">
-              {stats.managedSellers.length === 0 ? (
-                <p className="text-grey-500 text-center py-8">
-                  관리 중인 셀러가 없습니다
-                </p>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-grey-200">
-                    <thead>
-                      <tr className="bg-grey-50">
-                        <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
-                          이름
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
-                          전화번호
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
-                          채널
-                        </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
-                          방송
-                        </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
-                          매출 건수
-                        </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-grey-500 uppercase">
-                          발주 건수
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-grey-500 uppercase">
-                          가입일
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-grey-200">
-                      {stats.managedSellers.map((seller) => (
-                        <tr
-                          key={seller.id}
-                          className="hover:bg-grey-50 cursor-pointer"
-                          onClick={() => router.push(`/users/${seller.id}`)}
-                        >
-                          <td className="px-4 py-3 text-sm font-medium text-blue-600">
-                            {seller.name}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-grey-600">
-                            {seller.phone || "-"}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-grey-600">
-                            {seller.channels?.length > 0
-                              ? seller.channels.join(", ")
-                              : "-"}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-right">
-                            {seller._count.broadcasts}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-right">
-                            {seller._count.sales}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-right">
-                            {seller._count.orders}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-grey-600">
-                            {formatDate(seller.createdAt)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </Card>
-          </TabsContent>
-        )}
 
         {/* 변경 이력 (MASTER만) */}
         {userRole === "MASTER" && (

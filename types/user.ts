@@ -1,4 +1,4 @@
-export type Role = "MASTER" | "SUB_MASTER" | "ADMIN" | "SELLER";
+export type Role = "MASTER" | "SUB_MASTER" | "SELLER";
 
 export interface User {
   id: string;
@@ -6,9 +6,6 @@ export interface User {
   name: string;
   phone: string | null;
   role: Role;
-  adminId: string | null;
-  admin?: User;
-  sellers?: User[];
   channels: string[];
   avgSales: number | null;
   createdAt: Date;
@@ -20,6 +17,5 @@ export type UserFormData = {
   name: string;
   phone?: string;
   role: Role;
-  adminId?: string;
   channels?: string[];
 };

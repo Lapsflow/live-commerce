@@ -15,8 +15,8 @@ const saleSchema = z.object({
 export const { get: GET, update: PUT, remove: DELETE } = createCrudHandler({
   model: "sale",
   roles: {
-    read: ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
-    write: ["MASTER", "SUB_MASTER", "ADMIN"],
+    read: ["MASTER", "SUB_MASTER", "SELLER"],
+    write: ["MASTER", "SUB_MASTER"],
     delete: ["MASTER", "SUB_MASTER"],
   },
   createSchema: saleSchema,

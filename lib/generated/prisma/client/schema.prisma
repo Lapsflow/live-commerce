@@ -19,7 +19,6 @@ model User {
   name         String
   phone        String // ✨ 휴대폰번호 (필수 - pptx 스펙)
   role         Role     @default(SELLER)
-  adminId      String?
   centerId     String? // ✨ Center assignment (nullable - MASTER has no center)
   passwordHash String?
   createdAt    DateTime @default(now())
@@ -43,16 +42,11 @@ model User {
   // ✨ 활성/비활성 토글 (수정 요청 #3)
   isActive Boolean @default(true)
 
-  // Self-referential relation: Admin → Sellers
-  admin   User?  @relation("AdminSellers", fields: [adminId], references: [id], onDelete: SetNull)
-  sellers User[] @relation("AdminSellers")
-
   // Center relation
   center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
 
   // Relations
-  orders             Order[]               @relation
-  adminOrders        Order[]               @relation("AdminOrders")
+  orders             Order[]
   broadcasts         Broadcast[]
   rejectedBroadcasts Broadcast[]           @relation("BroadcastRejecter")
   sales              Sale[]
@@ -66,7 +60,6 @@ model User {
 enum Role {
   MASTER
   SUB_MASTER
-  ADMIN
   SELLER
 }
 
@@ -262,7 +255,6 @@ model Order {
   id                 String      @id @default(cuid())
   orderNo            String      @unique
   sellerId           String
-  adminId            String?
   processingCenterId String? // ✨ Center processing this order (nullable)
   status             OrderStatus @default(PENDING)
   totalAmount        Int         @default(0)
@@ -309,7 +301,6 @@ model Order {
 
   // Relations
   seller             User                  @relation(fields: [sellerId], references: [id])
-  admin              User?                 @relation("AdminOrders", fields: [adminId], references: [id])
   processingCenter   Center?               @relation(fields: [processingCenterId], references: [id], onDelete: SetNull)
   broadcast          Broadcast?            @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
   items              OrderItem[]

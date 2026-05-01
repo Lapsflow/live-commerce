@@ -30,7 +30,7 @@ const barcodeMasterUpdateSchema = z.object({
  */
 
 // GET /api/barcode-master - List all barcode masters
-export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, _user: AuthUser) => {
+export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: NextRequest, _user: AuthUser) => {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get('search');
   const isActive = searchParams.get('isActive');

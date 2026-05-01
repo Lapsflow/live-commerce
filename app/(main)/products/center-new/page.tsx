@@ -33,8 +33,8 @@ export default function CenterNewProductPage() {
   const userCenterId = (session?.user as any)?.centerId;
   const centerInfo = (session?.user as any)?.center;
 
-  // 권한 체크: SUB_MASTER, ADMIN만
-  const canAccess = userRole === "MASTER" || userRole === "SUB_MASTER" || userRole === "ADMIN";
+  // 권한 체크: MASTER, SUB_MASTER만
+  const canAccess = userRole === "MASTER" || userRole === "SUB_MASTER";
 
   const [isLoading, setIsLoading] = useState(false);
   const [previewCode, setPreviewCode] = useState("");
@@ -183,7 +183,7 @@ export default function CenterNewProductPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* MASTER: 센터 선택 / SUB_MASTER,ADMIN: 본인 센터 표시 */}
+            {/* MASTER: 센터 선택 / SUB_MASTER: 본인 센터 표시 */}
             <div className="space-y-2">
               <Label>소속 센터 *</Label>
               {userRole === "MASTER" ? (

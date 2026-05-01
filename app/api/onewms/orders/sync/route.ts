@@ -14,7 +14,7 @@ const orderSyncSchema = z.object({
 });
 
 export const POST = withRole(
-  ['ADMIN', 'SUB_MASTER', 'MASTER'],
+  ['SUB_MASTER', 'MASTER'],
   async (req: NextRequest) => {
     try {
       // Parse and validate request body

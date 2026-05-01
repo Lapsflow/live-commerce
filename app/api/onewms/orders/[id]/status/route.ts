@@ -9,7 +9,7 @@ import { getOrderSyncStatus } from '@/lib/services/onewms/orderSync';
 import { ok, errors } from '@/lib/api/response';
 
 export const GET = withRole(
-  ['MASTER', 'SUB_MASTER', 'ADMIN', 'SELLER'],
+  ['MASTER', 'SUB_MASTER', 'SELLER'],
   async (
     req: NextRequest,
     user,

@@ -8,7 +8,7 @@ import { createOnewmsClient } from '@/lib/onewms';
  * ONEWMS에서 송장 이미지 URL 조회 (고객 서비스 및 배송 확인용)
  */
 export const GET = withRole(
-  ['MASTER', 'SUB_MASTER', 'ADMIN', 'SELLER'],
+  ['MASTER', 'SUB_MASTER', 'SELLER'],
   async (
     req: NextRequest,
     user,

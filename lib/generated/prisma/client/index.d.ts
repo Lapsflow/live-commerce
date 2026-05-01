@@ -151,7 +151,6 @@ export namespace $Enums {
   export const Role: {
   MASTER: 'MASTER',
   SUB_MASTER: 'SUB_MASTER',
-  ADMIN: 'ADMIN',
   SELLER: 'SELLER'
 };
 
@@ -3352,9 +3351,7 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    sellers: number
     orders: number
-    adminOrders: number
     broadcasts: number
     rejectedBroadcasts: number
     sales: number
@@ -3366,9 +3363,7 @@ export namespace Prisma {
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    sellers?: boolean | UserCountOutputTypeCountSellersArgs
     orders?: boolean | UserCountOutputTypeCountOrdersArgs
-    adminOrders?: boolean | UserCountOutputTypeCountAdminOrdersArgs
     broadcasts?: boolean | UserCountOutputTypeCountBroadcastsArgs
     rejectedBroadcasts?: boolean | UserCountOutputTypeCountRejectedBroadcastsArgs
     sales?: boolean | UserCountOutputTypeCountSalesArgs
@@ -3393,21 +3388,7 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountSellersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UserWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
   export type UserCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: OrderWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountAdminOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OrderWhereInput
   }
 
@@ -3865,7 +3846,6 @@ export namespace Prisma {
     name: string | null
     phone: string | null
     role: $Enums.Role | null
-    adminId: string | null
     centerId: string | null
     passwordHash: string | null
     createdAt: Date | null
@@ -3885,7 +3865,6 @@ export namespace Prisma {
     name: string | null
     phone: string | null
     role: $Enums.Role | null
-    adminId: string | null
     centerId: string | null
     passwordHash: string | null
     createdAt: Date | null
@@ -3905,7 +3884,6 @@ export namespace Prisma {
     name: number
     phone: number
     role: number
-    adminId: number
     centerId: number
     passwordHash: number
     createdAt: number
@@ -3939,7 +3917,6 @@ export namespace Prisma {
     name?: true
     phone?: true
     role?: true
-    adminId?: true
     centerId?: true
     passwordHash?: true
     createdAt?: true
@@ -3959,7 +3936,6 @@ export namespace Prisma {
     name?: true
     phone?: true
     role?: true
-    adminId?: true
     centerId?: true
     passwordHash?: true
     createdAt?: true
@@ -3979,7 +3955,6 @@ export namespace Prisma {
     name?: true
     phone?: true
     role?: true
-    adminId?: true
     centerId?: true
     passwordHash?: true
     createdAt?: true
@@ -4090,7 +4065,6 @@ export namespace Prisma {
     name: string
     phone: string
     role: $Enums.Role
-    adminId: string | null
     centerId: string | null
     passwordHash: string | null
     createdAt: Date
@@ -4133,7 +4107,6 @@ export namespace Prisma {
     name?: boolean
     phone?: boolean
     role?: boolean
-    adminId?: boolean
     centerId?: boolean
     passwordHash?: boolean
     createdAt?: boolean
@@ -4148,11 +4121,8 @@ export namespace Prisma {
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
     isActive?: boolean
-    admin?: boolean | User$adminArgs<ExtArgs>
-    sellers?: boolean | User$sellersArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
-    adminOrders?: boolean | User$adminOrdersArgs<ExtArgs>
     broadcasts?: boolean | User$broadcastsArgs<ExtArgs>
     rejectedBroadcasts?: boolean | User$rejectedBroadcastsArgs<ExtArgs>
     sales?: boolean | User$salesArgs<ExtArgs>
@@ -4171,7 +4141,6 @@ export namespace Prisma {
     name?: boolean
     phone?: boolean
     role?: boolean
-    adminId?: boolean
     centerId?: boolean
     passwordHash?: boolean
     createdAt?: boolean
@@ -4186,7 +4155,6 @@ export namespace Prisma {
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
     isActive?: boolean
-    admin?: boolean | User$adminArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4197,7 +4165,6 @@ export namespace Prisma {
     name?: boolean
     phone?: boolean
     role?: boolean
-    adminId?: boolean
     centerId?: boolean
     passwordHash?: boolean
     createdAt?: boolean
@@ -4212,7 +4179,6 @@ export namespace Prisma {
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
     isActive?: boolean
-    admin?: boolean | User$adminArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4223,7 +4189,6 @@ export namespace Prisma {
     name?: boolean
     phone?: boolean
     role?: boolean
-    adminId?: boolean
     centerId?: boolean
     passwordHash?: boolean
     createdAt?: boolean
@@ -4240,13 +4205,10 @@ export namespace Prisma {
     isActive?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "adminId" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason" | "isActive", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason" | "isActive", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    admin?: boolean | User$adminArgs<ExtArgs>
-    sellers?: boolean | User$sellersArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
-    adminOrders?: boolean | User$adminOrdersArgs<ExtArgs>
     broadcasts?: boolean | User$broadcastsArgs<ExtArgs>
     rejectedBroadcasts?: boolean | User$rejectedBroadcastsArgs<ExtArgs>
     sales?: boolean | User$salesArgs<ExtArgs>
@@ -4258,22 +4220,17 @@ export namespace Prisma {
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    admin?: boolean | User$adminArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
   }
   export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    admin?: boolean | User$adminArgs<ExtArgs>
     center?: boolean | User$centerArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      admin: Prisma.$UserPayload<ExtArgs> | null
-      sellers: Prisma.$UserPayload<ExtArgs>[]
       center: Prisma.$CenterPayload<ExtArgs> | null
       orders: Prisma.$OrderPayload<ExtArgs>[]
-      adminOrders: Prisma.$OrderPayload<ExtArgs>[]
       broadcasts: Prisma.$BroadcastPayload<ExtArgs>[]
       rejectedBroadcasts: Prisma.$BroadcastPayload<ExtArgs>[]
       sales: Prisma.$SalePayload<ExtArgs>[]
@@ -4290,7 +4247,6 @@ export namespace Prisma {
       name: string
       phone: string
       role: $Enums.Role
-      adminId: string | null
       centerId: string | null
       passwordHash: string | null
       createdAt: Date
@@ -4699,11 +4655,8 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    admin<T extends User$adminArgs<ExtArgs> = {}>(args?: Subset<T, User$adminArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    sellers<T extends User$sellersArgs<ExtArgs> = {}>(args?: Subset<T, User$sellersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     center<T extends User$centerArgs<ExtArgs> = {}>(args?: Subset<T, User$centerArgs<ExtArgs>>): Prisma__CenterClient<$Result.GetResult<Prisma.$CenterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     orders<T extends User$ordersArgs<ExtArgs> = {}>(args?: Subset<T, User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    adminOrders<T extends User$adminOrdersArgs<ExtArgs> = {}>(args?: Subset<T, User$adminOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     broadcasts<T extends User$broadcastsArgs<ExtArgs> = {}>(args?: Subset<T, User$broadcastsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BroadcastPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     rejectedBroadcasts<T extends User$rejectedBroadcastsArgs<ExtArgs> = {}>(args?: Subset<T, User$rejectedBroadcastsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BroadcastPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sales<T extends User$salesArgs<ExtArgs> = {}>(args?: Subset<T, User$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4747,7 +4700,6 @@ export namespace Prisma {
     readonly name: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
-    readonly adminId: FieldRef<"User", 'String'>
     readonly centerId: FieldRef<"User", 'String'>
     readonly passwordHash: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
@@ -5163,49 +5115,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.admin
-   */
-  export type User$adminArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
-  }
-
-  /**
-   * User.sellers
-   */
-  export type User$sellersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
-    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
-    cursor?: UserWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
-  }
-
-  /**
    * User.center
    */
   export type User$centerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5228,30 +5137,6 @@ export namespace Prisma {
    * User.orders
    */
   export type User$ordersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Order
-     */
-    select?: OrderSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Order
-     */
-    omit?: OrderOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: OrderInclude<ExtArgs> | null
-    where?: OrderWhereInput
-    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
-    cursor?: OrderWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
-  }
-
-  /**
-   * User.adminOrders
-   */
-  export type User$adminOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Order
      */
@@ -10983,7 +10868,6 @@ export namespace Prisma {
     id: string | null
     orderNo: string | null
     sellerId: string | null
-    adminId: string | null
     processingCenterId: string | null
     status: $Enums.OrderStatus | null
     totalAmount: number | null
@@ -11017,7 +10901,6 @@ export namespace Prisma {
     id: string | null
     orderNo: string | null
     sellerId: string | null
-    adminId: string | null
     processingCenterId: string | null
     status: $Enums.OrderStatus | null
     totalAmount: number | null
@@ -11051,7 +10934,6 @@ export namespace Prisma {
     id: number
     orderNo: number
     sellerId: number
-    adminId: number
     processingCenterId: number
     status: number
     totalAmount: number
@@ -11097,7 +10979,6 @@ export namespace Prisma {
     id?: true
     orderNo?: true
     sellerId?: true
-    adminId?: true
     processingCenterId?: true
     status?: true
     totalAmount?: true
@@ -11131,7 +11012,6 @@ export namespace Prisma {
     id?: true
     orderNo?: true
     sellerId?: true
-    adminId?: true
     processingCenterId?: true
     status?: true
     totalAmount?: true
@@ -11165,7 +11045,6 @@ export namespace Prisma {
     id?: true
     orderNo?: true
     sellerId?: true
-    adminId?: true
     processingCenterId?: true
     status?: true
     totalAmount?: true
@@ -11286,7 +11165,6 @@ export namespace Prisma {
     id: string
     orderNo: string
     sellerId: string
-    adminId: string | null
     processingCenterId: string | null
     status: $Enums.OrderStatus
     totalAmount: number
@@ -11339,7 +11217,6 @@ export namespace Prisma {
     id?: boolean
     orderNo?: boolean
     sellerId?: boolean
-    adminId?: boolean
     processingCenterId?: boolean
     status?: boolean
     totalAmount?: boolean
@@ -11368,7 +11245,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: boolean
     taxInvoiceNumber?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
-    admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
     broadcast?: boolean | Order$broadcastArgs<ExtArgs>
     items?: boolean | Order$itemsArgs<ExtArgs>
@@ -11383,7 +11259,6 @@ export namespace Prisma {
     id?: boolean
     orderNo?: boolean
     sellerId?: boolean
-    adminId?: boolean
     processingCenterId?: boolean
     status?: boolean
     totalAmount?: boolean
@@ -11412,7 +11287,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: boolean
     taxInvoiceNumber?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
-    admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
     broadcast?: boolean | Order$broadcastArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
@@ -11421,7 +11295,6 @@ export namespace Prisma {
     id?: boolean
     orderNo?: boolean
     sellerId?: boolean
-    adminId?: boolean
     processingCenterId?: boolean
     status?: boolean
     totalAmount?: boolean
@@ -11450,7 +11323,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: boolean
     taxInvoiceNumber?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
-    admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
     broadcast?: boolean | Order$broadcastArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
@@ -11459,7 +11331,6 @@ export namespace Prisma {
     id?: boolean
     orderNo?: boolean
     sellerId?: boolean
-    adminId?: boolean
     processingCenterId?: boolean
     status?: boolean
     totalAmount?: boolean
@@ -11489,10 +11360,9 @@ export namespace Prisma {
     taxInvoiceNumber?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "adminId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "broadcastId" | "matchType" | "taxInvoiceIssued" | "taxInvoiceIssuedAt" | "taxInvoiceNumber", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "broadcastId" | "matchType" | "taxInvoiceIssued" | "taxInvoiceIssuedAt" | "taxInvoiceNumber", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
-    admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
     broadcast?: boolean | Order$broadcastArgs<ExtArgs>
     items?: boolean | Order$itemsArgs<ExtArgs>
@@ -11504,13 +11374,11 @@ export namespace Prisma {
   }
   export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
-    admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
     broadcast?: boolean | Order$broadcastArgs<ExtArgs>
   }
   export type OrderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
-    admin?: boolean | Order$adminArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
     broadcast?: boolean | Order$broadcastArgs<ExtArgs>
   }
@@ -11519,7 +11387,6 @@ export namespace Prisma {
     name: "Order"
     objects: {
       seller: Prisma.$UserPayload<ExtArgs>
-      admin: Prisma.$UserPayload<ExtArgs> | null
       processingCenter: Prisma.$CenterPayload<ExtArgs> | null
       broadcast: Prisma.$BroadcastPayload<ExtArgs> | null
       items: Prisma.$OrderItemPayload<ExtArgs>[]
@@ -11532,7 +11399,6 @@ export namespace Prisma {
       id: string
       orderNo: string
       sellerId: string
-      adminId: string | null
       processingCenterId: string | null
       status: $Enums.OrderStatus
       totalAmount: number
@@ -11955,7 +11821,6 @@ export namespace Prisma {
   export interface Prisma__OrderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     seller<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    admin<T extends Order$adminArgs<ExtArgs> = {}>(args?: Subset<T, Order$adminArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     processingCenter<T extends Order$processingCenterArgs<ExtArgs> = {}>(args?: Subset<T, Order$processingCenterArgs<ExtArgs>>): Prisma__CenterClient<$Result.GetResult<Prisma.$CenterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     broadcast<T extends Order$broadcastArgs<ExtArgs> = {}>(args?: Subset<T, Order$broadcastArgs<ExtArgs>>): Prisma__BroadcastClient<$Result.GetResult<Prisma.$BroadcastPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     items<T extends Order$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -11995,7 +11860,6 @@ export namespace Prisma {
     readonly id: FieldRef<"Order", 'String'>
     readonly orderNo: FieldRef<"Order", 'String'>
     readonly sellerId: FieldRef<"Order", 'String'>
-    readonly adminId: FieldRef<"Order", 'String'>
     readonly processingCenterId: FieldRef<"Order", 'String'>
     readonly status: FieldRef<"Order", 'OrderStatus'>
     readonly totalAmount: FieldRef<"Order", 'Int'>
@@ -12421,25 +12285,6 @@ export namespace Prisma {
      * Limit how many Orders to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Order.admin
-   */
-  export type Order$adminArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
   }
 
   /**
@@ -35958,7 +35803,6 @@ export namespace Prisma {
     name: 'name',
     phone: 'phone',
     role: 'role',
-    adminId: 'adminId',
     centerId: 'centerId',
     passwordHash: 'passwordHash',
     createdAt: 'createdAt',
@@ -36074,7 +35918,6 @@ export namespace Prisma {
     id: 'id',
     orderNo: 'orderNo',
     sellerId: 'sellerId',
-    adminId: 'adminId',
     processingCenterId: 'processingCenterId',
     status: 'status',
     totalAmount: 'totalAmount',
@@ -36772,7 +36615,6 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    adminId?: StringNullableFilter<"User"> | string | null
     centerId?: StringNullableFilter<"User"> | string | null
     passwordHash?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -36787,11 +36629,8 @@ export namespace Prisma {
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
-    admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    sellers?: UserListRelationFilter
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     orders?: OrderListRelationFilter
-    adminOrders?: OrderListRelationFilter
     broadcasts?: BroadcastListRelationFilter
     rejectedBroadcasts?: BroadcastListRelationFilter
     sales?: SaleListRelationFilter
@@ -36809,7 +36648,6 @@ export namespace Prisma {
     name?: SortOrder
     phone?: SortOrder
     role?: SortOrder
-    adminId?: SortOrderInput | SortOrder
     centerId?: SortOrderInput | SortOrder
     passwordHash?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -36824,11 +36662,8 @@ export namespace Prisma {
     contractApprovedBy?: SortOrderInput | SortOrder
     contractRejectionReason?: SortOrderInput | SortOrder
     isActive?: SortOrder
-    admin?: UserOrderByWithRelationInput
-    sellers?: UserOrderByRelationAggregateInput
     center?: CenterOrderByWithRelationInput
     orders?: OrderOrderByRelationAggregateInput
-    adminOrders?: OrderOrderByRelationAggregateInput
     broadcasts?: BroadcastOrderByRelationAggregateInput
     rejectedBroadcasts?: BroadcastOrderByRelationAggregateInput
     sales?: SaleOrderByRelationAggregateInput
@@ -36849,7 +36684,6 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    adminId?: StringNullableFilter<"User"> | string | null
     centerId?: StringNullableFilter<"User"> | string | null
     passwordHash?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -36864,11 +36698,8 @@ export namespace Prisma {
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
-    admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    sellers?: UserListRelationFilter
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     orders?: OrderListRelationFilter
-    adminOrders?: OrderListRelationFilter
     broadcasts?: BroadcastListRelationFilter
     rejectedBroadcasts?: BroadcastListRelationFilter
     sales?: SaleListRelationFilter
@@ -36886,7 +36717,6 @@ export namespace Prisma {
     name?: SortOrder
     phone?: SortOrder
     role?: SortOrder
-    adminId?: SortOrderInput | SortOrder
     centerId?: SortOrderInput | SortOrder
     passwordHash?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -36918,7 +36748,6 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"User"> | string
     phone?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
-    adminId?: StringNullableWithAggregatesFilter<"User"> | string | null
     centerId?: StringNullableWithAggregatesFilter<"User"> | string | null
     passwordHash?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -37461,7 +37290,6 @@ export namespace Prisma {
     id?: StringFilter<"Order"> | string
     orderNo?: StringFilter<"Order"> | string
     sellerId?: StringFilter<"Order"> | string
-    adminId?: StringNullableFilter<"Order"> | string | null
     processingCenterId?: StringNullableFilter<"Order"> | string | null
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     totalAmount?: IntFilter<"Order"> | number
@@ -37490,7 +37318,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     taxInvoiceNumber?: StringNullableFilter<"Order"> | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
-    admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processingCenter?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     broadcast?: XOR<BroadcastNullableScalarRelationFilter, BroadcastWhereInput> | null
     items?: OrderItemListRelationFilter
@@ -37504,7 +37331,6 @@ export namespace Prisma {
     id?: SortOrder
     orderNo?: SortOrder
     sellerId?: SortOrder
-    adminId?: SortOrderInput | SortOrder
     processingCenterId?: SortOrderInput | SortOrder
     status?: SortOrder
     totalAmount?: SortOrder
@@ -37533,7 +37359,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: SortOrderInput | SortOrder
     taxInvoiceNumber?: SortOrderInput | SortOrder
     seller?: UserOrderByWithRelationInput
-    admin?: UserOrderByWithRelationInput
     processingCenter?: CenterOrderByWithRelationInput
     broadcast?: BroadcastOrderByWithRelationInput
     items?: OrderItemOrderByRelationAggregateInput
@@ -37550,7 +37375,6 @@ export namespace Prisma {
     OR?: OrderWhereInput[]
     NOT?: OrderWhereInput | OrderWhereInput[]
     sellerId?: StringFilter<"Order"> | string
-    adminId?: StringNullableFilter<"Order"> | string | null
     processingCenterId?: StringNullableFilter<"Order"> | string | null
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     totalAmount?: IntFilter<"Order"> | number
@@ -37579,7 +37403,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     taxInvoiceNumber?: StringNullableFilter<"Order"> | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
-    admin?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processingCenter?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     broadcast?: XOR<BroadcastNullableScalarRelationFilter, BroadcastWhereInput> | null
     items?: OrderItemListRelationFilter
@@ -37593,7 +37416,6 @@ export namespace Prisma {
     id?: SortOrder
     orderNo?: SortOrder
     sellerId?: SortOrder
-    adminId?: SortOrderInput | SortOrder
     processingCenterId?: SortOrderInput | SortOrder
     status?: SortOrder
     totalAmount?: SortOrder
@@ -37635,7 +37457,6 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Order"> | string
     orderNo?: StringWithAggregatesFilter<"Order"> | string
     sellerId?: StringWithAggregatesFilter<"Order"> | string
-    adminId?: StringNullableWithAggregatesFilter<"Order"> | string | null
     processingCenterId?: StringNullableWithAggregatesFilter<"Order"> | string | null
     status?: EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus
     totalAmount?: IntWithAggregatesFilter<"Order"> | number
@@ -39384,11 +39205,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
@@ -39406,7 +39224,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -39421,9 +39238,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -39454,11 +39269,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
@@ -39476,7 +39288,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39491,9 +39302,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -39511,7 +39320,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -39557,7 +39365,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40222,7 +40029,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
@@ -40236,7 +40042,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -40300,7 +40105,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -40314,7 +40118,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -40353,7 +40156,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -40417,7 +40219,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -42396,17 +42197,6 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type UserNullableScalarRelationFilter = {
-    is?: UserWhereInput | null
-    isNot?: UserWhereInput | null
-  }
-
-  export type UserListRelationFilter = {
-    every?: UserWhereInput
-    some?: UserWhereInput
-    none?: UserWhereInput
-  }
-
   export type CenterNullableScalarRelationFilter = {
     is?: CenterWhereInput | null
     isNot?: CenterWhereInput | null
@@ -42465,10 +42255,6 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type UserOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type OrderOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -42508,7 +42294,6 @@ export namespace Prisma {
     name?: SortOrder
     phone?: SortOrder
     role?: SortOrder
-    adminId?: SortOrder
     centerId?: SortOrder
     passwordHash?: SortOrder
     createdAt?: SortOrder
@@ -42536,7 +42321,6 @@ export namespace Prisma {
     name?: SortOrder
     phone?: SortOrder
     role?: SortOrder
-    adminId?: SortOrder
     centerId?: SortOrder
     passwordHash?: SortOrder
     createdAt?: SortOrder
@@ -42556,7 +42340,6 @@ export namespace Prisma {
     name?: SortOrder
     phone?: SortOrder
     role?: SortOrder
-    adminId?: SortOrder
     centerId?: SortOrder
     passwordHash?: SortOrder
     createdAt?: SortOrder
@@ -42961,6 +42744,16 @@ export namespace Prisma {
     _max?: NestedEnumSampleStatusNullableFilter<$PrismaModel>
   }
 
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
+  }
+
+  export type UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type CenterCountOrderByAggregateInput = {
     id?: SortOrder
     code?: SortOrder
@@ -43230,7 +43023,6 @@ export namespace Prisma {
     id?: SortOrder
     orderNo?: SortOrder
     sellerId?: SortOrder
-    adminId?: SortOrder
     processingCenterId?: SortOrder
     status?: SortOrder
     totalAmount?: SortOrder
@@ -43269,7 +43061,6 @@ export namespace Prisma {
     id?: SortOrder
     orderNo?: SortOrder
     sellerId?: SortOrder
-    adminId?: SortOrder
     processingCenterId?: SortOrder
     status?: SortOrder
     totalAmount?: SortOrder
@@ -43303,7 +43094,6 @@ export namespace Prisma {
     id?: SortOrder
     orderNo?: SortOrder
     sellerId?: SortOrder
-    adminId?: SortOrder
     processingCenterId?: SortOrder
     status?: SortOrder
     totalAmount?: SortOrder
@@ -43504,6 +43294,11 @@ export namespace Prisma {
     in?: $Enums.BroadcastStatus[] | ListEnumBroadcastStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.BroadcastStatus[] | ListEnumBroadcastStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumBroadcastStatusFilter<$PrismaModel> | $Enums.BroadcastStatus
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
   }
 
   export type BroadcastCountOrderByAggregateInput = {
@@ -44575,19 +44370,6 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type UserCreateNestedOneWithoutSellersInput = {
-    create?: XOR<UserCreateWithoutSellersInput, UserUncheckedCreateWithoutSellersInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSellersInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserCreateNestedManyWithoutAdminInput = {
-    create?: XOR<UserCreateWithoutAdminInput, UserUncheckedCreateWithoutAdminInput> | UserCreateWithoutAdminInput[] | UserUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: UserCreateOrConnectWithoutAdminInput | UserCreateOrConnectWithoutAdminInput[]
-    createMany?: UserCreateManyAdminInputEnvelope
-    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-  }
-
   export type CenterCreateNestedOneWithoutUsersInput = {
     create?: XOR<CenterCreateWithoutUsersInput, CenterUncheckedCreateWithoutUsersInput>
     connectOrCreate?: CenterCreateOrConnectWithoutUsersInput
@@ -44598,13 +44380,6 @@ export namespace Prisma {
     create?: XOR<OrderCreateWithoutSellerInput, OrderUncheckedCreateWithoutSellerInput> | OrderCreateWithoutSellerInput[] | OrderUncheckedCreateWithoutSellerInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutSellerInput | OrderCreateOrConnectWithoutSellerInput[]
     createMany?: OrderCreateManySellerInputEnvelope
-    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-  }
-
-  export type OrderCreateNestedManyWithoutAdminInput = {
-    create?: XOR<OrderCreateWithoutAdminInput, OrderUncheckedCreateWithoutAdminInput> | OrderCreateWithoutAdminInput[] | OrderUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: OrderCreateOrConnectWithoutAdminInput | OrderCreateOrConnectWithoutAdminInput[]
-    createMany?: OrderCreateManyAdminInputEnvelope
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
   }
 
@@ -44664,24 +44439,10 @@ export namespace Prisma {
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
-  export type UserUncheckedCreateNestedManyWithoutAdminInput = {
-    create?: XOR<UserCreateWithoutAdminInput, UserUncheckedCreateWithoutAdminInput> | UserCreateWithoutAdminInput[] | UserUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: UserCreateOrConnectWithoutAdminInput | UserCreateOrConnectWithoutAdminInput[]
-    createMany?: UserCreateManyAdminInputEnvelope
-    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-  }
-
   export type OrderUncheckedCreateNestedManyWithoutSellerInput = {
     create?: XOR<OrderCreateWithoutSellerInput, OrderUncheckedCreateWithoutSellerInput> | OrderCreateWithoutSellerInput[] | OrderUncheckedCreateWithoutSellerInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutSellerInput | OrderCreateOrConnectWithoutSellerInput[]
     createMany?: OrderCreateManySellerInputEnvelope
-    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-  }
-
-  export type OrderUncheckedCreateNestedManyWithoutAdminInput = {
-    create?: XOR<OrderCreateWithoutAdminInput, OrderUncheckedCreateWithoutAdminInput> | OrderCreateWithoutAdminInput[] | OrderUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: OrderCreateOrConnectWithoutAdminInput | OrderCreateOrConnectWithoutAdminInput[]
-    createMany?: OrderCreateManyAdminInputEnvelope
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
   }
 
@@ -44797,30 +44558,6 @@ export namespace Prisma {
     set?: boolean
   }
 
-  export type UserUpdateOneWithoutSellersNestedInput = {
-    create?: XOR<UserCreateWithoutSellersInput, UserUncheckedCreateWithoutSellersInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSellersInput
-    upsert?: UserUpsertWithoutSellersInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSellersInput, UserUpdateWithoutSellersInput>, UserUncheckedUpdateWithoutSellersInput>
-  }
-
-  export type UserUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<UserCreateWithoutAdminInput, UserUncheckedCreateWithoutAdminInput> | UserCreateWithoutAdminInput[] | UserUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: UserCreateOrConnectWithoutAdminInput | UserCreateOrConnectWithoutAdminInput[]
-    upsert?: UserUpsertWithWhereUniqueWithoutAdminInput | UserUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: UserCreateManyAdminInputEnvelope
-    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    update?: UserUpdateWithWhereUniqueWithoutAdminInput | UserUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: UserUpdateManyWithWhereWithoutAdminInput | UserUpdateManyWithWhereWithoutAdminInput[]
-    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
-  }
-
   export type CenterUpdateOneWithoutUsersNestedInput = {
     create?: XOR<CenterCreateWithoutUsersInput, CenterUncheckedCreateWithoutUsersInput>
     connectOrCreate?: CenterCreateOrConnectWithoutUsersInput
@@ -44842,20 +44579,6 @@ export namespace Prisma {
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
     update?: OrderUpdateWithWhereUniqueWithoutSellerInput | OrderUpdateWithWhereUniqueWithoutSellerInput[]
     updateMany?: OrderUpdateManyWithWhereWithoutSellerInput | OrderUpdateManyWithWhereWithoutSellerInput[]
-    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
-  }
-
-  export type OrderUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<OrderCreateWithoutAdminInput, OrderUncheckedCreateWithoutAdminInput> | OrderCreateWithoutAdminInput[] | OrderUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: OrderCreateOrConnectWithoutAdminInput | OrderCreateOrConnectWithoutAdminInput[]
-    upsert?: OrderUpsertWithWhereUniqueWithoutAdminInput | OrderUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: OrderCreateManyAdminInputEnvelope
-    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    update?: OrderUpdateWithWhereUniqueWithoutAdminInput | OrderUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: OrderUpdateManyWithWhereWithoutAdminInput | OrderUpdateManyWithWhereWithoutAdminInput[]
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
@@ -44971,20 +44694,6 @@ export namespace Prisma {
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
-  export type UserUncheckedUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<UserCreateWithoutAdminInput, UserUncheckedCreateWithoutAdminInput> | UserCreateWithoutAdminInput[] | UserUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: UserCreateOrConnectWithoutAdminInput | UserCreateOrConnectWithoutAdminInput[]
-    upsert?: UserUpsertWithWhereUniqueWithoutAdminInput | UserUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: UserCreateManyAdminInputEnvelope
-    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    update?: UserUpdateWithWhereUniqueWithoutAdminInput | UserUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: UserUpdateManyWithWhereWithoutAdminInput | UserUpdateManyWithWhereWithoutAdminInput[]
-    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
-  }
-
   export type OrderUncheckedUpdateManyWithoutSellerNestedInput = {
     create?: XOR<OrderCreateWithoutSellerInput, OrderUncheckedCreateWithoutSellerInput> | OrderCreateWithoutSellerInput[] | OrderUncheckedCreateWithoutSellerInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutSellerInput | OrderCreateOrConnectWithoutSellerInput[]
@@ -44996,20 +44705,6 @@ export namespace Prisma {
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
     update?: OrderUpdateWithWhereUniqueWithoutSellerInput | OrderUpdateWithWhereUniqueWithoutSellerInput[]
     updateMany?: OrderUpdateManyWithWhereWithoutSellerInput | OrderUpdateManyWithWhereWithoutSellerInput[]
-    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
-  }
-
-  export type OrderUncheckedUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<OrderCreateWithoutAdminInput, OrderUncheckedCreateWithoutAdminInput> | OrderCreateWithoutAdminInput[] | OrderUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: OrderCreateOrConnectWithoutAdminInput | OrderCreateOrConnectWithoutAdminInput[]
-    upsert?: OrderUpsertWithWhereUniqueWithoutAdminInput | OrderUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: OrderCreateManyAdminInputEnvelope
-    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-    update?: OrderUpdateWithWhereUniqueWithoutAdminInput | OrderUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: OrderUpdateManyWithWhereWithoutAdminInput | OrderUpdateManyWithWhereWithoutAdminInput[]
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
@@ -45901,12 +45596,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type UserCreateNestedOneWithoutAdminOrdersInput = {
-    create?: XOR<UserCreateWithoutAdminOrdersInput, UserUncheckedCreateWithoutAdminOrdersInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAdminOrdersInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type CenterCreateNestedOneWithoutOrdersInput = {
     create?: XOR<CenterCreateWithoutOrdersInput, CenterUncheckedCreateWithoutOrdersInput>
     connectOrCreate?: CenterCreateOrConnectWithoutOrdersInput
@@ -46009,16 +45698,6 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutOrdersInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOrdersInput, UserUpdateWithoutOrdersInput>, UserUncheckedUpdateWithoutOrdersInput>
-  }
-
-  export type UserUpdateOneWithoutAdminOrdersNestedInput = {
-    create?: XOR<UserCreateWithoutAdminOrdersInput, UserUncheckedCreateWithoutAdminOrdersInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAdminOrdersInput
-    upsert?: UserUpsertWithoutAdminOrdersInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAdminOrdersInput, UserUpdateWithoutAdminOrdersInput>, UserUncheckedUpdateWithoutAdminOrdersInput>
   }
 
   export type CenterUpdateOneWithoutOrdersNestedInput = {
@@ -47384,157 +47063,6 @@ export namespace Prisma {
     _max?: NestedEnumAuditActionFilter<$PrismaModel>
   }
 
-  export type UserCreateWithoutSellersInput = {
-    id?: string
-    username: string
-    email?: string | null
-    name: string
-    phone: string
-    role?: $Enums.Role
-    passwordHash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    channels?: UserCreatechannelsInput | string[]
-    avgSales?: number | null
-    categories?: UserCreatecategoriesInput | string[]
-    regions?: UserCreateregionsInput | string[]
-    timeSlots?: UserCreatetimeSlotsInput | string[]
-    contractStatus?: $Enums.ContractStatus
-    contractApprovedAt?: Date | string | null
-    contractApprovedBy?: string | null
-    contractRejectionReason?: string | null
-    isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    center?: CenterCreateNestedOneWithoutUsersInput
-    orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
-    broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
-    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
-    sales?: SaleCreateNestedManyWithoutSellerInput
-    proposals?: ProposalCreateNestedManyWithoutUserInput
-    proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
-    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
-    scanLogs?: ScanLogCreateNestedManyWithoutUserInput
-    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutSellersInput = {
-    id?: string
-    username: string
-    email?: string | null
-    name: string
-    phone: string
-    role?: $Enums.Role
-    adminId?: string | null
-    centerId?: string | null
-    passwordHash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    channels?: UserCreatechannelsInput | string[]
-    avgSales?: number | null
-    categories?: UserCreatecategoriesInput | string[]
-    regions?: UserCreateregionsInput | string[]
-    timeSlots?: UserCreatetimeSlotsInput | string[]
-    contractStatus?: $Enums.ContractStatus
-    contractApprovedAt?: Date | string | null
-    contractApprovedBy?: string | null
-    contractRejectionReason?: string | null
-    isActive?: boolean
-    orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
-    broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
-    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
-    sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
-    proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
-    proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
-    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
-    scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
-    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutSellersInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutSellersInput, UserUncheckedCreateWithoutSellersInput>
-  }
-
-  export type UserCreateWithoutAdminInput = {
-    id?: string
-    username: string
-    email?: string | null
-    name: string
-    phone: string
-    role?: $Enums.Role
-    passwordHash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    channels?: UserCreatechannelsInput | string[]
-    avgSales?: number | null
-    categories?: UserCreatecategoriesInput | string[]
-    regions?: UserCreateregionsInput | string[]
-    timeSlots?: UserCreatetimeSlotsInput | string[]
-    contractStatus?: $Enums.ContractStatus
-    contractApprovedAt?: Date | string | null
-    contractApprovedBy?: string | null
-    contractRejectionReason?: string | null
-    isActive?: boolean
-    sellers?: UserCreateNestedManyWithoutAdminInput
-    center?: CenterCreateNestedOneWithoutUsersInput
-    orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
-    broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
-    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
-    sales?: SaleCreateNestedManyWithoutSellerInput
-    proposals?: ProposalCreateNestedManyWithoutUserInput
-    proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
-    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
-    scanLogs?: ScanLogCreateNestedManyWithoutUserInput
-    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutAdminInput = {
-    id?: string
-    username: string
-    email?: string | null
-    name: string
-    phone: string
-    role?: $Enums.Role
-    centerId?: string | null
-    passwordHash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    channels?: UserCreatechannelsInput | string[]
-    avgSales?: number | null
-    categories?: UserCreatecategoriesInput | string[]
-    regions?: UserCreateregionsInput | string[]
-    timeSlots?: UserCreatetimeSlotsInput | string[]
-    contractStatus?: $Enums.ContractStatus
-    contractApprovedAt?: Date | string | null
-    contractApprovedBy?: string | null
-    contractRejectionReason?: string | null
-    isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
-    orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
-    broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
-    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
-    sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
-    proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
-    proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
-    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
-    scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
-    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutAdminInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutAdminInput, UserUncheckedCreateWithoutAdminInput>
-  }
-
-  export type UserCreateManyAdminInputEnvelope = {
-    data: UserCreateManyAdminInput | UserCreateManyAdminInput[]
-    skipDuplicates?: boolean
-  }
-
   export type CenterCreateWithoutUsersInput = {
     id?: string
     code: string
@@ -47616,7 +47144,6 @@ export namespace Prisma {
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
@@ -47629,7 +47156,6 @@ export namespace Prisma {
   export type OrderUncheckedCreateWithoutSellerInput = {
     id?: string
     orderNo: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -47671,92 +47197,6 @@ export namespace Prisma {
 
   export type OrderCreateManySellerInputEnvelope = {
     data: OrderCreateManySellerInput | OrderCreateManySellerInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type OrderCreateWithoutAdminInput = {
-    id?: string
-    orderNo: string
-    status?: $Enums.OrderStatus
-    totalAmount?: number
-    memo?: string | null
-    uploadedAt?: Date | string
-    approvedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    recipient?: string | null
-    phone?: string | null
-    address?: string | null
-    totalMargin?: number
-    paymentStatus?: $Enums.PaymentStatus
-    shippingStatus?: $Enums.ShippingStatus
-    paidAt?: Date | string | null
-    virtualAccount?: string | null
-    virtualAccountBank?: string | null
-    virtualAccountExpiry?: Date | string | null
-    productType?: $Enums.ProductType | null
-    expiresAt?: Date | string | null
-    cancelledAt?: Date | string | null
-    cancelReason?: string | null
-    matchType?: string | null
-    taxInvoiceIssued?: boolean
-    taxInvoiceIssuedAt?: Date | string | null
-    taxInvoiceNumber?: string | null
-    seller: UserCreateNestedOneWithoutOrdersInput
-    processingCenter?: CenterCreateNestedOneWithoutOrdersInput
-    broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
-    items?: OrderItemCreateNestedManyWithoutOrderInput
-    onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
-    onewmsDeliveryLogs?: OnewmsDeliveryLogCreateNestedManyWithoutOrderInput
-    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutOrderInput
-    reservations?: StockReservationCreateNestedManyWithoutOrderInput
-  }
-
-  export type OrderUncheckedCreateWithoutAdminInput = {
-    id?: string
-    orderNo: string
-    sellerId: string
-    processingCenterId?: string | null
-    status?: $Enums.OrderStatus
-    totalAmount?: number
-    memo?: string | null
-    uploadedAt?: Date | string
-    approvedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    recipient?: string | null
-    phone?: string | null
-    address?: string | null
-    totalMargin?: number
-    paymentStatus?: $Enums.PaymentStatus
-    shippingStatus?: $Enums.ShippingStatus
-    paidAt?: Date | string | null
-    virtualAccount?: string | null
-    virtualAccountBank?: string | null
-    virtualAccountExpiry?: Date | string | null
-    productType?: $Enums.ProductType | null
-    expiresAt?: Date | string | null
-    cancelledAt?: Date | string | null
-    cancelReason?: string | null
-    broadcastId?: string | null
-    matchType?: string | null
-    taxInvoiceIssued?: boolean
-    taxInvoiceIssuedAt?: Date | string | null
-    taxInvoiceNumber?: string | null
-    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
-    onewmsMapping?: OnewmsOrderMappingUncheckedCreateNestedOneWithoutOrderInput
-    onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedCreateNestedManyWithoutOrderInput
-    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutOrderInput
-    reservations?: StockReservationUncheckedCreateNestedManyWithoutOrderInput
-  }
-
-  export type OrderCreateOrConnectWithoutAdminInput = {
-    where: OrderWhereUniqueInput
-    create: XOR<OrderCreateWithoutAdminInput, OrderUncheckedCreateWithoutAdminInput>
-  }
-
-  export type OrderCreateManyAdminInputEnvelope = {
-    data: OrderCreateManyAdminInput | OrderCreateManyAdminInput[]
     skipDuplicates?: boolean
   }
 
@@ -48098,128 +47538,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserUpsertWithoutSellersInput = {
-    update: XOR<UserUpdateWithoutSellersInput, UserUncheckedUpdateWithoutSellersInput>
-    create: XOR<UserCreateWithoutSellersInput, UserUncheckedCreateWithoutSellersInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutSellersInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutSellersInput, UserUncheckedUpdateWithoutSellersInput>
-  }
-
-  export type UserUpdateWithoutSellersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    name?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    channels?: UserUpdatechannelsInput | string[]
-    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
-    categories?: UserUpdatecategoriesInput | string[]
-    regions?: UserUpdateregionsInput | string[]
-    timeSlots?: UserUpdatetimeSlotsInput | string[]
-    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    center?: CenterUpdateOneWithoutUsersNestedInput
-    orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
-    broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
-    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
-    sales?: SaleUpdateManyWithoutSellerNestedInput
-    proposals?: ProposalUpdateManyWithoutUserNestedInput
-    proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
-    sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
-    scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
-    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutSellersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    name?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
-    centerId?: NullableStringFieldUpdateOperationsInput | string | null
-    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    channels?: UserUpdatechannelsInput | string[]
-    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
-    categories?: UserUpdatecategoriesInput | string[]
-    regions?: UserUpdateregionsInput | string[]
-    timeSlots?: UserUpdatetimeSlotsInput | string[]
-    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
-    broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
-    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
-    sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
-    proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
-    proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
-    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
-    scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
-    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUpsertWithWhereUniqueWithoutAdminInput = {
-    where: UserWhereUniqueInput
-    update: XOR<UserUpdateWithoutAdminInput, UserUncheckedUpdateWithoutAdminInput>
-    create: XOR<UserCreateWithoutAdminInput, UserUncheckedCreateWithoutAdminInput>
-  }
-
-  export type UserUpdateWithWhereUniqueWithoutAdminInput = {
-    where: UserWhereUniqueInput
-    data: XOR<UserUpdateWithoutAdminInput, UserUncheckedUpdateWithoutAdminInput>
-  }
-
-  export type UserUpdateManyWithWhereWithoutAdminInput = {
-    where: UserScalarWhereInput
-    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutAdminInput>
-  }
-
-  export type UserScalarWhereInput = {
-    AND?: UserScalarWhereInput | UserScalarWhereInput[]
-    OR?: UserScalarWhereInput[]
-    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
-    id?: StringFilter<"User"> | string
-    username?: StringFilter<"User"> | string
-    email?: StringNullableFilter<"User"> | string | null
-    name?: StringFilter<"User"> | string
-    phone?: StringFilter<"User"> | string
-    role?: EnumRoleFilter<"User"> | $Enums.Role
-    adminId?: StringNullableFilter<"User"> | string | null
-    centerId?: StringNullableFilter<"User"> | string | null
-    passwordHash?: StringNullableFilter<"User"> | string | null
-    createdAt?: DateTimeFilter<"User"> | Date | string
-    updatedAt?: DateTimeFilter<"User"> | Date | string
-    channels?: StringNullableListFilter<"User">
-    avgSales?: IntNullableFilter<"User"> | number | null
-    categories?: StringNullableListFilter<"User">
-    regions?: StringNullableListFilter<"User">
-    timeSlots?: StringNullableListFilter<"User">
-    contractStatus?: EnumContractStatusFilter<"User"> | $Enums.ContractStatus
-    contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
-    contractApprovedBy?: StringNullableFilter<"User"> | string | null
-    contractRejectionReason?: StringNullableFilter<"User"> | string | null
-    isActive?: BoolFilter<"User"> | boolean
-  }
-
   export type CenterUpsertWithoutUsersInput = {
     update: XOR<CenterUpdateWithoutUsersInput, CenterUncheckedUpdateWithoutUsersInput>
     create: XOR<CenterCreateWithoutUsersInput, CenterUncheckedCreateWithoutUsersInput>
@@ -48302,7 +47620,6 @@ export namespace Prisma {
     id?: StringFilter<"Order"> | string
     orderNo?: StringFilter<"Order"> | string
     sellerId?: StringFilter<"Order"> | string
-    adminId?: StringNullableFilter<"Order"> | string | null
     processingCenterId?: StringNullableFilter<"Order"> | string | null
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     totalAmount?: IntFilter<"Order"> | number
@@ -48330,22 +47647,6 @@ export namespace Prisma {
     taxInvoiceIssued?: BoolFilter<"Order"> | boolean
     taxInvoiceIssuedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     taxInvoiceNumber?: StringNullableFilter<"Order"> | string | null
-  }
-
-  export type OrderUpsertWithWhereUniqueWithoutAdminInput = {
-    where: OrderWhereUniqueInput
-    update: XOR<OrderUpdateWithoutAdminInput, OrderUncheckedUpdateWithoutAdminInput>
-    create: XOR<OrderCreateWithoutAdminInput, OrderUncheckedCreateWithoutAdminInput>
-  }
-
-  export type OrderUpdateWithWhereUniqueWithoutAdminInput = {
-    where: OrderWhereUniqueInput
-    data: XOR<OrderUpdateWithoutAdminInput, OrderUncheckedUpdateWithoutAdminInput>
-  }
-
-  export type OrderUpdateManyWithWhereWithoutAdminInput = {
-    where: OrderScalarWhereInput
-    data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyWithoutAdminInput>
   }
 
   export type BroadcastUpsertWithWhereUniqueWithoutSellerInput = {
@@ -49275,10 +48576,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
@@ -49296,7 +48594,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49310,9 +48607,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -49390,7 +48685,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
@@ -49403,7 +48697,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
     memo?: string | null
@@ -49545,6 +48838,32 @@ export namespace Prisma {
   export type UserUpdateManyWithWhereWithoutCenterInput = {
     where: UserScalarWhereInput
     data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutCenterInput>
+  }
+
+  export type UserScalarWhereInput = {
+    AND?: UserScalarWhereInput | UserScalarWhereInput[]
+    OR?: UserScalarWhereInput[]
+    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
+    id?: StringFilter<"User"> | string
+    username?: StringFilter<"User"> | string
+    email?: StringNullableFilter<"User"> | string | null
+    name?: StringFilter<"User"> | string
+    phone?: StringFilter<"User"> | string
+    role?: EnumRoleFilter<"User"> | $Enums.Role
+    centerId?: StringNullableFilter<"User"> | string | null
+    passwordHash?: StringNullableFilter<"User"> | string | null
+    createdAt?: DateTimeFilter<"User"> | Date | string
+    updatedAt?: DateTimeFilter<"User"> | Date | string
+    channels?: StringNullableListFilter<"User">
+    avgSales?: IntNullableFilter<"User"> | number | null
+    categories?: StringNullableListFilter<"User">
+    regions?: StringNullableListFilter<"User">
+    timeSlots?: StringNullableListFilter<"User">
+    contractStatus?: EnumContractStatusFilter<"User"> | $Enums.ContractStatus
+    contractApprovedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    contractApprovedBy?: StringNullableFilter<"User"> | string | null
+    contractRejectionReason?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
   }
 
   export type ProductCenterStockUpsertWithWhereUniqueWithoutCenterInput = {
@@ -49944,7 +49263,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
@@ -49957,7 +49275,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -50016,11 +49333,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
@@ -50037,7 +49351,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -50052,9 +49365,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -50202,7 +49513,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -50215,7 +49525,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -50280,11 +49589,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
@@ -50301,7 +49607,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50316,9 +49621,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -50447,10 +49750,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
@@ -50468,7 +49768,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -50483,8 +49782,6 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -50498,79 +49795,6 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutOrdersInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
-  }
-
-  export type UserCreateWithoutAdminOrdersInput = {
-    id?: string
-    username: string
-    email?: string | null
-    name: string
-    phone: string
-    role?: $Enums.Role
-    passwordHash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    channels?: UserCreatechannelsInput | string[]
-    avgSales?: number | null
-    categories?: UserCreatecategoriesInput | string[]
-    regions?: UserCreateregionsInput | string[]
-    timeSlots?: UserCreatetimeSlotsInput | string[]
-    contractStatus?: $Enums.ContractStatus
-    contractApprovedAt?: Date | string | null
-    contractApprovedBy?: string | null
-    contractRejectionReason?: string | null
-    isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
-    center?: CenterCreateNestedOneWithoutUsersInput
-    orders?: OrderCreateNestedManyWithoutSellerInput
-    broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
-    rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
-    sales?: SaleCreateNestedManyWithoutSellerInput
-    proposals?: ProposalCreateNestedManyWithoutUserInput
-    proposalCarts?: ProposalCartCreateNestedManyWithoutUserInput
-    sellerMatches?: OrderSellerMatchingCreateNestedManyWithoutSellerInput
-    scanLogs?: ScanLogCreateNestedManyWithoutUserInput
-    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutAdminOrdersInput = {
-    id?: string
-    username: string
-    email?: string | null
-    name: string
-    phone: string
-    role?: $Enums.Role
-    adminId?: string | null
-    centerId?: string | null
-    passwordHash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    channels?: UserCreatechannelsInput | string[]
-    avgSales?: number | null
-    categories?: UserCreatecategoriesInput | string[]
-    regions?: UserCreateregionsInput | string[]
-    timeSlots?: UserCreatetimeSlotsInput | string[]
-    contractStatus?: $Enums.ContractStatus
-    contractApprovedAt?: Date | string | null
-    contractApprovedBy?: string | null
-    contractRejectionReason?: string | null
-    isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
-    orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
-    rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
-    sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
-    proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
-    proposalCarts?: ProposalCartUncheckedCreateNestedManyWithoutUserInput
-    sellerMatches?: OrderSellerMatchingUncheckedCreateNestedManyWithoutSellerInput
-    scanLogs?: ScanLogUncheckedCreateNestedManyWithoutUserInput
-    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutAdminOrdersInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutAdminOrdersInput, UserUncheckedCreateWithoutAdminOrdersInput>
   }
 
   export type CenterCreateWithoutOrdersInput = {
@@ -50873,10 +50097,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
@@ -50894,7 +50115,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50909,87 +50129,6 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
-    broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
-    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
-    sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
-    proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
-    proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
-    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
-    scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
-    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUpsertWithoutAdminOrdersInput = {
-    update: XOR<UserUpdateWithoutAdminOrdersInput, UserUncheckedUpdateWithoutAdminOrdersInput>
-    create: XOR<UserCreateWithoutAdminOrdersInput, UserUncheckedCreateWithoutAdminOrdersInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutAdminOrdersInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutAdminOrdersInput, UserUncheckedUpdateWithoutAdminOrdersInput>
-  }
-
-  export type UserUpdateWithoutAdminOrdersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    name?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    channels?: UserUpdatechannelsInput | string[]
-    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
-    categories?: UserUpdatecategoriesInput | string[]
-    regions?: UserUpdateregionsInput | string[]
-    timeSlots?: UserUpdatetimeSlotsInput | string[]
-    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
-    center?: CenterUpdateOneWithoutUsersNestedInput
-    orders?: OrderUpdateManyWithoutSellerNestedInput
-    broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
-    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
-    sales?: SaleUpdateManyWithoutSellerNestedInput
-    proposals?: ProposalUpdateManyWithoutUserNestedInput
-    proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
-    sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
-    scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
-    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutAdminOrdersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    name?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
-    centerId?: NullableStringFieldUpdateOperationsInput | string | null
-    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    channels?: UserUpdatechannelsInput | string[]
-    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
-    categories?: UserUpdatecategoriesInput | string[]
-    regions?: UserUpdateregionsInput | string[]
-    timeSlots?: UserUpdatetimeSlotsInput | string[]
-    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -51259,7 +50398,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
@@ -51272,7 +50410,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -51444,7 +50581,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
@@ -51457,7 +50593,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -51619,7 +50754,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
@@ -51632,7 +50766,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -51804,7 +50937,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -51817,7 +50949,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -51970,11 +51101,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
@@ -51991,7 +51119,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -52006,9 +51133,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
@@ -52096,11 +51221,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     sales?: SaleCreateNestedManyWithoutSellerInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
@@ -52117,7 +51239,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -52132,9 +51253,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
@@ -52212,7 +51331,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
     onewmsMapping?: OnewmsOrderMappingCreateNestedOneWithoutOrderInput
@@ -52225,7 +51343,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -52300,11 +51417,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
@@ -52321,7 +51435,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52336,9 +51449,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
@@ -52438,11 +51549,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
@@ -52459,7 +51567,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52474,9 +51581,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
@@ -52538,11 +51643,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     proposals?: ProposalCreateNestedManyWithoutUserInput
@@ -52559,7 +51661,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -52574,9 +51675,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutUserInput
@@ -52762,11 +51861,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     proposals?: ProposalUpdateManyWithoutUserNestedInput
@@ -52783,7 +51879,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52798,9 +51893,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
@@ -52982,11 +52075,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
@@ -53003,7 +52093,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -53018,9 +52107,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -53066,11 +52153,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
@@ -53087,7 +52171,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53102,9 +52185,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -53134,11 +52215,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
@@ -53155,7 +52233,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -53170,9 +52247,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -53311,11 +52386,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
@@ -53332,7 +52404,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53347,9 +52418,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -53487,7 +52556,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
@@ -53500,7 +52568,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -53579,7 +52646,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -53592,7 +52658,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -53847,7 +52912,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: Date | string | null
     taxInvoiceNumber?: string | null
     seller: UserCreateNestedOneWithoutOrdersInput
-    admin?: UserCreateNestedOneWithoutAdminOrdersInput
     processingCenter?: CenterCreateNestedOneWithoutOrdersInput
     broadcast?: BroadcastCreateNestedOneWithoutOrdersInput
     items?: OrderItemCreateNestedManyWithoutOrderInput
@@ -53860,7 +52924,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -53939,7 +53002,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -53952,7 +53014,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -55074,11 +54135,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
@@ -55095,7 +54153,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -55110,9 +54167,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -55304,11 +54359,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
@@ -55325,7 +54377,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55340,9 +54391,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -55530,11 +54579,8 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    admin?: UserCreateNestedOneWithoutSellersInput
-    sellers?: UserCreateNestedManyWithoutAdminInput
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
     sales?: SaleCreateNestedManyWithoutSellerInput
@@ -55551,7 +54597,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     centerId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
@@ -55566,9 +54611,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
-    sellers?: UserUncheckedCreateNestedManyWithoutAdminInput
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
-    adminOrders?: OrderUncheckedCreateNestedManyWithoutAdminInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -55614,11 +54657,8 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
@@ -55635,7 +54675,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     centerId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55650,9 +54689,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -55662,66 +54699,9 @@ export namespace Prisma {
     scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type UserCreateManyAdminInput = {
-    id?: string
-    username: string
-    email?: string | null
-    name: string
-    phone: string
-    role?: $Enums.Role
-    centerId?: string | null
-    passwordHash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    channels?: UserCreatechannelsInput | string[]
-    avgSales?: number | null
-    categories?: UserCreatecategoriesInput | string[]
-    regions?: UserCreateregionsInput | string[]
-    timeSlots?: UserCreatetimeSlotsInput | string[]
-    contractStatus?: $Enums.ContractStatus
-    contractApprovedAt?: Date | string | null
-    contractApprovedBy?: string | null
-    contractRejectionReason?: string | null
-    isActive?: boolean
-  }
-
   export type OrderCreateManySellerInput = {
     id?: string
     orderNo: string
-    adminId?: string | null
-    processingCenterId?: string | null
-    status?: $Enums.OrderStatus
-    totalAmount?: number
-    memo?: string | null
-    uploadedAt?: Date | string
-    approvedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    recipient?: string | null
-    phone?: string | null
-    address?: string | null
-    totalMargin?: number
-    paymentStatus?: $Enums.PaymentStatus
-    shippingStatus?: $Enums.ShippingStatus
-    paidAt?: Date | string | null
-    virtualAccount?: string | null
-    virtualAccountBank?: string | null
-    virtualAccountExpiry?: Date | string | null
-    productType?: $Enums.ProductType | null
-    expiresAt?: Date | string | null
-    cancelledAt?: Date | string | null
-    cancelReason?: string | null
-    broadcastId?: string | null
-    matchType?: string | null
-    taxInvoiceIssued?: boolean
-    taxInvoiceIssuedAt?: Date | string | null
-    taxInvoiceNumber?: string | null
-  }
-
-  export type OrderCreateManyAdminInput = {
-    id?: string
-    orderNo: string
-    sellerId: string
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -55876,97 +54856,6 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type UserUpdateWithoutAdminInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    name?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    channels?: UserUpdatechannelsInput | string[]
-    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
-    categories?: UserUpdatecategoriesInput | string[]
-    regions?: UserUpdateregionsInput | string[]
-    timeSlots?: UserUpdatetimeSlotsInput | string[]
-    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUpdateManyWithoutAdminNestedInput
-    center?: CenterUpdateOneWithoutUsersNestedInput
-    orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
-    broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
-    rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
-    sales?: SaleUpdateManyWithoutSellerNestedInput
-    proposals?: ProposalUpdateManyWithoutUserNestedInput
-    proposalCarts?: ProposalCartUpdateManyWithoutUserNestedInput
-    sellerMatches?: OrderSellerMatchingUpdateManyWithoutSellerNestedInput
-    scanLogs?: ScanLogUpdateManyWithoutUserNestedInput
-    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutAdminInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    name?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    centerId?: NullableStringFieldUpdateOperationsInput | string | null
-    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    channels?: UserUpdatechannelsInput | string[]
-    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
-    categories?: UserUpdatecategoriesInput | string[]
-    regions?: UserUpdateregionsInput | string[]
-    timeSlots?: UserUpdatetimeSlotsInput | string[]
-    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
-    broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
-    rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
-    sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
-    proposals?: ProposalUncheckedUpdateManyWithoutUserNestedInput
-    proposalCarts?: ProposalCartUncheckedUpdateManyWithoutUserNestedInput
-    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutSellerNestedInput
-    scanLogs?: ScanLogUncheckedUpdateManyWithoutUserNestedInput
-    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateManyWithoutAdminInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    name?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    centerId?: NullableStringFieldUpdateOperationsInput | string | null
-    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    channels?: UserUpdatechannelsInput | string[]
-    avgSales?: NullableIntFieldUpdateOperationsInput | number | null
-    categories?: UserUpdatecategoriesInput | string[]
-    regions?: UserUpdateregionsInput | string[]
-    timeSlots?: UserUpdatetimeSlotsInput | string[]
-    contractStatus?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    contractApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-  }
-
   export type OrderUpdateWithoutSellerInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
@@ -55995,7 +54884,6 @@ export namespace Prisma {
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -56008,7 +54896,6 @@ export namespace Prisma {
   export type OrderUncheckedUpdateWithoutSellerInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -56046,116 +54933,6 @@ export namespace Prisma {
   export type OrderUncheckedUpdateManyWithoutSellerInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
-    processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    totalAmount?: IntFieldUpdateOperationsInput | number
-    memo?: NullableStringFieldUpdateOperationsInput | string | null
-    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    recipient?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    totalMargin?: IntFieldUpdateOperationsInput | number
-    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
-    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
-    virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
-    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
-    matchType?: NullableStringFieldUpdateOperationsInput | string | null
-    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
-    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type OrderUpdateWithoutAdminInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    orderNo?: StringFieldUpdateOperationsInput | string
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    totalAmount?: IntFieldUpdateOperationsInput | number
-    memo?: NullableStringFieldUpdateOperationsInput | string | null
-    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    recipient?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    totalMargin?: IntFieldUpdateOperationsInput | number
-    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
-    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
-    virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
-    matchType?: NullableStringFieldUpdateOperationsInput | string | null
-    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
-    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
-    broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
-    items?: OrderItemUpdateManyWithoutOrderNestedInput
-    onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
-    onewmsDeliveryLogs?: OnewmsDeliveryLogUpdateManyWithoutOrderNestedInput
-    sellerMatches?: OrderSellerMatchingUpdateManyWithoutOrderNestedInput
-    reservations?: StockReservationUpdateManyWithoutOrderNestedInput
-  }
-
-  export type OrderUncheckedUpdateWithoutAdminInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    orderNo?: StringFieldUpdateOperationsInput | string
-    sellerId?: StringFieldUpdateOperationsInput | string
-    processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    totalAmount?: IntFieldUpdateOperationsInput | number
-    memo?: NullableStringFieldUpdateOperationsInput | string | null
-    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    recipient?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    totalMargin?: IntFieldUpdateOperationsInput | number
-    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
-    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
-    virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    productType?: NullableEnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType | null
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
-    broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
-    matchType?: NullableStringFieldUpdateOperationsInput | string | null
-    taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
-    taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
-    onewmsMapping?: OnewmsOrderMappingUncheckedUpdateOneWithoutOrderNestedInput
-    onewmsDeliveryLogs?: OnewmsDeliveryLogUncheckedUpdateManyWithoutOrderNestedInput
-    sellerMatches?: OrderSellerMatchingUncheckedUpdateManyWithoutOrderNestedInput
-    reservations?: StockReservationUncheckedUpdateManyWithoutOrderNestedInput
-  }
-
-  export type OrderUncheckedUpdateManyWithoutAdminInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    orderNo?: StringFieldUpdateOperationsInput | string
-    sellerId?: StringFieldUpdateOperationsInput | string
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -57079,7 +55856,6 @@ export namespace Prisma {
     name: string
     phone: string
     role?: $Enums.Role
-    adminId?: string | null
     passwordHash?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -57108,7 +55884,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
     memo?: string | null
@@ -57187,10 +55962,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    admin?: UserUpdateOneWithoutSellersNestedInput
-    sellers?: UserUpdateManyWithoutAdminNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
     sales?: SaleUpdateManyWithoutSellerNestedInput
@@ -57208,7 +55980,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57222,9 +55993,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    sellers?: UserUncheckedUpdateManyWithoutAdminNestedInput
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
-    adminOrders?: OrderUncheckedUpdateManyWithoutAdminNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -57242,7 +56011,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57314,7 +56082,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     broadcast?: BroadcastUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
@@ -57327,7 +56094,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
     memo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57365,7 +56131,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
     memo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57692,7 +56457,6 @@ export namespace Prisma {
     id?: string
     orderNo: string
     sellerId: string
-    adminId?: string | null
     processingCenterId?: string | null
     status?: $Enums.OrderStatus
     totalAmount?: number
@@ -57786,7 +56550,6 @@ export namespace Prisma {
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     taxInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     seller?: UserUpdateOneRequiredWithoutOrdersNestedInput
-    admin?: UserUpdateOneWithoutAdminOrdersNestedInput
     processingCenter?: CenterUpdateOneWithoutOrdersNestedInput
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     onewmsMapping?: OnewmsOrderMappingUpdateOneWithoutOrderNestedInput
@@ -57799,7 +56562,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number
@@ -57837,7 +56599,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNo?: StringFieldUpdateOperationsInput | string
     sellerId?: StringFieldUpdateOperationsInput | string
-    adminId?: NullableStringFieldUpdateOperationsInput | string | null
     processingCenterId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     totalAmount?: IntFieldUpdateOperationsInput | number

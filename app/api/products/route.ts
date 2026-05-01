@@ -28,7 +28,7 @@ const productSchema = z.object({
 });
 
 // GET: List products with filters
-export const GET = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   const { searchParams } = new URL(req.url);
   const productType = searchParams.get("productType") as "HEADQUARTERS" | "CENTER" | null;
   const search = searchParams.get("search");
@@ -71,8 +71,8 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (
       sellPrice: { gt: 0 },
       supplyPrice: { gt: 0 },
     };
-  } else if (user.role === "SUB_MASTER" || user.role === "ADMIN") {
-    // SUB_MASTER/ADMIN: 본사 상품 + 본인 센터 상품
+  } else if (user.role === "SUB_MASTER") {
+    // SUB_MASTER: 본사 상품 + 본인 센터 상품
     if (user.centerId) {
       authFilter = {
         OR: [
@@ -104,7 +104,7 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (
 });
 
 // POST: Create product with type validation
-export const POST = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   const body = await req.json();
   const parsed = productSchema.safeParse(body);
 
@@ -129,10 +129,10 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"], async 
     }
   }
 
-  // SUB_MASTER/ADMIN: only their own center for CENTER products
+  // SUB_MASTER: only their own center for CENTER products
   if (
     productType === "CENTER" &&
-    (user.role === "SUB_MASTER" || user.role === "ADMIN") &&
+    user.role === "SUB_MASTER" &&
     user.centerId
   ) {
     const targetCenter = data.managedBy || user.centerId;

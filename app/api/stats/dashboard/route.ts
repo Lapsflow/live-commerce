@@ -109,7 +109,7 @@ export async function GET(req: NextRequest) {
     const sellerIds = sellerRankingRaw.map((item) => item.sellerId);
     const sellers = await prisma.user.findMany({
       where: { id: { in: sellerIds } },
-      select: { id: true, name: true, adminId: true, admin: { select: { name: true } } },
+      select: { id: true, name: true },
     });
 
     const sellerMap = new Map(sellers.map((s) => [s.id, s]));
@@ -119,8 +119,6 @@ export async function GET(req: NextRequest) {
       return {
         sellerId: item.sellerId,
         sellerName: seller?.name || "알 수 없음",
-        adminId: seller?.adminId || null,
-        adminName: seller?.admin?.name || null,
         totalSales: item._sum.totalPrice || 0,
         count: item._count,
       };

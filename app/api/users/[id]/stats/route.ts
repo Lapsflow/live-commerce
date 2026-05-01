@@ -26,7 +26,6 @@ export const GET = withRole(
         role: true,
         centerId: true,
         center: { select: { name: true, code: true } },
-        admin: { select: { id: true, name: true } },
       },
     });
 
@@ -48,10 +47,8 @@ export const GET = withRole(
         prisma.order.count({
           where: { sellerId: userId },
         }),
-        // Managed sellers (only meaningful for ADMIN role)
-        user.role === "ADMIN"
-          ? prisma.user.count({ where: { adminId: userId } })
-          : Promise.resolve(0),
+        // Managed sellers count (legacy)
+        Promise.resolve(0),
       ]);
 
     // Recent broadcasts (last 10)
@@ -99,22 +96,7 @@ export const GET = withRole(
       },
     });
 
-    // Managed sellers list (for ADMIN)
-    let managedSellers: any[] = [];
-    if (user.role === "ADMIN") {
-      managedSellers = await prisma.user.findMany({
-        where: { adminId: userId },
-        select: {
-          id: true,
-          name: true,
-          phone: true,
-          channels: true,
-          createdAt: true,
-          _count: { select: { broadcasts: true, sales: true, orders: true } },
-        },
-        orderBy: { name: "asc" },
-      });
-    }
+    const managedSellers: any[] = [];
 
     return ok({
       user: {
@@ -123,7 +105,6 @@ export const GET = withRole(
         role: user.role,
         centerName: user.center?.name ?? null,
         centerCode: user.center?.code ?? null,
-        adminName: user.admin?.name ?? null,
       },
       stats: {
         broadcastCount,

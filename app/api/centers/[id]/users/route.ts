@@ -23,7 +23,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const allowedRoles = ['MASTER', 'SUB_MASTER', 'ADMIN'];
+    const allowedRoles = ['MASTER', 'SUB_MASTER'];
     if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
       return errors.forbidden('센터 사용자 조회 권한이 없습니다');
     }

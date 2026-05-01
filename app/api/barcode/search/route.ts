@@ -32,7 +32,7 @@ interface ProductWithInventory {
  *
  * Returns product information with inventory across all warehouses
  */
-export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   const { searchParams } = new URL(req.url);
   const barcode = searchParams.get('barcode');
 

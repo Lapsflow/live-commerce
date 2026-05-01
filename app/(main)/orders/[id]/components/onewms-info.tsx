@@ -25,7 +25,7 @@ interface OnewmsOrderStatus {
 
 export function OnewmsInfo({ orderId }: OnewmsInfoProps) {
   const { data: session } = useSession();
-  const canManage = session?.user?.role === 'MASTER' || session?.user?.role === 'ADMIN';
+  const canManage = session?.user?.role === 'MASTER' || session?.user?.role === 'SUB_MASTER';
 
   // 1. ONEWMS 정보 조회
   const { data, isLoading, refetch } = useQuery({

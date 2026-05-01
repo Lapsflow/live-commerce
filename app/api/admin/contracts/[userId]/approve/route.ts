@@ -4,8 +4,8 @@ import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { withRole } from "@/lib/api/middleware";
 
-// Phase 2: withRole() middleware applied (ADMIN only)
-export const POST = withRole(["MASTER", "ADMIN"], async (
+// Phase 2: withRole() middleware applied (MASTER, SUB_MASTER)
+export const POST = withRole(["MASTER", "SUB_MASTER"], async (
   req: NextRequest,
   authUser,
   { params }: { params: Promise<{ userId: string }> }

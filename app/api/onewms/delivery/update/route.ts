@@ -13,7 +13,7 @@ const deliveryUpdateSchema = z.object({
  * 특정 주문의 배송 상태를 ONEWMS에서 수동으로 동기화
  */
 export const POST = withRole(
-  ['ADMIN', 'SUB_MASTER', 'MASTER'],
+  ['SUB_MASTER', 'MASTER'],
   async (req: NextRequest) => {
     try {
       // 요청 본문 파싱 및 검증

@@ -12,7 +12,7 @@ import { logAudit } from "@/lib/services/audit";
 
 /** 세금계산서 발행 */
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (
     req: NextRequest,
     user: AuthUser,

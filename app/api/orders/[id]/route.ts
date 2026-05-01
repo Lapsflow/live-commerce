@@ -12,11 +12,10 @@ import { auth } from "@/lib/auth";
  *
  * 권한:
  * - SELLER: 본인 발주만 조회 가능
- * - ADMIN: 소속 Seller 발주 조회 가능
  * - MASTER, SUB_MASTER: 모든 발주 조회 가능
  */
 export const GET = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -38,14 +37,6 @@ export const GET = withRole(
         where: { id: orderId },
         include: {
           seller: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              adminId: true,
-            },
-          },
-          admin: {
             select: {
               id: true,
               name: true,
@@ -79,10 +70,6 @@ export const GET = withRole(
       // 권한 검증
       if (userRole === "SELLER" && order.sellerId !== userId) {
         return errors.forbidden("본인의 발주만 조회할 수 있습니다");
-      }
-
-      if (userRole === "ADMIN" && order.seller.adminId !== userId) {
-        return errors.forbidden("소속 Seller의 발주만 조회할 수 있습니다");
       }
 
       return ok(order);

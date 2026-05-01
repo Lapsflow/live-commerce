@@ -17,7 +17,7 @@ const scanSchema = z.object({
  * 바코드 스캔 이벤트 기록 + 재고 업데이트
  */
 export const POST = withRole(
-  ["SELLER", "ADMIN", "SUB_MASTER", "MASTER"],
+  ["SELLER", "SUB_MASTER", "MASTER"],
   async (request: NextRequest, user) => {
     const body = await request.json();
 

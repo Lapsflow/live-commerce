@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     const userId = (session.user as any).id;
     const userRole = (session.user as any).role;
 
-    if (order.sellerId !== userId && !['MASTER', 'SUB_MASTER', 'ADMIN'].includes(userRole)) {
+    if (order.sellerId !== userId && !['MASTER', 'SUB_MASTER'].includes(userRole)) {
       return errors.forbidden('발주에 대한 권한이 없습니다');
     }
 

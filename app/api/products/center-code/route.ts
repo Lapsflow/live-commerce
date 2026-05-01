@@ -8,7 +8,7 @@ import { previewCenterProductCode } from '@/lib/services/products/codeGenerator'
  * 센터 상품 코드 미리보기 (다음 번호 조회)
  */
 export const GET = withRole(
-  ['MASTER', 'SUB_MASTER', 'ADMIN'],
+  ['MASTER', 'SUB_MASTER'],
   async (req: NextRequest, user) => {
     const { searchParams } = new URL(req.url);
     const centerId = searchParams.get('centerId');
@@ -17,9 +17,9 @@ export const GET = withRole(
       return errors.badRequest('centerId가 필요합니다');
     }
 
-    // SUB_MASTER/ADMIN은 본인 센터만
+    // SUB_MASTER은 본인 센터만
     if (
-      (user.role === 'SUB_MASTER' || user.role === 'ADMIN') &&
+      user.role === 'SUB_MASTER' &&
       user.centerId !== centerId
     ) {
       return errors.forbidden('본인 센터의 상품 코드만 조회할 수 있습니다');

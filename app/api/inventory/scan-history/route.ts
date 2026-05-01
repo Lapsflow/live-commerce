@@ -8,7 +8,7 @@ import { prisma } from "@/lib/db/prisma";
  * 사용자의 스캔 이력 조회
  */
 export const GET = withRole(
-  ["SELLER", "ADMIN", "SUB_MASTER", "MASTER"],
+  ["SELLER", "SUB_MASTER", "MASTER"],
   async (request: NextRequest, user) => {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit") || "20");

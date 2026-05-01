@@ -14,7 +14,7 @@ const resolveConflictSchema = z.object({
 });
 
 export const POST = withRole(
-  ['ADMIN', 'SUB_MASTER', 'MASTER'],
+  ['SUB_MASTER', 'MASTER'],
   async (
     req: NextRequest,
     user,

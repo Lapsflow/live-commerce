@@ -10,8 +10,8 @@ export async function GET(req: NextRequest) {
     const session = await auth();
     if (!session) return errors.unauthorized();
 
-    // 2. Authorization (MASTER, SUB_MASTER, ADMIN allowed)
-    const allowedRoles = ['MASTER', 'SUB_MASTER', 'ADMIN'];
+    // 2. Authorization (MASTER, SUB_MASTER allowed)
+    const allowedRoles = ['MASTER', 'SUB_MASTER'];
     if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
       return errors.forbidden('센터 코드 조회 권한이 없습니다');
     }

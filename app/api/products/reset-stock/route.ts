@@ -10,7 +10,7 @@ import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest, user: AuthUser) => {
     try {
       const body = await req.json();
@@ -20,7 +20,7 @@ export const POST = withRole(
         return errors.badRequest("centerId가 필요합니다");
       }
 
-      // ADMIN/SUB_MASTER can only reset their own center
+      // SUB_MASTER can only reset their own center
       if (user.role !== "MASTER" && user.centerId !== centerId) {
         return errors.forbidden("해당 센터의 재고를 초기화할 권한이 없습니다");
       }

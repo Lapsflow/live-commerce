@@ -32,8 +32,6 @@ interface DashboardStats {
   sellerRanking: Array<{
     sellerId: string;
     sellerName: string;
-    adminId?: string | null;
-    adminName?: string | null;
     totalSales: number;
     count: number;
   }>;
@@ -58,7 +56,6 @@ export default function DashboardPage() {
   const [onewmsStats, setOnewmsStats] = useState<OnewmsStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [adminFilter, setAdminFilter] = useState<string>("all");
   const [drilldownType, setDrilldownType] = useState<"sales" | "count" | "avgPrice" | "margin" | null>(null);
 
   // 날짜 범위 상태 (기본: 최근 30일)
@@ -96,22 +93,11 @@ export default function DashboardPage() {
     setToDate(newTo);
   };
 
-  // 관리자 목록 추출 (셀러 랭킹에서)
-  const adminOptions = useMemo(() => {
-    if (!stats) return [];
-    const map = new Map<string, string>();
-    for (const s of stats.sellerRanking) {
-      if (s.adminId && s.adminName) map.set(s.adminId, s.adminName);
-    }
-    return Array.from(map, ([id, name]) => ({ id, name }));
-  }, [stats]);
-
-  // 관리자 필터 적용된 랭킹
+  // 셀러 랭킹
   const filteredRanking = useMemo(() => {
     if (!stats) return [];
-    if (adminFilter === "all") return stats.sellerRanking;
-    return stats.sellerRanking.filter((s) => s.adminId === adminFilter);
-  }, [stats, adminFilter]);
+    return stats.sellerRanking;
+  }, [stats]);
 
   if (loading) {
     return (
@@ -202,20 +188,6 @@ export default function DashboardPage() {
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">셀러 랭킹 (Top 10)</h2>
-            {adminOptions.length > 0 && (
-              <select
-                value={adminFilter}
-                onChange={(e) => setAdminFilter(e.target.value)}
-                className="border rounded-md px-3 py-1.5 text-sm bg-background"
-              >
-                <option value="all">전체 관리자</option>
-                {adminOptions.map((admin) => (
-                  <option key={admin.id} value={admin.id}>
-                    {admin.name}
-                  </option>
-                ))}
-              </select>
-            )}
           </div>
           <RankingTable data={filteredRanking} />
         </Card>

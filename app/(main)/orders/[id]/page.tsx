@@ -111,7 +111,7 @@ export default function OrderDetailPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const userRole = (session?.user as any)?.role;
-  const isAdmin = ["MASTER", "SUB_MASTER", "ADMIN"].includes(userRole);
+  const isAdmin = ["MASTER", "SUB_MASTER"].includes(userRole);
   const orderId = params.id as string;
 
   const [order, setOrder] = useState<Order | null>(null);
@@ -527,7 +527,7 @@ export default function OrderDetailPage() {
       )}
 
       {/* History */}
-      {userRole && ["MASTER", "SUB_MASTER", "ADMIN"].includes(userRole) && (
+      {userRole && ["MASTER", "SUB_MASTER"].includes(userRole) && (
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-3">변경 이력</h2>
           <EntityHistory entityType="Order" entityId={order.id} />

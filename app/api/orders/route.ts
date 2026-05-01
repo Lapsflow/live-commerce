@@ -21,7 +21,6 @@ const orderItemSchema = z.object({
 const orderSchema = z.object({
   orderNo: z.string().min(1).max(50),
   sellerId: z.string().cuid().optional(), // Optional, defaults to current user
-  adminId: z.string().cuid().optional(),
   status: z.enum(["PENDING", "APPROVED", "REJECTED"]).optional(),
   totalAmount: z.number().int().min(0),
   memo: z.string().max(500).optional(),
@@ -32,8 +31,8 @@ const orderSchema = z.object({
 });
 
 // GET: List orders with filters
-// Phase 2: withRole() middleware applied (MASTER, ADMIN, SELLER)
-export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+// Phase 2: withRole() middleware applied (MASTER, SUB_MASTER, SELLER)
+export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
     const { searchParams } = new URL(req.url);
     const productType = searchParams.get("productType") as "HEADQUARTERS" | "CENTER" | null;
@@ -104,8 +103,8 @@ export const GET = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextReque
 });
 
 // POST: Create order with auto-split by product type
-// Phase 2: withRole() middleware applied (MASTER, ADMIN, SELLER)
-export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequest, user: AuthUser) => {
+// Phase 2: withRole() middleware applied (MASTER, SUB_MASTER, SELLER)
+export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: NextRequest, user: AuthUser) => {
   try {
     const body = await req.json();
     const data = orderSchema.parse(body);
@@ -187,7 +186,6 @@ export const POST = withRole(["MASTER", "ADMIN", "SELLER"], async (req: NextRequ
         data: {
           orderNo,
           sellerId,
-          adminId: data.adminId,
           status: data.status || "PENDING",
           totalAmount: proportionalTotalAmount,
           totalMargin,

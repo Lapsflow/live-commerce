@@ -15,10 +15,10 @@ const statusUpdateSchema = z.object({
  * PUT /api/orders/:id/status
  *
  * 발주 상태 변경 (입금/출고)
- * 권한: MASTER, SUB_MASTER, ADMIN만 가능
+ * 권한: MASTER, SUB_MASTER만 가능
  */
 export const PUT = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest, user: AuthUser) => {
     try {
       // URL에서 orderId 추출

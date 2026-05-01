@@ -17,7 +17,7 @@ const bulkDeleteSchema = z.object({
 // ORDER-01: 자동 매칭 (코드/바코드/제품명)
 // ORDER-02: Stage 1 에러 반환 → Stage 2 담당자 검수
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest, user: AuthUser) => {
     try {
       const formData = await req.formData();
@@ -206,7 +206,7 @@ export const POST = withRole(
 
 // ──────────────────────── DELETE: 일괄 삭제 ────────────────────────
 export const DELETE = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest) => {
     try {
       const body = await req.json();

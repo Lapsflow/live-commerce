@@ -8,7 +8,6 @@ import { logAudit } from "@/lib/services/audit";
 declare module "next-auth" {
   interface User {
     role?: string;
-    adminId?: string;
     centerId?: string;
     center?: { id: string; name: string; code: string } | null;
   }
@@ -16,7 +15,6 @@ declare module "next-auth" {
     user: User & {
       userId?: string;
       role?: string;
-      adminId?: string;
       centerId?: string;
       center?: { id: string; name: string; code: string } | null;
     };
@@ -24,7 +22,6 @@ declare module "next-auth" {
   interface JWT {
     userId?: string;
     role?: string;
-    adminId?: string;
     centerId?: string;
     center?: { id: string; name: string; code: string } | null;
   }
@@ -145,7 +142,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
-          adminId: user.adminId ?? undefined,
           centerId: user.centerId ?? undefined,
           center: user.center ?? undefined,
         };
@@ -158,7 +154,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.userId = user.id;
         token.role = user.role;
-        token.adminId = user.adminId;
         token.centerId = user.centerId;
         token.center = user.center;
       }
@@ -168,7 +163,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user) {
         session.user.userId = token.userId as string;
         session.user.role = token.role as string;
-        session.user.adminId = token.adminId as string | undefined;
         session.user.centerId = token.centerId as string | undefined;
         session.user.center = token.center as { id: string; name: string; code: string } | null | undefined;
       }

@@ -12,10 +12,10 @@ import { logAudit } from "@/lib/services/audit";
  * - 상태를 LIVE → ENDED로 변경
  * - endedAt 타임스탬프 기록
  *
- * 권한: MASTER, SUB_MASTER, ADMIN, SELLER
+ * 권한: MASTER, SUB_MASTER, SELLER
  */
 export const PUT = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest, user: AuthUser) => {
     try {
       // URL에서 broadcastId 추출

@@ -80,7 +80,7 @@ export default function BroadcastsPage() {
 
   const userRole = (session?.user as any)?.role;
   const isManagerOrAbove =
-    userRole === "MASTER" || userRole === "SUB_MASTER" || userRole === "ADMIN";
+    userRole === "MASTER" || userRole === "SUB_MASTER";
 
   const loadBroadcasts = async () => {
     setLoading(true);

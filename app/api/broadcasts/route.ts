@@ -24,8 +24,8 @@ const broadcastSchema = z.object({
 export const { list: GET } = createCrudHandler({
   model: "broadcast",
   roles: {
-    read: ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
-    write: ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+    read: ["MASTER", "SUB_MASTER", "SELLER"],
+    write: ["MASTER", "SUB_MASTER", "SELLER"],
   },
   createSchema: broadcastSchema,
   updateSchema: broadcastSchema.partial(),
@@ -42,7 +42,7 @@ export const { list: GET } = createCrudHandler({
 const CONFLICT_WINDOW_HOURS = 2;
 
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest, user: AuthUser) => {
     try {
       const body = await req.json();
@@ -99,20 +99,15 @@ export const POST = withRole(
         },
       });
 
-      // LIVE-09: 셀러 요청접수 → 센터담당자(ADMIN) 알림
+      // LIVE-09: 셀러 요청접수 → 관리자 알림
       if (!data.status || data.status === "REQUESTED") {
         try {
           const seller = await prisma.user.findUnique({
             where: { id: data.sellerId },
-            select: { name: true, adminId: true },
+            select: { name: true },
           });
-          // 담당 ADMIN에게 알림 (adminId가 없으면 MASTER/SUB_MASTER에게)
-          const recipients = seller?.adminId
-            ? await prisma.user.findMany({
-                where: { id: seller.adminId, isActive: true },
-                select: { name: true, phone: true, email: true },
-              })
-            : await prisma.user.findMany({
+          // MASTER/SUB_MASTER에게 알림
+          const recipients = await prisma.user.findMany({
                 where: { role: { in: ["MASTER", "SUB_MASTER"] }, isActive: true },
                 select: { name: true, phone: true, email: true },
               });

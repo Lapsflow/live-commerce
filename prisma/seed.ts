@@ -11,9 +11,9 @@ const prisma = new PrismaClient({
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // 1. Users (MASTER 1명, ADMIN 2명, SELLER 5명)
+  // 1. Users (MASTER 1명, SUB_MASTER 2명, SELLER 5명)
   const masterPassword = await bcrypt.hash("master1234", 10);
-  const adminPassword = await bcrypt.hash("admin1234", 10);
+  const subMasterPassword = await bcrypt.hash("admin1234", 10);
   const sellerPassword = await bcrypt.hash("seller1234", 10);
 
   const master = await prisma.user.upsert({
@@ -33,36 +33,38 @@ async function main() {
     },
   });
 
-  const admin1 = await prisma.user.upsert({
+  const subMaster1 = await prisma.user.upsert({
     where: { username: "admin1" },
     update: {
-      passwordHash: adminPassword,
+      passwordHash: subMasterPassword,
       contractStatus: "APPROVED",
+      role: "SUB_MASTER",
     },
     create: {
       username: "admin1",
       email: "admin1@live-commerce.com",
       name: "Admin 1",
       phone: "010-2345-6789",
-      role: "ADMIN",
-      passwordHash: adminPassword,
+      role: "SUB_MASTER",
+      passwordHash: subMasterPassword,
       contractStatus: "APPROVED",
     },
   });
 
-  const admin2 = await prisma.user.upsert({
+  const subMaster2 = await prisma.user.upsert({
     where: { username: "admin2" },
     update: {
-      passwordHash: adminPassword,
+      passwordHash: subMasterPassword,
       contractStatus: "APPROVED",
+      role: "SUB_MASTER",
     },
     create: {
       username: "admin2",
       email: "admin2@live-commerce.com",
       name: "Admin 2",
       phone: "010-3456-7890",
-      role: "ADMIN",
-      passwordHash: adminPassword,
+      role: "SUB_MASTER",
+      passwordHash: subMasterPassword,
       contractStatus: "APPROVED",
     },
   });
@@ -80,7 +82,6 @@ async function main() {
         name: "Seller 1",
         phone: "010-4567-8901",
         role: "SELLER",
-        adminId: admin1.id,
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
@@ -97,7 +98,6 @@ async function main() {
         name: "Seller 2",
         phone: "010-5678-9012",
         role: "SELLER",
-        adminId: admin1.id,
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
@@ -114,7 +114,6 @@ async function main() {
         name: "Seller 3",
         phone: "010-6789-0123",
         role: "SELLER",
-        adminId: admin2.id,
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
@@ -131,7 +130,6 @@ async function main() {
         name: "Seller 4",
         phone: "010-7890-1234",
         role: "SELLER",
-        adminId: admin2.id,
         passwordHash: sellerPassword,
         contractStatus: "APPROVED",
       },
@@ -154,7 +152,7 @@ async function main() {
     }),
   ]);
 
-  console.log(`✅ Created ${1 + 2 + sellers.length} users`);
+  console.log(`✅ Created ${1 + 2 + sellers.length} users (1 MASTER, 2 SUB_MASTER, ${sellers.length} SELLER)`);
 
   // 2. Products (20개 샘플)
   const products = await Promise.all(
@@ -300,7 +298,6 @@ async function main() {
         data: {
           orderNo,
           sellerId: seller.id,
-          adminId: seller.adminId,
           status: i % 3 === 0 ? "APPROVED" : i % 3 === 1 ? "PENDING" : "REJECTED",
           totalAmount: 50000 + i * 10000,
           memo: i % 2 === 0 ? `발주 메모 ${i + 1}` : undefined,

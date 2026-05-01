@@ -30,7 +30,7 @@ export async function GET(
     const userId = (session.user as any).id;
     const userRole = (session.user as any).role;
 
-    if (sellerId !== userId && !['MASTER', 'SUB_MASTER', 'ADMIN'].includes(userRole)) {
+    if (sellerId !== userId && !['MASTER', 'SUB_MASTER'].includes(userRole)) {
       return errors.forbidden('해당 셀러의 추천 상품을 조회할 권한이 없습니다');
     }
 

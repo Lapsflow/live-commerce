@@ -62,7 +62,7 @@ const shippingLabels = {
 export default function OrdersPage() {
   const { data: session } = useSession();
   const userRole = (session?.user as any)?.role;
-  const isAdmin = ["MASTER", "SUB_MASTER", "ADMIN"].includes(userRole);
+  const isAdmin = ["MASTER", "SUB_MASTER"].includes(userRole);
 
   const [pipelineFilter, setPipelineFilter] = useState<string | null>(null);
   const [orderTypeTab, setOrderTypeTab] = useState<string>("all");

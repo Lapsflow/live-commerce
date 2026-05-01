@@ -9,7 +9,7 @@ import { prisma } from "@/lib/db/prisma";
  * 쿼리: ?category=FOOD&priceType=free|paid&status=CONTINUOUS&search=키워드&sort=latest|price
  */
 export const GET = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest) => {
     const url = new URL(req.url);
     const category = url.searchParams.get("category");

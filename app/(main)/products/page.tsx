@@ -120,11 +120,10 @@ export default function ProductsPage() {
   const userRole = (session?.user as any)?.role;
   const userCenterId = (session?.user as any)?.centerId;
   const isMasterOrSub = ["MASTER", "SUB_MASTER"].includes(userRole);
-  const isAdmin = userRole === "ADMIN";
   const isSeller = userRole === "SELLER";
-  const canResetStock = isMasterOrSub || isAdmin;
-  const canAddProduct = isMasterOrSub || isAdmin;
-  const canUploadExcel = isMasterOrSub || isAdmin;
+  const canResetStock = isMasterOrSub;
+  const canAddProduct = isMasterOrSub;
+  const canUploadExcel = isMasterOrSub;
 
   const [productTypeFilter, setProductTypeFilter] = useState<"ALL" | "HEADQUARTERS" | "CENTER">("ALL");
   const [showInactive, setShowInactive] = useState(false);

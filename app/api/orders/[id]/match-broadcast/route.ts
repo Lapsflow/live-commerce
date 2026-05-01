@@ -14,7 +14,7 @@ const matchSchema = z.object({
 
 // POST: 수동 매칭
 export const POST = withRole(
-  ["MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (
     req: NextRequest,
     user: AuthUser,
@@ -44,7 +44,7 @@ export const POST = withRole(
 
 // DELETE: 매칭 해제
 export const DELETE = withRole(
-  ["MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (
     req: NextRequest,
     user: AuthUser,

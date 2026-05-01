@@ -35,10 +35,10 @@ interface ParsedProduct {
 /**
  * POST /api/products/upload
  * 엑셀 파일 파싱 → 검증 → 센터 상품 일괄 등록
- * MASTER, SUB_MASTER, ADMIN만 가능
+ * MASTER, SUB_MASTER만 가능
  */
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest, user) => {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -52,8 +52,8 @@ export const POST = withRole(
       return errors.badRequest("센터를 선택해주세요");
     }
 
-    // SUB_MASTER/ADMIN: 본인 센터만 업로드 가능
-    if ((user.role === "SUB_MASTER" || user.role === "ADMIN") && user.centerId && centerId !== user.centerId) {
+    // SUB_MASTER: 본인 센터만 업로드 가능
+    if (user.role === "SUB_MASTER" && user.centerId && centerId !== user.centerId) {
       return errors.forbidden("본인 센터의 상품만 업로드할 수 있습니다.");
     }
 

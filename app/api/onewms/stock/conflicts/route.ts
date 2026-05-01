@@ -9,7 +9,7 @@ import { getStockConflicts } from '@/lib/services/onewms/stockSync';
 import { ok, errors } from '@/lib/api/response';
 
 export const GET = withRole(
-  ['MASTER', 'SUB_MASTER', 'ADMIN'],
+  ['MASTER', 'SUB_MASTER'],
   async (req: NextRequest) => {
     try {
       // Get all conflicts

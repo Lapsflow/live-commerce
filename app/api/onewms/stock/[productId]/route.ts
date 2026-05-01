@@ -8,7 +8,7 @@ import { ok, errors } from '@/lib/api/response';
  * 특정 상품의 재고 정보와 ONEWMS 동기화 상태 조회
  */
 export const GET = withRole(
-  ['MASTER', 'SUB_MASTER', 'ADMIN', 'SELLER'],
+  ['MASTER', 'SUB_MASTER', 'SELLER'],
   async (
     req: NextRequest,
     user,

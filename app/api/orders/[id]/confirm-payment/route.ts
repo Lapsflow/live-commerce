@@ -14,7 +14,7 @@ import { prisma } from "@/lib/db/prisma";
 import { logAudit } from "@/lib/services/audit";
 
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (
     req: NextRequest,
     user: AuthUser,

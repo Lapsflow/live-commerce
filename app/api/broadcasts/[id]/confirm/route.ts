@@ -16,11 +16,10 @@ import { auth } from "@/lib/auth";
  *
  * 권한:
  * - SELLER: 본인 방송만 확정 가능
- * - ADMIN: 소속 Seller 방송 확정 가능
  * - MASTER, SUB_MASTER: 모든 방송 확정 가능
  */
 export const PUT = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -46,7 +45,6 @@ export const PUT = withRole(
               id: true,
               name: true,
               email: true,
-              adminId: true,
             },
           },
         },
@@ -59,10 +57,6 @@ export const PUT = withRole(
       // 권한 검증
       if (userRole === "SELLER" && broadcast.sellerId !== userId) {
         return errors.forbidden("본인의 방송만 확정할 수 있습니다");
-      }
-
-      if (userRole === "ADMIN" && broadcast.seller.adminId !== userId) {
-        return errors.forbidden("소속 Seller의 방송만 확정할 수 있습니다");
       }
 
       // 예정된 방송만 확정 가능

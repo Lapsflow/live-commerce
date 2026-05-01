@@ -15,8 +15,8 @@ const saleSchema = z.object({
 export const { list: GET, create: POST } = createCrudHandler({
   model: "sale",
   roles: {
-    read: ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
-    write: ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+    read: ["MASTER", "SUB_MASTER", "SELLER"],
+    write: ["MASTER", "SUB_MASTER", "SELLER"],
   },
   createSchema: saleSchema,
   updateSchema: saleSchema.partial(),

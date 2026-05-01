@@ -47,6 +47,13 @@ tests/screenshots/
 .playwright-mcp/
 playwright/.auth/
 
+# backups
+backups/
+
+# temp screenshots
+barcode-*.png
+test-results/
+
 # bkit / claude
 docs/.pdca-snapshots/
 docs/.pdca-status*.json

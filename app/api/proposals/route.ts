@@ -32,7 +32,7 @@ const proposalCreateSchema = z.object({
  * 권한: 모든 로그인 사용자
  */
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -85,11 +85,10 @@ export const POST = withRole(
  *
  * 권한:
  * - SELLER: 본인 제안만 조회
- * - ADMIN: 소속 Seller 제안 조회
  * - MASTER, SUB_MASTER: 모든 제안 조회
  */
 export const GET = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -106,14 +105,6 @@ export const GET = withRole(
       let userFilter = {};
       if (userRole === "SELLER") {
         userFilter = { submittedBy: userId };
-      } else if (userRole === "ADMIN") {
-        // Admin이 관리하는 Seller 목록 조회
-        const sellers = await prisma.user.findMany({
-          where: { adminId: userId },
-          select: { id: true },
-        });
-        const sellerIds = sellers.map((s) => s.id);
-        userFilter = { submittedBy: { in: sellerIds } };
       }
 
       // 상태 필터

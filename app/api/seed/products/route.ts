@@ -11,11 +11,11 @@ import { auth } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    // Only ADMIN can seed products
+    // Only MASTER can seed products
     const session = await auth();
-    if (!session?.user || session.user.role !== 'ADMIN') {
+    if (!session?.user || session.user.role !== 'MASTER') {
       return NextResponse.json(
-        { success: false, error: { message: 'Unauthorized: ADMIN role required' } },
+        { success: false, error: { message: 'Unauthorized: MASTER role required' } },
         { status: 403 }
       );
     }

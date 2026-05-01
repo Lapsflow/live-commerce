@@ -14,9 +14,7 @@ import {
   Search,
   Plus,
   Edit,
-  BarChart3,
   UserCheck,
-  Shield,
   Building2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -27,13 +25,11 @@ type User = {
   name: string;
   phone: string | null;
   role: string;
-  adminId: string | null;
   channels: string[];
   avgSales: number | null;
   isActive: boolean;
   createdAt: string;
   center?: { name: string; code: string } | null;
-  admin?: { name: string } | null;
   _count?: { sellers?: number; broadcasts?: number; sales?: number; orders?: number };
 };
 
@@ -98,14 +94,6 @@ export default function UsersPage() {
     }
   };
 
-  const adminList = useMemo(
-    () =>
-      users
-        .filter((u) => u.role === "ADMIN")
-        .map((u) => ({ id: u.id, name: u.name })),
-    [users]
-  );
-
   // Filtered lists
   const filterBySearch = (list: User[]) =>
     list.filter((u) => {
@@ -122,28 +110,6 @@ export default function UsersPage() {
     () => filterBySearch(users.filter((u) => u.role === "SELLER")),
     [users, searchQuery]
   );
-  const admins = useMemo(
-    () => filterBySearch(users.filter((u) => u.role === "ADMIN")),
-    [users, searchQuery]
-  );
-
-  // Admin dashboard stats
-  const adminStats = useMemo(() => {
-    const adminUsers = users.filter((u) => u.role === "ADMIN");
-    return adminUsers.map((admin) => {
-      const managedSellers = users.filter((u) => u.adminId === admin.id);
-      const totalAvgSales = managedSellers.reduce(
-        (sum, s) => sum + (s.avgSales || 0),
-        0
-      );
-      return {
-        ...admin,
-        sellerCount: managedSellers.length,
-        totalAvgSales,
-        sellers: managedSellers,
-      };
-    });
-  }, [users]);
 
   // Center groups for center tab
   const centerGroups = useMemo(() => {
@@ -186,11 +152,6 @@ export default function UsersPage() {
       </div>
     );
   }
-
-  const getAdminName = (adminId: string | null) => {
-    if (!adminId) return "-";
-    return users.find((u) => u.id === adminId)?.name || "-";
-  };
 
   return (
     <div className="space-y-6">
@@ -241,17 +202,9 @@ export default function UsersPage() {
               <UserCheck className="h-4 w-4" />
               셀러 ({users.filter((u) => u.role === "SELLER").length})
             </TabsTrigger>
-            <TabsTrigger value="admins" className="gap-1.5">
-              <Shield className="h-4 w-4" />
-              관리자 ({users.filter((u) => u.role === "ADMIN").length})
-            </TabsTrigger>
             <TabsTrigger value="centers" className="gap-1.5">
               <Building2 className="h-4 w-4" />
               센터
-            </TabsTrigger>
-            <TabsTrigger value="dashboard" className="gap-1.5">
-              <BarChart3 className="h-4 w-4" />
-              관리자 대시보드
             </TabsTrigger>
           </TabsList>
 
@@ -262,7 +215,6 @@ export default function UsersPage() {
               columns={["name", "email", "phone", "role", "isActive", "channels", "avgSales", "createdAt"]}
               onEdit={handleEditUser}
               onRowClick={(user) => router.push(`/users/${user.id}`)}
-              getAdminName={getAdminName}
               onToggleActive={handleToggleActive}
             />
           </TabsContent>
@@ -271,23 +223,9 @@ export default function UsersPage() {
           <TabsContent value="sellers">
             <UserTable
               users={sellers}
-              columns={["name", "phone", "admin", "isActive", "channels", "avgSales", "createdAt"]}
+              columns={["name", "phone", "isActive", "channels", "avgSales", "createdAt"]}
               onEdit={handleEditUser}
               onRowClick={(user) => router.push(`/users/${user.id}`)}
-              getAdminName={getAdminName}
-              onToggleActive={handleToggleActive}
-            />
-          </TabsContent>
-
-          {/* 관리자 탭 */}
-          <TabsContent value="admins">
-            <UserTable
-              users={admins}
-              columns={["name", "email", "phone", "isActive", "sellerCount", "createdAt"]}
-              onEdit={handleEditUser}
-              onRowClick={(user) => router.push(`/users/${user.id}`)}
-              getAdminName={getAdminName}
-              allUsers={users}
               onToggleActive={handleToggleActive}
             />
           </TabsContent>
@@ -342,69 +280,6 @@ export default function UsersPage() {
             </div>
           </TabsContent>
 
-          {/* 관리자 대시보드 */}
-          <TabsContent value="dashboard">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {adminStats.length === 0 ? (
-                <Card className="col-span-full p-8 text-center text-grey-500">
-                  등록된 관리자가 없습니다
-                </Card>
-              ) : (
-                adminStats.map((admin) => (
-                  <Card
-                    key={admin.id}
-                    className="p-5 hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => router.push(`/users/${admin.id}`)}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-lg">{admin.name}</h3>
-                      <RoleBadge role="ADMIN" />
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-grey-500">관리 셀러</span>
-                        <span className="font-semibold">{admin.sellerCount}명</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-grey-500">셀러 평균매출 합계</span>
-                        <span className="font-semibold">
-                          {admin.totalAvgSales > 0
-                            ? `${admin.totalAvgSales.toLocaleString()}원`
-                            : "-"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-grey-500">이메일</span>
-                        <span className="text-grey-600 truncate ml-2">
-                          {admin.email}
-                        </span>
-                      </div>
-                    </div>
-                    {admin.sellers.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-grey-100">
-                        <p className="text-xs text-grey-400 mb-1.5">관리 셀러</p>
-                        <div className="flex flex-wrap gap-1">
-                          {admin.sellers.slice(0, 5).map((s) => (
-                            <span
-                              key={s.id}
-                              className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded"
-                            >
-                              {s.name}
-                            </span>
-                          ))}
-                          {admin.sellers.length > 5 && (
-                            <span className="text-xs text-grey-400">
-                              +{admin.sellers.length - 5}명
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </Card>
-                ))
-              )}
-            </div>
-          </TabsContent>
         </Tabs>
       )}
 
@@ -413,7 +288,6 @@ export default function UsersPage() {
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         onSuccess={() => loadUsers()}
-        adminList={adminList}
       />
     </div>
   );
@@ -426,10 +300,8 @@ type ColumnKey =
   | "email"
   | "phone"
   | "role"
-  | "admin"
   | "channels"
   | "avgSales"
-  | "sellerCount"
   | "isActive"
   | "createdAt";
 
@@ -438,10 +310,8 @@ const columnConfig: Record<ColumnKey, { label: string; align?: "right" | "center
   email: { label: "이메일" },
   phone: { label: "전화번호" },
   role: { label: "역할" },
-  admin: { label: "소속 관리자" },
   channels: { label: "활동 채널" },
   avgSales: { label: "평균 매출", align: "right" },
-  sellerCount: { label: "관리 셀러", align: "right" },
   isActive: { label: "상태", align: "center" },
   createdAt: { label: "가입일" },
 };
@@ -451,21 +321,14 @@ function UserTable({
   columns,
   onEdit,
   onRowClick,
-  getAdminName,
-  allUsers,
   onToggleActive,
 }: {
   users: User[];
   columns: ColumnKey[];
   onEdit: (user: User) => void;
   onRowClick: (user: User) => void;
-  getAdminName: (adminId: string | null) => string;
-  allUsers?: User[];
   onToggleActive?: (user: User) => void;
 }) {
-  const getSellerCount = (userId: string) =>
-    (allUsers || []).filter((u) => u.adminId === userId).length;
-
   return (
     <Card className="p-6">
       <div className="overflow-x-auto">
@@ -519,7 +382,6 @@ function UserTable({
                       {col === "email" && user.email}
                       {col === "phone" && (user.phone || "-")}
                       {col === "role" && <RoleBadge role={user.role} />}
-                      {col === "admin" && getAdminName(user.adminId)}
                       {col === "channels" &&
                         (user.channels?.length > 0
                           ? user.channels.join(", ")
@@ -542,11 +404,6 @@ function UserTable({
                         >
                           {user.isActive ? "활성" : "비활성"}
                         </button>
-                      )}
-                      {col === "sellerCount" && (
-                        <span className="font-semibold">
-                          {getSellerCount(user.id)}명
-                        </span>
                       )}
                       {col === "createdAt" &&
                         new Date(user.createdAt).toLocaleDateString("ko-KR")}

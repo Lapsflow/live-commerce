@@ -23,7 +23,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const allowedRoles = ['MASTER', 'SUB_MASTER', 'ADMIN', 'SELLER'];
+    const allowedRoles = ['MASTER', 'SUB_MASTER', 'SELLER'];
     if (!session.user?.role || !allowedRoles.includes(session.user.role)) {
       return errors.forbidden('센터 상품 조회 권한이 없습니다');
     }

@@ -17,7 +17,7 @@ const bulkStatusUpdateSchema = z.object({
  * PUT /api/orders/bulk-status
  *
  * 여러 발주의 상태를 한 번에 변경 (입금/출고)
- * 권한: MASTER, SUB_MASTER, ADMIN만 가능
+ * 권한: MASTER, SUB_MASTER만 가능
  *
  * Request Body:
  * {
@@ -37,7 +37,7 @@ const bulkStatusUpdateSchema = z.object({
  * }
  */
 export const PUT = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest) => {
     try {
       const body = await req.json();

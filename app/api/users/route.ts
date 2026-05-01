@@ -10,15 +10,14 @@ const userSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1).max(100),
   phone: z.string().max(20).optional(),
-  role: z.enum(["MASTER", "SUB_MASTER", "ADMIN", "SELLER"]).optional(),
-  adminId: z.string().cuid().optional(),
+  role: z.enum(["MASTER", "SUB_MASTER", "SELLER"]).optional(),
 });
 
 // GET은 기존 CRUD factory 유지
 const crud = createCrudHandler({
   model: "user",
   roles: {
-    read: ["MASTER", "SUB_MASTER", "ADMIN"],
+    read: ["MASTER", "SUB_MASTER"],
     write: ["MASTER", "SUB_MASTER"],
   },
   createSchema: userSchema,

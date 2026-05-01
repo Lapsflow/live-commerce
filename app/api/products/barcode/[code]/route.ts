@@ -14,7 +14,7 @@ type Params = Promise<{ code: string }>;
  * 바코드로 상품 조회 + ONEWMS 실시간 재고
  */
 export const GET = withRole(
-  ["SELLER", "ADMIN", "SUB_MASTER", "MASTER"],
+  ["SELLER", "SUB_MASTER", "MASTER"],
   async (request: NextRequest, user, context: { params: Params }) => {
     const params = await context.params;
     const { code } = params;

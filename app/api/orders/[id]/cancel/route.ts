@@ -13,7 +13,7 @@ import { prisma } from "@/lib/db/prisma";
 import { logAudit } from "@/lib/services/audit";
 
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (
     req: NextRequest,
     user: AuthUser,

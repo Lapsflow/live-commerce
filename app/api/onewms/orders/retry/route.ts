@@ -9,7 +9,7 @@ import { retryFailedOrders } from '@/lib/services/onewms/orderSync';
 import { ok, errors } from '@/lib/api/response';
 
 export const POST = withRole(
-  ['ADMIN', 'SUB_MASTER', 'MASTER'],
+  ['SUB_MASTER', 'MASTER'],
   async (req: NextRequest) => {
     try {
       // Retry failed orders

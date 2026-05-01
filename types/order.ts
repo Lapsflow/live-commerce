@@ -36,7 +36,6 @@ export interface Order {
     name: string;
     email: string;
   };
-  adminId: string | null;
   status: OrderStatus;
   productType: "HEADQUARTERS" | "CENTER"; // Added
   paymentStatus: PaymentStatus;

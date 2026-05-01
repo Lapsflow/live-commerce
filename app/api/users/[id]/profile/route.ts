@@ -10,7 +10,7 @@ const profileUpdateSchema = z.object({
   timeSlots: z.array(z.string()).optional(),
 });
 
-export const PATCH = withRole(["MASTER", "ADMIN", "SELLER"], async (
+export const PATCH = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (
   req: NextRequest,
   user: AuthUser,
   context: { params: Promise<{ id: string }> }
@@ -23,7 +23,7 @@ export const PATCH = withRole(["MASTER", "ADMIN", "SELLER"], async (
     return errors.badRequest(parsed.error.issues[0].message, parsed.error.issues);
   }
 
-  // 본인 프로필만 수정 가능 (MASTER/ADMIN은 예외)
+  // 본인 프로필만 수정 가능 (MASTER/SUB_MASTER는 예외)
   if (user.role === "SELLER" && user.userId !== id) {
     return errors.forbidden("본인의 프로필만 수정할 수 있습니다.");
   }

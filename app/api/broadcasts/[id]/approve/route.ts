@@ -10,7 +10,7 @@ import { logAudit } from "@/lib/services/audit";
  * REQUESTED → SCHEDULED (관리자/마스터 승인)
  */
 export const PUT = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest, user: AuthUser) => {
     const segments = req.nextUrl.pathname.split("/");
     const approveIdx = segments.indexOf("approve");

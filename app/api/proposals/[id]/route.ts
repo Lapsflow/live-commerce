@@ -10,11 +10,10 @@ import { auth } from "@/lib/auth";
  * 제안 상세 조회
  * 권한:
  * - SELLER: 본인 제안만 조회
- * - ADMIN: 소속 Seller 제안 조회
  * - MASTER, SUB_MASTER: 모든 제안 조회
  */
 export const GET = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -41,7 +40,6 @@ export const GET = withRole(
               name: true,
               email: true,
               role: true,
-              adminId: true,
             },
           },
         },
@@ -54,10 +52,6 @@ export const GET = withRole(
       // 권한 검증
       if (userRole === "SELLER" && proposal.submittedBy !== userId) {
         return errors.forbidden("본인의 제안만 조회할 수 있습니다");
-      }
-
-      if (userRole === "ADMIN" && proposal.user.adminId !== userId) {
-        return errors.forbidden("소속 Seller의 제안만 조회할 수 있습니다");
       }
 
       return ok(proposal);
@@ -74,11 +68,10 @@ export const GET = withRole(
  * 제안 삭제
  * 권한:
  * - SELLER: 본인의 PENDING 제안만 삭제 가능
- * - ADMIN: 소속 Seller의 PENDING 제안 삭제 가능
  * - MASTER, SUB_MASTER: 모든 제안 삭제 가능
  */
 export const DELETE = withRole(
-  ["MASTER", "SUB_MASTER", "ADMIN", "SELLER"],
+  ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -105,7 +98,6 @@ export const DELETE = withRole(
               name: true,
               email: true,
               role: true,
-              adminId: true,
             },
           },
         },
@@ -120,12 +112,8 @@ export const DELETE = withRole(
         return errors.forbidden("본인의 제안만 삭제할 수 있습니다");
       }
 
-      if (userRole === "ADMIN" && proposal.user.adminId !== userId) {
-        return errors.forbidden("소속 Seller의 제안만 삭제할 수 있습니다");
-      }
-
-      // SELLER와 ADMIN은 PENDING 상태만 삭제 가능
-      if ((userRole === "SELLER" || userRole === "ADMIN") && proposal.status !== "PENDING") {
+      // SELLER는 PENDING 상태만 삭제 가능
+      if (userRole === "SELLER" && proposal.status !== "PENDING") {
         return errors.badRequest("PENDING 상태의 제안만 삭제할 수 있습니다");
       }
 

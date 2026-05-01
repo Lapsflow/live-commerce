@@ -16,9 +16,9 @@ export default function CentersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 권한 확인 (MASTER, SUB_MASTER, ADMIN만 접근 가능)
+  // 권한 확인 (MASTER, SUB_MASTER만 접근 가능)
   const userRole = (session?.user as any)?.role;
-  const hasAccess = ["MASTER", "SUB_MASTER", "ADMIN"].includes(userRole);
+  const hasAccess = ["MASTER", "SUB_MASTER"].includes(userRole);
   const canCreate = userRole === "MASTER"; // MASTER만 센터 생성 가능
 
   useEffect(() => {

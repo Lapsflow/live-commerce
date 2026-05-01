@@ -82,16 +82,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [categoryEdit, setCategoryEdit] = useState("");
   const [notesEdit, setNotesEdit] = useState("");
 
-  // CENTER 상품은 SUB_MASTER/ADMIN도 가격 수정 가능
+  // CENTER 상품은 SUB_MASTER도 가격 수정 가능
   const canEditPrice = isMaster || (
     product?.productType === "CENTER" &&
-    (userRole === "SUB_MASTER" || userRole === "ADMIN") &&
+    userRole === "SUB_MASTER" &&
     product?.managedBy === userCenterId
   );
 
-  // SUB_MASTER/ADMIN: 본인 센터 상품만 수정 가능
+  // SUB_MASTER: 본인 센터 상품만 수정 가능
   const canEdit = isMaster || (
-    (userRole === "SUB_MASTER" || userRole === "ADMIN") &&
+    userRole === "SUB_MASTER" &&
     product?.productType === "CENTER" &&
     product?.managedBy === userCenterId
   );

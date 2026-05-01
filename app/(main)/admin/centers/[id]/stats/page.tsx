@@ -27,7 +27,7 @@ interface CenterStats {
     totalOrders: number;
     totalBroadcasts: number;
     usersByRole: {
-      ADMIN: number;
+      SUB_MASTER: number;
       SELLER: number;
     };
     topProducts: Array<{
@@ -135,7 +135,7 @@ export default function CenterStatsPage() {
               <p className="text-3xl font-bold">{centerStats.totalUsers}</p>
               <div className="flex gap-2 mt-2">
                 <span className="text-xs text-muted-foreground">
-                  관리자: {centerStats.usersByRole.ADMIN}
+                  관리자: {centerStats.usersByRole.SUB_MASTER}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   셀러: {centerStats.usersByRole.SELLER}

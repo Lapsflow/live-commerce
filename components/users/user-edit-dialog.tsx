@@ -28,7 +28,6 @@ type User = {
   name: string;
   phone: string | null;
   role: string;
-  adminId: string | null;
   channels: string[];
   avgSales: number | null;
 };
@@ -38,7 +37,6 @@ type UserEditDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
-  adminList?: Array<{ id: string; name: string }>;
 };
 
 export function UserEditDialog({
@@ -46,7 +44,6 @@ export function UserEditDialog({
   open,
   onOpenChange,
   onSuccess,
-  adminList = [],
 }: UserEditDialogProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +52,6 @@ export function UserEditDialog({
     name: "",
     phone: "",
     role: "SELLER",
-    adminId: "",
     channels: "",
     avgSales: "",
   });
@@ -66,7 +62,6 @@ export function UserEditDialog({
         name: user.name || "",
         phone: user.phone || "",
         role: user.role || "SELLER",
-        adminId: user.adminId || "",
         channels: user.channels?.join(", ") || "",
         avgSales: user.avgSales?.toString() || "",
       });
@@ -85,7 +80,6 @@ export function UserEditDialog({
         name: formData.name,
         phone: formData.phone || null,
         role: formData.role,
-        adminId: formData.adminId || null,
         channels: formData.channels
           .split(",")
           .map((c) => c.trim())
@@ -114,8 +108,6 @@ export function UserEditDialog({
       setLoading(false);
     }
   };
-
-  const needsAdmin = formData.role === "ADMIN" || formData.role === "SELLER";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -184,36 +176,10 @@ export function UserEditDialog({
                 <SelectContent>
                   <SelectItem value="MASTER">{ROLE_LABELS["MASTER"]}</SelectItem>
                   <SelectItem value="SUB_MASTER">{ROLE_LABELS["SUB_MASTER"]}</SelectItem>
-                  <SelectItem value="ADMIN">{ROLE_LABELS["ADMIN"]}</SelectItem>
                   <SelectItem value="SELLER">{ROLE_LABELS["SELLER"]}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-
-            {/* 소속 Admin (ADMIN, SELLER만) */}
-            {needsAdmin && (
-              <div className="space-y-2">
-                <Label htmlFor="adminId">소속 Admin</Label>
-                <Select
-                  value={formData.adminId}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, adminId: value || "" })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Admin 선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">없음</SelectItem>
-                    {adminList.map((admin) => (
-                      <SelectItem key={admin.id} value={admin.id}>
-                        {admin.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
 
             {/* 활동 채널 (SELLER만) */}
             {formData.role === "SELLER" && (
