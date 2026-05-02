@@ -4,6 +4,7 @@ import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { sendNotification } from "@/lib/services/notifications";
 import { logAudit } from "@/lib/services/audit";
+import { getRealtimeStockBatch } from "@/lib/services/onewms/realtime";
 
 /**
  * PUT /api/broadcasts/:id/start
@@ -96,6 +97,43 @@ const startBroadcastHandler = async (req: NextRequest) => {
         },
       },
     });
+
+    // Phase 2: 방송 시작 시 본사 상품 일괄 ONEWMS 재고 갱신
+    try {
+      const hqProducts = await prisma.product.findMany({
+        where: {
+          productType: "HEADQUARTERS",
+          isActive: true,
+          onewmsCode: { not: null },
+        },
+        select: { id: true, onewmsCode: true, totalStock: true },
+        take: 200,
+      });
+
+      if (hqProducts.length > 0) {
+        const codes = hqProducts.map((p) => p.onewmsCode as string);
+        const realtimeMap = await getRealtimeStockBatch(codes);
+
+        const updates: Promise<any>[] = [];
+        for (const p of hqProducts) {
+          const realtime = realtimeMap.get(p.onewmsCode!);
+          if (realtime !== null && realtime !== undefined && realtime !== p.totalStock) {
+            updates.push(
+              prisma.product.update({
+                where: { id: p.id },
+                data: { totalStock: realtime },
+              }).catch(() => {})
+            );
+          }
+        }
+        if (updates.length > 0) {
+          await Promise.allSettled(updates);
+          console.log(`[BROADCAST_START] Updated ${updates.length} product stocks from ONEWMS`);
+        }
+      }
+    } catch (err) {
+      console.error("[BROADCAST_START] ONEWMS stock sync failed:", err);
+    }
 
     // LIVE-09: 방송 시작 알림 → 관리자(MASTER/SUB_MASTER)
     try {

@@ -9,8 +9,10 @@
  */
 
 import { prisma } from "@/lib/db/prisma";
+import { getRealtimeStock } from "@/lib/services/onewms/realtime";
 
 const THREE_HOURS_MS = 3 * 60 * 60 * 1000;
+const MAX_RETRY = 3;
 
 // ─── Types ───
 
@@ -44,8 +46,9 @@ interface ReleaseResult {
 // ─── Functions ───
 
 /**
- * 가용 재고 확인
- * available = totalStock - reservedStock
+ * 가용 재고 확인 (ONEWMS 실시간)
+ * 본사 상품: ONEWMS realtime - reservedStock
+ * 센터 상품: DB totalStock - reservedStock
  */
 export async function checkAvailability(
   items: StockCheckItem[]
@@ -59,10 +62,32 @@ export async function checkAvailability(
       name: true,
       totalStock: true,
       reservedStock: true,
+      productType: true,
+      onewmsCode: true,
     },
   });
 
   const productMap = new Map(products.map((p) => [p.id, p]));
+
+  // Fetch realtime stock for HQ products with onewmsCode
+  const hqProducts = products.filter(
+    (p) => p.productType === "HEADQUARTERS" && p.onewmsCode
+  );
+
+  const realtimeStocks = new Map<string, number>();
+  if (hqProducts.length > 0) {
+    const settled = await Promise.allSettled(
+      hqProducts.map(async (p) => {
+        const stock = await getRealtimeStock(p.onewmsCode!);
+        return { id: p.id, stock };
+      })
+    );
+    for (const result of settled) {
+      if (result.status === "fulfilled" && result.value.stock !== null) {
+        realtimeStocks.set(result.value.id, result.value.stock);
+      }
+    }
+  }
 
   const result = items.map((item) => {
     const product = productMap.get(item.productId);
@@ -76,7 +101,9 @@ export async function checkAvailability(
       };
     }
 
-    const availableStock = product.totalStock - product.reservedStock;
+    // Use realtime stock if available, otherwise DB
+    const baseStock = realtimeStocks.get(product.id) ?? product.totalStock;
+    const availableStock = Math.max(0, baseStock - product.reservedStock);
     return {
       productId: item.productId,
       productName: product.name,
@@ -93,74 +120,152 @@ export async function checkAvailability(
 }
 
 /**
- * 재고 선점 (발주 생성 시)
+ * 재고 선점 (발주 생성 시) - ONEWMS 실시간 검증 포함
+ * - 본사 상품: ONEWMS 실시간 조회 후 DB 갱신 + 선점
+ * - 센터 상품: DB 기준 선점
  * - Product.reservedStock 증가
  * - StockReservation ACTIVE 레코드 생성
  * - Order.expiresAt 설정 (3시간 후)
+ * - Serializable isolation + exponential backoff retry (max 3)
  */
 export async function reserveStock(
   orderId: string
 ): Promise<ReservationResult> {
-  try {
-    await prisma.$transaction(async (tx) => {
-      // 1. 주문 + 아이템 조회
-      const order = await tx.order.findUnique({
+  for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
+    try {
+      // 1. 트랜잭션 전: 주문 조회 + 본사 상품 ONEWMS 실시간 조회
+      const order = await prisma.order.findUnique({
         where: { id: orderId },
-        include: { items: true },
-      });
-
-      if (!order) throw new Error("주문을 찾을 수 없습니다.");
-      if (order.status !== "PENDING") throw new Error("대기 상태의 주문만 선점 가능합니다.");
-
-      // 2. 상품별 가용 재고 확인 + 선점 (race condition 방지: 트랜잭션 내)
-      for (const item of order.items) {
-        const product = await tx.product.findUnique({
-          where: { id: item.productId },
-          select: { id: true, totalStock: true, reservedStock: true },
-        });
-
-        if (!product) {
-          throw new Error(`상품을 찾을 수 없습니다: ${item.productId}`);
-        }
-
-        const available = product.totalStock - product.reservedStock;
-        if (available < item.quantity) {
-          throw new Error(
-            `재고 부족: ${item.productName} (가용: ${available}, 요청: ${item.quantity})`
-          );
-        }
-
-        // reservedStock 증가
-        await tx.product.update({
-          where: { id: item.productId },
-          data: { reservedStock: { increment: item.quantity } },
-        });
-
-        // StockReservation 레코드 생성
-        await tx.stockReservation.create({
-          data: {
-            orderId,
-            productId: item.productId,
-            quantity: item.quantity,
-            status: "ACTIVE",
+        include: {
+          items: {
+            include: {
+              product: {
+                select: { id: true, onewmsCode: true, productType: true },
+              },
+            },
           },
-        });
-      }
-
-      // 3. 만료 시각 설정
-      await tx.order.update({
-        where: { id: orderId },
-        data: {
-          expiresAt: new Date(Date.now() + THREE_HOURS_MS),
         },
       });
-    });
 
-    return { success: true };
-  } catch (err: any) {
-    console.error("[RESERVE_STOCK ERROR]", err);
-    return { success: false, error: err.message };
+      if (!order) return { success: false, error: "주문을 찾을 수 없습니다." };
+      if (order.status !== "PENDING") return { success: false, error: "대기 상태의 주문만 선점 가능합니다." };
+
+      // Pre-fetch realtime stock for HQ products (outside transaction)
+      const realtimeStocks = new Map<string, number>();
+      const hqItems = order.items.filter(
+        (item) =>
+          item.product?.productType === "HEADQUARTERS" &&
+          item.product?.onewmsCode
+      );
+
+      if (hqItems.length > 0) {
+        const settled = await Promise.allSettled(
+          hqItems.map(async (item) => {
+            const stock = await getRealtimeStock(item.product!.onewmsCode!);
+            return { productId: item.productId, stock };
+          })
+        );
+        for (const result of settled) {
+          if (result.status === "fulfilled" && result.value.stock !== null) {
+            realtimeStocks.set(result.value.productId, result.value.stock);
+          }
+        }
+      }
+
+      // 2. Serializable 트랜잭션으로 선점
+      await prisma.$transaction(
+        async (tx) => {
+          for (const item of order.items) {
+            const product = await tx.product.findUnique({
+              where: { id: item.productId },
+              select: {
+                id: true,
+                totalStock: true,
+                reservedStock: true,
+                productType: true,
+                onewmsCode: true,
+              },
+            });
+
+            if (!product) {
+              throw new Error(`상품을 찾을 수 없습니다: ${item.productId}`);
+            }
+
+            // 본사 상품: ONEWMS 실시간 값으로 DB 갱신
+            let baseStock = product.totalStock;
+            const realtimeStock = realtimeStocks.get(product.id);
+            if (
+              product.productType === "HEADQUARTERS" &&
+              product.onewmsCode &&
+              realtimeStock !== undefined
+            ) {
+              baseStock = realtimeStock;
+              await tx.product.update({
+                where: { id: product.id },
+                data: { totalStock: realtimeStock },
+              });
+            }
+
+            const available = baseStock - product.reservedStock;
+            if (available < item.quantity) {
+              throw new Error(
+                `재고 부족: ${item.productName} (가용: ${available}, 요청: ${item.quantity})`
+              );
+            }
+
+            // reservedStock 증가
+            await tx.product.update({
+              where: { id: item.productId },
+              data: { reservedStock: { increment: item.quantity } },
+            });
+
+            // StockReservation 레코드 생성
+            await tx.stockReservation.create({
+              data: {
+                orderId,
+                productId: item.productId,
+                quantity: item.quantity,
+                status: "ACTIVE",
+              },
+            });
+          }
+
+          // 만료 시각 설정
+          await tx.order.update({
+            where: { id: orderId },
+            data: {
+              expiresAt: new Date(Date.now() + THREE_HOURS_MS),
+            },
+          });
+        },
+        {
+          isolationLevel: "Serializable",
+          timeout: 10000,
+        }
+      );
+
+      return { success: true };
+    } catch (err: any) {
+      // Serializable conflict → retry with exponential backoff
+      const isSerializationFailure =
+        err.message?.includes("could not serialize") ||
+        err.code === "P2034";
+
+      if (isSerializationFailure && attempt < MAX_RETRY) {
+        const delay = Math.pow(2, attempt) * 100;
+        console.warn(
+          `[RESERVE_STOCK] Serialization conflict, retry ${attempt}/${MAX_RETRY} after ${delay}ms`
+        );
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+
+      console.error("[RESERVE_STOCK ERROR]", err);
+      return { success: false, error: err.message };
+    }
   }
+
+  return { success: false, error: "최대 재시도 횟수 초과" };
 }
 
 /**

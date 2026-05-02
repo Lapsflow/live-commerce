@@ -6,6 +6,7 @@ import { z } from "zod";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { serializeProduct } from "@/lib/services/products/serializeProduct";
 import { logAudit } from "@/lib/services/audit";
+import { getRealtimeStock } from "@/lib/services/onewms/realtime";
 
 // Phase 2: Product Update Schema (partial)
 const productUpdateSchema = z.object({
@@ -64,6 +65,22 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (
         product.managedBy !== centerId
       ) {
         return error("FORBIDDEN", "권한이 없습니다.", 403);
+      }
+    }
+
+    // Phase 2: 본사 상품 ONEWMS 실시간 재고 반영
+    if (product.productType === "HEADQUARTERS" && product.onewmsCode) {
+      try {
+        const realtimeStock = await getRealtimeStock(product.onewmsCode);
+        if (realtimeStock !== null && realtimeStock !== product.totalStock) {
+          (product as any).totalStock = realtimeStock;
+          // Background DB cache update
+          prisma.product
+            .update({ where: { id }, data: { totalStock: realtimeStock } })
+            .catch(() => {});
+        }
+      } catch {
+        // ONEWMS 장애 시 DB 값 그대로
       }
     }
 
