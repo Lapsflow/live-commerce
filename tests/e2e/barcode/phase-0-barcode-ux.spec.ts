@@ -175,8 +175,8 @@ test.describe('Phase 0: 바코드 입력 UX 개선', () => {
       await page.waitForTimeout(500);
     }
 
-    // 현재 표시: 마지막 스캔 상품
-    const currentBarcode = page.locator('.font-mono').filter({ hasText: products[products.length - 1].barcode });
+    // 현재 표시: 마지막 스캔 상품 (상세 영역의 p.font-mono)
+    const currentBarcode = page.locator('p.font-mono').filter({ hasText: products[products.length - 1].barcode });
     await expect(currentBarcode).toBeVisible({ timeout: 5000 });
 
     // 첫 번째 바코드 칩 클릭
@@ -186,7 +186,7 @@ test.describe('Phase 0: 바코드 입력 UX 개선', () => {
       await page.waitForTimeout(500);
 
       // 첫 번째 상품 바코드가 상세 정보에 표시되는지
-      const switchedBarcode = page.locator('.font-mono').filter({ hasText: products[0].barcode });
+      const switchedBarcode = page.locator('p.font-mono').filter({ hasText: products[0].barcode });
       await expect(switchedBarcode).toBeVisible({ timeout: 3000 });
     }
 
