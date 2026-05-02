@@ -1,7 +1,7 @@
 /**
  * Vercel Cron: Stock Synchronization
  * Runs every 6 hours to sync stock with ONEWMS
- * Schedule: 0 star-slash-6 star star star (every 6 hours)
+ * Schedule: "0 star/6 * * *" (every 6h: 0:00, 6:00, 12:00, 18:00 UTC)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
