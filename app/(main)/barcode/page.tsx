@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,6 +46,15 @@ export default function BarcodePage() {
   const [product, setProduct] = useState<ProductWithInventory | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [scanHistory, setScanHistory] = useState<ProductWithInventory[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // 포커스 벗어나면 자동 복귀 (바코드 스캐너 HID 입력 안정성)
+  const handleBlur = () => {
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 200);
+  };
 
   const handleSearch = async () => {
     if (!barcode.trim()) {
@@ -53,11 +62,16 @@ export default function BarcodePage() {
       return;
     }
 
+    const searchBarcode = barcode.trim();
     setLoading(true);
     setError(null);
 
+    // 입력 즉시 초기화 + 포커스 유지 (연속 스캔 대응)
+    setBarcode("");
+    setTimeout(() => inputRef.current?.focus(), 100);
+
     try {
-      const normalized = normBarcode(barcode);
+      const normalized = normBarcode(searchBarcode);
       const res = await fetch(`/api/barcode/search?barcode=${encodeURIComponent(normalized)}`);
 
       if (!res.ok) {
@@ -73,6 +87,11 @@ export default function BarcodePage() {
       const json = await res.json();
       if (json.data) {
         setProduct(json.data);
+        // 스캔 이력 누적 (최근 10건, 중복 바코드는 최신으로 갱신)
+        setScanHistory((prev) => {
+          const filtered = prev.filter((p) => p.barcode !== json.data.barcode);
+          return [json.data, ...filtered].slice(0, 10);
+        });
       } else {
         setError("해당 바코드의 상품이 없습니다");
         setProduct(null);
@@ -96,13 +115,16 @@ export default function BarcodePage() {
       <Card className="p-6 mb-6 shadow-lg">
         <div className="flex gap-4">
           <Input
+            ref={inputRef}
             type="text"
             placeholder="바코드를 입력하세요 (Enter로 검색)"
             value={barcode}
             onChange={(e) => setBarcode(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            onBlur={handleBlur}
             className="flex-1 text-lg"
             autoFocus
+            autoComplete="off"
           />
           <Button onClick={handleSearch} disabled={loading} size="lg">
             <Search className="mr-2 h-4 w-4" />
@@ -115,6 +137,32 @@ export default function BarcodePage() {
           </div>
         )}
       </Card>
+
+      {/* Scan History - 최근 스캔 이력 (2건 이상일 때 표시) */}
+      {scanHistory.length > 1 && (
+        <Card className="p-4 mb-6 shadow-sm">
+          <h3 className="text-sm font-semibold text-muted-foreground mb-2">
+            최근 스캔 이력 ({scanHistory.length}건)
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {scanHistory.map((item) => (
+              <button
+                key={item.barcode}
+                onClick={() => setProduct(item)}
+                className={`px-3 py-1.5 rounded-md text-sm border transition-colors ${
+                  product?.barcode === item.barcode
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-muted hover:bg-muted/80 border-transparent"
+                }`}
+              >
+                <span className="font-mono text-xs">{item.barcode}</span>
+                <span className="ml-2 font-medium">{item.name.substring(0, 15)}{item.name.length > 15 ? "…" : ""}</span>
+                <span className="ml-2 text-blue-600 font-bold">{item.totalStock.toLocaleString()}개</span>
+              </button>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Product Result - 2 Column Responsive Layout */}
       {product && (
