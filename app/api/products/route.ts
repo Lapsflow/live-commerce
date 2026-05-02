@@ -7,7 +7,6 @@ import { validateProductCode } from "@/lib/validators/product";
 import { logAudit } from "@/lib/services/audit";
 import { serializeProducts } from "@/lib/services/products/serializeProduct";
 import { generateCenterProductCode } from "@/lib/services/products/codeGenerator";
-import { getRealtimeStockBatch } from "@/lib/services/onewms/realtime";
 
 // Phase 2: Product Type Validation Schema
 const productSchema = z.object({
@@ -101,39 +100,8 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
     prisma.product.count({ where }),
   ]);
 
-  // Phase 2: 본사 상품 ONEWMS 실시간 재고 반영
-  const hqProducts = products.filter(
-    (p: any) => p.productType === "HEADQUARTERS" && p.onewmsCode
-  );
-  if (hqProducts.length > 0) {
-    try {
-      const codes = hqProducts.map((p: any) => p.onewmsCode as string);
-      const realtimeMap = await getRealtimeStockBatch(codes);
-
-      // Enrich products with realtime stock + background DB update
-      const updates: Promise<any>[] = [];
-      for (const product of hqProducts as any[]) {
-        const realtimeStock = realtimeMap.get(product.onewmsCode);
-        if (realtimeStock !== null && realtimeStock !== undefined && realtimeStock !== product.totalStock) {
-          product.totalStock = realtimeStock;
-          updates.push(
-            prisma.product.update({
-              where: { id: product.id },
-              data: { totalStock: realtimeStock },
-            }).catch(() => {}) // Non-blocking DB cache update
-          );
-        }
-      }
-      // Fire-and-forget DB updates
-      if (updates.length > 0) {
-        Promise.allSettled(updates).catch(() => {});
-      }
-    } catch (err) {
-      // ONEWMS 장애 시 DB 값 그대로 반환
-      console.error("[PRODUCTS_LIST] Realtime stock fetch failed, using DB cache:", err);
-    }
-  }
-
+  // DB totalStock 사용 (cron 6시간 주기 동기화 + 바코드/발주 시 갱신)
+  // ONEWMS 실시간 조회는 바코드 페이지 및 발주 시에만 수행
   return paginated(serializeProducts(products, user.role), total, pageSize);
 });
 

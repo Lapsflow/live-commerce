@@ -51,43 +51,75 @@ export async function GET(req: NextRequest) {
       },
     };
 
-    // 1. 총 매출 및 건수, 평균 단가
-    const aggregates = await prisma.sale.aggregate({
-      where: dateFilter,
-      _sum: { totalPrice: true },
-      _avg: { unitPrice: true },
-      _count: true,
-    });
+    // 4개 쿼리 병렬 실행 (순차 → 병렬로 2.9s → ~1s)
+    const [aggregates, dailySalesRaw, sellerRankingRaw, marginResult] = await Promise.all([
+      // 1. 총 매출 및 건수, 평균 단가
+      prisma.sale.aggregate({
+        where: dateFilter,
+        _sum: { totalPrice: true },
+        _avg: { unitPrice: true },
+        _count: true,
+      }),
+
+      // 2. 일별 매출
+      roleFilter.sellerId
+        ? prisma.$queryRaw<Array<{ date: Date; totalSales: bigint; count: bigint }>>`
+            SELECT
+              DATE("saleDate") as date,
+              SUM("totalPrice") as "totalSales",
+              COUNT(*) as count
+            FROM "Sale"
+            WHERE "saleDate" >= ${fromDate}
+              AND "saleDate" <= ${toDate}
+              AND "sellerId" = ${roleFilter.sellerId}
+            GROUP BY DATE("saleDate")
+            ORDER BY date ASC
+          `
+        : prisma.$queryRaw<Array<{ date: Date; totalSales: bigint; count: bigint }>>`
+            SELECT
+              DATE("saleDate") as date,
+              SUM("totalPrice") as "totalSales",
+              COUNT(*) as count
+            FROM "Sale"
+            WHERE "saleDate" >= ${fromDate}
+              AND "saleDate" <= ${toDate}
+            GROUP BY DATE("saleDate")
+            ORDER BY date ASC
+          `,
+
+      // 3. 셀러 랭킹 (Top 10)
+      prisma.sale.groupBy({
+        by: ["sellerId"],
+        where: dateFilter,
+        _sum: { totalPrice: true },
+        _count: true,
+        orderBy: { _sum: { totalPrice: "desc" } },
+        take: 10,
+      }),
+
+      // 4. 총 마진 — DB에서 직접 계산 (전체 Sale fetch 제거)
+      roleFilter.sellerId
+        ? prisma.$queryRaw<[{ totalMargin: bigint | null }]>`
+            SELECT COALESCE(SUM((s."unitPrice" - p."supplyPrice") * s."quantity"), 0)::bigint as "totalMargin"
+            FROM "Sale" s
+            JOIN "Product" p ON s."productId" = p."id"
+            WHERE s."saleDate" >= ${fromDate}
+              AND s."saleDate" <= ${toDate}
+              AND s."sellerId" = ${roleFilter.sellerId}
+          `
+        : prisma.$queryRaw<[{ totalMargin: bigint | null }]>`
+            SELECT COALESCE(SUM((s."unitPrice" - p."supplyPrice") * s."quantity"), 0)::bigint as "totalMargin"
+            FROM "Sale" s
+            JOIN "Product" p ON s."productId" = p."id"
+            WHERE s."saleDate" >= ${fromDate}
+              AND s."saleDate" <= ${toDate}
+          `,
+    ]);
 
     const totalSales = aggregates._sum.totalPrice || 0;
     const totalCount = aggregates._count;
     const avgPrice = Math.round(aggregates._avg.unitPrice || 0);
-
-    // 2. 일별 매출
-    const dailySalesRaw = roleFilter.sellerId
-      ? await prisma.$queryRaw<Array<{ date: Date; totalSales: bigint; count: bigint }>>`
-          SELECT
-            DATE("saleDate") as date,
-            SUM("totalPrice") as "totalSales",
-            COUNT(*) as count
-          FROM "Sale"
-          WHERE "saleDate" >= ${fromDate}
-            AND "saleDate" <= ${toDate}
-            AND "sellerId" = ${roleFilter.sellerId}
-          GROUP BY DATE("saleDate")
-          ORDER BY date ASC
-        `
-      : await prisma.$queryRaw<Array<{ date: Date; totalSales: bigint; count: bigint }>>`
-          SELECT
-            DATE("saleDate") as date,
-            SUM("totalPrice") as "totalSales",
-            COUNT(*) as count
-          FROM "Sale"
-          WHERE "saleDate" >= ${fromDate}
-            AND "saleDate" <= ${toDate}
-          GROUP BY DATE("saleDate")
-          ORDER BY date ASC
-        `;
+    const totalMargin = Number(marginResult[0]?.totalMargin ?? 0);
 
     const dailySales = dailySalesRaw.map((item) => ({
       date: item.date.toISOString().split("T")[0],
@@ -95,17 +127,7 @@ export async function GET(req: NextRequest) {
       count: Number(item.count),
     }));
 
-    // 3. 셀러 랭킹 (Top 10)
-    const sellerRankingRaw = await prisma.sale.groupBy({
-      by: ["sellerId"],
-      where: dateFilter,
-      _sum: { totalPrice: true },
-      _count: true,
-      orderBy: { _sum: { totalPrice: "desc" } },
-      take: 10,
-    });
-
-    // 셀러 정보 조회 (담당 관리자 포함)
+    // 셀러 정보 조회
     const sellerIds = sellerRankingRaw.map((item) => item.sellerId);
     const sellers = await prisma.user.findMany({
       where: { id: { in: sellerIds } },
@@ -123,25 +145,6 @@ export async function GET(req: NextRequest) {
         count: item._count,
       };
     });
-
-    // 4. 총 마진 계산 (판매가 - 공급가)
-    const salesWithProducts = await prisma.sale.findMany({
-      where: dateFilter,
-      select: {
-        unitPrice: true,
-        quantity: true,
-        product: {
-          select: {
-            supplyPrice: true,
-          },
-        },
-      },
-    });
-
-    const totalMargin = salesWithProducts.reduce((sum, sale) => {
-      const margin = (sale.unitPrice - sale.product.supplyPrice) * sale.quantity;
-      return sum + margin;
-    }, 0);
 
     return ok({
       totalSales,

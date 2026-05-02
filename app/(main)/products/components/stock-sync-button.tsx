@@ -34,8 +34,8 @@ interface StockApiResponse {
 }
 
 export function StockSyncButton({ productId }: StockSyncButtonProps) {
-  // 1. 재고 정보 조회
-  const { data, isLoading, refetch } = useQuery({
+  // 1. 재고 정보 조회 — 수동 클릭 시만 (자동 fetch 비활성)
+  const { data, isLoading, refetch, isFetched } = useQuery({
     queryKey: ['product-stock', productId],
     queryFn: async () => {
       const res = await fetch(`/api/onewms/stock/${productId}`);
@@ -43,6 +43,7 @@ export function StockSyncButton({ productId }: StockSyncButtonProps) {
       const response = await res.json() as StockApiResponse;
       return response.data;
     },
+    enabled: false, // 자동 fetch 비활성 → 버튼 클릭 시만 refetch()
   });
 
   // 2. 동기화 Mutation
@@ -65,16 +66,31 @@ export function StockSyncButton({ productId }: StockSyncButtonProps) {
     },
   });
 
+  // 아직 조회하지 않은 상태 → "재고 확인" 버튼만 표시
+  if (!isFetched && !isLoading) {
+    return (
+      <Button
+        onClick={() => refetch()}
+        size="sm"
+        variant="ghost"
+        className="text-muted-foreground"
+      >
+        <RefreshCw className="h-3 w-3 mr-1" />
+        재고 확인
+      </Button>
+    );
+  }
+
   if (isLoading) {
-    return <Button disabled size="sm">로딩 중...</Button>;
+    return <Button disabled size="sm"><RefreshCw className="h-3 w-3 mr-1 animate-spin" />확인 중...</Button>;
   }
 
   if (!data || !data.product.onewmsCode) {
-    return <Button disabled size="sm">ONEWMS 코드 없음</Button>;
+    return <span className="text-xs text-muted-foreground">WMS 미연동</span>;
   }
 
   if (!data.lastSync) {
-    return <Button disabled size="sm">동기화 기록 없음</Button>;
+    return <span className="text-xs text-muted-foreground">동기화 기록 없음</span>;
   }
 
   const hasConflict = Math.abs(data.lastSync.difference) > 5;

@@ -17,7 +17,7 @@ interface CacheEntry {
   fetchedAt: number;
 }
 
-const CACHE_TTL_MS = 60_000; // 1 minute
+const CACHE_TTL_MS = 180_000; // 3 minutes (발주/바코드 시 skipCache=true로 강제 갱신)
 const CACHE_MAX_SIZE = 2000;
 const stockCache = new Map<string, CacheEntry>();
 
