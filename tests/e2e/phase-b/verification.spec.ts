@@ -213,10 +213,31 @@ test("5. SELLER: 거절 후 재신청 (무제한)", async ({ page }) => {
     return;
   }
 
-  // 재신청 = 새 방송 생성 (같은 센터)
+  // Cleanup: 이전 테스트 잔재 방송 취소 (충돌 방지)
+  // seller1의 PB-REAPPLY/PB-TEST 방송 중 REQUESTED/SCHEDULED 상태인 것을 찾아서 CANCELED 처리
+  const listRes = await page.request.get(
+    `${BASE}/api/broadcasts?pageSize=100&sort=-createdAt`
+  );
+  const listJson = await listRes.json();
+  const oldBroadcasts = (Array.isArray(listJson.data) ? listJson.data : []).filter(
+    (b: any) =>
+      b.sellerId === sellerId &&
+      (b.code?.startsWith("PB-REAPPLY") || b.code?.startsWith("PB-TEST")) &&
+      ["REQUESTED", "SCHEDULED"].includes(b.status)
+  );
+
+  for (const old of oldBroadcasts) {
+    await page.request.put(`${BASE}/api/broadcasts/${old.id}`, {
+      headers: { Origin: BASE },
+      data: { status: "CANCELED" },
+    });
+    console.log(`잔재 정리: ${old.code} → CANCELED`);
+  }
+
+  // 재신청 = 새 방송 생성 (충분히 먼 시점으로 충돌 회피)
   const code = `PB-REAPPLY-${Date.now().toString(36).toUpperCase()}`;
   const scheduledAt = new Date(
-    Date.now() + 14 * 86400000
+    Date.now() + 30 * 86400000 + Math.floor(Math.random() * 86400000)
   ).toISOString();
 
   const createRes = await page.request.post(`${BASE}/api/broadcasts`, {
