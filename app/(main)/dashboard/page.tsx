@@ -6,7 +6,11 @@ import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { SalesChart } from "@/components/dashboard/sales-chart";
+import dynamic from "next/dynamic";
+const SalesChart = dynamic(
+  () => import("@/components/dashboard/sales-chart").then((m) => m.SalesChart),
+  { ssr: false, loading: () => <div className="h-64 animate-pulse bg-muted rounded-lg" /> }
+);
 import { RankingTable } from "@/components/dashboard/ranking-table";
 import { RecommendedProductsCard } from "@/components/dashboard/recommended-products-card";
 import { DrilldownModal } from "@/components/dashboard/drilldown-modal";

@@ -17,15 +17,35 @@ import {
   RefreshCw,
   Activity,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const ConflictTrendChart = dynamic(
+  () =>
+    import("recharts").then((mod) => {
+      const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = mod;
+      return {
+        default: ({ data }: { data: Array<{ date: string; count: number }> }) => (
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis dataKey="date" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+              <YAxis allowDecimals={false} className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--popover))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "var(--radius)",
+                }}
+                formatter={(value) => [`${value}건`, "충돌"]}
+              />
+              <Bar dataKey="count" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        ),
+      };
+    }),
+  { ssr: false, loading: () => <div className="h-[250px] animate-pulse bg-muted rounded-lg" /> }
+);
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { toast } from "sonner";
@@ -276,37 +296,7 @@ export default function SyncMonitorPage() {
       {formattedTrend.length > 0 && (
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-4">충돌 추이 (7일)</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={formattedTrend}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                className="stroke-muted"
-              />
-              <XAxis
-                dataKey="date"
-                className="text-xs"
-                tick={{ fill: "hsl(var(--muted-foreground))" }}
-              />
-              <YAxis
-                allowDecimals={false}
-                className="text-xs"
-                tick={{ fill: "hsl(var(--muted-foreground))" }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "hsl(var(--popover))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "var(--radius)",
-                }}
-                formatter={(value) => [`${value}건`, "충돌"]}
-              />
-              <Bar
-                dataKey="count"
-                fill="hsl(var(--destructive))"
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <ConflictTrendChart data={formattedTrend} />
         </Card>
       )}
 
