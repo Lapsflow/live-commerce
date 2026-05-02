@@ -21,6 +21,7 @@ import {
   FlaskConical,
   History,
   Store,
+  Activity,
 } from "lucide-react";
 import { useState } from "react";
 import { NavItem } from "./nav-item";
@@ -56,6 +57,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },
     { href: "/admin/audit-log", label: "변경 이력", icon: History },
+    { href: "/admin/sync-monitor", label: "동기화 모니터", icon: Activity },
   ],
   SUB_MASTER: [
     { href: "/dashboard", label: "전체 통계", icon: BarChart },
