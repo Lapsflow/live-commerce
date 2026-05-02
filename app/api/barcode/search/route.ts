@@ -23,6 +23,8 @@ interface ProductWithInventory {
   sellPrice: number;
   supplyPrice: number;
   totalStock: number;
+  stockSource: 'onewms' | 'db';
+  stockFetchedAt: string;
   warehouses: WarehouseStock[];
 }
 
@@ -85,13 +87,18 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
 
   // 재고 계산: HQ 상품은 ONEWMS 실시간 → product.totalStock 순 폴백
   // CENTER 상품은 product.totalStock 사용 (warehouseInventories는 창고별 상세로만 사용)
+  const force = searchParams.get('force') === 'true';
   let totalStock = product.totalStock;
+  let stockSource: 'onewms' | 'db' = 'db';
 
   if (product.productType === "HEADQUARTERS" && product.onewmsCode) {
     try {
-      const realtimeStock = await getRealtimeStock(product.onewmsCode);
+      const realtimeStock = await getRealtimeStock(product.onewmsCode, {
+        skipCache: force,
+      });
       if (realtimeStock !== null) {
         totalStock = realtimeStock;
+        stockSource = 'onewms';
         // Background DB cache update
         if (realtimeStock !== product.totalStock) {
           prisma.product
@@ -123,6 +130,8 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
     sellPrice: product.sellPrice,
     supplyPrice: product.supplyPrice,
     totalStock,
+    stockSource,
+    stockFetchedAt: new Date().toISOString(),
     warehouses,
   };
 

@@ -5,8 +5,12 @@ import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Package } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search, Package, RefreshCw, AlertTriangle } from "lucide-react";
 import { normBarcode } from "@/lib/utils/barcode";
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
+import { toast } from "sonner";
 import { PricingInfoCard } from "./components/PricingInfoCard";
 import { AIAnalysisCard } from "./components/AIAnalysisCard";
 import { OrderInputCard } from "./components/OrderInputCard";
@@ -27,7 +31,9 @@ interface ProductWithInventory {
   barcode: string;
   sellPrice: number;
   supplyPrice: number;
-  totalStock: number; // Sum of all warehouses
+  totalStock: number;
+  stockSource?: 'onewms' | 'db';
+  stockFetchedAt?: string;
   warehouses: WarehouseStock[];
 }
 
@@ -104,6 +110,34 @@ export default function BarcodePage() {
     }
   };
 
+  // 재고 새로고침 (캐시 무시)
+  const handleRefresh = async () => {
+    if (!product) return;
+    setLoading(true);
+    try {
+      const normalized = normBarcode(product.barcode);
+      const res = await fetch(
+        `/api/barcode/search?barcode=${encodeURIComponent(normalized)}&force=true`
+      );
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data) {
+          setProduct(json.data);
+          setScanHistory((prev) =>
+            prev.map((p) => (p.barcode === json.data.barcode ? json.data : p))
+          );
+          toast.success("재고가 새로고침되었습니다");
+        }
+      } else {
+        toast.error("새로고침에 실패했습니다");
+      }
+    } catch {
+      toast.error("새로고침에 실패했습니다");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto py-6 max-w-6xl">
       <div className="flex items-center gap-3 mb-6">
@@ -164,6 +198,34 @@ export default function BarcodePage() {
         </Card>
       )}
 
+      {/* Loading Skeleton */}
+      {loading && !product && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <Card className="p-6 shadow-lg">
+              <Skeleton className="h-8 w-3/4 mb-4" />
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i}>
+                    <Skeleton className="h-4 w-16 mb-2" />
+                    <Skeleton className="h-6 w-24" />
+                  </div>
+                ))}
+              </div>
+            </Card>
+            <Card className="p-6 shadow-lg">
+              <Skeleton className="h-6 w-32 mb-4" />
+              <Skeleton className="h-32 w-full" />
+            </Card>
+          </div>
+          <div className="space-y-6">
+            <Card className="p-6 shadow-lg">
+              <Skeleton className="h-48 w-full" />
+            </Card>
+          </div>
+        </div>
+      )}
+
       {/* Product Result - 2 Column Responsive Layout */}
       {product && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -182,10 +244,38 @@ export default function BarcodePage() {
                   <p className="font-medium text-lg font-mono">{product.barcode}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">총 재고</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-sm text-muted-foreground">총 재고</p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0"
+                      onClick={handleRefresh}
+                      disabled={loading}
+                      title="재고 새로고침"
+                    >
+                      <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
+                    </Button>
+                  </div>
                   <p className="text-3xl font-bold text-blue-600">
                     {product.totalStock.toLocaleString()}개
                   </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    {product.stockFetchedAt && (
+                      <span className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(product.stockFetchedAt), {
+                          addSuffix: true,
+                          locale: ko,
+                        })}
+                      </span>
+                    )}
+                    {product.stockSource === "db" && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs bg-yellow-50 text-yellow-700 border border-yellow-300">
+                        <AlertTriangle className="h-3 w-3" />
+                        캐시
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">판매가</p>

@@ -49,14 +49,18 @@ export function clearRealtimeCache(): void {
 
 /**
  * 단건 실시간 재고 조회 (1분 캐시)
+ * @param options.skipCache - true면 캐시 무시, 직접 ONEWMS 호출
  * @returns ONEWMS 가용 재고 (전 창고 합산), null if failed
  */
 export async function getRealtimeStock(
-  onewmsCode: string
+  onewmsCode: string,
+  options?: { skipCache?: boolean }
 ): Promise<number | null> {
-  // 1. Check cache
-  const cached = getCached(onewmsCode);
-  if (cached !== null) return cached;
+  // 1. Check cache (skip if forced refresh)
+  if (!options?.skipCache) {
+    const cached = getCached(onewmsCode);
+    if (cached !== null) return cached;
+  }
 
   // 2. Fetch from ONEWMS
   try {
