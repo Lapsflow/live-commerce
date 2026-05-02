@@ -83,13 +83,25 @@ export async function syncProductStock(productId: string): Promise<{
       },
     });
 
-    // Auto-resolve if difference is small (<= 5 units)
+    // Case 1: DB=0, ONEWMS>0 → 신상품 또는 첫 동기화. 무조건 자동 적용.
+    if (localQty === 0 && onewmsAvailableQty > 0) {
+      await prisma.product.update({
+        where: { id: productId },
+        data: { totalStock: onewmsAvailableQty },
+      });
+
+      console.log(
+        `DB=0 auto-applied for ${product.code}: 0 → ${onewmsAvailableQty}`
+      );
+
+      return { success: true, conflict: false };
+    }
+
+    // Case 2: Small difference (<=5 units) → 자동 적용
     if (Math.abs(difference) <= 5) {
       await prisma.product.update({
         where: { id: productId },
-        data: {
-          totalStock: onewmsAvailableQty,
-        },
+        data: { totalStock: onewmsAvailableQty },
       });
 
       console.log(
@@ -101,35 +113,30 @@ export async function syncProductStock(productId: string): Promise<{
         console.warn(
           `[LOW STOCK ALERT] Product ${product.code} (${product.name}) has low stock: ${onewmsAvailableQty} units`
         );
-        // TODO: Send notification (email, Slack, etc.)
-        // await sendLowStockNotification(product, onewmsAvailableQty);
       }
 
       return { success: true, conflict: false };
     }
 
-    // Mark as conflict if difference is significant
-    if (Math.abs(difference) > 5) {
-      await prisma.onewmsStockSync.updateMany({
-        where: {
-          productId,
-          syncedAt: {
-            gte: new Date(Date.now() - 60000), // Last 1 minute
-          },
+    // Case 3: DB>0, ONEWMS=0 → 출고 누락 또는 전량 출고 의심. conflict 생성.
+    // Case 4: Large difference (>5 units, 양쪽 모두 >0) → conflict 생성.
+    await prisma.onewmsStockSync.updateMany({
+      where: {
+        productId,
+        syncedAt: {
+          gte: new Date(Date.now() - 60000), // Last 1 minute
         },
-        data: {
-          syncStatus: 'conflict',
-        },
-      });
+      },
+      data: {
+        syncStatus: 'conflict',
+      },
+    });
 
-      console.log(
-        `Conflict detected for ${product.code}: ONEWMS=${onewmsAvailableQty}, Local=${localQty}, Diff=${difference}`
-      );
+    console.log(
+      `Conflict detected for ${product.code}: ONEWMS=${onewmsAvailableQty}, Local=${localQty}, Diff=${difference}`
+    );
 
-      return { success: true, conflict: true };
-    }
-
-    return { success: true, conflict: false };
+    return { success: true, conflict: true };
   } catch (error) {
     console.error(`Stock sync failed for product ${productId}:`, error);
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -155,12 +162,12 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
   };
 
   try {
-    // Find all products with ONEWMS codes
+    // Find active HQ products with ONEWMS codes only
     const products = await prisma.product.findMany({
       where: {
-        onewmsCode: {
-          not: null,
-        },
+        productType: 'HEADQUARTERS',
+        isActive: true,
+        onewmsCode: { not: null },
       },
       select: {
         id: true,
@@ -171,36 +178,51 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
     });
 
     stats.totalProducts = products.length;
-    console.log(`Starting stock sync for ${stats.totalProducts} products`);
+    console.log(`Starting stock sync for ${stats.totalProducts} products (HEADQUARTERS + active)`);
 
-    // Sync products in parallel (batches of 5 to avoid rate limits)
-    const batchSize = 5;
+    // Sync products in parallel (batches of 20, 500ms delay)
+    const batchSize = 20;
+    const batchDelayMs = 500;
     for (let i = 0; i < products.length; i += batchSize) {
       const batch = products.slice(i, i + batchSize);
 
-      const results = await Promise.all(
+      const results = await Promise.allSettled(
         batch.map((product) => syncProductStock(product.id))
       );
 
       // Aggregate results
       results.forEach((result, index) => {
-        if (result.success) {
-          stats.synced++;
-          if (result.conflict) {
-            stats.conflicts++;
+        if (result.status === 'fulfilled') {
+          const r = result.value;
+          if (r.success) {
+            stats.synced++;
+            if (r.conflict) {
+              stats.conflicts++;
+            }
+          } else {
+            stats.errors++;
+            stats.errorDetails.push({
+              productId: batch[index].id,
+              error: r.error || 'Unknown error',
+            });
           }
         } else {
           stats.errors++;
           stats.errorDetails.push({
             productId: batch[index].id,
-            error: result.error || 'Unknown error',
+            error: result.reason?.message || 'Promise rejected',
           });
         }
       });
 
+      // Progress log every 100 products
+      if ((i + batchSize) % 100 < batchSize) {
+        console.log(`  Progress: ${Math.min(i + batchSize, products.length)}/${products.length}`);
+      }
+
       // Small delay between batches to avoid rate limiting
       if (i + batchSize < products.length) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, batchDelayMs));
       }
     }
 

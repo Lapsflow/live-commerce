@@ -7,6 +7,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { syncAllStocks, deactivateOrphanProducts } from '@/lib/services/onewms/stockSync';
 import { syncProductPricesFromOnewms } from '@/lib/services/onewms/productImport';
+import { prisma } from '@/lib/db/prisma';
+
+// Vercel Pro: 최대 5분 (기본 10초 → 명시적으로 300초 설정)
+export const maxDuration = 300;
 
 export async function GET(req: NextRequest) {
   try {
@@ -31,6 +35,7 @@ export async function GET(req: NextRequest) {
     }
 
     console.log('Starting scheduled stock + price + orphan sync...');
+    const startTime = Date.now();
 
     // Run stock synchronization
     const stats = await syncAllStocks();
@@ -41,7 +46,34 @@ export async function GET(req: NextRequest) {
     // Deactivate orphan HEADQUARTERS products not in ONEWMS, restore reappeared ones
     const orphanStats = await deactivateOrphanProducts();
 
-    console.log('Scheduled sync completed:', { stock: stats, prices: priceStats, orphan: orphanStats });
+    const durationMs = Date.now() - startTime;
+    console.log(`Scheduled sync completed in ${durationMs}ms:`, { stock: stats, prices: priceStats, orphan: orphanStats });
+
+    // AuditLog에 cron 실행 기록
+    try {
+      await prisma.auditLog.create({
+        data: {
+          userId: null,
+          userName: '시스템',
+          userRole: 'MASTER',
+          action: 'UPDATE',
+          entityType: 'System',
+          entityId: 'cron-stock-sync',
+          entityName: 'Stock Sync Cron',
+          description: `Cron stock sync 완료: ${stats.synced}/${stats.totalProducts} synced, ${stats.conflicts} conflicts, ${stats.errors} errors (${durationMs}ms)`,
+          metadata: {
+            durationMs,
+            stock: JSON.parse(JSON.stringify(stats)),
+            prices: JSON.parse(JSON.stringify(priceStats)),
+            orphan: JSON.parse(JSON.stringify(orphanStats)),
+          },
+          ipAddress: 'cron',
+          userAgent: 'vercel-cron/1.0',
+        },
+      });
+    } catch (auditError) {
+      console.error('Failed to create audit log:', auditError);
+    }
 
     return NextResponse.json({
       success: true,
@@ -49,6 +81,7 @@ export async function GET(req: NextRequest) {
       stats,
       priceStats,
       orphanStats,
+      durationMs,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
