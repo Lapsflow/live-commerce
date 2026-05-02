@@ -254,13 +254,13 @@ export async function getStockConflicts(): Promise<ConflictInfo[]> {
         syncedAt: Date;
       }>
     >`
-      SELECT DISTINCT ON (product_id)
+      SELECT DISTINCT ON ("productId")
         oss.id,
         oss."productId",
         oss."productCode",
         oss."availableQty",
         oss."localQty",
-        oss.difference,
+        oss."difference",
         oss."syncedAt"
       FROM "OnewmsStockSync" oss
       WHERE oss."syncStatus" = 'conflict'

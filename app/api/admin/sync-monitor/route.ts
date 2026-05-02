@@ -17,78 +17,77 @@ export const maxDuration = 60;
 export const GET = withRole(
   ['MASTER'],
   async (_req: NextRequest, _user: AuthUser) => {
-    try {
-      const [cronLogs, conflictCount, failedOrderCount, conflicts, conflictTrend, lastHealthcheck] =
-        await Promise.all([
-          // 1. Last 10 cron stock-sync logs
-          prisma.auditLog.findMany({
-            where: { entityId: 'cron-stock-sync', ipAddress: 'cron' },
-            orderBy: { createdAt: 'desc' },
-            take: 10,
-            select: { id: true, createdAt: true, description: true, metadata: true },
-          }),
+    // Run queries with individual error resilience
+    const safe = async <T>(label: string, fn: () => Promise<T>, fallback: T): Promise<T> => {
+      try {
+        return await fn();
+      } catch (err) {
+        console.error(`[SYNC-MONITOR] ${label} failed:`, err);
+        return fallback;
+      }
+    };
 
-          // 2. Active conflict count
-          prisma.onewmsStockSync.count({
-            where: { syncStatus: 'conflict' },
-          }),
+    const [cronLogs, conflictCount, failedOrderCount, conflicts, conflictTrend, lastHealthcheck] =
+      await Promise.all([
+        safe('cronLogs', () => prisma.auditLog.findMany({
+          where: { entityId: 'cron-stock-sync', ipAddress: 'cron' },
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+          select: { id: true, createdAt: true, description: true, metadata: true },
+        }), []),
 
-          // 3. Failed order sync count
-          prisma.onewmsOrderMapping.count({
-            where: { status: 'failed' },
-          }),
+        safe('conflictCount', () => prisma.onewmsStockSync.count({
+          where: { syncStatus: 'conflict' },
+        }), 0),
 
-          // 4. Active conflicts with product info
-          getStockConflicts(),
+        safe('failedOrderCount', () => prisma.onewmsOrderMapping.count({
+          where: { status: 'failed' },
+        }), 0),
 
-          // 5. Conflict trend (last 7 days)
-          prisma.$queryRaw<Array<{ date: string; count: number }>>`
-            SELECT TO_CHAR("syncedAt"::date, 'YYYY-MM-DD') as date,
-                   COUNT(*)::int as count
-            FROM "OnewmsStockSync"
-            WHERE "syncStatus" = 'conflict'
-              AND "syncedAt" >= NOW() - INTERVAL '7 days'
-            GROUP BY "syncedAt"::date
-            ORDER BY "syncedAt"::date
-          `,
+        safe('conflicts', () => getStockConflicts(), []),
 
-          // 6. Last healthcheck result
-          prisma.auditLog.findFirst({
-            where: { entityId: 'healthcheck' },
-            orderBy: { createdAt: 'desc' },
-            select: { metadata: true, createdAt: true },
-          }),
-        ]);
+        safe('conflictTrend', () => prisma.$queryRaw<Array<{ date: string; count: number }>>`
+          SELECT TO_CHAR("syncedAt"::date, 'YYYY-MM-DD') as date,
+                 COUNT(*)::int as count
+          FROM "OnewmsStockSync"
+          WHERE "syncStatus" = 'conflict'
+            AND "syncedAt" >= NOW() - INTERVAL '7 days'
+          GROUP BY "syncedAt"::date
+          ORDER BY "syncedAt"::date
+        `, []),
 
-      // Build summary
-      const lastSync = cronLogs[0] || null;
-      const lastSyncMeta = lastSync?.metadata as Record<string, unknown> | null;
-      const healthcheckMeta = lastHealthcheck?.metadata as Record<string, unknown> | null;
+        safe('lastHealthcheck', () => prisma.auditLog.findFirst({
+          where: { entityId: 'healthcheck' },
+          orderBy: { createdAt: 'desc' },
+          select: { metadata: true, createdAt: true },
+        }), null),
+      ]);
 
-      const summary = {
-        lastSyncTime: lastSync?.createdAt?.toISOString() ?? null,
-        lastSyncDuration: (lastSyncMeta?.durationMs as number) ?? null,
-        matchRate: (healthcheckMeta?.matchRate as number) ?? null,
-        lastHealthcheckTime: lastHealthcheck?.createdAt?.toISOString() ?? null,
-        activeConflicts: conflictCount,
-        failedOrders: failedOrderCount,
-      };
+    // Build summary
+    const lastSync = cronLogs[0] || null;
+    const lastSyncMeta = lastSync?.metadata as Record<string, unknown> | null;
+    const healthcheckMeta = lastHealthcheck?.metadata as Record<string, unknown> | null;
 
-      return ok({
-        summary,
-        cronHistory: cronLogs.map((log) => ({
-          id: log.id,
-          createdAt: log.createdAt.toISOString(),
-          description: log.description,
-          metadata: log.metadata,
-        })),
-        conflictTrend,
-        conflicts,
-      });
-    } catch (error) {
-      console.error('[SYNC-MONITOR] GET failed:', error);
-      return errors.internal('모니터링 데이터 조회 실패');
-    }
+    const summary = {
+      lastSyncTime: lastSync?.createdAt?.toISOString() ?? null,
+      lastSyncDuration: (lastSyncMeta?.durationMs as number) ?? null,
+      matchRate: (healthcheckMeta?.matchRate as number) ?? null,
+      lastHealthcheckTime: lastHealthcheck?.createdAt?.toISOString() ?? null,
+      activeConflicts: conflictCount,
+      failedOrders: failedOrderCount,
+    };
+
+    return ok({
+      summary,
+      cronHistory: cronLogs.map((log) => ({
+        id: log.id,
+        createdAt: log.createdAt.toISOString(),
+        description: log.description,
+        metadata: log.metadata,
+      })),
+      conflictTrend,
+      conflicts,
+    });
   }
 );
 
