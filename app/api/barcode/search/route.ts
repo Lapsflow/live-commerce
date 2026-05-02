@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db/prisma';
 import { ok, errors } from '@/lib/api/response';
 import { normBarcode } from '@/lib/utils/barcode';
 import { getActiveCenterIdForSeller } from '@/lib/services/broadcasts';
+import { getRealtimeStock } from '@/lib/services/onewms/realtime';
 
 interface WarehouseStock {
   warehouseId: string;
@@ -82,10 +83,26 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
     }
   }
 
-  const totalStock = product.warehouseInventories.reduce(
-    (sum, inv) => sum + inv.quantity,
-    0
-  );
+  // 재고 계산: HQ 상품은 ONEWMS 실시간 → product.totalStock 순 폴백
+  // CENTER 상품은 product.totalStock 사용 (warehouseInventories는 창고별 상세로만 사용)
+  let totalStock = product.totalStock;
+
+  if (product.productType === "HEADQUARTERS" && product.onewmsCode) {
+    try {
+      const realtimeStock = await getRealtimeStock(product.onewmsCode);
+      if (realtimeStock !== null) {
+        totalStock = realtimeStock;
+        // Background DB cache update
+        if (realtimeStock !== product.totalStock) {
+          prisma.product
+            .update({ where: { id: product.id }, data: { totalStock: realtimeStock } })
+            .catch(() => {});
+        }
+      }
+    } catch {
+      // ONEWMS 장애 시 DB totalStock 그대로 사용
+    }
+  }
 
   const warehouses: WarehouseStock[] = product.warehouseInventories.map(
     (inv) => ({

@@ -85,6 +85,16 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
       if (error.message.includes('rate limit') || error.message.includes('제한')) {
         return errors.tooManyRequests(error.message);
       }
+      if (
+        error.message.includes('할당량') ||
+        error.message.includes('quota') ||
+        error.message.includes('429') ||
+        error.message.includes('RESOURCE_EXHAUSTED')
+      ) {
+        return errors.tooManyRequests(
+          'AI 분석 서비스 할당량이 초과되었습니다. 이전 캐시된 결과가 없어 분석을 수행할 수 없습니다. 잠시 후 다시 시도해주세요.'
+        );
+      }
       return errors.internal(error.message);
     }
 

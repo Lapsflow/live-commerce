@@ -55,7 +55,7 @@ export async function analyzeProduct(
 ): Promise<ProductAnalysisResult> {
   const { skipCache = false, storeInDb = true } = options;
 
-  // 1. Check cache first
+  // 1. Check Redis cache first
   if (!skipCache) {
     const cacheKey = `ai:analysis:${barcode}`;
     const cached = await getCached<ProductAnalysisResult>(cacheKey);
@@ -67,6 +67,18 @@ export async function analyzeProduct(
           cached: true,
         },
       };
+    }
+
+    // 1b. Redis miss → check DB for recent analysis (within 24h)
+    try {
+      const dbResult = await getAnalysisFromDb(barcode);
+      if (dbResult) {
+        // Re-populate Redis cache
+        await setCached(cacheKey, dbResult, CACHE_TTL.PRICING).catch(() => {});
+        return dbResult;
+      }
+    } catch {
+      // DB fallback failed, continue to Gemini
     }
   }
 
@@ -121,13 +133,78 @@ export async function analyzeProduct(
     rfmScore: product.sellerMatches[0]?.recommendScore || 0,
   };
 
-  // 6. Call Gemini API
+  // 6. Call Gemini API (with quota error fallback to DB)
   const client = createGeminiClient();
 
-  const [pricingAnalysis, salesAnalysis] = await Promise.all([
-    client.analyzePricing(pricingContext),
-    client.analyzeSales(salesContext),
-  ]);
+  let pricingAnalysis, salesAnalysis;
+  try {
+    [pricingAnalysis, salesAnalysis] = await Promise.all([
+      client.analyzePricing(pricingContext),
+      client.analyzeSales(salesContext),
+    ]);
+  } catch (geminiError: any) {
+    // Gemini quota/rate limit → try DB fallback before throwing
+    const isQuotaError =
+      geminiError?.message?.includes('429') ||
+      geminiError?.message?.includes('quota') ||
+      geminiError?.message?.includes('RESOURCE_EXHAUSTED') ||
+      geminiError?.status === 429;
+
+    if (isQuotaError) {
+      // Try DB with extended window (72h) for quota errors
+      try {
+        const cutoff72h = new Date(Date.now() - 72 * 60 * 60 * 1000);
+        const [pRow, sRow] = await Promise.all([
+          prisma.aIAnalysis.findFirst({
+            where: { barcode, analysisType: 'pricing', createdAt: { gte: cutoff72h } },
+            orderBy: { createdAt: 'desc' },
+          }),
+          prisma.aIAnalysis.findFirst({
+            where: { barcode, analysisType: 'sales', createdAt: { gte: cutoff72h } },
+            orderBy: { createdAt: 'desc' },
+          }),
+        ]);
+
+        if (pRow?.parsedData && sRow?.parsedData) {
+          const pd = pRow.parsedData as any;
+          const sd = sRow.parsedData as any;
+          if (pd.competitiveness && sd.keyPoints) {
+            const product = await prisma.product.findUnique({
+              where: { barcode },
+              select: { id: true, name: true },
+            });
+            return {
+              productId: pRow.productId,
+              barcode,
+              productName: product?.name || '',
+              pricing: {
+                competitiveness: pd.competitiveness,
+                marginHealth: pd.marginHealth,
+                actionItems: pd.actionItems || [],
+              },
+              sales: {
+                keyPoints: sd.keyPoints || [],
+                targetCustomer: sd.targetCustomer || '',
+                broadcastScript: sd.broadcastScript || '',
+                recommendedBundle: sd.recommendedBundle || [],
+                cautions: sd.cautions || [],
+              },
+              metadata: {
+                analyzedAt: pRow.createdAt,
+                tokensUsed: 0,
+                estimatedCost: 0,
+                cached: true,
+              },
+            };
+          }
+        }
+      } catch {
+        // DB fallback also failed
+      }
+      throw new Error('AI 분석 할당량이 초과되었습니다. 잠시 후 다시 시도해주세요.');
+    }
+    throw geminiError;
+  }
 
   const totalTokens =
     pricingAnalysis.usage.totalTokens + salesAnalysis.usage.totalTokens;
@@ -172,6 +249,70 @@ export async function analyzeProduct(
   await updateDailyUsageStats(totalTokens, totalCost);
 
   return result;
+}
+
+/**
+ * DB fallback: reconstruct analysis from AIAnalysis table (within 24h)
+ */
+async function getAnalysisFromDb(
+  barcode: string
+): Promise<ProductAnalysisResult | null> {
+  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24h ago
+
+  const [pricingRow, salesRow] = await Promise.all([
+    prisma.aIAnalysis.findFirst({
+      where: {
+        barcode,
+        analysisType: 'pricing',
+        createdAt: { gte: cutoff },
+      },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.aIAnalysis.findFirst({
+      where: {
+        barcode,
+        analysisType: 'sales',
+        createdAt: { gte: cutoff },
+      },
+      orderBy: { createdAt: 'desc' },
+    }),
+  ]);
+
+  if (!pricingRow || !salesRow) return null;
+
+  const pricingData = pricingRow.parsedData as any;
+  const salesData = salesRow.parsedData as any;
+
+  if (!pricingData?.competitiveness || !salesData?.keyPoints) return null;
+
+  const product = await prisma.product.findUnique({
+    where: { barcode },
+    select: { id: true, name: true },
+  });
+
+  return {
+    productId: pricingRow.productId,
+    barcode,
+    productName: product?.name || '',
+    pricing: {
+      competitiveness: pricingData.competitiveness,
+      marginHealth: pricingData.marginHealth,
+      actionItems: pricingData.actionItems || [],
+    },
+    sales: {
+      keyPoints: salesData.keyPoints || [],
+      targetCustomer: salesData.targetCustomer || '',
+      broadcastScript: salesData.broadcastScript || '',
+      recommendedBundle: salesData.recommendedBundle || [],
+      cautions: salesData.cautions || [],
+    },
+    metadata: {
+      analyzedAt: pricingRow.createdAt,
+      tokensUsed: (pricingRow.tokensUsed || 0) + (salesRow.tokensUsed || 0),
+      estimatedCost: Number(pricingRow.estimatedCost || 0) + Number(salesRow.estimatedCost || 0),
+      cached: true,
+    },
+  };
 }
 
 /**
