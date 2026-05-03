@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
+  const host = req.headers.get("host") || "";
+
+  // 301 redirect: supermujin.ai → www.supermujin.ai
+  if (host === "supermujin.ai") {
+    const url = new URL(`https://www.supermujin.ai${req.nextUrl.pathname}${req.nextUrl.search}`);
+    return NextResponse.redirect(url, 301);
+  }
+
   const { pathname } = req.nextUrl;
 
   // Check if user has auth cookie (existence only, no validation)

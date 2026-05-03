@@ -229,7 +229,7 @@ export default function OrderManualPage() {
 
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground border-t pt-4">
-          <p>슈퍼무진 라이브커머스 | supermujin.ai</p>
+          <p>슈퍼무진 라이브커머스 | www.supermujin.ai</p>
           <p>문의: 관리자에게 연락하세요</p>
         </div>
       </div>

@@ -196,8 +196,8 @@ lib/services/tax-invoice/
 | 2 | Solapi 계정 생성 | 높음 | 발신번호 등록 + API key |
 | 3 | PopBill 계정 생성 | 중간 | 사업자등록증 필요 |
 | 4 | Vercel 환경변수 설정 | 높음 | Phase 2 변수 13개 |
-| 5 | Toss 웹훅 URL 등록 | 중간 | `supermujin.ai/api/webhooks/toss/virtual-account` |
-| 6 | PopBill 웹훅 URL 등록 | 중간 | `supermujin.ai/api/webhooks/popbill` |
+| 5 | Toss 웹훅 URL 등록 | 중간 | `www.supermujin.ai/api/webhooks/toss/virtual-account` |
+| 6 | PopBill 웹훅 URL 등록 | 중간 | `www.supermujin.ai/api/webhooks/popbill` |
 | 7 | 카카오 알림톡 템플릿 심사 | 중간 | 카카오비즈 채널 + 템플릿 등록 |
 
 ---

@@ -5,7 +5,7 @@
  */
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'https://supermujin.ai';
+const BASE_URL = 'https://www.supermujin.ai';
 
 test.describe('ONEWMS Import API', () => {
   test.setTimeout(120000); // 2 min for API imports

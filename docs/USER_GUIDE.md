@@ -17,13 +17,13 @@
 - ONEWMS 창고 재고 연동
 - 변경 이력 추적 (AuditLog)
 
-**접속 주소:** https://supermujin.ai
+**접속 주소:** https://www.supermujin.ai
 
 ---
 
 ## 2. 로그인 방법
 
-1. 브라우저에서 https://supermujin.ai 접속
+1. 브라우저에서 https://www.supermujin.ai 접속
 2. 아이디와 비밀번호 입력
 3. "로그인" 버튼 클릭
 4. 대시보드로 자동 이동

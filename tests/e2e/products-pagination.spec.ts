@@ -4,7 +4,7 @@
  */
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'https://supermujin.ai';
+const BASE_URL = 'https://www.supermujin.ai';
 
 test.describe('Products Page Pagination', () => {
   test.beforeEach(async ({ browser }, testInfo) => {

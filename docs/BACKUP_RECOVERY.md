@@ -74,10 +74,10 @@ npx prisma db push
 **API에서:**
 ```bash
 # 최근 변경 이력 조회
-curl -H "Cookie: ..." "https://supermujin.ai/api/admin/audit-log?pageSize=50"
+curl -H "Cookie: ..." "https://www.supermujin.ai/api/admin/audit-log?pageSize=50"
 
 # 특정 엔티티 변경 이력
-curl -H "Cookie: ..." "https://supermujin.ai/api/admin/audit-log?entityType=Product&pageSize=50"
+curl -H "Cookie: ..." "https://www.supermujin.ai/api/admin/audit-log?entityType=Product&pageSize=50"
 ```
 
 ### 2-2. AuditLog를 이용한 수동 복구
@@ -201,7 +201,7 @@ npx vercel env rm VARIABLE_NAME
 
 **Cron 수동 실행:**
 ```bash
-curl -X POST "https://supermujin.ai/api/cron/stock-sync" \
+curl -X POST "https://www.supermujin.ai/api/cron/stock-sync" \
   -H "Authorization: Bearer $CRON_SECRET"
 ```
 

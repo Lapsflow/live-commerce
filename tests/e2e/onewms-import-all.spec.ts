@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'https://supermujin.ai';
+const BASE_URL = 'https://www.supermujin.ai';
 
 test.describe('ONEWMS Full Import', () => {
   test.setTimeout(600000); // 10 min for full import (1044 products across 11 pages)

@@ -8,7 +8,7 @@
 
 ## 테스트 전 준비사항
 
-- 접속 URL: https://supermujin.ai
+- 접속 URL: https://www.supermujin.ai
 - 브라우저: Chrome 또는 Edge 권장
 - 테스트 계정: 아래 표 참고
 
@@ -31,7 +31,7 @@
 - Step 2: 카테고리/지역/시간대 선택
 
 **단계:**
-1. https://supermujin.ai/signup 접속
+1. https://www.supermujin.ai/signup 접속
 2. Step 1: 기본 정보 입력 (아이디, 비밀번호, 이름, 연락처)
 3. Step 2: 카테고리 선택 (식품/뷰티/생활 등), 활동 지역, 선호 시간대
 4. "가입하기" 클릭
