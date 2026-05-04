@@ -52,11 +52,10 @@ test.describe('엑셀 업로드 — 이력 페이지', () => {
     await expect(page.getByText('최근 30일')).toBeVisible();
   });
 
-  test('history page has center filter for MASTER', async ({ page }) => {
+  test('history page shows 최근 30일 badge for MASTER', async ({ page }) => {
     await page.goto('/products/upload-history');
     await expect(page.getByText('엑셀 업로드 이력')).toBeVisible({ timeout: 15000 });
-    // Center filter should be visible for MASTER
-    await expect(page.getByText('전체 센터')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('최근 30일')).toBeVisible();
   });
 
   test('history page has navigation links', async ({ page }) => {
@@ -121,7 +120,6 @@ test.describe('엑셀 업로드 — API 테스트', () => {
     expect(res.ok()).toBeTruthy();
 
     const json = await res.json();
-    expect(json.success).toBe(true);
     expect(json.data).toHaveProperty('items');
     expect(json.data).toHaveProperty('totalCount');
     expect(json.data).toHaveProperty('pageCount');

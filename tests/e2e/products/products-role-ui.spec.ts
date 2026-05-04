@@ -10,7 +10,7 @@ test.describe('상품 관리 — SELLER 역할', () => {
     // 모든 액션 버튼 숨김 확인
     await expect(page.getByText('상품 추가', { exact: true })).not.toBeVisible();
     await expect(page.getByText('센터 상품 등록')).not.toBeVisible();
-    await expect(page.getByText('엑셀 업로드')).not.toBeVisible();
+    await expect(page.getByRole('button', { name: '엑셀 업로드' })).not.toBeVisible();
     await expect(page.getByText('재고 초기화')).not.toBeVisible();
   });
 });
@@ -24,7 +24,7 @@ test.describe('상품 관리 — MASTER 역할 (센터 상품)', () => {
 
     // "센터 상품 등록" 표시
     await expect(page.getByText('센터 상품 등록')).toBeVisible();
-    await expect(page.getByText('엑셀 업로드')).toBeVisible();
+    await expect(page.getByRole('button', { name: '엑셀 업로드' })).toBeVisible();
   });
 });
 
@@ -37,6 +37,6 @@ test.describe('상품 관리 — MASTER 역할', () => {
 
     // MASTER 전용 버튼
     await expect(page.getByText('상품 추가', { exact: true })).toBeVisible();
-    await expect(page.getByText('엑셀 업로드')).toBeVisible();
+    await expect(page.getByRole('button', { name: '엑셀 업로드' })).toBeVisible();
   });
 });
