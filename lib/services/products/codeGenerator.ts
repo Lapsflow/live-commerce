@@ -76,3 +76,46 @@ export async function generateCenterProductCode(centerId: string): Promise<strin
 export async function previewCenterProductCode(centerId: string): Promise<string> {
   return generateCenterProductCode(centerId);
 }
+
+/**
+ * 트랜잭션 안전 코드 생성 (엑셀 일괄 업로드용)
+ * prisma.$transaction(async (tx) => { ... }) 내에서 호출
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function generateCenterProductCodeTx(centerId: string, tx: any): Promise<string> {
+  const center = await tx.center.findUnique({
+    where: { id: centerId },
+    select: { centerNumber: true, regionCode: true },
+  });
+
+  if (!center) {
+    throw new Error(`센터를 찾을 수 없습니다: ${centerId}`);
+  }
+
+  const num = extractCenterNumber(center);
+  const prefix = `[C${num}-`;
+
+  const lastProduct = await tx.product.findFirst({
+    where: {
+      productType: 'CENTER',
+      managedBy: centerId,
+      code: { startsWith: prefix },
+    },
+    orderBy: { code: 'desc' },
+    select: { code: true },
+  });
+
+  let nextSeq = 1;
+  if (lastProduct) {
+    const match = lastProduct.code.match(/\[C\d{2}-(\d{3})\]/);
+    if (match) {
+      nextSeq = parseInt(match[1], 10) + 1;
+    }
+  }
+
+  if (nextSeq > 999) {
+    throw new Error(`센터 ${num}의 상품 코드가 999를 초과했습니다`);
+  }
+
+  return `${prefix}${String(nextSeq).padStart(3, '0')}]`;
+}

@@ -22,6 +22,7 @@ import {
   History,
   Store,
   Activity,
+  FileSpreadsheet,
 } from "lucide-react";
 import { useState } from "react";
 import { NavItem } from "./nav-item";
@@ -40,7 +41,6 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/orders", label: "발주", icon: ShoppingCart },
     { href: "/sales", label: "판매", icon: TrendingUp },
-    { href: "/proposals", label: "상품 제안", icon: FileText },
     { href: "/barcode", label: "바코드", icon: Barcode },
   ],
   MASTER: [
@@ -52,6 +52,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts", label: "방송 관리", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/products", label: "상품 관리", icon: Package },
+    { href: "/products/upload", label: "엑셀 업로드", icon: FileSpreadsheet },
     { href: "/admin/center-products", label: "센터 상품 현황", icon: Store },
     { href: "/proposals", label: "상품 제안", icon: FileText },
     { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
@@ -66,6 +67,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/broadcasts", label: "방송 관리", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/products", label: "상품 관리", icon: Package },
+    { href: "/products/upload", label: "엑셀 업로드", icon: FileSpreadsheet },
     { href: "/proposals", label: "상품 제안", icon: FileText },
     { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },

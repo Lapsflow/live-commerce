@@ -108,7 +108,9 @@ model Product {
   notes        String? // 메모
 
   // ✨ PRODUCT-05: Soft delete (비활성화만, hard delete 금지)
-  isActive Boolean @default(true)
+  isActive          Boolean   @default(true)
+  deactivatedAt     DateTime?
+  deactivatedReason String?
 
   // ✨ Phase 3: Sample Shopping Mall
   isSample       Boolean         @default(false)
@@ -132,6 +134,7 @@ model Product {
   @@index([productType])
   @@index([managedBy])
   @@index([isActive])
+  @@index([managedBy, productType, isActive])
 }
 
 enum ProductType {
@@ -418,6 +421,11 @@ model Broadcast {
   rejecter User?   @relation("BroadcastRejecter", fields: [rejectedBy], references: [id], onDelete: SetNull)
   sales    Sale[]
   orders   Order[] // ✨ LIVE-03: 매칭된 발주서들
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([centerId])
 }
 
 enum BroadcastPlatform {
@@ -456,6 +464,11 @@ model Sale {
   seller    User       @relation(fields: [sellerId], references: [id])
   product   Product    @relation(fields: [productId], references: [id])
   broadcast Broadcast? @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
+
+  @@index([saleDate])
+  @@index([sellerId])
+  @@index([sellerId, saleDate])
+  @@index([productId])
 }
 
 // ──────────────────────── Proposal Management ────────────────────────

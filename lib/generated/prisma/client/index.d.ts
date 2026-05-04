@@ -5438,6 +5438,8 @@ export namespace Prisma {
     registeredBy: string | null
     notes: string | null
     isActive: boolean | null
+    deactivatedAt: Date | null
+    deactivatedReason: string | null
     isSample: boolean | null
     sampleCategory: $Enums.SampleCategory | null
     samplePrice: number | null
@@ -5472,6 +5474,8 @@ export namespace Prisma {
     registeredBy: string | null
     notes: string | null
     isActive: boolean | null
+    deactivatedAt: Date | null
+    deactivatedReason: string | null
     isSample: boolean | null
     sampleCategory: $Enums.SampleCategory | null
     samplePrice: number | null
@@ -5506,6 +5510,8 @@ export namespace Prisma {
     registeredBy: number
     notes: number
     isActive: number
+    deactivatedAt: number
+    deactivatedReason: number
     isSample: number
     sampleCategory: number
     samplePrice: number
@@ -5572,6 +5578,8 @@ export namespace Prisma {
     registeredBy?: true
     notes?: true
     isActive?: true
+    deactivatedAt?: true
+    deactivatedReason?: true
     isSample?: true
     sampleCategory?: true
     samplePrice?: true
@@ -5606,6 +5614,8 @@ export namespace Prisma {
     registeredBy?: true
     notes?: true
     isActive?: true
+    deactivatedAt?: true
+    deactivatedReason?: true
     isSample?: true
     sampleCategory?: true
     samplePrice?: true
@@ -5640,6 +5650,8 @@ export namespace Prisma {
     registeredBy?: true
     notes?: true
     isActive?: true
+    deactivatedAt?: true
+    deactivatedReason?: true
     isSample?: true
     sampleCategory?: true
     samplePrice?: true
@@ -5761,6 +5773,8 @@ export namespace Prisma {
     registeredBy: string | null
     notes: string | null
     isActive: boolean
+    deactivatedAt: Date | null
+    deactivatedReason: string | null
     isSample: boolean
     sampleCategory: $Enums.SampleCategory | null
     samplePrice: number | null
@@ -5814,6 +5828,8 @@ export namespace Prisma {
     registeredBy?: boolean
     notes?: boolean
     isActive?: boolean
+    deactivatedAt?: boolean
+    deactivatedReason?: boolean
     isSample?: boolean
     sampleCategory?: boolean
     samplePrice?: boolean
@@ -5860,6 +5876,8 @@ export namespace Prisma {
     registeredBy?: boolean
     notes?: boolean
     isActive?: boolean
+    deactivatedAt?: boolean
+    deactivatedReason?: boolean
     isSample?: boolean
     sampleCategory?: boolean
     samplePrice?: boolean
@@ -5894,6 +5912,8 @@ export namespace Prisma {
     registeredBy?: boolean
     notes?: boolean
     isActive?: boolean
+    deactivatedAt?: boolean
+    deactivatedReason?: boolean
     isSample?: boolean
     sampleCategory?: boolean
     samplePrice?: boolean
@@ -5928,13 +5948,15 @@ export namespace Prisma {
     registeredBy?: boolean
     notes?: boolean
     isActive?: boolean
+    deactivatedAt?: boolean
+    deactivatedReason?: boolean
     isSample?: boolean
     sampleCategory?: boolean
     samplePrice?: boolean
     sampleStatus?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "originalPrice" | "minSellPrice" | "maxSellPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "category" | "registeredBy" | "notes" | "isActive" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "barcode" | "sellPrice" | "supplyPrice" | "originalPrice" | "minSellPrice" | "maxSellPrice" | "totalStock" | "reservedStock" | "stockMujin" | "stock1" | "stock2" | "stock3" | "createdAt" | "updatedAt" | "onewmsCode" | "onewmsBarcode" | "masterBarcodeId" | "productType" | "managedBy" | "isWmsProduct" | "category" | "registeredBy" | "notes" | "isActive" | "deactivatedAt" | "deactivatedReason" | "isSample" | "sampleCategory" | "samplePrice" | "sampleStatus", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
@@ -5995,6 +6017,8 @@ export namespace Prisma {
       registeredBy: string | null
       notes: string | null
       isActive: boolean
+      deactivatedAt: Date | null
+      deactivatedReason: string | null
       isSample: boolean
       sampleCategory: $Enums.SampleCategory | null
       samplePrice: number | null
@@ -6460,6 +6484,8 @@ export namespace Prisma {
     readonly registeredBy: FieldRef<"Product", 'String'>
     readonly notes: FieldRef<"Product", 'String'>
     readonly isActive: FieldRef<"Product", 'Boolean'>
+    readonly deactivatedAt: FieldRef<"Product", 'DateTime'>
+    readonly deactivatedReason: FieldRef<"Product", 'String'>
     readonly isSample: FieldRef<"Product", 'Boolean'>
     readonly sampleCategory: FieldRef<"Product", 'SampleCategory'>
     readonly samplePrice: FieldRef<"Product", 'Int'>
@@ -35850,6 +35876,8 @@ export namespace Prisma {
     registeredBy: 'registeredBy',
     notes: 'notes',
     isActive: 'isActive',
+    deactivatedAt: 'deactivatedAt',
+    deactivatedReason: 'deactivatedReason',
     isSample: 'isSample',
     sampleCategory: 'sampleCategory',
     samplePrice: 'samplePrice',
@@ -36795,6 +36823,8 @@ export namespace Prisma {
     registeredBy?: StringNullableFilter<"Product"> | string | null
     notes?: StringNullableFilter<"Product"> | string | null
     isActive?: BoolFilter<"Product"> | boolean
+    deactivatedAt?: DateTimeNullableFilter<"Product"> | Date | string | null
+    deactivatedReason?: StringNullableFilter<"Product"> | string | null
     isSample?: BoolFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableFilter<"Product"> | $Enums.SampleCategory | null
     samplePrice?: IntNullableFilter<"Product"> | number | null
@@ -36840,6 +36870,8 @@ export namespace Prisma {
     registeredBy?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    deactivatedAt?: SortOrderInput | SortOrder
+    deactivatedReason?: SortOrderInput | SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrderInput | SortOrder
     samplePrice?: SortOrderInput | SortOrder
@@ -36888,6 +36920,8 @@ export namespace Prisma {
     registeredBy?: StringNullableFilter<"Product"> | string | null
     notes?: StringNullableFilter<"Product"> | string | null
     isActive?: BoolFilter<"Product"> | boolean
+    deactivatedAt?: DateTimeNullableFilter<"Product"> | Date | string | null
+    deactivatedReason?: StringNullableFilter<"Product"> | string | null
     isSample?: BoolFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableFilter<"Product"> | $Enums.SampleCategory | null
     samplePrice?: IntNullableFilter<"Product"> | number | null
@@ -36933,6 +36967,8 @@ export namespace Prisma {
     registeredBy?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    deactivatedAt?: SortOrderInput | SortOrder
+    deactivatedReason?: SortOrderInput | SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrderInput | SortOrder
     samplePrice?: SortOrderInput | SortOrder
@@ -36975,6 +37011,8 @@ export namespace Prisma {
     registeredBy?: StringNullableWithAggregatesFilter<"Product"> | string | null
     notes?: StringNullableWithAggregatesFilter<"Product"> | string | null
     isActive?: BoolWithAggregatesFilter<"Product"> | boolean
+    deactivatedAt?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
+    deactivatedReason?: StringNullableWithAggregatesFilter<"Product"> | string | null
     isSample?: BoolWithAggregatesFilter<"Product"> | boolean
     sampleCategory?: EnumSampleCategoryNullableWithAggregatesFilter<"Product"> | $Enums.SampleCategory | null
     samplePrice?: IntNullableWithAggregatesFilter<"Product"> | number | null
@@ -39409,6 +39447,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -39454,6 +39494,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -39499,6 +39541,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -39544,6 +39588,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -39589,6 +39635,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -39623,6 +39671,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -39657,6 +39707,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -42594,6 +42646,8 @@ export namespace Prisma {
     registeredBy?: SortOrder
     notes?: SortOrder
     isActive?: SortOrder
+    deactivatedAt?: SortOrder
+    deactivatedReason?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
     samplePrice?: SortOrder
@@ -42643,6 +42697,8 @@ export namespace Prisma {
     registeredBy?: SortOrder
     notes?: SortOrder
     isActive?: SortOrder
+    deactivatedAt?: SortOrder
+    deactivatedReason?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
     samplePrice?: SortOrder
@@ -42677,6 +42733,8 @@ export namespace Prisma {
     registeredBy?: SortOrder
     notes?: SortOrder
     isActive?: SortOrder
+    deactivatedAt?: SortOrder
+    deactivatedReason?: SortOrder
     isSample?: SortOrder
     sampleCategory?: SortOrder
     samplePrice?: SortOrder
@@ -48958,6 +49016,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49002,6 +49062,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49115,6 +49177,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49159,6 +49223,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49408,6 +49474,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49452,6 +49520,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -49670,6 +49740,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -49714,6 +49786,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -50476,6 +50550,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -50520,6 +50596,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -50665,6 +50743,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -50709,6 +50789,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -50832,6 +50914,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -50876,6 +50960,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -51021,6 +51107,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -51065,6 +51153,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -51718,6 +51808,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -51762,6 +51854,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -51942,6 +52036,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -51986,6 +52082,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -52290,6 +52388,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -52334,6 +52434,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -52467,6 +52569,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -52511,6 +52615,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -52719,6 +52825,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -52763,6 +52871,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -52823,6 +52933,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -52867,6 +52979,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -53306,6 +53420,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -53350,6 +53466,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -53482,6 +53600,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -53526,6 +53646,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -53607,6 +53729,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -53651,6 +53775,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -53781,6 +53907,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -53825,6 +53953,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -53951,6 +54081,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -53995,6 +54127,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -54055,6 +54189,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -54099,6 +54235,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -54210,6 +54348,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -54254,6 +54394,8 @@ export namespace Prisma {
     registeredBy?: string | null
     notes?: string | null
     isActive?: boolean
+    deactivatedAt?: Date | string | null
+    deactivatedReason?: string | null
     isSample?: boolean
     sampleCategory?: $Enums.SampleCategory | null
     samplePrice?: number | null
@@ -54440,6 +54582,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null
@@ -54484,6 +54628,8 @@ export namespace Prisma {
     registeredBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    deactivatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deactivatedReason?: NullableStringFieldUpdateOperationsInput | string | null
     isSample?: BoolFieldUpdateOperationsInput | boolean
     sampleCategory?: NullableEnumSampleCategoryFieldUpdateOperationsInput | $Enums.SampleCategory | null
     samplePrice?: NullableIntFieldUpdateOperationsInput | number | null

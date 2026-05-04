@@ -1,9 +1,6 @@
 /**
- * POST /api/products/upload
- * 엑셀 상품 일괄 업로드 — Option 2: Upsert by Barcode
- *
- * 동작: 바코드 기준으로 기존 상품 업데이트, 신규 추가, 미포함 상품 비활성화
- * 권한: MASTER, SUB_MASTER만 가능
+ * POST /api/products/upload/preview
+ * 엑셀 업로드 Dry Run — DB 변경 없이 변경 사항 미리보기
  */
 
 import { NextRequest } from "next/server";
@@ -11,7 +8,7 @@ import { withRole } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import * as XLSX from "xlsx";
-import { parseAndValidateExcel, buildUpsertPlan, executeUpsert } from "@/lib/services/products/excelUpsert";
+import { parseAndValidateExcel, buildUpsertPlan } from "@/lib/services/products/excelUpsert";
 
 export const POST = withRole(
   ["MASTER", "SUB_MASTER"],
@@ -36,7 +33,7 @@ export const POST = withRole(
     // 센터 존재 확인
     const center = await prisma.center.findUnique({
       where: { id: centerId },
-      select: { id: true, name: true },
+      select: { id: true },
     });
 
     if (!center) {
@@ -70,18 +67,13 @@ export const POST = withRole(
       return errors.badRequest("엑셀 데이터 오류", { errors: validationErrors });
     }
 
-    // 바코드 충돌 사전 체크
+    // Dry Run
     const preview = await buildUpsertPlan(centerId, valid);
+
     if (preview.validationErrors.length > 0) {
       return errors.badRequest("바코드 충돌", { errors: preview.validationErrors });
     }
 
-    // 실행
-    const result = await executeUpsert(centerId, valid, user, req);
-
-    return ok({
-      message: `업로드 완료: 업데이트 ${result.stats.updated}, 신규 ${result.stats.created}, 재활성화 ${result.stats.reactivated}, 비활성화 ${result.stats.deactivated}`,
-      ...result,
-    });
+    return ok(preview);
   }
 );

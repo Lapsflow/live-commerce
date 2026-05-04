@@ -108,7 +108,9 @@ model Product {
   notes        String?  // 메모
 
   // ✨ PRODUCT-05: Soft delete (비활성화만, hard delete 금지)
-  isActive    Boolean  @default(true)
+  isActive          Boolean   @default(true)
+  deactivatedAt     DateTime?
+  deactivatedReason String?
 
   // ✨ Phase 3: Sample Shopping Mall
   isSample        Boolean         @default(false)
@@ -132,6 +134,7 @@ model Product {
   @@index([productType])
   @@index([managedBy])
   @@index([isActive])
+  @@index([managedBy, productType, isActive])
 }
 
 enum ProductType {

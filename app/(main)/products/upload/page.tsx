@@ -12,9 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Upload, Download, FileSpreadsheet, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  ArrowLeft, Upload, Download, FileSpreadsheet,
+  AlertCircle, CheckCircle2, RefreshCw, ArrowUpDown,
+} from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import * as XLSX from "xlsx";
@@ -28,13 +38,46 @@ interface Center {
 
 interface PreviewRow {
   row: number;
-  code: string;
   name: string;
   barcode: string;
   sellPrice: number;
   supplyPrice: number;
+  originalPrice: number;
+  category: string;
   stock: number;
+  notes: string;
   error?: string;
+}
+
+interface PriceChange {
+  barcode: string;
+  productName: string;
+  field: string;
+  oldValue: number;
+  newValue: number;
+}
+
+interface DeactivatedProduct {
+  id: string;
+  code: string;
+  name: string;
+  barcode: string;
+  activeOrderCount: number;
+}
+
+interface UpsertPreviewResult {
+  stats: { updated: number; created: number; reactivated: number; deactivated: number };
+  priceChanges: PriceChange[];
+  newProducts: Array<{ barcode: string; name: string; sellPrice: number; stock: number }>;
+  deactivatedProducts: DeactivatedProduct[];
+  totalActiveOrderCount: number;
+}
+
+interface UploadResult {
+  message: string;
+  stats: { updated: number; created: number; reactivated: number; deactivated: number };
+  priceChanges: PriceChange[];
+  durationMs: number;
 }
 
 export default function ProductUploadPage() {
@@ -51,14 +94,12 @@ export default function ProductUploadPage() {
   const [previewData, setPreviewData] = useState<PreviewRow[]>([]);
   const [rawFile, setRawFile] = useState<File | null>(null);
 
+  const [previewing, setPreviewing] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [result, setResult] = useState<{
-    success: boolean;
-    message: string;
-    count?: number;
-    errors?: { row: number; code: string; error: string }[];
-    duplicates?: string[];
-  } | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [serverPreview, setServerPreview] = useState<UpsertPreviewResult | null>(null);
+  const [result, setResult] = useState<UploadResult | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const userRole = (session?.user as any)?.role;
   const userCenterId = (session?.user as any)?.centerId;
@@ -73,8 +114,6 @@ export default function ProductUploadPage() {
           const data = await res.json();
           const list = data.data?.centers || [];
           setCenters(list);
-
-          // SUB_MASTER는 자기 센터만
           if (userRole === "SUB_MASTER" && userCenterId) {
             setSelectedCenterId(userCenterId);
           }
@@ -88,32 +127,27 @@ export default function ProductUploadPage() {
     fetchCenters();
   }, [userRole, userCenterId]);
 
-  // 엑셀 템플릿 다운로드
+  // 템플릿 다운로드
   const handleDownloadTemplate = () => {
     const templateData = [
-      { 상품코드: "CTR-001", 상품명: "샘플 상품 1", 바코드: "", 판매가: 10000, 공급가: 7000, 재고: 100 },
-      { 상품코드: "CTR-002", 상품명: "샘플 상품 2", 바코드: "", 판매가: 25000, 공급가: 18000, 재고: 50 },
+      { 상품명: "샘플 상품 1", 바코드: "8801234567890", 판매가: 10000, 공급가: 7000, 원가: 5000, 카테고리: "식품", 재고: 100, 메모: "" },
+      { 상품명: "샘플 상품 2", 바코드: "8801234567891", 판매가: 25000, 공급가: 18000, 원가: 12000, 카테고리: "뷰티", 재고: 50, 메모: "" },
     ];
-
     const ws = XLSX.utils.json_to_sheet(templateData);
-    // 컬럼 너비 설정
     ws["!cols"] = [
-      { wch: 15 }, // 상품코드
-      { wch: 25 }, // 상품명
-      { wch: 20 }, // 바코드
-      { wch: 12 }, // 판매가
-      { wch: 12 }, // 공급가
-      { wch: 10 }, // 재고
+      { wch: 25 }, { wch: 18 }, { wch: 12 }, { wch: 12 },
+      { wch: 12 }, { wch: 10 }, { wch: 10 }, { wch: 15 },
     ];
-
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "상품목록");
     XLSX.writeFile(wb, "상품_업로드_템플릿.xlsx");
   };
 
-  // 파일 선택 → 미리보기
+  // 파일 선택 → 클라이언트 파싱
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResult(null);
+    setUploadError(null);
+    setServerPreview(null);
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -133,42 +167,70 @@ export default function ProductUploadPage() {
       }
 
       const sheet = workbook.Sheets[sheetName];
-      const rows: Record<string, any>[] = XLSX.utils.sheet_to_json(sheet);
+      const rows: Record<string, unknown>[] = XLSX.utils.sheet_to_json(sheet);
 
       const preview: PreviewRow[] = rows.map((row, idx) => {
-        const code = String(row["상품코드"] ?? "").trim();
         const name = String(row["상품명"] ?? "").trim();
         const barcode = String(row["바코드"] ?? "").trim();
         const sellPrice = parseInt(String(row["판매가"] ?? "0")) || 0;
         const supplyPrice = parseInt(String(row["공급가"] ?? "0")) || 0;
+        const originalPrice = parseInt(String(row["원가"] ?? "0")) || 0;
+        const category = String(row["카테고리"] ?? "").trim();
         const stock = parseInt(String(row["재고"] ?? "0")) || 0;
+        const notes = String(row["메모"] ?? "").trim();
 
         let error: string | undefined;
-        if (!code) error = "상품코드 누락";
+        if (!barcode) error = "바코드 누락 (필수)";
         else if (!name) error = "상품명 누락";
         else if (sellPrice < 0) error = "판매가 음수";
         else if (supplyPrice < 0) error = "공급가 음수";
 
-        return { row: idx + 2, code, name, barcode, sellPrice, supplyPrice, stock, error };
+        return { row: idx + 2, name, barcode, sellPrice, supplyPrice, originalPrice, category, stock, notes, error };
       });
 
       setPreviewData(preview);
     };
-
     reader.readAsArrayBuffer(file);
   };
 
-  // 업로드 실행
-  const handleUpload = async () => {
-    // PRODUCT-06: 센터 미선택 시 명확한 안내
-    if (!selectedCenterId) {
-      toast({ title: "센터 미선택", description: "센터를 선택해 주세요", variant: "destructive" });
-      return;
-    }
-    if (!rawFile) return;
+  // 서버 미리보기 (Dry Run)
+  const handlePreview = async () => {
+    if (!selectedCenterId || !rawFile) return;
+    setPreviewing(true);
+    setUploadError(null);
 
+    try {
+      const formData = new FormData();
+      formData.append("file", rawFile);
+      formData.append("centerId", selectedCenterId);
+
+      const res = await fetch("/api/products/upload/preview", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setServerPreview(data.data);
+        setShowConfirmDialog(true);
+      } else {
+        const errMsg = data.error?.message || "미리보기 실패";
+        setUploadError(errMsg);
+        toast({ title: "미리보기 실패", description: errMsg, variant: "destructive" });
+      }
+    } catch {
+      setUploadError("네트워크 오류가 발생했습니다");
+      toast({ title: "오류", description: "네트워크 오류가 발생했습니다", variant: "destructive" });
+    } finally {
+      setPreviewing(false);
+    }
+  };
+
+  // 확정 업로드
+  const handleExecuteUpload = async () => {
+    if (!selectedCenterId || !rawFile) return;
     setUploading(true);
-    setResult(null);
 
     try {
       const formData = new FormData();
@@ -183,32 +245,33 @@ export default function ProductUploadPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setResult({
-          success: true,
-          message: data.data.message,
-          count: data.data.count,
-        });
+        setResult(data.data);
+        setShowConfirmDialog(false);
         toast({ title: "업로드 완료", description: data.data.message });
       } else {
-        const errData = data.error;
-        setResult({
-          success: false,
-          message: errData?.message || "업로드 실패",
-          errors: errData?.details?.errors,
-          duplicates: errData?.details?.duplicates,
-        });
-        toast({ title: "업로드 실패", description: errData?.message, variant: "destructive" });
+        const errMsg = data.error?.message || "업로드 실패";
+        setUploadError(errMsg);
+        setShowConfirmDialog(false);
+        toast({ title: "업로드 실패", description: errMsg, variant: "destructive" });
       }
     } catch {
-      // PRODUCT-06: 에러 상태를 result에도 반영
-      setResult({
-        success: false,
-        message: "네트워크 오류가 발생했습니다",
-      });
+      setUploadError("네트워크 오류가 발생했습니다");
+      setShowConfirmDialog(false);
       toast({ title: "오류", description: "네트워크 오류가 발생했습니다", variant: "destructive" });
     } finally {
       setUploading(false);
     }
+  };
+
+  // 초기화
+  const handleReset = () => {
+    setPreviewData([]);
+    setRawFile(null);
+    setFileName("");
+    setResult(null);
+    setUploadError(null);
+    setServerPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const hasErrors = previewData.some((r) => r.error);
@@ -226,7 +289,7 @@ export default function ProductUploadPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">엑셀 상품 업로드</h1>
           <p className="text-muted-foreground">
-            엑셀 파일로 센터 자사몰 상품을 일괄 등록합니다
+            바코드 기준으로 상품을 일괄 갱신합니다 (업데이트 / 신규 추가 / 비활성화)
           </p>
         </div>
       </div>
@@ -235,7 +298,7 @@ export default function ProductUploadPage() {
       <Card>
         <CardHeader>
           <CardTitle>1. 센터 선택</CardTitle>
-          <CardDescription>상품을 등록할 센터를 선택하세요</CardDescription>
+          <CardDescription>상품을 관리할 센터를 선택하세요</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="max-w-sm">
@@ -270,7 +333,7 @@ export default function ProductUploadPage() {
         <CardHeader>
           <CardTitle>2. 엑셀 파일</CardTitle>
           <CardDescription>
-            템플릿을 다운로드하여 작성 후 업로드하세요. 바코드를 비워두면 자동 생성됩니다.
+            템플릿을 다운로드하여 작성 후 업로드하세요. 바코드가 매칭 키입니다.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -302,32 +365,41 @@ export default function ProductUploadPage() {
             </p>
           )}
 
-          {/* 필수 컬럼 안내 */}
+          {/* 컬럼 안내 */}
           <div className="rounded-lg border p-3 bg-muted/50">
-            <p className="text-sm font-medium mb-2">필수 컬럼</p>
+            <p className="text-sm font-medium mb-2">컬럼 안내</p>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="outline">상품코드 *</Badge>
               <Badge variant="outline">상품명 *</Badge>
-              <Badge variant="secondary">바코드 (선택)</Badge>
-              <Badge variant="outline">판매가</Badge>
-              <Badge variant="outline">공급가</Badge>
-              <Badge variant="outline">재고</Badge>
+              <Badge variant="outline">바코드 * (매칭 키)</Badge>
+              <Badge variant="outline">판매가 *</Badge>
+              <Badge variant="outline">공급가 *</Badge>
+              <Badge variant="secondary">원가</Badge>
+              <Badge variant="secondary">카테고리</Badge>
+              <Badge variant="outline">재고 *</Badge>
+              <Badge variant="secondary">메모</Badge>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              * 바코드를 비워두면 CTR-센터코드-순번 형식으로 자동 생성됩니다
-            </p>
+            <div className="mt-2 space-y-1">
+              <p className="text-xs text-muted-foreground">
+                * 같은 바코드 → 기존 상품 업데이트 (가격/재고/이름 갱신)
+              </p>
+              <p className="text-xs text-muted-foreground">
+                * 새 바코드 → 신규 상품 등록 (상품코드 자동 생성)
+              </p>
+              <p className="text-xs text-muted-foreground">
+                * 엑셀에 없는 기존 상품 → 비활성화 (진행 중 발주는 영향 없음)
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Step 3: 미리보기 */}
+      {/* Step 3: 클라이언트 미리보기 */}
       {previewData.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>3. 미리보기</CardTitle>
+            <CardTitle>3. 데이터 확인</CardTitle>
             <CardDescription>
               총 {previewData.length}개 상품
-              {emptyBarcodeCount > 0 && ` (바코드 자동 생성: ${emptyBarcodeCount}개)`}
               {hasErrors && (
                 <span className="text-red-500 ml-2">
                   오류 {previewData.filter((r) => r.error).length}건
@@ -341,9 +413,8 @@ export default function ProductUploadPage() {
                 <thead className="sticky top-0 bg-gray-50">
                   <tr>
                     <th className="px-3 py-2 text-left font-medium text-gray-500">행</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-500">상품코드</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-500">상품명</th>
                     <th className="px-3 py-2 text-left font-medium text-gray-500">바코드</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-500">상품명</th>
                     <th className="px-3 py-2 text-right font-medium text-gray-500">판매가</th>
                     <th className="px-3 py-2 text-right font-medium text-gray-500">공급가</th>
                     <th className="px-3 py-2 text-right font-medium text-gray-500">재고</th>
@@ -354,19 +425,10 @@ export default function ProductUploadPage() {
                   {previewData.map((row) => (
                     <tr key={row.row} className={row.error ? "bg-red-50" : ""}>
                       <td className="px-3 py-2 text-gray-500">{row.row}</td>
-                      <td className="px-3 py-2 font-mono">{row.code}</td>
+                      <td className="px-3 py-2 font-mono text-xs">{row.barcode || "-"}</td>
                       <td className="px-3 py-2">{row.name}</td>
-                      <td className="px-3 py-2 font-mono">
-                        {row.barcode || (
-                          <span className="text-blue-500 text-xs">자동생성</span>
-                        )}
-                      </td>
-                      <td className="px-3 py-2 text-right">
-                        {row.sellPrice.toLocaleString()}원
-                      </td>
-                      <td className="px-3 py-2 text-right">
-                        {row.supplyPrice.toLocaleString()}원
-                      </td>
+                      <td className="px-3 py-2 text-right">{row.sellPrice.toLocaleString()}원</td>
+                      <td className="px-3 py-2 text-right">{row.supplyPrice.toLocaleString()}원</td>
                       <td className="px-3 py-2 text-right">{row.stock}</td>
                       <td className="px-3 py-2">
                         {row.error ? (
@@ -387,75 +449,214 @@ export default function ProductUploadPage() {
               </table>
             </div>
 
-            {/* 업로드 버튼 */}
+            {uploadError && (
+              <div className="mt-3 p-3 bg-red-50 rounded border border-red-200">
+                <p className="text-sm text-red-700 flex items-center gap-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {uploadError}
+                </p>
+              </div>
+            )}
+
             <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setPreviewData([]);
-                  setRawFile(null);
-                  setFileName("");
-                  setResult(null);
-                  if (fileInputRef.current) fileInputRef.current.value = "";
-                }}
-              >
+              <Button variant="outline" onClick={handleReset}>
                 초기화
               </Button>
               <Button
-                onClick={handleUpload}
-                disabled={uploading || hasErrors || previewData.length === 0}
+                onClick={handlePreview}
+                disabled={previewing || hasErrors || previewData.length === 0 || emptyBarcodeCount > 0}
               >
-                <Upload className="mr-2 h-4 w-4" />
-                {uploading ? "업로드 중..." : `${previewData.length}개 상품 등록`}
+                <ArrowUpDown className="mr-2 h-4 w-4" />
+                {previewing ? "분석 중..." : "변경 사항 확인"}
               </Button>
             </div>
           </CardContent>
         </Card>
       )}
 
+      {/* 확인 Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>업로드 확인</DialogTitle>
+          </DialogHeader>
+
+          {serverPreview && (
+            <div className="space-y-4">
+              {/* 통계 */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <StatCard label="업데이트" value={serverPreview.stats.updated} color="blue" />
+                <StatCard label="신규 추가" value={serverPreview.stats.created} color="green" />
+                <StatCard label="재활성화" value={serverPreview.stats.reactivated} color="purple" />
+                <StatCard label="비활성화" value={serverPreview.stats.deactivated} color="orange" />
+              </div>
+
+              {/* 가격 변동 */}
+              {serverPreview.priceChanges.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium mb-2">
+                    가격 변동 ({serverPreview.priceChanges.length}건)
+                  </h4>
+                  <div className="max-h-32 overflow-y-auto rounded border">
+                    <table className="w-full text-xs">
+                      <thead className="bg-gray-50 sticky top-0">
+                        <tr>
+                          <th className="px-2 py-1 text-left">상품</th>
+                          <th className="px-2 py-1 text-left">항목</th>
+                          <th className="px-2 py-1 text-right">변경 전</th>
+                          <th className="px-2 py-1 text-right">변경 후</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        {serverPreview.priceChanges.map((pc, i) => (
+                          <tr key={i}>
+                            <td className="px-2 py-1">{pc.productName}</td>
+                            <td className="px-2 py-1">{pc.field}</td>
+                            <td className="px-2 py-1 text-right">{pc.oldValue.toLocaleString()}원</td>
+                            <td className="px-2 py-1 text-right font-medium">
+                              {pc.newValue.toLocaleString()}원
+                              <span className={`ml-1 ${pc.newValue > pc.oldValue ? "text-red-500" : "text-blue-500"}`}>
+                                ({pc.newValue > pc.oldValue ? "+" : ""}{Math.round(((pc.newValue - pc.oldValue) / pc.oldValue) * 100)}%)
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* 신규 상품 */}
+              {serverPreview.newProducts.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium mb-2">
+                    신규 상품 ({serverPreview.newProducts.length}건)
+                  </h4>
+                  <div className="max-h-24 overflow-y-auto text-xs space-y-1">
+                    {serverPreview.newProducts.slice(0, 5).map((p, i) => (
+                      <p key={i} className="text-gray-600">
+                        {p.name} ({p.barcode}) — {p.sellPrice.toLocaleString()}원, {p.stock}개
+                      </p>
+                    ))}
+                    {serverPreview.newProducts.length > 5 && (
+                      <p className="text-gray-400">...외 {serverPreview.newProducts.length - 5}건</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 비활성화 상품 */}
+              {serverPreview.deactivatedProducts.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium mb-2">
+                    비활성화 상품 ({serverPreview.deactivatedProducts.length}건)
+                  </h4>
+                  <div className="max-h-24 overflow-y-auto text-xs space-y-1">
+                    {serverPreview.deactivatedProducts.slice(0, 5).map((p, i) => (
+                      <p key={i} className="text-gray-600">
+                        {p.name} ({p.barcode})
+                        {p.activeOrderCount > 0 && (
+                          <span className="text-amber-600 ml-1">
+                            발주 {p.activeOrderCount}건
+                          </span>
+                        )}
+                      </p>
+                    ))}
+                    {serverPreview.deactivatedProducts.length > 5 && (
+                      <p className="text-gray-400">...외 {serverPreview.deactivatedProducts.length - 5}건</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 진행 중 발주 안내 */}
+              {serverPreview.totalActiveOrderCount > 0 && (
+                <div className="rounded border border-amber-200 bg-amber-50 p-3">
+                  <p className="text-sm text-amber-800">
+                    진행 중 발주 {serverPreview.totalActiveOrderCount}건은 비활성화 후에도 정상 처리됩니다.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              취소
+            </Button>
+            <Button onClick={handleExecuteUpload} disabled={uploading}>
+              <Upload className="mr-2 h-4 w-4" />
+              {uploading ? "업로드 중..." : "확정 업로드"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* 결과 */}
       {result && (
-        <Card className={result.success ? "border-green-300" : "border-red-300"}>
+        <Card className="border-green-300">
           <CardContent className="pt-6">
-            {result.success ? (
+            <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="h-6 w-6 text-green-500" />
-                <div>
-                  <p className="font-medium text-green-700">{result.message}</p>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto"
-                    onClick={() => router.push("/products?productType=CENTER")}
-                  >
-                    센터 상품 목록 보기
-                  </Button>
-                </div>
+                <p className="font-medium text-green-700">{result.message}</p>
               </div>
-            ) : (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-red-500" />
-                  <p className="font-medium text-red-700">{result.message}</p>
-                </div>
-                {result.errors && (
-                  <ul className="text-sm text-red-600 list-disc list-inside">
-                    {result.errors.map((e, i) => (
-                      <li key={i}>
-                        행 {e.row} ({e.code}): {e.error}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {result.duplicates && (
-                  <p className="text-sm text-red-600">
-                    중복: {result.duplicates.join(", ")}
-                  </p>
-                )}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <StatCard label="업데이트" value={result.stats.updated} color="blue" />
+                <StatCard label="신규 추가" value={result.stats.created} color="green" />
+                <StatCard label="재활성화" value={result.stats.reactivated} color="purple" />
+                <StatCard label="비활성화" value={result.stats.deactivated} color="orange" />
               </div>
-            )}
+              {result.priceChanges.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  가격 변동 {result.priceChanges.length}건
+                </p>
+              )}
+              <p className="text-xs text-muted-foreground">
+                처리 시간: {(result.durationMs / 1000).toFixed(1)}초
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push("/products?productType=CENTER")}
+                >
+                  센터 상품 목록
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push("/products/upload-history")}
+                >
+                  업로드 이력
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleReset}>
+                  <RefreshCw className="mr-1 h-3 w-3" />
+                  새 업로드
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}
+    </div>
+  );
+}
+
+// 통계 카드 컴포넌트
+function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
+  const colorMap: Record<string, string> = {
+    blue: "bg-blue-50 text-blue-700 border-blue-200",
+    green: "bg-green-50 text-green-700 border-green-200",
+    purple: "bg-purple-50 text-purple-700 border-purple-200",
+    orange: "bg-orange-50 text-orange-700 border-orange-200",
+  };
+
+  return (
+    <div className={`rounded-lg border p-3 text-center ${colorMap[color] || ""}`}>
+      <p className="text-2xl font-bold">{value}</p>
+      <p className="text-xs">{label}</p>
     </div>
   );
 }
