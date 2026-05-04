@@ -29,10 +29,10 @@ const proposalCreateSchema = z.object({
  * POST /api/proposals
  *
  * 제안 등록
- * 권한: 모든 로그인 사용자
+ * 권한: MASTER만 가능
  */
 export const POST = withRole(
-  ["MASTER", "SUB_MASTER", "SELLER"],
+  ["MASTER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -84,11 +84,10 @@ export const POST = withRole(
  * - status?: PENDING | APPROVED | REJECTED
  *
  * 권한:
- * - SELLER: 본인 제안만 조회
  * - MASTER, SUB_MASTER: 모든 제안 조회
  */
 export const GET = withRole(
-  ["MASTER", "SUB_MASTER", "SELLER"],
+  ["MASTER", "SUB_MASTER"],
   async (req: NextRequest) => {
     try {
       const session = await auth();
@@ -96,16 +95,8 @@ export const GET = withRole(
         return errors.unauthorized();
       }
 
-      const userRole = (session.user as any).role;
-      const userId = (session.user as any).userId;
       const { searchParams } = new URL(req.url);
       const statusFilter = searchParams.get("status");
-
-      // 역할별 필터
-      let userFilter = {};
-      if (userRole === "SELLER") {
-        userFilter = { submittedBy: userId };
-      }
 
       // 상태 필터
       const statusWhere = statusFilter
@@ -114,7 +105,6 @@ export const GET = withRole(
 
       const proposals = await prisma.proposal.findMany({
         where: {
-          ...userFilter,
           ...statusWhere,
         },
         include: {

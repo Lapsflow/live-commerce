@@ -197,8 +197,8 @@ export default function DashboardPage() {
         </Card>
       )}
 
-      {/* ONEWMS 연동 상태 */}
-      {onewmsStats && (
+      {/* ONEWMS 연동 상태 (관리자만) */}
+      {!isSeller && onewmsStats && (
         <Card className="p-6 border-blue-200 bg-blue-50/50">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">

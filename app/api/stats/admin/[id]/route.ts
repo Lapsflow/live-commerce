@@ -60,9 +60,17 @@ export const GET = withRole(
         return errors.notFound("manager");
       }
 
-      // centerId 기반 소속 Seller 목록 조회
+      // 본인 센터에 방송 신청한 Seller 목록 조회 (Broadcast.centerId 기준)
+      const broadcastSellers = manager.centerId
+        ? await prisma.broadcast.findMany({
+            where: { centerId: manager.centerId },
+            select: { sellerId: true },
+            distinct: ["sellerId"],
+          })
+        : [];
+      const sellerIds = [...new Set(broadcastSellers.map((b) => b.sellerId))];
       const sellers = await prisma.user.findMany({
-        where: { centerId: manager.centerId, role: "SELLER" },
+        where: { id: { in: sellerIds }, role: "SELLER" },
         select: {
           id: true,
           name: true,
@@ -91,7 +99,7 @@ export const GET = withRole(
         });
       }
 
-      const sellerIds = sellers.map((s) => s.id);
+      // sellerIds는 위에서 이미 선언됨 (broadcast 기반)
 
       // Seller별 매출 통계 조회
       const sellerStats = await prisma.sale.groupBy({

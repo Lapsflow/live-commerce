@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,9 +77,18 @@ const CATEGORIES: Record<string, string[]> = {
 };
 
 export default function ProposalsPage() {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
+  const router = useRouter();
   const userRole = (session?.user as any)?.role;
+  const isMaster = userRole === "MASTER";
   const isMasterOrSubMaster = userRole === "MASTER" || userRole === "SUB_MASTER";
+
+  // SELLER는 접근 불가 — 대시보드로 리다이렉트
+  useEffect(() => {
+    if (sessionStatus === "authenticated" && userRole === "SELLER") {
+      router.replace("/dashboard");
+    }
+  }, [sessionStatus, userRole, router]);
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -235,6 +245,11 @@ export default function ProposalsPage() {
   const subImages: string[] = JSON.parse(formData.imageSubs || "[]");
   const subcategories = CATEGORIES[formData.category] || [];
 
+  // SELLER 리다이렉트 중이면 빈 화면
+  if (sessionStatus === "authenticated" && userRole === "SELLER") {
+    return null;
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -250,10 +265,12 @@ export default function ProposalsPage() {
           <FileText className="h-8 w-8 text-blue-600" />
           <h1 className="text-3xl font-bold">상품 제안</h1>
         </div>
-        <Button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          {showForm ? "취소" : "새 제안"}
-        </Button>
+        {isMaster && (
+          <Button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            {showForm ? "취소" : "새 제안"}
+          </Button>
+        )}
       </div>
 
       {error && (
@@ -262,8 +279,8 @@ export default function ProposalsPage() {
         </Card>
       )}
 
-      {/* 등록 폼 */}
-      {showForm && (
+      {/* 등록 폼 — MASTER만 */}
+      {isMaster && showForm && (
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">새 제안 등록</h2>
           <form onSubmit={handleSubmit} className="space-y-6">

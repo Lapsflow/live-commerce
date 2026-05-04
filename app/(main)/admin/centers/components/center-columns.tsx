@@ -144,27 +144,31 @@ export const centerColumns: ColumnDef<CenterWithStats>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={async () => {
-                if (confirm(`${center.name} 센터를 비활성화하시겠습니까?`)) {
+                const action = center.isActive ? "비활성화" : "활성화";
+                const msg = center.isActive
+                  ? `${center.name} 센터를 비활성화하시겠습니까?\n\n소속 사용자 계정은 유지됩니다.`
+                  : `${center.name} 센터를 활성화하시겠습니까?`;
+                if (confirm(msg)) {
                   try {
                     const res = await fetch(`/api/centers/${center.id}`, {
                       method: "PUT",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ isActive: false }),
+                      body: JSON.stringify({ isActive: !center.isActive }),
                     });
                     if (res.ok) {
                       window.location.reload();
                     } else {
-                      alert("비활성화에 실패했습니다.");
+                      alert(`${action}에 실패했습니다.`);
                     }
                   } catch (err) {
                     alert("오류가 발생했습니다.");
                   }
                 }
               }}
-              className="text-destructive"
+              className={center.isActive ? "text-destructive" : "text-green-600"}
             >
               <XCircle className="mr-2 h-4 w-4" />
-              비활성화
+              {center.isActive ? "비활성화" : "활성화"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

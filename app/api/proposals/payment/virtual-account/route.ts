@@ -21,6 +21,11 @@ export async function POST(req: NextRequest) {
       return errors.unauthorized();
     }
 
+    const userRole = (session.user as any)?.role;
+    if (!userRole || !["MASTER", "SUB_MASTER"].includes(userRole)) {
+      return errors.forbidden("접근 권한이 없습니다");
+    }
+
     const body = await req.json();
     const { proposalIds, totalAmount } = body;
 

@@ -152,7 +152,7 @@ export function createCrudHandler<TData = Record<string, unknown>>(
     const params = parseListParams(req);
 
     // ✨ 역할 기반 필터 적용
-    let roleFilter = {};
+    let roleWhere: Record<string, any> = {};
     if (user && (model === "order" || model === "broadcast" || model === "sale")) {
       try {
         // Create a minimal session object for getRoleBasedFilter
@@ -160,17 +160,19 @@ export function createCrudHandler<TData = Record<string, unknown>>(
           user: {
             id: user.userId,
             role: user.role,
+            centerId: user.centerId,
           },
         };
-        roleFilter = getRoleBasedFilter(session as any, model as "order" | "broadcast" | "sale");
+        const result = await getRoleBasedFilter(session as any, model as "order" | "broadcast" | "sale");
+        roleWhere = result.where;
       } catch (err) {
         logger.warn("role_filter_error", { model, userId: user.userId, error: String(err) });
       }
     }
 
     const searchWhere = buildSearchWhere(params.search, searchFields);
-    const where = Object.keys(roleFilter).length > 0
-      ? { AND: [roleFilter, searchWhere] }
+    const where = Object.keys(roleWhere).length > 0
+      ? { AND: [roleWhere, searchWhere] }
       : searchWhere;
 
     const orderBy = buildOrderBy(params.sort, sortableFields);

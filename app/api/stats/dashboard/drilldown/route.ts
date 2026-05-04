@@ -32,9 +32,9 @@ export async function GET(req: NextRequest) {
       ? new Date(fromDateStr)
       : new Date(toDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    const roleFilter = getRoleBasedFilter(session as any, "sale");
+    const { where: roleWhere } = await getRoleBasedFilter(session as any, "sale");
     const dateFilter = {
-      ...roleFilter,
+      ...roleWhere,
       saleDate: { gte: fromDate, lte: toDate },
     };
 

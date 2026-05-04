@@ -16,10 +16,10 @@ import { auth } from "@/lib/auth";
  * - fromDate?: YYYY-MM-DD (기본값: 30일 전)
  * - toDate?: YYYY-MM-DD (기본값: 오늘)
  *
- * 역할별 필터링 적용:
- * - 셀러: 본인 데이터만
- * - 관리자: 소속 셀러 데이터
- * - 마스터/부마스터: 전체 데이터
+ * 역할별 필터링:
+ * - MASTER: 전체 데이터
+ * - SUB_MASTER: 본인 센터에 방송 신청한 셀러들의 데이터
+ * - SELLER: 본인 데이터만
  */
 export async function GET(req: NextRequest) {
   try {
@@ -40,18 +40,18 @@ export async function GET(req: NextRequest) {
       : new Date(toDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     // 역할 기반 필터 적용
-    const roleFilter = getRoleBasedFilter(session as any, "sale");
+    const { where: roleWhere, sellerIds } = await getRoleBasedFilter(session as any, "sale");
 
     // 날짜 범위 필터 추가
     const dateFilter = {
-      ...roleFilter,
+      ...roleWhere,
       saleDate: {
         gte: fromDate,
         lte: toDate,
       },
     };
 
-    // 4개 쿼리 병렬 실행 (순차 → 병렬로 2.9s → ~1s)
+    // 4개 쿼리 병렬 실행
     const [aggregates, dailySalesRaw, sellerRankingRaw, marginResult] = await Promise.all([
       // 1. 총 매출 및 건수, 평균 단가
       prisma.sale.aggregate({
@@ -61,8 +61,8 @@ export async function GET(req: NextRequest) {
         _count: true,
       }),
 
-      // 2. 일별 매출
-      roleFilter.sellerId
+      // 2. 일별 매출 (raw SQL — sellerIds로 필터)
+      sellerIds !== null
         ? prisma.$queryRaw<Array<{ date: Date; totalSales: bigint; count: bigint }>>`
             SELECT
               DATE("saleDate") as date,
@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
             FROM "Sale"
             WHERE "saleDate" >= ${fromDate}
               AND "saleDate" <= ${toDate}
-              AND "sellerId" = ${roleFilter.sellerId}
+              AND "sellerId" = ANY(${sellerIds})
             GROUP BY DATE("saleDate")
             ORDER BY date ASC
           `
@@ -97,15 +97,15 @@ export async function GET(req: NextRequest) {
         take: 10,
       }),
 
-      // 4. 총 마진 — DB에서 직접 계산 (전체 Sale fetch 제거)
-      roleFilter.sellerId
+      // 4. 총 마진 — DB에서 직접 계산
+      sellerIds !== null
         ? prisma.$queryRaw<[{ totalMargin: bigint | null }]>`
             SELECT COALESCE(SUM((s."unitPrice" - p."supplyPrice") * s."quantity"), 0)::bigint as "totalMargin"
             FROM "Sale" s
             JOIN "Product" p ON s."productId" = p."id"
             WHERE s."saleDate" >= ${fromDate}
               AND s."saleDate" <= ${toDate}
-              AND s."sellerId" = ${roleFilter.sellerId}
+              AND s."sellerId" = ANY(${sellerIds})
           `
         : prisma.$queryRaw<[{ totalMargin: bigint | null }]>`
             SELECT COALESCE(SUM((s."unitPrice" - p."supplyPrice") * s."quantity"), 0)::bigint as "totalMargin"
@@ -128,9 +128,9 @@ export async function GET(req: NextRequest) {
     }));
 
     // 셀러 정보 조회
-    const sellerIds = sellerRankingRaw.map((item) => item.sellerId);
+    const sellerIdList = sellerRankingRaw.map((item) => item.sellerId);
     const sellers = await prisma.user.findMany({
-      where: { id: { in: sellerIds } },
+      where: { id: { in: sellerIdList } },
       select: { id: true, name: true },
     });
 

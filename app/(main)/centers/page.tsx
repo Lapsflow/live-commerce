@@ -115,15 +115,25 @@ export default function CentersPage() {
   };
 
   const handleToggleActive = async (center: Center) => {
+    const action = center.isActive ? "비활성화" : "활성화";
+    if (!confirm(`${center.name} 센터를 ${action}하시겠습니까?\n\n${center.isActive ? "비활성화해도 소속 사용자 계정은 유지됩니다." : ""}`)) {
+      return;
+    }
+    const newActive = !center.isActive;
     try {
       const res = await fetch(`/api/centers/${center.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: !center.isActive }),
+        body: JSON.stringify({ isActive: newActive }),
       });
       if (res.ok) {
-        toast.success(center.isActive ? "센터가 비활성화되었습니다" : "센터가 활성화되었습니다");
-        loadCenters();
+        toast.success(`센터가 ${action}되었습니다`);
+        // 비활성화 시 "전체" 보기로 전환하여 센터가 목록에서 사라지지 않도록 함
+        if (!newActive && showActiveOnly) {
+          setShowActiveOnly(false); // useEffect가 loadCenters() 호출
+        } else {
+          loadCenters();
+        }
       } else {
         toast.error("상태 변경 실패");
       }

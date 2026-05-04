@@ -8,6 +8,7 @@ import { sendNotification } from "@/lib/services/notifications";
  * POST /api/proposals/cart/checkout
  *
  * 장바구니 전체 샘플 일괄 주문
+ * 권한: MASTER, SUB_MASTER만 가능
  * 장바구니의 모든 아이템을 Proposal로 변환하고 장바구니 비우기
  */
 export async function POST(req: NextRequest) {
@@ -15,6 +16,11 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) {
       return errors.unauthorized();
+    }
+
+    const userRole = (session.user as any)?.role;
+    if (!userRole || !["MASTER", "SUB_MASTER"].includes(userRole)) {
+      return errors.forbidden("접근 권한이 없습니다");
     }
 
     // 장바구니 아이템 조회

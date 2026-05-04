@@ -8,13 +8,18 @@ import { calculateShippingFee } from "@/lib/constants/shipping";
  * GET /api/proposals/cart
  *
  * 샘플 장바구니 조회
- * 현재 로그인한 사용자의 장바구니 아이템 목록을 반환
+ * 권한: MASTER, SUB_MASTER만 가능
  */
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       return errors.unauthorized();
+    }
+
+    const userRole = (session.user as any)?.role;
+    if (!userRole || !["MASTER", "SUB_MASTER"].includes(userRole)) {
+      return errors.forbidden("접근 권한이 없습니다");
     }
 
     const cartItems = await prisma.proposalCart.findMany({
@@ -68,6 +73,7 @@ export async function GET(req: NextRequest) {
  * POST /api/proposals/cart
  *
  * 샘플 장바구니에 상품 추가
+ * 권한: MASTER, SUB_MASTER만 가능
  * Request Body: { productId, quantity?, samplePrice? }
  */
 export async function POST(req: NextRequest) {
@@ -75,6 +81,11 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) {
       return errors.unauthorized();
+    }
+
+    const userRole = (session.user as any)?.role;
+    if (!userRole || !["MASTER", "SUB_MASTER"].includes(userRole)) {
+      return errors.forbidden("접근 권한이 없습니다");
     }
 
     const body = await req.json();
@@ -157,12 +168,18 @@ export async function POST(req: NextRequest) {
  * DELETE /api/proposals/cart?productId={productId}
  *
  * 샘플 장바구니에서 상품 제거
+ * 권한: MASTER, SUB_MASTER만 가능
  */
 export async function DELETE(req: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       return errors.unauthorized();
+    }
+
+    const userRole = (session.user as any)?.role;
+    if (!userRole || !["MASTER", "SUB_MASTER"].includes(userRole)) {
+      return errors.forbidden("접근 권한이 없습니다");
     }
 
     const { searchParams } = new URL(req.url);
