@@ -5,9 +5,9 @@ test.use({ storageState: 'playwright/.auth/seller.json' });
 
 test.describe('Order List Page - Seller', () => {
 
-  test('페이지 제목 "발주 관리" 표시', async ({ page }) => {
+  test('페이지 제목 "내 발주" 표시', async ({ page }) => {
     await navigateToOrders(page);
-    await expect(page.getByRole('heading', { name: '발주 관리' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '내 발주' })).toBeVisible();
   });
 
   test('주문 목록 또는 빈 상태 표시', async ({ page }) => {

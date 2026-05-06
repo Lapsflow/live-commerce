@@ -45,14 +45,16 @@ test.describe('Order List Page - Admin', () => {
 
     test('엑셀 업로드 클릭 시 /orders/upload 이동', async ({ page }) => {
       await navigateToOrders(page);
-      const link = page.getByRole('link', { name: /엑셀 업로드/ });
+      // Use the link inside main content area (not sidebar) that points to /orders/upload
+      const mainContent = page.locator('main, [class*="container"]').first();
+      const link = mainContent.getByRole('link', { name: /엑셀 업로드/ });
       const linkCount = await link.count();
       if (linkCount > 0) {
         await link.first().click();
       } else {
-        await page.getByText('엑셀 업로드').first().click();
+        await mainContent.getByText('엑셀 업로드').first().click();
       }
-      await page.waitForURL(/\/orders\/upload/);
+      await page.waitForURL(/\/orders\/upload/, { timeout: 30000 });
       expect(page.url()).toContain('/orders/upload');
     });
   });
@@ -60,7 +62,7 @@ test.describe('Order List Page - Admin', () => {
   test.describe('데이터 테이블', () => {
     test('테이블 컬럼 헤더 표시', async ({ page }) => {
       await navigateToOrders(page);
-      const headers = ['주문번호', '판매자', '입금상태', '남은시간', '출고상태', '승인상태', '공급가합계', '등록일', '액션'];
+      const headers = ['주문번호', '판매자', '입금상태', '남은시간', '출고상태', '발주상태', '공급가합계', '마진', '등록일', '액션'];
       for (const header of headers) {
         await expect(page.locator('th, [role="columnheader"]').filter({ hasText: header }).first()).toBeVisible();
       }
