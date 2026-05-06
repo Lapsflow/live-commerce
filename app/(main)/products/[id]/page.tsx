@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Lock, Pencil, Trash2, Save, X } from "lucide-react";
+import { ArrowLeft, Lock, Pencil, Trash2, Save, X, RefreshCw, Info } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -82,19 +82,26 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [categoryEdit, setCategoryEdit] = useState("");
   const [notesEdit, setNotesEdit] = useState("");
 
-  // CENTER 상품은 SUB_MASTER도 가격 수정 가능
-  const canEditPrice = isMaster || (
-    product?.productType === "CENTER" &&
-    userRole === "SUB_MASTER" &&
-    product?.managedBy === userCenterId
-  );
+  const isHQ = product?.productType === "HEADQUARTERS";
+  const isMasterOrSub = ["MASTER", "SUB_MASTER"].includes(userRole);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  // SUB_MASTER: 본인 센터 상품만 수정 가능
-  const canEdit = isMaster || (
+  // HEADQUARTERS 상품: 슈퍼무진에서 수정 불가 (ONEWMS source of truth)
+  // CENTER 상품: SUB_MASTER도 가격 수정 가능
+  const canEditPrice = !isHQ && (isMaster || (
+    userRole === "SUB_MASTER" &&
+    product?.managedBy === userCenterId
+  ));
+
+  // HEADQUARTERS 상품은 누구도 수정 불가 (ONEWMS에서만 변경)
+  const canEdit = !isHQ && (isMaster || (
     userRole === "SUB_MASTER" &&
     product?.productType === "CENTER" &&
     product?.managedBy === userCenterId
-  );
+  ));
+
+  // HQ 상품 활성/비활성 토글은 MASTER만 가능
+  const canToggleHqActive = isHQ && isMaster;
 
   // Extract params
   useEffect(() => {
@@ -289,6 +296,36 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     }
   };
 
+  const handleForceSync = async () => {
+    if (!product) return;
+    setIsSyncing(true);
+    try {
+      const res = await fetch(`/api/products/${productId}/force-sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (data.data?.synced) {
+          toast.success(data.data.message);
+          // Refresh product data
+          setProduct(data.data.product);
+          setSellPrice(String(data.data.product.sellPrice));
+          setSupplyPrice(String(data.data.product.supplyPrice));
+          setOriginalPriceEdit(String(data.data.product.originalPrice || ""));
+        } else {
+          toast.info(data.data?.message || "이미 최신 상태입니다");
+        }
+      } else {
+        toast.error(data.error?.message || "동기화 실패");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const handleCancel = () => {
     if (!product) return;
 
@@ -344,7 +381,26 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
         <div className="flex gap-2">
-          {!isEditing ? (
+          {isHQ ? (
+            <>
+              {isMasterOrSub && (
+                <Button variant="outline" onClick={handleForceSync} disabled={isSyncing}>
+                  <RefreshCw className={`mr-2 h-4 w-4 ${isSyncing ? "animate-spin" : ""}`} />
+                  {isSyncing ? "동기화 중..." : "ONEWMS 동기화"}
+                </Button>
+              )}
+              {canToggleHqActive && (product?.isActive !== false ? (
+                <Button variant="destructive" onClick={handleDeactivate}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  비활성화
+                </Button>
+              ) : (
+                <Button variant="outline" className="text-green-600 border-green-300" onClick={handleReactivate}>
+                  활성화
+                </Button>
+              ))}
+            </>
+          ) : !isEditing ? (
             <>
               {canEdit && (
                 <Button variant="outline" onClick={() => setIsEditing(true)}>
@@ -395,14 +451,29 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             </Badge>
           </div>
           <CardDescription>
-            {product.productType === "HEADQUARTERS"
-              ? "본사 WMS 상품은 바코드가 필수입니다"
+            {isHQ
+              ? "본사(WMS) 상품은 ONEWMS에서만 수정할 수 있습니다. 재고·가격은 자동 동기화됩니다."
               : "센터 자사몰 상품은 센터별로 관리됩니다"}
-            {!isMaster && " (가격은 마스터만 변경 가능)"}
+            {!isHQ && !isMaster && " (가격은 마스터만 변경 가능)"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
+            {/* HQ 상품 읽기전용 안내 */}
+            {isHQ && (
+              <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950/30">
+                <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+                <div className="text-sm text-blue-800 dark:text-blue-300">
+                  <p className="font-medium">ONEWMS 연동 상품 (읽기 전용)</p>
+                  <p className="mt-1 text-blue-700 dark:text-blue-400">
+                    이 상품의 정보(이름, 바코드, 가격, 재고)는 ONEWMS에서 자동 동기화됩니다.
+                    슈퍼무진에서 직접 수정할 수 없습니다. 변경이 필요하면 ONEWMS에서 수정 후
+                    &quot;ONEWMS 동기화&quot; 버튼을 눌러주세요.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Code */}
             <div className="space-y-2">
               <Label htmlFor="code">상품코드</Label>

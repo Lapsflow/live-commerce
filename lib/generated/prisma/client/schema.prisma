@@ -112,6 +112,12 @@ model Product {
   deactivatedAt     DateTime?
   deactivatedReason String?
 
+  // ✨ ONEWMS 자동 등록 추적 (바코드 스캔 or 크론)
+  autoCreated   Boolean   @default(false)
+  autoCreatedAt DateTime?
+  reviewedAt    DateTime?
+  reviewedBy    String?
+
   // ✨ Phase 3: Sample Shopping Mall
   isSample       Boolean         @default(false)
   sampleCategory SampleCategory?
@@ -135,6 +141,7 @@ model Product {
   @@index([managedBy])
   @@index([isActive])
   @@index([managedBy, productType, isActive])
+  @@index([autoCreated, reviewedAt])
 }
 
 enum ProductType {

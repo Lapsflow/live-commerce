@@ -6,14 +6,14 @@ import type { Product } from "@/types/product";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, Package, FileSpreadsheet, RotateCcw, Eye, EyeOff } from "lucide-react";
+import { Plus, Package, FileSpreadsheet, RotateCcw, Eye, EyeOff, Sparkles, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { StockSyncButton } from "./components/stock-sync-button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
-const columns: ColumnDef<Product>[] = [
+const baseColumns: ColumnDef<Product>[] = [
   {
     accessorKey: "code",
     header: "상품코드",
@@ -127,14 +127,47 @@ export default function ProductsPage() {
 
   const [productTypeFilter, setProductTypeFilter] = useState<"ALL" | "HEADQUARTERS" | "CENTER">("ALL");
   const [showInactive, setShowInactive] = useState(false);
+  const [showAutoCreated, setShowAutoCreated] = useState(false);
+  const [autoCreatedCount, setAutoCreatedCount] = useState(0);
   const [resetting, setResetting] = useState(false);
+
+  // Fetch unreviewed auto-created count (MASTER/SUB_MASTER only)
+  useEffect(() => {
+    if (!isMasterOrSub) return;
+    fetch("/api/products/auto-created?reviewed=false&limit=1")
+      .then((r) => r.json())
+      .then((d) => setAutoCreatedCount(d.data?.totalCount ?? 0))
+      .catch(() => {});
+  }, [isMasterOrSub]);
 
   const params = new URLSearchParams();
   if (productTypeFilter !== "ALL") params.set("productType", productTypeFilter);
   if (showInactive) params.set("showInactive", "true");
+  if (showAutoCreated) params.set("autoCreated", "true");
   const qs = params.toString();
-  const apiPath = `/api/products${qs ? `?${qs}` : ""}`;
+  const apiPath = showAutoCreated
+    ? `/api/products/auto-created?reviewed=false&limit=50`
+    : `/api/products${qs ? `?${qs}` : ""}`;
   const { dataSource, refresh } = useApiCrud<Product>(apiPath);
+
+  const handleReview = async (productId: string) => {
+    try {
+      const res = await fetch(`/api/products/auto-created/${productId}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.ok) {
+        toast.success("검토 완료");
+        setAutoCreatedCount((c) => Math.max(0, c - 1));
+        refresh();
+      } else {
+        const data = await res.json();
+        toast.error(data.error?.message || "검토 처리 실패");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다");
+    }
+  };
 
   const handleResetStock = async () => {
     if (!userCenterId) {
@@ -253,13 +286,52 @@ export default function ProductsPage() {
             </Button>
           </>
         )}
+        {isMasterOrSub && autoCreatedCount > 0 && (
+          <>
+            <div className="w-px h-6 bg-border mx-1" />
+            <Button
+              variant={showAutoCreated ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowAutoCreated(!showAutoCreated)}
+              className={showAutoCreated ? "" : "border-amber-300 text-amber-700 hover:bg-amber-50"}
+            >
+              <Sparkles className="mr-1 h-3 w-3" />
+              자동 등록 {autoCreatedCount}건 미검토
+            </Button>
+          </>
+        )}
       </div>
 
       {/* Data Table */}
       <DataTable
-        columns={columns}
+        columns={showAutoCreated ? [
+          ...baseColumns.filter((c) => c.id !== "actions"),
+          {
+            id: "autoCreatedAt",
+            header: "자동 등록일",
+            cell: ({ row }: { row: any }) => {
+              const d = row.original.autoCreatedAt;
+              return d ? new Date(d).toLocaleDateString("ko-KR") : "-";
+            },
+          },
+          {
+            id: "review-action",
+            header: "검토",
+            cell: ({ row }: { row: any }) => (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleReview(row.original.id)}
+                className="text-green-700 border-green-300 hover:bg-green-50"
+              >
+                <CheckCircle className="mr-1 h-3 w-3" />
+                검토 완료
+              </Button>
+            ),
+          },
+        ] : baseColumns}
         dataSource={dataSource}
-        title="상품 목록"
+        title={showAutoCreated ? "자동 등록 상품 (미검토)" : "상품 목록"}
         searchPlaceholder="상품명 또는 바코드 검색..."
       />
     </div>

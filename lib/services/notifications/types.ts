@@ -18,6 +18,7 @@ export type NotificationType =
   | "BROADCAST_STARTED"      // LIVE-09: 방송 시작됨
   | "BROADCAST_ENDED"        // LIVE-09: 방송 종료됨
   | "SAMPLE_CHECKOUT"        // PROPOSAL-09: 샘플 결제 완료
+  | "PRODUCT_AUTO_CREATED"  // ONEWMS 자동 등록 → 마스터 검토 알림
   ;
 
 export type NotificationChannel = "ALIMTALK" | "LMS" | "SMS" | "EMAIL";

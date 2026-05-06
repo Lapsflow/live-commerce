@@ -153,4 +153,15 @@ export const TEMPLATES: Record<NotificationType, Template> = {
       `상품 수: ${v.itemCount || "-"}건\n` +
       `샘플 요청이 접수되었습니다. 확인해 주세요.`,
   },
+
+  // ── ONEWMS 자동 등록 → 마스터 ──
+  PRODUCT_AUTO_CREATED: {
+    templateId: "TPL_PRODUCT_AUTO_CREATED",
+    description: "ONEWMS 상품 자동 등록 알림 → 마스터",
+    buildMessage: (v) =>
+      `[슈퍼무진] 상품 자동 등록\n\n` +
+      `상품명: ${v.productName || "-"}\n` +
+      `바코드: ${v.barcode || "-"}\n` +
+      `${v.message || "ONEWMS에서 자동 등록되었습니다. 검토해 주세요."}`,
+  },
 };

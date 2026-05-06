@@ -256,6 +256,110 @@ export async function syncStockFromOnewms(
 }
 
 /**
+ * Auto-import NEW products from ONEWMS that don't exist in DB yet.
+ * Called from stock-sync cron to detect and register new ONEWMS products.
+ * Only creates products with onewmsCode not yet in DB.
+ */
+export async function autoImportNewProducts(): Promise<{
+  total: number;
+  created: number;
+  skipped: number;
+  errors: number;
+}> {
+  const result = { total: 0, created: 0, skipped: 0, errors: 0 };
+
+  const client = createOnewmsClient();
+
+  // Get all existing onewmsCodes in DB
+  const existingProducts = await prisma.product.findMany({
+    where: { onewmsCode: { not: null } },
+    select: { onewmsCode: true, barcode: true },
+  });
+  const existingOnewmsCodes = new Set(existingProducts.map((p) => p.onewmsCode));
+  const existingBarcodes = new Set(existingProducts.map((p) => p.barcode));
+
+  // Fetch all ONEWMS products (paginated)
+  const onewmsProducts: ProductInfo[] = [];
+  for (let page = 1; page <= 20; page++) {
+    const { data: products, total } = await client.getProductList(page, 100);
+    onewmsProducts.push(...products);
+    if (page * 100 >= total) break;
+  }
+
+  result.total = onewmsProducts.length;
+
+  // Filter to only new products
+  const newProducts = onewmsProducts.filter(
+    (p) => p.product_id && !existingOnewmsCodes.has(p.product_id)
+  );
+
+  if (newProducts.length === 0) {
+    console.log(`[AUTO-IMPORT] No new products found (${result.total} total in ONEWMS)`);
+    return result;
+  }
+
+  console.log(`[AUTO-IMPORT] Found ${newProducts.length} new products to import`);
+
+  for (const p of newProducts) {
+    const onewmsCode = p.product_id!;
+    try {
+      const originalBarcode = p.barcode?.trim() || '';
+      const code = `WMS-${onewmsCode}`;
+      const productName = p.name || `WMS Product ${onewmsCode}`;
+      const sellPrice = parseInt(String(p.shop_price || '0'), 10) || 0;
+      const supplyPrice = parseInt(String(p.supply_price || '0'), 10) || 0;
+      const originalPrice = parseInt(String(p.org_price || '0'), 10) || 0;
+
+      // Barcode dedup
+      let dbBarcode = originalBarcode || `WMS-NOBC-${onewmsCode}`;
+      if (existingBarcodes.has(dbBarcode)) {
+        dbBarcode = `${originalBarcode}-${onewmsCode}`;
+      }
+
+      // Code dedup
+      const existingCode = await prisma.product.findUnique({
+        where: { code },
+        select: { id: true },
+      });
+      const finalCode = existingCode ? `WMS-${onewmsCode}-${Date.now().toString(36)}` : code;
+
+      await prisma.product.create({
+        data: {
+          code: finalCode,
+          name: productName,
+          barcode: dbBarcode,
+          sellPrice,
+          supplyPrice,
+          originalPrice,
+          onewmsCode,
+          onewmsBarcode: originalBarcode || null,
+          productType: 'HEADQUARTERS',
+          isWmsProduct: true,
+          isActive: true,
+          autoCreated: true,
+          autoCreatedAt: new Date(),
+        },
+      });
+
+      existingBarcodes.add(dbBarcode);
+      result.created++;
+    } catch (error) {
+      result.errors++;
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`[AUTO-IMPORT] Failed to create product ${onewmsCode}:`, message);
+    }
+  }
+
+  result.skipped = result.total - newProducts.length;
+
+  console.log(
+    `[AUTO-IMPORT] Done: ${result.created} created, ${result.skipped} skipped (existing), ${result.errors} errors`
+  );
+
+  return result;
+}
+
+/**
  * Sync product prices (originalPrice, sellPrice, supplyPrice) from ONEWMS.
  * Only updates HEADQUARTERS products. CENTER products are never touched.
  * Called from stock-sync cron alongside stock sync.

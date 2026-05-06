@@ -135,11 +135,69 @@ export const PUT = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (
       }
     }
 
+    // ── HEADQUARTERS 상품 수정 불가 정책 ──
+    // 본사(WMS) 상품은 ONEWMS → 슈퍼무진 단방향 동기화만 허용
+    // 사용자가 직접 수정할 수 있는 것: isActive 토글(MASTER only)
+    if (existingProduct.productType === "HEADQUARTERS") {
+      const allowedHqFields = ["isActive"];
+      const attemptedFields = Object.keys(data).filter(
+        (k) => (data as any)[k] !== undefined && !allowedHqFields.includes(k)
+      );
+
+      if (attemptedFields.length > 0) {
+        return error(
+          "FORBIDDEN",
+          "본사(WMS) 상품은 ONEWMS에서만 수정할 수 있습니다. 슈퍼무진에서 직접 수정이 불가합니다.",
+          403
+        );
+      }
+
+      // isActive toggle: MASTER only
+      const updateData: any = {};
+      if (data.isActive !== undefined) {
+        if (user.role !== "MASTER") {
+          return error(
+            "FORBIDDEN",
+            "본사 상품 활성/비활성 변경은 전체관리자만 가능합니다.",
+            403
+          );
+        }
+        updateData.isActive = data.isActive;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        return ok(existingProduct);
+      }
+
+      const product = await prisma.product.update({
+        where: { id },
+        data: updateData,
+      });
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "UPDATE",
+        entityType: "Product",
+        entityId: product.id,
+        entityName: product.name,
+        before: { isActive: existingProduct.isActive },
+        after: { isActive: product.isActive },
+        description: `본사 상품 ${data.isActive ? "활성화" : "비활성화"}: ${product.name} (${product.code})`,
+        request: req,
+      });
+
+      return ok(product);
+    }
+
+    // ── 이하 CENTER 상품만 해당 ──
+
     // Phase 2: Product type validation
     const newProductType = data.productType || existingProduct.productType;
 
     if (newProductType === "HEADQUARTERS") {
-      // WMS products: barcode required
+      // CENTER → HEADQUARTERS 변경 시 바코드 필수
       const newBarcode = data.barcode || existingProduct.barcode;
       if (!newBarcode) {
         return error(
@@ -150,27 +208,15 @@ export const PUT = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (
       }
     }
 
-    // Update product
+    // Update product (CENTER only)
     const updateData: any = {};
     if (data.code !== undefined) updateData.code = data.code;
     if (data.name !== undefined) updateData.name = data.name;
     if (data.barcode !== undefined) updateData.barcode = data.barcode;
 
-    // Phase 2: WMS products have read-only pricing (API-level enforcement)
-    if (existingProduct.productType === "HEADQUARTERS") {
-      // Block price changes for WMS products
-      if (data.sellPrice !== undefined || data.supplyPrice !== undefined) {
-        return error(
-          "FORBIDDEN",
-          "본사(WMS) 상품은 가격을 수정할 수 없습니다.",
-          403
-        );
-      }
-    } else {
-      // CENTER products: allow price updates
-      if (data.sellPrice !== undefined) updateData.sellPrice = data.sellPrice;
-      if (data.supplyPrice !== undefined) updateData.supplyPrice = data.supplyPrice;
-    }
+    // CENTER products: allow price updates
+    if (data.sellPrice !== undefined) updateData.sellPrice = data.sellPrice;
+    if (data.supplyPrice !== undefined) updateData.supplyPrice = data.supplyPrice;
 
     if (data.totalStock !== undefined) updateData.totalStock = data.totalStock;
     if (data.stockMujin !== undefined) updateData.stockMujin = data.stockMujin;
@@ -264,14 +310,15 @@ export const DELETE = withRole(["MASTER", "SUB_MASTER"], async (
       return error("NOT_FOUND", "상품을 찾을 수 없습니다.", 404);
     }
 
+    // HEADQUARTERS 상품: MASTER만 비활성화 가능
+    if (product.productType === "HEADQUARTERS" && user.role !== "MASTER") {
+      return error("FORBIDDEN", "본사(WMS) 상품은 전체관리자만 비활성화할 수 있습니다.", 403);
+    }
+
     // SUB_MASTER: 본인 센터 상품만 비활성화 가능
-    if (user.role === "SUB_MASTER") {
-      if (product.productType === "CENTER" && product.managedBy !== user.centerId) {
+    if (user.role === "SUB_MASTER" && product.productType === "CENTER") {
+      if (product.managedBy !== user.centerId) {
         return error("FORBIDDEN", "다른 센터의 상품은 비활성화할 수 없습니다.", 403);
-      }
-      // HQ 상품은 MASTER만 비활성화 가능
-      if (product.productType === "HEADQUARTERS") {
-        return error("FORBIDDEN", "본사 상품은 전체관리자만 비활성화할 수 있습니다.", 403);
       }
     }
 

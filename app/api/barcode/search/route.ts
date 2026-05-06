@@ -5,6 +5,7 @@ import { ok, errors } from '@/lib/api/response';
 import { normBarcode } from '@/lib/utils/barcode';
 import { getActiveCenterIdForSeller } from '@/lib/services/broadcasts';
 import { getRealtimeStock } from '@/lib/services/onewms/realtime';
+import { autoRegisterFromOnewms } from '@/lib/services/onewms/autoRegister';
 
 interface WarehouseStock {
   warehouseId: string;
@@ -71,6 +72,28 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
   });
 
   if (!product) {
+    // ONEWMS Fallback: DB에 없으면 ONEWMS에서 검색 → 자동 등록
+    try {
+      const autoResult = await autoRegisterFromOnewms(normalized);
+      if (autoResult) {
+        const result: ProductWithInventory = {
+          id: autoResult.product.id,
+          name: autoResult.product.name,
+          code: autoResult.product.code,
+          barcode: autoResult.product.barcode,
+          sellPrice: autoResult.product.sellPrice,
+          supplyPrice: autoResult.product.supplyPrice,
+          totalStock: autoResult.product.totalStock,
+          stockSource: autoResult.stockSource,
+          stockFetchedAt: autoResult.stockFetchedAt,
+          warehouses: [],
+        };
+        return ok(result);
+      }
+    } catch (err) {
+      console.error('[BARCODE] ONEWMS auto-register fallback failed:', err);
+    }
+
     return errors.notFound('상품');
   }
 
