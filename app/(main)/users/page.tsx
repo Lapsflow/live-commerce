@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { RoleBadge } from "@/components/users/role-badge";
 import { UserEditDialog } from "@/components/users/user-edit-dialog";
+import { UserAddDialog } from "@/components/users/user-add-dialog";
 import {
   Users as UsersIcon,
   Search,
@@ -42,8 +43,10 @@ export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   const userRole = (session?.user as any)?.role;
+  const userCenterId = (session?.user as any)?.centerId;
   const hasAccess = userRole === "MASTER" || userRole === "SUB_MASTER";
 
   useEffect(() => {
@@ -162,7 +165,7 @@ export default function UsersPage() {
           <h1 className="text-3xl font-bold text-grey-900">사용자 관리</h1>
         </div>
         <Button
-          onClick={() => (window.location.href = "/signup")}
+          onClick={() => setAddDialogOpen(true)}
           className="flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
@@ -212,7 +215,7 @@ export default function UsersPage() {
           <TabsContent value="all">
             <UserTable
               users={allUsers}
-              columns={["name", "email", "phone", "role", "isActive", "channels", "avgSales", "createdAt"]}
+              columns={["name", "email", "phone", "role", "center", "isActive", "channels", "avgSales", "createdAt"]}
               onEdit={handleEditUser}
               onRowClick={(user) => router.push(`/users/${user.id}`)}
               onToggleActive={handleToggleActive}
@@ -289,6 +292,17 @@ export default function UsersPage() {
         onOpenChange={setEditDialogOpen}
         onSuccess={() => loadUsers()}
       />
+
+      <UserAddDialog
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+        onSuccess={() => {
+          loadUsers();
+          toast.success("사용자가 생성되었습니다");
+        }}
+        currentUserRole={userRole}
+        currentUserCenterId={userCenterId}
+      />
     </div>
   );
 }
@@ -300,6 +314,7 @@ type ColumnKey =
   | "email"
   | "phone"
   | "role"
+  | "center"
   | "channels"
   | "avgSales"
   | "isActive"
@@ -310,6 +325,7 @@ const columnConfig: Record<ColumnKey, { label: string; align?: "right" | "center
   email: { label: "이메일" },
   phone: { label: "전화번호" },
   role: { label: "역할" },
+  center: { label: "소속 센터" },
   channels: { label: "활동 채널" },
   avgSales: { label: "평균 매출", align: "right" },
   isActive: { label: "상태", align: "center" },
@@ -382,6 +398,7 @@ function UserTable({
                       {col === "email" && user.email}
                       {col === "phone" && (user.phone || "-")}
                       {col === "role" && <RoleBadge role={user.role} />}
+                      {col === "center" && (user.center?.name || "-")}
                       {col === "channels" &&
                         (user.channels?.length > 0
                           ? user.channels.join(", ")

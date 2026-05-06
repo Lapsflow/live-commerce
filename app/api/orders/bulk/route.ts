@@ -23,6 +23,7 @@ export const POST = withRole(
       const formData = await req.formData();
       const file = formData.get("file") as File | null;
       const isPreview = formData.get("preview") === "true";
+      const isCreditTrade = formData.get("isCreditTrade") === "true";
 
       if (!file) {
         return errors.badRequest("파일이 필요합니다.");
@@ -142,6 +143,8 @@ export const POST = withRole(
             sellerId,
             status: "PENDING", // Stage 2: 담당자 검수 대기
             totalAmount,
+            isCreditTrade,
+            ...(isCreditTrade ? { paymentStatus: "PAID" as const, paidAt: new Date() } : {}),
             totalMargin: totalAmount - totalSupply,
             memo: firstItem.memo || undefined,
             recipient: firstItem.recipient || undefined,

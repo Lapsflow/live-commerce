@@ -293,6 +293,9 @@ model Order {
   cancelledAt  DateTime? // 취소 시각
   cancelReason String?   // "EXPIRED" | "SELLER_CANCELLED" | "ADMIN_CANCELLED"
 
+  // ✨ 외상거래 (입금 스킵 → 바로 출고대기)
+  isCreditTrade Boolean @default(false)
+
   // ✨ LIVE-03: 발주서→방송 자동 매칭
   broadcastId  String? // 매칭된 방송 ID (자동 또는 수동)
   matchType    String? // "AUTO" | "MANUAL" | null(미매칭)
@@ -406,6 +409,8 @@ model Broadcast {
   startedAt   DateTime?
   endedAt     DateTime?
   status      BroadcastStatus   @default(SCHEDULED)
+  title       String? // 방송 제목
+  expectedProducts String? // 예상 상품 목록 (텍스트)
   memo        String?
   requestMemo     String? // 셀러 신청 메모
   rejectionReason String? // 반려 사유

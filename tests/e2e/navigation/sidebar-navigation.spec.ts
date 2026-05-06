@@ -8,20 +8,20 @@ import { test, expect } from '@playwright/test';
  * Tests role-based navigation (SELLER, MASTER)
  *
  * Actual sidebar labels by role:
- * SELLER: 대시보드, 방송, 방송 캘린더, 발주, 판매, 상품 제안, 바코드
- * MASTER: 전체 통계, 사용자 관리, 센터 관리, 계약 승인, 발주 관리, 방송 관리, 방송 캘린더, 상품 관리, 상품 제안, 바코드
+ * SELLER: 내 통계, 방송 신청, 방송 캘린더, 내 발주, 상품 제안, 샘플 요청, 바코드
+ * MASTER: 전체 통계, 사용자 관리, 센터 관리, 계약 승인, 발주 관리, 방송 관리, 방송 캘린더, 상품 관리, 엑셀 업로드, 센터 상품 현황, 상품 제안, 샘플 요청, 바코드, 변경 이력, 동기화 모니터
  */
 
 test.describe('Sidebar Navigation (SELLER role)', () => {
   test.use({ storageState: 'playwright/.auth/seller.json' });
 
   const sellerLinks = [
-    '대시보드',
-    '방송',
-    '발주',
-    '판매',
-    '바코드',
+    '내 통계',
+    '방송 신청',
+    '내 발주',
     '상품 제안',
+    '샘플 요청',
+    '바코드',
   ];
 
   test.beforeEach(async ({ page }) => {
@@ -67,11 +67,11 @@ test.describe('Sidebar Navigation (MASTER role)', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' });
 
   const masterLinks = [
-    '대시보드',
+    '전체 통계',
     '사용자 관리',
     '센터 관리',
     '계약 승인',
-    '방송',
+    '방송 관리',
     '바코드',
     '상품 제안',
   ];
@@ -162,7 +162,7 @@ test.describe('Sidebar Navigation - Role-Based Visibility (SELLER)', () => {
     await page.waitForLoadState('networkidle');
 
     // Admin-only links that SELLER should NOT see
-    const adminOnlyLinks = ['센터 관리', '사용자 관리', '계약 승인', '셀러 관리'];
+    const adminOnlyLinks = ['센터 관리', '사용자 관리', '계약 승인', '셀러 관리', '입금 관리', '발주 컨펌'];
 
     for (const linkText of adminOnlyLinks) {
       const link = page.locator(`nav a:has-text("${linkText}")`).or(

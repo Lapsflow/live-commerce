@@ -55,6 +55,14 @@ export default function DashboardPage() {
   const userId = (session?.user as any)?.id;
   const userRole = (session?.user as any)?.role;
   const isSeller = userRole === "SELLER";
+  const isSubMaster = userRole === "SUB_MASTER";
+
+  // 역할별 KPI 레이블
+  const kpiLabels = isSeller
+    ? { sales: "내 매출", count: "내 판매 건수", avgPrice: "내 평균 단가", margin: "내 마진" }
+    : isSubMaster
+      ? { sales: "센터 매출", count: "센터 판매 건수", avgPrice: "평균 단가", margin: "센터 마진" }
+      : { sales: "총 매출", count: "판매 건수", avgPrice: "평균 단가", margin: "총 마진" };
 
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [onewmsStats, setOnewmsStats] = useState<OnewmsStats | null>(null);
@@ -135,7 +143,9 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-bold">통계 대시보드</h1>
+        <h1 className="text-3xl font-bold">
+          {isSeller ? "내 통계" : isSubMaster ? "센터 대시보드" : "통계 대시보드"}
+        </h1>
         <DateRangePicker
           fromDate={fromDate}
           toDate={toDate}
@@ -146,27 +156,27 @@ export default function DashboardPage() {
       {/* KPI 카드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          label="총 매출"
+          label={kpiLabels.sales}
           value={`${stats.totalSales.toLocaleString()}원`}
           trend={stats.salesTrend}
           icon={<DollarSignIcon className="h-8 w-8" />}
           onClick={() => setDrilldownType("sales")}
         />
         <StatCard
-          label="판매 건수"
+          label={kpiLabels.count}
           value={`${stats.totalCount.toLocaleString()}건`}
           trend={stats.countTrend}
           icon={<ShoppingCartIcon className="h-8 w-8" />}
           onClick={() => setDrilldownType("count")}
         />
         <StatCard
-          label="평균 단가"
+          label={kpiLabels.avgPrice}
           value={`${stats.avgPrice.toLocaleString()}원`}
           icon={<TrendingUpIcon className="h-8 w-8" />}
           onClick={() => setDrilldownType("avgPrice")}
         />
         <StatCard
-          label="총 마진"
+          label={kpiLabels.margin}
           value={`${stats.totalMargin.toLocaleString()}원`}
           icon={<PercentIcon className="h-8 w-8" />}
           onClick={() => setDrilldownType("margin")}

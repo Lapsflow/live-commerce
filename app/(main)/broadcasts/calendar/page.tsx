@@ -111,6 +111,8 @@ export default function BroadcastCalendarPage() {
   const [requestDate, setRequestDate] = useState("");
   const [requestTime, setRequestTime] = useState("10:00");
   const [requestPlatform, setRequestPlatform] = useState("GRIP");
+  const [requestTitle, setRequestTitle] = useState("");
+  const [requestExpectedProducts, setRequestExpectedProducts] = useState("");
   const [requestMemo, setRequestMemo] = useState("");
   const [requestCenterId, setRequestCenterId] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -205,6 +207,8 @@ export default function BroadcastCalendarPage() {
     setRequestDate(dateStr);
     setRequestTime("10:00");
     setRequestPlatform("GRIP");
+    setRequestTitle("");
+    setRequestExpectedProducts("");
     setRequestMemo("");
     setRequestCenterId(isMaster ? "" : userCenterId || "");
     setRequestOpen(true);
@@ -230,6 +234,8 @@ export default function BroadcastCalendarPage() {
           platform: requestPlatform,
           scheduledAt,
           status: "REQUESTED",
+          title: requestTitle || undefined,
+          expectedProducts: requestExpectedProducts || undefined,
           requestMemo: requestMemo || undefined,
           centerId: effectiveRequestCenterId || undefined,
         }),
@@ -305,6 +311,8 @@ export default function BroadcastCalendarPage() {
               setRequestDate(format(new Date(), "yyyy-MM-dd"));
               setRequestTime("10:00");
               setRequestPlatform("GRIP");
+              setRequestTitle("");
+              setRequestExpectedProducts("");
               setRequestMemo("");
               setRequestCenterId(isMaster ? "" : userCenterId || "");
               setRequestOpen(true);
@@ -503,6 +511,14 @@ export default function BroadcastCalendarPage() {
               </div>
             </div>
             <div className="space-y-2">
+              <Label>방송 제목</Label>
+              <Input
+                value={requestTitle}
+                onChange={(e) => setRequestTitle(e.target.value)}
+                placeholder="방송 제목을 입력하세요"
+              />
+            </div>
+            <div className="space-y-2">
               <Label>플랫폼</Label>
               <Select value={requestPlatform} onValueChange={(v) => v && setRequestPlatform(v)}>
                 <SelectTrigger>
@@ -536,12 +552,21 @@ export default function BroadcastCalendarPage() {
               </div>
             )}
             <div className="space-y-2">
+              <Label>예상 상품 목록 (선택)</Label>
+              <Textarea
+                value={requestExpectedProducts}
+                onChange={(e) => setRequestExpectedProducts(e.target.value)}
+                placeholder="방송에서 판매할 상품 목록을 입력하세요"
+                rows={2}
+              />
+            </div>
+            <div className="space-y-2">
               <Label>메모 (선택)</Label>
               <Textarea
                 value={requestMemo}
                 onChange={(e) => setRequestMemo(e.target.value)}
                 placeholder="방송 관련 메모를 입력하세요"
-                rows={3}
+                rows={2}
               />
             </div>
           </div>

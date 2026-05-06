@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Upload, Download, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
 interface PreviewRow {
@@ -30,6 +32,7 @@ export default function OrderUploadPage() {
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<PreviewRow[] | null>(null);
   const [uploadError, setUploadError] = useState<any>(null);
+  const [isCreditTrade, setIsCreditTrade] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -95,6 +98,9 @@ export default function OrderUploadPage() {
     setUploadError(null);
     const formData = new FormData();
     formData.append("file", file);
+    if (isCreditTrade) {
+      formData.append("isCreditTrade", "true");
+    }
 
     try {
       const res = await fetch("/api/orders/bulk", {
@@ -181,15 +187,27 @@ export default function OrderUploadPage() {
             className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
           />
           {file && (
-            <div className="flex gap-4">
-              <Button onClick={handlePreview} disabled={loading} variant="outline">
-                미리보기 (매칭 확인)
-              </Button>
-              <Button onClick={handleUpload} disabled={loading || (preview !== null && !allMatched)}>
-                <Upload className="mr-2 h-4 w-4" />
-                {loading ? "처리 중..." : "업로드"}
-              </Button>
-            </div>
+            <>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="creditTrade"
+                  checked={isCreditTrade}
+                  onCheckedChange={(checked) => setIsCreditTrade(checked === true)}
+                />
+                <Label htmlFor="creditTrade" className="text-sm cursor-pointer">
+                  외상거래 (입금 단계 생략)
+                </Label>
+              </div>
+              <div className="flex gap-4">
+                <Button onClick={handlePreview} disabled={loading} variant="outline">
+                  미리보기 (매칭 확인)
+                </Button>
+                <Button onClick={handleUpload} disabled={loading || (preview !== null && !allMatched)}>
+                  <Upload className="mr-2 h-4 w-4" />
+                  {loading ? "처리 중..." : "업로드"}
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </Card>

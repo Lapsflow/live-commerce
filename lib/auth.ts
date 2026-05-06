@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 import { securityLogger } from "@/lib/logger";
 import { logAudit } from "@/lib/services/audit";
+import { findOrCreateCenterAccount } from "@/lib/services/center-auth";
 
 declare module "next-auth" {
   interface User {
@@ -42,7 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
           where: { username },
           include: {
             center: {
@@ -56,14 +57,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (!user) {
-          securityLogger.authFailed({ reason: "user_not_found", username });
-          logAudit({
-            action: "LOGIN_FAILED",
-            entityType: "User",
-            description: `로그인 실패 (존재하지 않는 사용자): ${username}`,
-            metadata: { reason: "user_not_found", username },
-          });
-          return null;
+          // 센터 코드로 로그인 시도 (SUB_MASTER 자동 생성)
+          const centerUser = await findOrCreateCenterAccount(username);
+          if (centerUser) {
+            user = centerUser;
+          } else {
+            securityLogger.authFailed({ reason: "user_not_found", username });
+            logAudit({
+              action: "LOGIN_FAILED",
+              entityType: "User",
+              description: `로그인 실패 (존재하지 않는 사용자): ${username}`,
+              metadata: { reason: "user_not_found", username },
+            });
+            return null;
+          }
         }
 
         // 비밀번호 검증 — DEV_AUTH_BYPASS=true일 때만 스킵 (production 차단)

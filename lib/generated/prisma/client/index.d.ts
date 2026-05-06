@@ -10916,6 +10916,7 @@ export namespace Prisma {
     expiresAt: Date | null
     cancelledAt: Date | null
     cancelReason: string | null
+    isCreditTrade: boolean | null
     broadcastId: string | null
     matchType: string | null
     taxInvoiceIssued: boolean | null
@@ -10949,6 +10950,7 @@ export namespace Prisma {
     expiresAt: Date | null
     cancelledAt: Date | null
     cancelReason: string | null
+    isCreditTrade: boolean | null
     broadcastId: string | null
     matchType: string | null
     taxInvoiceIssued: boolean | null
@@ -10982,6 +10984,7 @@ export namespace Prisma {
     expiresAt: number
     cancelledAt: number
     cancelReason: number
+    isCreditTrade: number
     broadcastId: number
     matchType: number
     taxInvoiceIssued: number
@@ -11027,6 +11030,7 @@ export namespace Prisma {
     expiresAt?: true
     cancelledAt?: true
     cancelReason?: true
+    isCreditTrade?: true
     broadcastId?: true
     matchType?: true
     taxInvoiceIssued?: true
@@ -11060,6 +11064,7 @@ export namespace Prisma {
     expiresAt?: true
     cancelledAt?: true
     cancelReason?: true
+    isCreditTrade?: true
     broadcastId?: true
     matchType?: true
     taxInvoiceIssued?: true
@@ -11093,6 +11098,7 @@ export namespace Prisma {
     expiresAt?: true
     cancelledAt?: true
     cancelReason?: true
+    isCreditTrade?: true
     broadcastId?: true
     matchType?: true
     taxInvoiceIssued?: true
@@ -11213,6 +11219,7 @@ export namespace Prisma {
     expiresAt: Date | null
     cancelledAt: Date | null
     cancelReason: string | null
+    isCreditTrade: boolean
     broadcastId: string | null
     matchType: string | null
     taxInvoiceIssued: boolean
@@ -11265,6 +11272,7 @@ export namespace Prisma {
     expiresAt?: boolean
     cancelledAt?: boolean
     cancelReason?: boolean
+    isCreditTrade?: boolean
     broadcastId?: boolean
     matchType?: boolean
     taxInvoiceIssued?: boolean
@@ -11307,6 +11315,7 @@ export namespace Prisma {
     expiresAt?: boolean
     cancelledAt?: boolean
     cancelReason?: boolean
+    isCreditTrade?: boolean
     broadcastId?: boolean
     matchType?: boolean
     taxInvoiceIssued?: boolean
@@ -11343,6 +11352,7 @@ export namespace Prisma {
     expiresAt?: boolean
     cancelledAt?: boolean
     cancelReason?: boolean
+    isCreditTrade?: boolean
     broadcastId?: boolean
     matchType?: boolean
     taxInvoiceIssued?: boolean
@@ -11379,6 +11389,7 @@ export namespace Prisma {
     expiresAt?: boolean
     cancelledAt?: boolean
     cancelReason?: boolean
+    isCreditTrade?: boolean
     broadcastId?: boolean
     matchType?: boolean
     taxInvoiceIssued?: boolean
@@ -11386,7 +11397,7 @@ export namespace Prisma {
     taxInvoiceNumber?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "broadcastId" | "matchType" | "taxInvoiceIssued" | "taxInvoiceIssuedAt" | "taxInvoiceNumber", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "isCreditTrade" | "broadcastId" | "matchType" | "taxInvoiceIssued" | "taxInvoiceIssuedAt" | "taxInvoiceNumber", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
@@ -11447,6 +11458,7 @@ export namespace Prisma {
       expiresAt: Date | null
       cancelledAt: Date | null
       cancelReason: string | null
+      isCreditTrade: boolean
       broadcastId: string | null
       matchType: string | null
       taxInvoiceIssued: boolean
@@ -11908,6 +11920,7 @@ export namespace Prisma {
     readonly expiresAt: FieldRef<"Order", 'DateTime'>
     readonly cancelledAt: FieldRef<"Order", 'DateTime'>
     readonly cancelReason: FieldRef<"Order", 'String'>
+    readonly isCreditTrade: FieldRef<"Order", 'Boolean'>
     readonly broadcastId: FieldRef<"Order", 'String'>
     readonly matchType: FieldRef<"Order", 'String'>
     readonly taxInvoiceIssued: FieldRef<"Order", 'Boolean'>
@@ -14844,6 +14857,8 @@ export namespace Prisma {
     startedAt: Date | null
     endedAt: Date | null
     status: $Enums.BroadcastStatus | null
+    title: string | null
+    expectedProducts: string | null
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
@@ -14864,6 +14879,8 @@ export namespace Prisma {
     startedAt: Date | null
     endedAt: Date | null
     status: $Enums.BroadcastStatus | null
+    title: string | null
+    expectedProducts: string | null
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
@@ -14884,6 +14901,8 @@ export namespace Prisma {
     startedAt: number
     endedAt: number
     status: number
+    title: number
+    expectedProducts: number
     memo: number
     requestMemo: number
     rejectionReason: number
@@ -14906,6 +14925,8 @@ export namespace Prisma {
     startedAt?: true
     endedAt?: true
     status?: true
+    title?: true
+    expectedProducts?: true
     memo?: true
     requestMemo?: true
     rejectionReason?: true
@@ -14926,6 +14947,8 @@ export namespace Prisma {
     startedAt?: true
     endedAt?: true
     status?: true
+    title?: true
+    expectedProducts?: true
     memo?: true
     requestMemo?: true
     rejectionReason?: true
@@ -14946,6 +14969,8 @@ export namespace Prisma {
     startedAt?: true
     endedAt?: true
     status?: true
+    title?: true
+    expectedProducts?: true
     memo?: true
     requestMemo?: true
     rejectionReason?: true
@@ -15039,6 +15064,8 @@ export namespace Prisma {
     startedAt: Date | null
     endedAt: Date | null
     status: $Enums.BroadcastStatus
+    title: string | null
+    expectedProducts: string | null
     memo: string | null
     requestMemo: string | null
     rejectionReason: string | null
@@ -15076,6 +15103,8 @@ export namespace Prisma {
     startedAt?: boolean
     endedAt?: boolean
     status?: boolean
+    title?: boolean
+    expectedProducts?: boolean
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
@@ -15102,6 +15131,8 @@ export namespace Prisma {
     startedAt?: boolean
     endedAt?: boolean
     status?: boolean
+    title?: boolean
+    expectedProducts?: boolean
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
@@ -15125,6 +15156,8 @@ export namespace Prisma {
     startedAt?: boolean
     endedAt?: boolean
     status?: boolean
+    title?: boolean
+    expectedProducts?: boolean
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
@@ -15148,6 +15181,8 @@ export namespace Prisma {
     startedAt?: boolean
     endedAt?: boolean
     status?: boolean
+    title?: boolean
+    expectedProducts?: boolean
     memo?: boolean
     requestMemo?: boolean
     rejectionReason?: boolean
@@ -15158,7 +15193,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type BroadcastOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "sellerId" | "centerId" | "platform" | "scheduledAt" | "startedAt" | "endedAt" | "status" | "memo" | "requestMemo" | "rejectionReason" | "rejectedAt" | "rejectedBy" | "reminder1hSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["broadcast"]>
+  export type BroadcastOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "sellerId" | "centerId" | "platform" | "scheduledAt" | "startedAt" | "endedAt" | "status" | "title" | "expectedProducts" | "memo" | "requestMemo" | "rejectionReason" | "rejectedAt" | "rejectedBy" | "reminder1hSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["broadcast"]>
   export type BroadcastInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     center?: boolean | Broadcast$centerArgs<ExtArgs>
@@ -15197,6 +15232,8 @@ export namespace Prisma {
       startedAt: Date | null
       endedAt: Date | null
       status: $Enums.BroadcastStatus
+      title: string | null
+      expectedProducts: string | null
       memo: string | null
       requestMemo: string | null
       rejectionReason: string | null
@@ -15642,6 +15679,8 @@ export namespace Prisma {
     readonly startedAt: FieldRef<"Broadcast", 'DateTime'>
     readonly endedAt: FieldRef<"Broadcast", 'DateTime'>
     readonly status: FieldRef<"Broadcast", 'BroadcastStatus'>
+    readonly title: FieldRef<"Broadcast", 'String'>
+    readonly expectedProducts: FieldRef<"Broadcast", 'String'>
     readonly memo: FieldRef<"Broadcast", 'String'>
     readonly requestMemo: FieldRef<"Broadcast", 'String'>
     readonly rejectionReason: FieldRef<"Broadcast", 'String'>
@@ -35968,6 +36007,7 @@ export namespace Prisma {
     expiresAt: 'expiresAt',
     cancelledAt: 'cancelledAt',
     cancelReason: 'cancelReason',
+    isCreditTrade: 'isCreditTrade',
     broadcastId: 'broadcastId',
     matchType: 'matchType',
     taxInvoiceIssued: 'taxInvoiceIssued',
@@ -36019,6 +36059,8 @@ export namespace Prisma {
     startedAt: 'startedAt',
     endedAt: 'endedAt',
     status: 'status',
+    title: 'title',
+    expectedProducts: 'expectedProducts',
     memo: 'memo',
     requestMemo: 'requestMemo',
     rejectionReason: 'rejectionReason',
@@ -37350,6 +37392,7 @@ export namespace Prisma {
     expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelReason?: StringNullableFilter<"Order"> | string | null
+    isCreditTrade?: BoolFilter<"Order"> | boolean
     broadcastId?: StringNullableFilter<"Order"> | string | null
     matchType?: StringNullableFilter<"Order"> | string | null
     taxInvoiceIssued?: BoolFilter<"Order"> | boolean
@@ -37391,6 +37434,7 @@ export namespace Prisma {
     expiresAt?: SortOrderInput | SortOrder
     cancelledAt?: SortOrderInput | SortOrder
     cancelReason?: SortOrderInput | SortOrder
+    isCreditTrade?: SortOrder
     broadcastId?: SortOrderInput | SortOrder
     matchType?: SortOrderInput | SortOrder
     taxInvoiceIssued?: SortOrder
@@ -37435,6 +37479,7 @@ export namespace Prisma {
     expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelReason?: StringNullableFilter<"Order"> | string | null
+    isCreditTrade?: BoolFilter<"Order"> | boolean
     broadcastId?: StringNullableFilter<"Order"> | string | null
     matchType?: StringNullableFilter<"Order"> | string | null
     taxInvoiceIssued?: BoolFilter<"Order"> | boolean
@@ -37476,6 +37521,7 @@ export namespace Prisma {
     expiresAt?: SortOrderInput | SortOrder
     cancelledAt?: SortOrderInput | SortOrder
     cancelReason?: SortOrderInput | SortOrder
+    isCreditTrade?: SortOrder
     broadcastId?: SortOrderInput | SortOrder
     matchType?: SortOrderInput | SortOrder
     taxInvoiceIssued?: SortOrder
@@ -37517,6 +37563,7 @@ export namespace Prisma {
     expiresAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     cancelledAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     cancelReason?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    isCreditTrade?: BoolWithAggregatesFilter<"Order"> | boolean
     broadcastId?: StringNullableWithAggregatesFilter<"Order"> | string | null
     matchType?: StringNullableWithAggregatesFilter<"Order"> | string | null
     taxInvoiceIssued?: BoolWithAggregatesFilter<"Order"> | boolean
@@ -37702,6 +37749,8 @@ export namespace Prisma {
     startedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     endedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     status?: EnumBroadcastStatusFilter<"Broadcast"> | $Enums.BroadcastStatus
+    title?: StringNullableFilter<"Broadcast"> | string | null
+    expectedProducts?: StringNullableFilter<"Broadcast"> | string | null
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
@@ -37727,6 +37776,8 @@ export namespace Prisma {
     startedAt?: SortOrderInput | SortOrder
     endedAt?: SortOrderInput | SortOrder
     status?: SortOrder
+    title?: SortOrderInput | SortOrder
+    expectedProducts?: SortOrderInput | SortOrder
     memo?: SortOrderInput | SortOrder
     requestMemo?: SortOrderInput | SortOrder
     rejectionReason?: SortOrderInput | SortOrder
@@ -37755,6 +37806,8 @@ export namespace Prisma {
     startedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     endedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     status?: EnumBroadcastStatusFilter<"Broadcast"> | $Enums.BroadcastStatus
+    title?: StringNullableFilter<"Broadcast"> | string | null
+    expectedProducts?: StringNullableFilter<"Broadcast"> | string | null
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
@@ -37780,6 +37833,8 @@ export namespace Prisma {
     startedAt?: SortOrderInput | SortOrder
     endedAt?: SortOrderInput | SortOrder
     status?: SortOrder
+    title?: SortOrderInput | SortOrder
+    expectedProducts?: SortOrderInput | SortOrder
     memo?: SortOrderInput | SortOrder
     requestMemo?: SortOrderInput | SortOrder
     rejectionReason?: SortOrderInput | SortOrder
@@ -37806,6 +37861,8 @@ export namespace Prisma {
     startedAt?: DateTimeNullableWithAggregatesFilter<"Broadcast"> | Date | string | null
     endedAt?: DateTimeNullableWithAggregatesFilter<"Broadcast"> | Date | string | null
     status?: EnumBroadcastStatusWithAggregatesFilter<"Broadcast"> | $Enums.BroadcastStatus
+    title?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
+    expectedProducts?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     memo?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableWithAggregatesFilter<"Broadcast"> | string | null
@@ -40076,6 +40133,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -40116,6 +40174,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -40152,6 +40211,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -40192,6 +40252,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -40230,6 +40291,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -40261,6 +40323,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -40293,6 +40356,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -40479,6 +40543,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -40503,6 +40569,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -40523,6 +40591,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40547,6 +40617,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40569,6 +40641,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -40587,6 +40661,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40606,6 +40682,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43103,6 +43181,7 @@ export namespace Prisma {
     expiresAt?: SortOrder
     cancelledAt?: SortOrder
     cancelReason?: SortOrder
+    isCreditTrade?: SortOrder
     broadcastId?: SortOrder
     matchType?: SortOrder
     taxInvoiceIssued?: SortOrder
@@ -43141,6 +43220,7 @@ export namespace Prisma {
     expiresAt?: SortOrder
     cancelledAt?: SortOrder
     cancelReason?: SortOrder
+    isCreditTrade?: SortOrder
     broadcastId?: SortOrder
     matchType?: SortOrder
     taxInvoiceIssued?: SortOrder
@@ -43174,6 +43254,7 @@ export namespace Prisma {
     expiresAt?: SortOrder
     cancelledAt?: SortOrder
     cancelReason?: SortOrder
+    isCreditTrade?: SortOrder
     broadcastId?: SortOrder
     matchType?: SortOrder
     taxInvoiceIssued?: SortOrder
@@ -43369,6 +43450,8 @@ export namespace Prisma {
     startedAt?: SortOrder
     endedAt?: SortOrder
     status?: SortOrder
+    title?: SortOrder
+    expectedProducts?: SortOrder
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
@@ -43389,6 +43472,8 @@ export namespace Prisma {
     startedAt?: SortOrder
     endedAt?: SortOrder
     status?: SortOrder
+    title?: SortOrder
+    expectedProducts?: SortOrder
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
@@ -43409,6 +43494,8 @@ export namespace Prisma {
     startedAt?: SortOrder
     endedAt?: SortOrder
     status?: SortOrder
+    title?: SortOrder
+    expectedProducts?: SortOrder
     memo?: SortOrder
     requestMemo?: SortOrder
     rejectionReason?: SortOrder
@@ -47198,6 +47285,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -47236,6 +47324,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -47266,6 +47355,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -47288,6 +47379,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -47318,6 +47411,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -47341,6 +47436,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -47700,6 +47797,7 @@ export namespace Prisma {
     expiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     cancelReason?: StringNullableFilter<"Order"> | string | null
+    isCreditTrade?: BoolFilter<"Order"> | boolean
     broadcastId?: StringNullableFilter<"Order"> | string | null
     matchType?: StringNullableFilter<"Order"> | string | null
     taxInvoiceIssued?: BoolFilter<"Order"> | boolean
@@ -47736,6 +47834,8 @@ export namespace Prisma {
     startedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     endedAt?: DateTimeNullableFilter<"Broadcast"> | Date | string | null
     status?: EnumBroadcastStatusFilter<"Broadcast"> | $Enums.BroadcastStatus
+    title?: StringNullableFilter<"Broadcast"> | string | null
+    expectedProducts?: StringNullableFilter<"Broadcast"> | string | null
     memo?: StringNullableFilter<"Broadcast"> | string | null
     requestMemo?: StringNullableFilter<"Broadcast"> | string | null
     rejectionReason?: StringNullableFilter<"Broadcast"> | string | null
@@ -48738,6 +48838,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -48776,6 +48877,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -48806,6 +48908,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -48828,6 +48932,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -49324,6 +49430,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -49363,6 +49470,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -49578,6 +49686,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -49617,6 +49726,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -49932,6 +50042,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -49955,6 +50067,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -50291,6 +50405,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50314,6 +50430,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50467,6 +50585,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -50506,6 +50625,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -50654,6 +50774,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -50693,6 +50814,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -50831,6 +50953,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -50870,6 +50993,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -51018,6 +51142,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51057,6 +51182,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -51416,6 +51542,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -51455,6 +51582,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -51885,6 +52013,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -51908,6 +52038,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -52119,6 +52251,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -52142,6 +52276,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -52657,6 +52793,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -52696,6 +52833,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -52747,6 +52885,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -52786,6 +52925,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -53021,6 +53161,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -53060,6 +53201,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -53111,6 +53253,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -53150,6 +53293,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -54870,6 +55014,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -54886,6 +55031,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -54906,6 +55053,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -55026,6 +55175,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -55064,6 +55214,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -55101,6 +55252,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -55116,6 +55268,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -55138,6 +55292,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -55159,6 +55315,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -55177,6 +55335,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -55200,6 +55360,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -55221,6 +55383,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -56051,6 +56215,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     broadcastId?: string | null
     matchType?: string | null
     taxInvoiceIssued?: boolean
@@ -56067,6 +56232,8 @@ export namespace Prisma {
     startedAt?: Date | string | null
     endedAt?: Date | string | null
     status?: $Enums.BroadcastStatus
+    title?: string | null
+    expectedProducts?: string | null
     memo?: string | null
     requestMemo?: string | null
     rejectionReason?: string | null
@@ -56223,6 +56390,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -56261,6 +56429,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -56298,6 +56467,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
@@ -56313,6 +56483,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -56335,6 +56507,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -56356,6 +56530,8 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBroadcastStatusFieldUpdateOperationsInput | $Enums.BroadcastStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
     memo?: NullableStringFieldUpdateOperationsInput | string | null
     requestMemo?: NullableStringFieldUpdateOperationsInput | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -56625,6 +56801,7 @@ export namespace Prisma {
     expiresAt?: Date | string | null
     cancelledAt?: Date | string | null
     cancelReason?: string | null
+    isCreditTrade?: boolean
     matchType?: string | null
     taxInvoiceIssued?: boolean
     taxInvoiceIssuedAt?: Date | string | null
@@ -56691,6 +56868,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -56730,6 +56908,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -56767,6 +56946,7 @@ export namespace Prisma {
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isCreditTrade?: BoolFieldUpdateOperationsInput | boolean
     matchType?: NullableStringFieldUpdateOperationsInput | string | null
     taxInvoiceIssued?: BoolFieldUpdateOperationsInput | boolean
     taxInvoiceIssuedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

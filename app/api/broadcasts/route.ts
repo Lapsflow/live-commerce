@@ -16,6 +16,8 @@ const broadcastSchema = z.object({
   startedAt: z.string().datetime().optional(),
   endedAt: z.string().datetime().optional(),
   status: z.enum(["REQUESTED", "SCHEDULED", "LIVE", "ENDED", "CANCELED", "REJECTED"]).optional(),
+  title: z.string().max(200).optional(),
+  expectedProducts: z.string().max(1000).optional(),
   requestMemo: z.string().max(500).optional(),
   memo: z.string().max(500).optional(),
 });
@@ -94,6 +96,8 @@ export const POST = withRole(
           startedAt: data.startedAt ? new Date(data.startedAt) : undefined,
           endedAt: data.endedAt ? new Date(data.endedAt) : undefined,
           status: data.status || "REQUESTED",
+          title: data.title,
+          expectedProducts: data.expectedProducts,
           requestMemo: data.requestMemo,
           memo: data.memo,
         },
@@ -118,7 +122,7 @@ export const POST = withRole(
                 recipient: { name: r.name, phone: r.phone, email: r.email || undefined },
                 variables: {
                   sellerName: seller?.name || "-",
-                  broadcastTitle: broadcast.code,
+                  broadcastTitle: broadcast.title || broadcast.code,
                   scheduledAt: scheduledAt.toLocaleString("ko-KR"),
                 },
                 broadcastId: broadcast.id,

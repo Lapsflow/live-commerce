@@ -36,11 +36,12 @@ interface MenuItem {
 
 const menuByRole: Record<string, MenuItem[]> = {
   SELLER: [
-    { href: "/dashboard", label: "대시보드", icon: LayoutDashboard },
-    { href: "/broadcasts", label: "방송", icon: Radio },
+    { href: "/dashboard", label: "내 통계", icon: LayoutDashboard },
+    { href: "/broadcasts", label: "방송 신청", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
-    { href: "/orders", label: "발주", icon: ShoppingCart },
-    { href: "/sales", label: "판매", icon: TrendingUp },
+    { href: "/orders", label: "내 발주", icon: ShoppingCart },
+    { href: "/products", label: "상품 제안", icon: Package },
+    { href: "/proposals", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },
   ],
   MASTER: [
@@ -61,15 +62,13 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/admin/sync-monitor", label: "동기화 모니터", icon: Activity },
   ],
   SUB_MASTER: [
-    { href: "/dashboard", label: "전체 통계", icon: BarChart },
-    { href: "/users", label: "사용자 관리", icon: Users },
-    { href: "/orders", label: "발주 관리", icon: ShoppingCart },
+    { href: "/dashboard", label: "대시보드", icon: BarChart },
+    { href: "/users", label: "셀러 관리", icon: Users },
+    { href: "/orders", label: "발주 컨펌", icon: ClipboardCheck },
+    { href: "/payments", label: "입금 관리", icon: FileText },
     { href: "/broadcasts", label: "방송 관리", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/products", label: "상품 관리", icon: Package },
-    { href: "/products/upload", label: "엑셀 업로드", icon: FileSpreadsheet },
-    { href: "/proposals", label: "상품 제안", icon: FileText },
-    { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },
   ],
 };
