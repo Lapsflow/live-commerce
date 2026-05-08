@@ -46,7 +46,7 @@ export default function ChangePasswordPage() {
 
       const data = await res.json();
 
-      if (res.ok && data.success) {
+      if (res.ok && !data.error) {
         toast.success("비밀번호가 변경되었습니다. 다시 로그인해주세요.");
         // 세션을 갱신하여 mustChangePassword 해제 — 재로그인으로 확실히 반영
         setTimeout(() => {
