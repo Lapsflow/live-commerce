@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/layout/sidebar";
+import { MustChangePasswordGuard } from "@/components/layout/must-change-password-guard";
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +15,9 @@ export default function MainLayout({
       {/* Main Content */}
       <main className="flex-1 lg:ml-64">
         <div className="p-4 lg:p-8 pt-16 lg:pt-8">
-          {children}
+          <MustChangePasswordGuard>
+            {children}
+          </MustChangePasswordGuard>
         </div>
       </main>
     </div>

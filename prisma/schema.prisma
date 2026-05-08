@@ -42,6 +42,9 @@ model User {
   // ✨ 활성/비활성 토글 (수정 요청 #3)
   isActive Boolean @default(true)
 
+  // ✨ 임시 비밀번호 → 첫 로그인 시 변경 강제
+  mustChangePassword Boolean @default(false)
+
   // Center relation
   center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
 

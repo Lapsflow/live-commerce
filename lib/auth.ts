@@ -11,6 +11,7 @@ declare module "next-auth" {
     role?: string;
     centerId?: string;
     center?: { id: string; name: string; code: string } | null;
+    mustChangePassword?: boolean;
   }
   interface Session {
     user: User & {
@@ -18,6 +19,7 @@ declare module "next-auth" {
       role?: string;
       centerId?: string;
       center?: { id: string; name: string; code: string } | null;
+      mustChangePassword?: boolean;
     };
   }
   interface JWT {
@@ -25,6 +27,7 @@ declare module "next-auth" {
     role?: string;
     centerId?: string;
     center?: { id: string; name: string; code: string } | null;
+    mustChangePassword?: boolean;
   }
 }
 
@@ -151,6 +154,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           role: user.role,
           centerId: user.centerId ?? undefined,
           center: user.center ?? undefined,
+          mustChangePassword: user.mustChangePassword ?? false,
         };
       },
     }),
@@ -163,6 +167,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.role = user.role;
         token.centerId = user.centerId;
         token.center = user.center;
+        token.mustChangePassword = user.mustChangePassword;
       }
       return token;
     },
@@ -172,6 +177,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.role = token.role as string;
         session.user.centerId = token.centerId as string | undefined;
         session.user.center = token.center as { id: string; name: string; code: string } | null | undefined;
+        session.user.mustChangePassword = token.mustChangePassword as boolean | undefined;
       }
       return session;
     },

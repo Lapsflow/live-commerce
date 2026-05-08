@@ -14,6 +14,8 @@ import {
 import { withRole, type AuthUser } from '@/lib/api/middleware';
 import { validateCenterCode } from '@/lib/validators/center';
 import { logAudit } from '@/lib/services/audit';
+import { prisma } from '@/lib/db/prisma';
+import bcrypt from 'bcryptjs';
 
 /**
  * GET /api/centers
@@ -109,9 +111,78 @@ export const POST = withRole(["MASTER", "SUB_MASTER"], async (req: NextRequest, 
       request: req,
     });
 
+    // ── 관리자 계정 동시 생성 (선택) ──
+    let adminInfo: { username: string; temporaryPassword: string; name: string } | null = null;
+
+    const adminUsername = (body.adminUsername as string || '').trim();
+    const adminPassword = (body.adminPassword as string || '').trim();
+    const adminName = (body.adminName as string || '').trim();
+    const adminEmail = (body.adminEmail as string || '').trim();
+    const adminPhone = (body.adminPhone as string || '').trim();
+
+    if (adminUsername) {
+      // Validation
+      if (adminUsername.length < 3) {
+        return errors.badRequest('관리자 아이디는 3자 이상이어야 합니다');
+      }
+      if (!adminPassword || adminPassword.length < 8) {
+        return errors.badRequest('관리자 비밀번호는 8자 이상이어야 합니다');
+      }
+      if (!adminName || adminName.length < 2) {
+        return errors.badRequest('관리자 이름은 2자 이상이어야 합니다');
+      }
+
+      // Username 중복 체크
+      const existingUser = await prisma.user.findUnique({
+        where: { username: adminUsername },
+      });
+      if (existingUser) {
+        return errors.badRequest(`아이디 "${adminUsername}"는 이미 사용 중입니다`);
+      }
+
+      // SUB_MASTER 계정 생성
+      const passwordHash = await bcrypt.hash(adminPassword, 10);
+      const adminUser = await prisma.user.create({
+        data: {
+          username: adminUsername,
+          passwordHash,
+          name: adminName,
+          email: adminEmail || null,
+          phone: adminPhone || '',
+          role: 'SUB_MASTER',
+          centerId: center.id,
+          isActive: true,
+          contractStatus: 'APPROVED',
+          mustChangePassword: true,
+        },
+      });
+
+      adminInfo = {
+        username: adminUsername,
+        temporaryPassword: adminPassword,
+        name: adminName,
+      };
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: 'CREATE',
+        entityType: 'User',
+        entityId: adminUser.id,
+        entityName: adminUser.name,
+        after: { username: adminUsername, role: 'SUB_MASTER', centerId: center.id },
+        description: `센터 관리자 계정 생성: ${adminName} (${adminUsername}) → ${center.name}`,
+        request: req,
+      });
+    }
+
     return created({
       center,
-      message: '센터가 성공적으로 생성되었습니다',
+      admin: adminInfo,
+      message: adminInfo
+        ? `센터 및 관리자 계정이 생성되었습니다`
+        : '센터가 성공적으로 생성되었습니다',
     });
   } catch (error) {
     console.error('Failed to create center:', error);

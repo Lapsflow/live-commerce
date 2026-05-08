@@ -46,6 +46,7 @@ export async function findOrCreateCenterAccount(centerCode: string) {
       passwordHash,
       isActive: true,
       contractStatus: "APPROVED",
+      mustChangePassword: true,
     },
     include: {
       center: { select: { id: true, name: true, code: true } },

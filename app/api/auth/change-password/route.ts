@@ -35,11 +35,11 @@ export const POST = withAuth(async (req: NextRequest, user) => {
       return error("INVALID_PASSWORD", "현재 비밀번호가 올바르지 않습니다", 400);
     }
 
-    // 새 비밀번호 해싱 및 저장
+    // 새 비밀번호 해싱 및 저장 (mustChangePassword도 해제)
     const newHash = await bcrypt.hash(data.newPassword, 10);
     await prisma.user.update({
       where: { id: user.userId },
-      data: { passwordHash: newHash },
+      data: { passwordHash: newHash, mustChangePassword: false },
     });
 
     return ok({ message: "비밀번호가 변경되었습니다" });

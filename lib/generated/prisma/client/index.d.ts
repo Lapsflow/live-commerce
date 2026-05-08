@@ -3856,6 +3856,7 @@ export namespace Prisma {
     contractApprovedBy: string | null
     contractRejectionReason: string | null
     isActive: boolean | null
+    mustChangePassword: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -3875,6 +3876,7 @@ export namespace Prisma {
     contractApprovedBy: string | null
     contractRejectionReason: string | null
     isActive: boolean | null
+    mustChangePassword: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -3898,6 +3900,7 @@ export namespace Prisma {
     contractApprovedBy: number
     contractRejectionReason: number
     isActive: number
+    mustChangePassword: number
     _all: number
   }
 
@@ -3927,6 +3930,7 @@ export namespace Prisma {
     contractApprovedBy?: true
     contractRejectionReason?: true
     isActive?: true
+    mustChangePassword?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -3946,6 +3950,7 @@ export namespace Prisma {
     contractApprovedBy?: true
     contractRejectionReason?: true
     isActive?: true
+    mustChangePassword?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -3969,6 +3974,7 @@ export namespace Prisma {
     contractApprovedBy?: true
     contractRejectionReason?: true
     isActive?: true
+    mustChangePassword?: true
     _all?: true
   }
 
@@ -4079,6 +4085,7 @@ export namespace Prisma {
     contractApprovedBy: string | null
     contractRejectionReason: string | null
     isActive: boolean
+    mustChangePassword: boolean
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -4121,6 +4128,7 @@ export namespace Prisma {
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: boolean | User$centerArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
     broadcasts?: boolean | User$broadcastsArgs<ExtArgs>
@@ -4155,6 +4163,7 @@ export namespace Prisma {
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4179,6 +4188,7 @@ export namespace Prisma {
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4203,9 +4213,10 @@ export namespace Prisma {
     contractApprovedBy?: boolean
     contractRejectionReason?: boolean
     isActive?: boolean
+    mustChangePassword?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason" | "isActive", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason" | "isActive" | "mustChangePassword", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     center?: boolean | User$centerArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
@@ -4261,6 +4272,7 @@ export namespace Prisma {
       contractApprovedBy: string | null
       contractRejectionReason: string | null
       isActive: boolean
+      mustChangePassword: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -4714,6 +4726,7 @@ export namespace Prisma {
     readonly contractApprovedBy: FieldRef<"User", 'String'>
     readonly contractRejectionReason: FieldRef<"User", 'String'>
     readonly isActive: FieldRef<"User", 'Boolean'>
+    readonly mustChangePassword: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -35933,7 +35946,8 @@ export namespace Prisma {
     contractApprovedAt: 'contractApprovedAt',
     contractApprovedBy: 'contractApprovedBy',
     contractRejectionReason: 'contractRejectionReason',
-    isActive: 'isActive'
+    isActive: 'isActive',
+    mustChangePassword: 'mustChangePassword'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -36755,6 +36769,7 @@ export namespace Prisma {
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
+    mustChangePassword?: BoolFilter<"User"> | boolean
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     orders?: OrderListRelationFilter
     broadcasts?: BroadcastListRelationFilter
@@ -36788,6 +36803,7 @@ export namespace Prisma {
     contractApprovedBy?: SortOrderInput | SortOrder
     contractRejectionReason?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    mustChangePassword?: SortOrder
     center?: CenterOrderByWithRelationInput
     orders?: OrderOrderByRelationAggregateInput
     broadcasts?: BroadcastOrderByRelationAggregateInput
@@ -36824,6 +36840,7 @@ export namespace Prisma {
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
+    mustChangePassword?: BoolFilter<"User"> | boolean
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     orders?: OrderListRelationFilter
     broadcasts?: BroadcastListRelationFilter
@@ -36857,6 +36874,7 @@ export namespace Prisma {
     contractApprovedBy?: SortOrderInput | SortOrder
     contractRejectionReason?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    mustChangePassword?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -36888,6 +36906,7 @@ export namespace Prisma {
     contractApprovedBy?: StringNullableWithAggregatesFilter<"User"> | string | null
     contractRejectionReason?: StringNullableWithAggregatesFilter<"User"> | string | null
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
+    mustChangePassword?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type ProductWhereInput = {
@@ -39376,6 +39395,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -39409,6 +39429,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -39440,6 +39461,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -39473,6 +39495,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -39505,6 +39528,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -39527,6 +39551,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -39550,6 +39575,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductCreateInput = {
@@ -42542,6 +42568,7 @@ export namespace Prisma {
     contractApprovedBy?: SortOrder
     contractRejectionReason?: SortOrder
     isActive?: SortOrder
+    mustChangePassword?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -42565,6 +42592,7 @@ export namespace Prisma {
     contractApprovedBy?: SortOrder
     contractRejectionReason?: SortOrder
     isActive?: SortOrder
+    mustChangePassword?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -42584,6 +42612,7 @@ export namespace Prisma {
     contractApprovedBy?: SortOrder
     contractRejectionReason?: SortOrder
     isActive?: SortOrder
+    mustChangePassword?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -48850,6 +48879,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
@@ -48881,6 +48911,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -49144,6 +49175,7 @@ export namespace Prisma {
     contractApprovedBy?: StringNullableFilter<"User"> | string | null
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
+    mustChangePassword?: BoolFilter<"User"> | boolean
   }
 
   export type ProductCenterStockUpsertWithWhereUniqueWithoutCenterInput = {
@@ -49639,6 +49671,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -49671,6 +49704,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -49909,6 +49943,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -49941,6 +49976,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -50082,6 +50118,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
@@ -50114,6 +50151,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -50433,6 +50471,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
@@ -50465,6 +50504,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -51497,6 +51537,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
@@ -51529,6 +51570,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -51617,6 +51659,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -51649,6 +51692,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -51815,6 +51859,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
@@ -51847,6 +51892,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -51947,6 +51993,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -51979,6 +52026,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -52041,6 +52089,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -52073,6 +52122,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -52275,6 +52325,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -52307,6 +52358,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -52505,6 +52557,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -52537,6 +52590,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -52583,6 +52637,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -52615,6 +52670,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -52645,6 +52701,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -52677,6 +52734,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -52828,6 +52886,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -52860,6 +52919,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -54693,6 +54753,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -54725,6 +54786,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -54929,6 +54991,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -54961,6 +55024,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -55161,6 +55225,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -55193,6 +55258,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -55239,6 +55305,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -55271,6 +55338,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -56471,6 +56539,7 @@ export namespace Prisma {
     contractApprovedBy?: string | null
     contractRejectionReason?: string | null
     isActive?: boolean
+    mustChangePassword?: boolean
   }
 
   export type ProductCenterStockCreateManyCenterInput = {
@@ -56567,6 +56636,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
@@ -56598,6 +56668,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -56629,6 +56700,7 @@ export namespace Prisma {
     contractApprovedBy?: NullableStringFieldUpdateOperationsInput | string | null
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductCenterStockUpdateWithoutCenterInput = {
