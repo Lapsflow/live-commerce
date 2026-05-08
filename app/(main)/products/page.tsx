@@ -97,7 +97,7 @@ const baseColumns: ColumnDef<Product>[] = [
               : "bg-gray-500/10 text-gray-500 dark:text-gray-400"
           }
         >
-          {active ? "���성" : "비활성"}
+          {active ? "활성" : "비활성"}
         </Badge>
       );
     },
