@@ -20,12 +20,12 @@ type AuthHandler = (req: NextRequest, user: AuthUser, context?: any) => Promise<
 
 function toAuthUser(user: Record<string, unknown>): AuthUser | null {
   const { userId, name, email, role, centerId } = user;
-  if (typeof userId !== "string" || typeof name !== "string" || typeof email !== "string") return null;
+  if (typeof userId !== "string" || typeof name !== "string") return null;
   if (typeof role !== "string" || !VALID_ROLES.includes(role)) return null;
   return {
     userId,
     name,
-    email,
+    email: typeof email === "string" ? email : "",
     role: role as Role,
     centerId: typeof centerId === "string" ? centerId : undefined,
   };
