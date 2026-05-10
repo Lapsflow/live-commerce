@@ -51,7 +51,7 @@ export default function CentersPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingCenter, setEditingCenter] = useState<Center | null>(null);
 
-  // Create form state
+  // Create form state — PROPOSAL-07: 아이디/비밀번호 필수 통합
   const [formData, setFormData] = useState({
     code: "",
     name: "",
@@ -62,8 +62,13 @@ export default function CentersPage() {
     address: "",
     addressDetail: "",
     businessNo: "",
+    adminUsername: "",
+    adminPassword: "",
   });
   const [submitting, setSubmitting] = useState(false);
+
+  // 생성 결과 (계정 정보 표시용)
+  const [createdAccount, setCreatedAccount] = useState<{ username: string; temporaryPassword: string; name: string } | null>(null);
 
   useEffect(() => {
     loadCenters();
@@ -86,9 +91,25 @@ export default function CentersPage() {
     }
   };
 
+  // 혼동 문자(l,1,o,0,i) 제외 임시 비밀번호 생성
+  const generateTempPassword = (length = 12): string => {
+    const chars = "abcdefghjkmnpqrstuvwxyz23456789";
+    const arr = new Uint8Array(length);
+    crypto.getRandomValues(arr);
+    return Array.from(arr, (b) => chars[b % chars.length]).join("");
+  };
+
   const handleCreate = async () => {
     if (!formData.code || !formData.name || !formData.regionCode || !formData.regionName || !formData.representative || !formData.representativePhone || !formData.address) {
       toast.error("필수 항목을 모두 입력해주세요");
+      return;
+    }
+    if (!formData.adminUsername || formData.adminUsername.length < 3) {
+      toast.error("로그인 아이디는 3자 이상이어야 합니다");
+      return;
+    }
+    if (!formData.adminPassword || formData.adminPassword.length < 8) {
+      toast.error("로그인 비밀번호는 8자 이상이어야 합니다");
       return;
     }
     setSubmitting(true);
@@ -100,9 +121,18 @@ export default function CentersPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success("센터가 생성되었습니다");
+        toast.success("센터 및 로그인 계정이 생성되었습니다");
         setShowCreateForm(false);
-        setFormData({ code: "", name: "", regionCode: "", regionName: "", representative: "", representativePhone: "", address: "", addressDetail: "", businessNo: "" });
+        // 결과 박스에 계정 정보 표시 (임시 비밀번호는 이 화면에서만 확인 가능)
+        if (data.data?.admin) {
+          setCreatedAccount(data.data.admin);
+        }
+        setFormData({
+          code: "", name: "", regionCode: "", regionName: "",
+          representative: "", representativePhone: "", address: "",
+          addressDetail: "", businessNo: "",
+          adminUsername: "", adminPassword: "",
+        });
         loadCenters();
       } else {
         toast.error(data.error?.message || "센터 생성 실패");
@@ -111,6 +141,17 @@ export default function CentersPage() {
       toast.error("서버 오류");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleCopyAccount = async () => {
+    if (!createdAccount) return;
+    const text = `아이디: ${createdAccount.username}\n비밀번호: ${createdAccount.temporaryPassword}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("계정 정보가 복사되었습니다");
+    } catch {
+      toast.error("복사 실패");
     }
   };
 
@@ -289,11 +330,81 @@ export default function CentersPage() {
               />
             </div>
           </div>
+
+          {/* 센터 로그인 계정 — PROPOSAL-07: 필수 통합 */}
+          <div className="mt-6 pt-6 border-t border-blue-200">
+            <h4 className="font-semibold text-base mb-1">센터 로그인 계정</h4>
+            <p className="text-xs text-grey-600 mb-3">
+              이 센터에서 사용할 로그인 아이디와 비밀번호를 입력하세요. 첫 로그인 시 비밀번호 변경이 필요합니다.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-grey-700">아이디 *</label>
+                <Input
+                  placeholder="3자 이상 (예: gangnam01)"
+                  value={formData.adminUsername}
+                  onChange={(e) => setFormData({ ...formData, adminUsername: e.target.value })}
+                  autoComplete="off"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-grey-700">비밀번호 *</label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="8자 이상"
+                    value={formData.adminPassword}
+                    onChange={(e) => setFormData({ ...formData, adminPassword: e.target.value })}
+                    className="font-mono flex-1"
+                    autoComplete="off"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFormData({ ...formData, adminPassword: generateTempPassword() })}
+                  >
+                    자동 생성
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="flex gap-2 mt-4">
             <Button onClick={handleCreate} disabled={submitting}>
               {submitting ? "생성 중..." : "센터 생성"}
             </Button>
             <Button variant="outline" onClick={() => setShowCreateForm(false)}>취소</Button>
+          </div>
+        </Card>
+      )}
+
+      {/* 생성 결과 — 임시 비밀번호 노출 */}
+      {createdAccount && (
+        <Card className="p-6 border-green-300 bg-green-50/50">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg mb-2 text-green-900">센터 및 로그인 계정 생성 완료</h3>
+              <div className="grid grid-cols-[100px_1fr] gap-2 text-sm">
+                <span className="text-grey-600">아이디</span>
+                <span className="font-mono font-semibold">{createdAccount.username}</span>
+                <span className="text-grey-600">비밀번호</span>
+                <span className="font-mono font-semibold">{createdAccount.temporaryPassword}</span>
+                <span className="text-grey-600">담당자</span>
+                <span>{createdAccount.name}</span>
+              </div>
+              <p className="text-xs text-amber-700 mt-3">
+                ⚠️ 비밀번호는 이 화면에서만 확인 가능합니다. 반드시 복사하여 전달해 주세요.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 shrink-0">
+              <Button size="sm" variant="outline" onClick={handleCopyAccount}>
+                계정 정보 복사
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setCreatedAccount(null)}>
+                닫기
+              </Button>
+            </div>
           </div>
         </Card>
       )}
