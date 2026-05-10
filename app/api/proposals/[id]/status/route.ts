@@ -2,7 +2,6 @@ import { NextRequest } from "next/server";
 import { withRole } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
-import { auth } from "@/lib/auth";
 import { z } from "zod";
 
 const statusUpdateSchema = z.object({
@@ -17,13 +16,8 @@ const statusUpdateSchema = z.object({
  */
 export const PUT = withRole(
   ["MASTER", "SUB_MASTER"],
-  async (req: NextRequest) => {
+  async (req: NextRequest, _user) => {
     try {
-      const session = await auth();
-      if (!session?.user) {
-        return errors.unauthorized();
-      }
-
       // URL에서 proposalId 추출
       const proposalId = req.url.split("/").filter(s => s).slice(-2)[0];
       if (!proposalId) {

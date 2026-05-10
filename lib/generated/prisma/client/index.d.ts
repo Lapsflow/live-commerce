@@ -17479,11 +17479,17 @@ export namespace Prisma {
   export type ProposalAvgAggregateOutputType = {
     samplePrice: number | null
     quantityLimit: number | null
+    onlineLowestPrice: number | null
+    supplyPrice: number | null
+    stockQty: number | null
   }
 
   export type ProposalSumAggregateOutputType = {
     samplePrice: number | null
     quantityLimit: number | null
+    onlineLowestPrice: number | null
+    supplyPrice: number | null
+    stockQty: number | null
   }
 
   export type ProposalMinAggregateOutputType = {
@@ -17507,6 +17513,10 @@ export namespace Prisma {
     supplyType: string | null
     brand: string | null
     productCode: string | null
+    onlineLowestPrice: number | null
+    supplyPrice: number | null
+    expiryDate: Date | null
+    stockQty: number | null
   }
 
   export type ProposalMaxAggregateOutputType = {
@@ -17530,6 +17540,10 @@ export namespace Prisma {
     supplyType: string | null
     brand: string | null
     productCode: string | null
+    onlineLowestPrice: number | null
+    supplyPrice: number | null
+    expiryDate: Date | null
+    stockQty: number | null
   }
 
   export type ProposalCountAggregateOutputType = {
@@ -17553,6 +17567,10 @@ export namespace Prisma {
     supplyType: number
     brand: number
     productCode: number
+    onlineLowestPrice: number
+    supplyPrice: number
+    expiryDate: number
+    stockQty: number
     _all: number
   }
 
@@ -17560,11 +17578,17 @@ export namespace Prisma {
   export type ProposalAvgAggregateInputType = {
     samplePrice?: true
     quantityLimit?: true
+    onlineLowestPrice?: true
+    supplyPrice?: true
+    stockQty?: true
   }
 
   export type ProposalSumAggregateInputType = {
     samplePrice?: true
     quantityLimit?: true
+    onlineLowestPrice?: true
+    supplyPrice?: true
+    stockQty?: true
   }
 
   export type ProposalMinAggregateInputType = {
@@ -17588,6 +17612,10 @@ export namespace Prisma {
     supplyType?: true
     brand?: true
     productCode?: true
+    onlineLowestPrice?: true
+    supplyPrice?: true
+    expiryDate?: true
+    stockQty?: true
   }
 
   export type ProposalMaxAggregateInputType = {
@@ -17611,6 +17639,10 @@ export namespace Prisma {
     supplyType?: true
     brand?: true
     productCode?: true
+    onlineLowestPrice?: true
+    supplyPrice?: true
+    expiryDate?: true
+    stockQty?: true
   }
 
   export type ProposalCountAggregateInputType = {
@@ -17634,6 +17666,10 @@ export namespace Prisma {
     supplyType?: true
     brand?: true
     productCode?: true
+    onlineLowestPrice?: true
+    supplyPrice?: true
+    expiryDate?: true
+    stockQty?: true
     _all?: true
   }
 
@@ -17744,6 +17780,10 @@ export namespace Prisma {
     supplyType: string | null
     brand: string | null
     productCode: string | null
+    onlineLowestPrice: number | null
+    supplyPrice: number | null
+    expiryDate: Date | null
+    stockQty: number | null
     _count: ProposalCountAggregateOutputType | null
     _avg: ProposalAvgAggregateOutputType | null
     _sum: ProposalSumAggregateOutputType | null
@@ -17786,6 +17826,10 @@ export namespace Prisma {
     supplyType?: boolean
     brand?: boolean
     productCode?: boolean
+    onlineLowestPrice?: boolean
+    supplyPrice?: boolean
+    expiryDate?: boolean
+    stockQty?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
@@ -17810,6 +17854,10 @@ export namespace Prisma {
     supplyType?: boolean
     brand?: boolean
     productCode?: boolean
+    onlineLowestPrice?: boolean
+    supplyPrice?: boolean
+    expiryDate?: boolean
+    stockQty?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
@@ -17834,6 +17882,10 @@ export namespace Prisma {
     supplyType?: boolean
     brand?: boolean
     productCode?: boolean
+    onlineLowestPrice?: boolean
+    supplyPrice?: boolean
+    expiryDate?: boolean
+    stockQty?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
@@ -17858,9 +17910,13 @@ export namespace Prisma {
     supplyType?: boolean
     brand?: boolean
     productCode?: boolean
+    onlineLowestPrice?: boolean
+    supplyPrice?: boolean
+    expiryDate?: boolean
+    stockQty?: boolean
   }
 
-  export type ProposalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "companyName" | "contact" | "phone" | "productName" | "category" | "subcategory" | "description" | "status" | "submittedBy" | "createdAt" | "updatedAt" | "imageMain" | "imageSubs" | "sampleType" | "samplePrice" | "quantityLimit" | "supplyType" | "brand" | "productCode", ExtArgs["result"]["proposal"]>
+  export type ProposalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "companyName" | "contact" | "phone" | "productName" | "category" | "subcategory" | "description" | "status" | "submittedBy" | "createdAt" | "updatedAt" | "imageMain" | "imageSubs" | "sampleType" | "samplePrice" | "quantityLimit" | "supplyType" | "brand" | "productCode" | "onlineLowestPrice" | "supplyPrice" | "expiryDate" | "stockQty", ExtArgs["result"]["proposal"]>
   export type ProposalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -17897,6 +17953,10 @@ export namespace Prisma {
       supplyType: string | null
       brand: string | null
       productCode: string | null
+      onlineLowestPrice: number | null
+      supplyPrice: number | null
+      expiryDate: Date | null
+      stockQty: number | null
     }, ExtArgs["result"]["proposal"]>
     composites: {}
   }
@@ -18341,6 +18401,10 @@ export namespace Prisma {
     readonly supplyType: FieldRef<"Proposal", 'String'>
     readonly brand: FieldRef<"Proposal", 'String'>
     readonly productCode: FieldRef<"Proposal", 'String'>
+    readonly onlineLowestPrice: FieldRef<"Proposal", 'Int'>
+    readonly supplyPrice: FieldRef<"Proposal", 'Int'>
+    readonly expiryDate: FieldRef<"Proposal", 'DateTime'>
+    readonly stockQty: FieldRef<"Proposal", 'Int'>
   }
     
 
@@ -36180,7 +36244,11 @@ export namespace Prisma {
     quantityLimit: 'quantityLimit',
     supplyType: 'supplyType',
     brand: 'brand',
-    productCode: 'productCode'
+    productCode: 'productCode',
+    onlineLowestPrice: 'onlineLowestPrice',
+    supplyPrice: 'supplyPrice',
+    expiryDate: 'expiryDate',
+    stockQty: 'stockQty'
   };
 
   export type ProposalScalarFieldEnum = (typeof ProposalScalarFieldEnum)[keyof typeof ProposalScalarFieldEnum]
@@ -38080,6 +38148,10 @@ export namespace Prisma {
     supplyType?: StringNullableFilter<"Proposal"> | string | null
     brand?: StringNullableFilter<"Proposal"> | string | null
     productCode?: StringNullableFilter<"Proposal"> | string | null
+    onlineLowestPrice?: IntNullableFilter<"Proposal"> | number | null
+    supplyPrice?: IntNullableFilter<"Proposal"> | number | null
+    expiryDate?: DateTimeNullableFilter<"Proposal"> | Date | string | null
+    stockQty?: IntNullableFilter<"Proposal"> | number | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -38104,6 +38176,10 @@ export namespace Prisma {
     supplyType?: SortOrderInput | SortOrder
     brand?: SortOrderInput | SortOrder
     productCode?: SortOrderInput | SortOrder
+    onlineLowestPrice?: SortOrderInput | SortOrder
+    supplyPrice?: SortOrderInput | SortOrder
+    expiryDate?: SortOrderInput | SortOrder
+    stockQty?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -38131,6 +38207,10 @@ export namespace Prisma {
     supplyType?: StringNullableFilter<"Proposal"> | string | null
     brand?: StringNullableFilter<"Proposal"> | string | null
     productCode?: StringNullableFilter<"Proposal"> | string | null
+    onlineLowestPrice?: IntNullableFilter<"Proposal"> | number | null
+    supplyPrice?: IntNullableFilter<"Proposal"> | number | null
+    expiryDate?: DateTimeNullableFilter<"Proposal"> | Date | string | null
+    stockQty?: IntNullableFilter<"Proposal"> | number | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -38155,6 +38235,10 @@ export namespace Prisma {
     supplyType?: SortOrderInput | SortOrder
     brand?: SortOrderInput | SortOrder
     productCode?: SortOrderInput | SortOrder
+    onlineLowestPrice?: SortOrderInput | SortOrder
+    supplyPrice?: SortOrderInput | SortOrder
+    expiryDate?: SortOrderInput | SortOrder
+    stockQty?: SortOrderInput | SortOrder
     _count?: ProposalCountOrderByAggregateInput
     _avg?: ProposalAvgOrderByAggregateInput
     _max?: ProposalMaxOrderByAggregateInput
@@ -38186,6 +38270,10 @@ export namespace Prisma {
     supplyType?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
     brand?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
     productCode?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
+    onlineLowestPrice?: IntNullableWithAggregatesFilter<"Proposal"> | number | null
+    supplyPrice?: IntNullableWithAggregatesFilter<"Proposal"> | number | null
+    expiryDate?: DateTimeNullableWithAggregatesFilter<"Proposal"> | Date | string | null
+    stockQty?: IntNullableWithAggregatesFilter<"Proposal"> | number | null
   }
 
   export type ProposalCartWhereInput = {
@@ -40932,6 +41020,10 @@ export namespace Prisma {
     supplyType?: string | null
     brand?: string | null
     productCode?: string | null
+    onlineLowestPrice?: number | null
+    supplyPrice?: number | null
+    expiryDate?: Date | string | null
+    stockQty?: number | null
     user: UserCreateNestedOneWithoutProposalsInput
   }
 
@@ -40956,6 +41048,10 @@ export namespace Prisma {
     supplyType?: string | null
     brand?: string | null
     productCode?: string | null
+    onlineLowestPrice?: number | null
+    supplyPrice?: number | null
+    expiryDate?: Date | string | null
+    stockQty?: number | null
   }
 
   export type ProposalUpdateInput = {
@@ -40978,6 +41074,10 @@ export namespace Prisma {
     supplyType?: NullableStringFieldUpdateOperationsInput | string | null
     brand?: NullableStringFieldUpdateOperationsInput | string | null
     productCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onlineLowestPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockQty?: NullableIntFieldUpdateOperationsInput | number | null
     user?: UserUpdateOneRequiredWithoutProposalsNestedInput
   }
 
@@ -41002,6 +41102,10 @@ export namespace Prisma {
     supplyType?: NullableStringFieldUpdateOperationsInput | string | null
     brand?: NullableStringFieldUpdateOperationsInput | string | null
     productCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onlineLowestPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockQty?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ProposalCreateManyInput = {
@@ -41025,6 +41129,10 @@ export namespace Prisma {
     supplyType?: string | null
     brand?: string | null
     productCode?: string | null
+    onlineLowestPrice?: number | null
+    supplyPrice?: number | null
+    expiryDate?: Date | string | null
+    stockQty?: number | null
   }
 
   export type ProposalUpdateManyMutationInput = {
@@ -41047,6 +41155,10 @@ export namespace Prisma {
     supplyType?: NullableStringFieldUpdateOperationsInput | string | null
     brand?: NullableStringFieldUpdateOperationsInput | string | null
     productCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onlineLowestPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockQty?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ProposalUncheckedUpdateManyInput = {
@@ -41070,6 +41182,10 @@ export namespace Prisma {
     supplyType?: NullableStringFieldUpdateOperationsInput | string | null
     brand?: NullableStringFieldUpdateOperationsInput | string | null
     productCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onlineLowestPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockQty?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ProposalCartCreateInput = {
@@ -43750,11 +43866,18 @@ export namespace Prisma {
     supplyType?: SortOrder
     brand?: SortOrder
     productCode?: SortOrder
+    onlineLowestPrice?: SortOrder
+    supplyPrice?: SortOrder
+    expiryDate?: SortOrder
+    stockQty?: SortOrder
   }
 
   export type ProposalAvgOrderByAggregateInput = {
     samplePrice?: SortOrder
     quantityLimit?: SortOrder
+    onlineLowestPrice?: SortOrder
+    supplyPrice?: SortOrder
+    stockQty?: SortOrder
   }
 
   export type ProposalMaxOrderByAggregateInput = {
@@ -43778,6 +43901,10 @@ export namespace Prisma {
     supplyType?: SortOrder
     brand?: SortOrder
     productCode?: SortOrder
+    onlineLowestPrice?: SortOrder
+    supplyPrice?: SortOrder
+    expiryDate?: SortOrder
+    stockQty?: SortOrder
   }
 
   export type ProposalMinOrderByAggregateInput = {
@@ -43801,11 +43928,18 @@ export namespace Prisma {
     supplyType?: SortOrder
     brand?: SortOrder
     productCode?: SortOrder
+    onlineLowestPrice?: SortOrder
+    supplyPrice?: SortOrder
+    expiryDate?: SortOrder
+    stockQty?: SortOrder
   }
 
   export type ProposalSumOrderByAggregateInput = {
     samplePrice?: SortOrder
     quantityLimit?: SortOrder
+    onlineLowestPrice?: SortOrder
+    supplyPrice?: SortOrder
+    stockQty?: SortOrder
   }
 
   export type EnumProposalStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -47658,6 +47792,10 @@ export namespace Prisma {
     supplyType?: string | null
     brand?: string | null
     productCode?: string | null
+    onlineLowestPrice?: number | null
+    supplyPrice?: number | null
+    expiryDate?: Date | string | null
+    stockQty?: number | null
   }
 
   export type ProposalUncheckedCreateWithoutUserInput = {
@@ -47680,6 +47818,10 @@ export namespace Prisma {
     supplyType?: string | null
     brand?: string | null
     productCode?: string | null
+    onlineLowestPrice?: number | null
+    supplyPrice?: number | null
+    expiryDate?: Date | string | null
+    stockQty?: number | null
   }
 
   export type ProposalCreateOrConnectWithoutUserInput = {
@@ -48079,6 +48221,10 @@ export namespace Prisma {
     supplyType?: StringNullableFilter<"Proposal"> | string | null
     brand?: StringNullableFilter<"Proposal"> | string | null
     productCode?: StringNullableFilter<"Proposal"> | string | null
+    onlineLowestPrice?: IntNullableFilter<"Proposal"> | number | null
+    supplyPrice?: IntNullableFilter<"Proposal"> | number | null
+    expiryDate?: DateTimeNullableFilter<"Proposal"> | Date | string | null
+    stockQty?: IntNullableFilter<"Proposal"> | number | null
   }
 
   export type ProposalCartUpsertWithWhereUniqueWithoutUserInput = {
@@ -55456,6 +55602,10 @@ export namespace Prisma {
     supplyType?: string | null
     brand?: string | null
     productCode?: string | null
+    onlineLowestPrice?: number | null
+    supplyPrice?: number | null
+    expiryDate?: Date | string | null
+    stockQty?: number | null
   }
 
   export type ProposalCartCreateManyUserInput = {
@@ -55810,6 +55960,10 @@ export namespace Prisma {
     supplyType?: NullableStringFieldUpdateOperationsInput | string | null
     brand?: NullableStringFieldUpdateOperationsInput | string | null
     productCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onlineLowestPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockQty?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ProposalUncheckedUpdateWithoutUserInput = {
@@ -55832,6 +55986,10 @@ export namespace Prisma {
     supplyType?: NullableStringFieldUpdateOperationsInput | string | null
     brand?: NullableStringFieldUpdateOperationsInput | string | null
     productCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onlineLowestPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockQty?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ProposalUncheckedUpdateManyWithoutUserInput = {
@@ -55854,6 +56012,10 @@ export namespace Prisma {
     supplyType?: NullableStringFieldUpdateOperationsInput | string | null
     brand?: NullableStringFieldUpdateOperationsInput | string | null
     productCode?: NullableStringFieldUpdateOperationsInput | string | null
+    onlineLowestPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    supplyPrice?: NullableIntFieldUpdateOperationsInput | number | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockQty?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ProposalCartUpdateWithoutUserInput = {

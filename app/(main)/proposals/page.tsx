@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -16,8 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  FileText, Plus, CheckCircle, XCircle, Clock,
-  Upload, ImageIcon, X, Loader2,
+  ShoppingBag, Plus, ImageIcon, X, Loader2,
+  Package, Repeat, Zap, AlertTriangle,
 } from "lucide-react";
 import DOMPurify from "isomorphic-dompurify";
 import dynamic from "next/dynamic";
@@ -43,27 +42,15 @@ type Proposal = {
   samplePrice?: number;
   brand?: string;
   productCode?: string;
+  // PROPOSAL-07
+  onlineLowestPrice?: number | null;
+  supplyPrice?: number | null;
+  expiryDate?: string | null;
+  stockQty?: number | null;
+  supplyType?: string | null;
   submittedBy: string;
   createdAt: string;
   user: { id: string; name: string; email: string; role: string };
-};
-
-const statusLabels: Record<string, string> = {
-  PENDING: "검토중",
-  APPROVED: "승인",
-  REJECTED: "거절",
-};
-
-const statusIcons: Record<string, React.ReactNode> = {
-  PENDING: <Clock className="h-4 w-4" />,
-  APPROVED: <CheckCircle className="h-4 w-4" />,
-  REJECTED: <XCircle className="h-4 w-4" />,
-};
-
-const statusColors: Record<string, string> = {
-  PENDING: "bg-yellow-100 text-yellow-800",
-  APPROVED: "bg-green-100 text-green-800",
-  REJECTED: "bg-red-100 text-red-800",
 };
 
 // PROPOSAL-04: 카테고리 구조
@@ -76,14 +63,29 @@ const CATEGORIES: Record<string, string[]> = {
   "기타": ["기타"],
 };
 
+const ALL_CATEGORIES = ["전체", ...Object.keys(CATEGORIES)];
+
+function formatKRW(n?: number | null): string {
+  if (n === null || n === undefined) return "—";
+  return n.toLocaleString("ko-KR") + "원";
+}
+
+function formatDate(d?: string | null): string {
+  if (!d) return "—";
+  try {
+    return new Date(d).toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
+  } catch {
+    return "—";
+  }
+}
+
 export default function ProposalsPage() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const userRole = (session?.user as any)?.role;
   const isMaster = userRole === "MASTER";
-  const isMasterOrSubMaster = userRole === "MASTER" || userRole === "SUB_MASTER";
 
-  // SELLER는 접근 불가 — 대시보드로 리다이렉트
+  // SELLER는 접근 불가 → 대시보드로 리다이렉트
   useEffect(() => {
     if (sessionStatus === "authenticated" && userRole === "SELLER") {
       router.replace("/dashboard");
@@ -94,9 +96,11 @@ export default function ProposalsPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>("전체");
+  const [detailProposal, setDetailProposal] = useState<Proposal | null>(null);
 
   // Form state
-  const [formData, setFormData] = useState({
+  const emptyForm = {
     companyName: "",
     contact: "",
     phone: "",
@@ -111,7 +115,12 @@ export default function ProposalsPage() {
     supplyType: "" as string,
     imageMain: "",
     imageSubs: "[]",
-  });
+    onlineLowestPrice: "" as string | number,
+    supplyPrice: "" as string | number,
+    expiryDate: "",
+    stockQty: "" as string | number,
+  };
+  const [formData, setFormData] = useState(emptyForm);
 
   // Image upload state
   const [uploading, setUploading] = useState(false);
@@ -151,8 +160,12 @@ export default function ProposalsPage() {
       if (res.ok && data.data?.url) {
         return data.data.url;
       }
+      // 에러 메시지 표시
+      const msg = data?.error?.message;
+      if (msg) setError(`이미지 업로드 실패: ${msg}`);
       return null;
-    } catch {
+    } catch (err: any) {
+      setError(`이미지 업로드 중 오류: ${err?.message || "알 수 없는 오류"}`);
       return null;
     } finally {
       setUploading(false);
@@ -162,13 +175,17 @@ export default function ProposalsPage() {
   const handleMainImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setError(null);
     const url = await uploadImage(file);
     if (url) setFormData((p) => ({ ...p, imageMain: url }));
+    // 같은 파일 다시 선택 가능하게 input value 리셋
+    if (mainImageRef.current) mainImageRef.current.value = "";
   };
 
   const handleSubImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
+    setError(null);
     const current: string[] = JSON.parse(formData.imageSubs || "[]");
     if (current.length + files.length > 5) {
       alert("서브 이미지는 최대 5장까지 가능합니다.");
@@ -179,6 +196,7 @@ export default function ProposalsPage() {
       if (url) current.push(url);
     }
     setFormData((p) => ({ ...p, imageSubs: JSON.stringify(current) }));
+    if (subImageRef.current) subImageRef.current.value = "";
   };
 
   const removeSubImage = (idx: number) => {
@@ -192,6 +210,7 @@ export default function ProposalsPage() {
     setError(null);
     try {
       const payload: any = { ...formData };
+      // 빈 값 정리
       if (!payload.subcategory) delete payload.subcategory;
       if (!payload.brand) delete payload.brand;
       if (!payload.productCode) delete payload.productCode;
@@ -199,7 +218,24 @@ export default function ProposalsPage() {
       if (!payload.supplyType) delete payload.supplyType;
       if (!payload.imageMain) delete payload.imageMain;
       if (payload.imageSubs === "[]") delete payload.imageSubs;
-      if (payload.samplePrice === 0) delete payload.samplePrice;
+      if (!payload.samplePrice || payload.samplePrice === 0) delete payload.samplePrice;
+      // PROPOSAL-07: 신규 필드 정리 (빈 문자열 → 제거, 숫자 변환)
+      if (payload.onlineLowestPrice === "" || payload.onlineLowestPrice === null) {
+        delete payload.onlineLowestPrice;
+      } else {
+        payload.onlineLowestPrice = Number(payload.onlineLowestPrice);
+      }
+      if (payload.supplyPrice === "" || payload.supplyPrice === null) {
+        delete payload.supplyPrice;
+      } else {
+        payload.supplyPrice = Number(payload.supplyPrice);
+      }
+      if (!payload.expiryDate) delete payload.expiryDate;
+      if (payload.stockQty === "" || payload.stockQty === null) {
+        delete payload.stockQty;
+      } else {
+        payload.stockQty = Number(payload.stockQty);
+      }
 
       const res = await fetch("/api/proposals", {
         method: "POST",
@@ -209,12 +245,7 @@ export default function ProposalsPage() {
       const data = await res.json();
       if (res.ok) {
         setShowForm(false);
-        setFormData({
-          companyName: "", contact: "", phone: "", productName: "",
-          category: "", subcategory: "", description: "", brand: "",
-          productCode: "", sampleType: "", samplePrice: 0,
-          supplyType: "", imageMain: "", imageSubs: "[]",
-        });
+        setFormData(emptyForm);
         loadProposals();
       } else {
         setError(data.error?.message || "제안 등록에 실패했습니다");
@@ -224,23 +255,22 @@ export default function ProposalsPage() {
     }
   };
 
-  const handleStatusChange = async (proposalId: string, newStatus: string) => {
-    try {
-      const res = await fetch(`/api/proposals/${proposalId}/status`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (res.ok) {
-        loadProposals();
-      } else {
-        const data = await res.json();
-        alert(data.error?.message || "상태 변경에 실패했습니다");
-      }
-    } catch {
-      alert("상태 변경 중 오류가 발생했습니다");
-    }
-  };
+  // 카테고리별 그룹핑
+  const filteredProposals = useMemo(() => {
+    return activeCategory === "전체"
+      ? proposals
+      : proposals.filter((p) => p.category === activeCategory);
+  }, [proposals, activeCategory]);
+
+  const groupedByCategory = useMemo(() => {
+    const groups: Record<string, Proposal[]> = {};
+    filteredProposals.forEach((p) => {
+      const cat = p.category || "기타";
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(p);
+    });
+    return groups;
+  }, [filteredProposals]);
 
   const subImages: string[] = JSON.parse(formData.imageSubs || "[]");
   const subcategories = CATEGORIES[formData.category] || [];
@@ -253,36 +283,52 @@ export default function ProposalsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-muted-foreground">로딩 중...</div>
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <FileText className="h-8 w-8 text-blue-600" />
-          <h1 className="text-3xl font-bold">상품 제안</h1>
+          <ShoppingBag className="h-8 w-8 text-blue-600" />
+          <div>
+            <h1 className="text-3xl font-bold">상품 제안</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              센터에서 발주 가능한 추천 상품을 확인하세요
+            </p>
+          </div>
         </div>
         {isMaster && (
           <Button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
-            {showForm ? "취소" : "새 제안"}
+            {showForm ? "취소" : "새 상품 등록"}
           </Button>
         )}
       </div>
 
       {error && (
         <Card className="p-4 bg-red-50 border-red-200">
-          <div className="text-red-600">{error}</div>
+          <div className="flex items-start gap-2 text-red-700 text-sm">
+            <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+            <span>{error}</span>
+            <button
+              type="button"
+              className="ml-auto text-red-500 hover:text-red-700"
+              onClick={() => setError(null)}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </Card>
       )}
 
       {/* 등록 폼 — MASTER만 */}
       {isMaster && showForm && (
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">새 제안 등록</h2>
+          <h2 className="text-xl font-semibold mb-4">새 상품 등록</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* 기본 정보 */}
             <div>
@@ -342,6 +388,55 @@ export default function ProposalsPage() {
                     value={formData.description}
                     onChange={(html) => setFormData({ ...formData, description: html })}
                     placeholder="상품의 특징, 구성, 효과 등을 자유롭게 작성하세요..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* PROPOSAL-07: 가격/재고/유통기한 (모두 선택) */}
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-1">가격 · 재고 · 유통기한</h3>
+              <p className="text-xs text-muted-foreground mb-3">모든 항목은 선택 입력. 비워두면 카드에서 &quot;—&quot;로 표시됩니다.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>온라인 최저가 (원)</Label>
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="예: 12000"
+                    value={formData.onlineLowestPrice}
+                    onChange={(e) => setFormData({ ...formData, onlineLowestPrice: e.target.value })}
+                    min={0}
+                  />
+                </div>
+                <div>
+                  <Label>공급가 (원)</Label>
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="예: 8500"
+                    value={formData.supplyPrice}
+                    onChange={(e) => setFormData({ ...formData, supplyPrice: e.target.value })}
+                    min={0}
+                  />
+                </div>
+                <div>
+                  <Label>유통기한</Label>
+                  <Input
+                    type="date"
+                    value={formData.expiryDate}
+                    onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>재고 갯수</Label>
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="예: 200"
+                    value={formData.stockQty}
+                    onChange={(e) => setFormData({ ...formData, stockQty: e.target.value })}
+                    min={0}
                   />
                 </div>
               </div>
@@ -415,7 +510,7 @@ export default function ProposalsPage() {
 
             {/* PROPOSAL-06: 샘플/공급 정책 */}
             <div>
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">샘플 및 공급 정책</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-3">샘플 및 발주 방식</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label>샘플 유형</Label>
@@ -434,12 +529,12 @@ export default function ProposalsPage() {
                   </div>
                 )}
                 <div>
-                  <Label>공급 방식</Label>
+                  <Label>발주 방식</Label>
                   <Select value={formData.supplyType} onValueChange={(v) => setFormData({ ...formData, supplyType: v || "" })}>
                     <SelectTrigger><SelectValue placeholder="선택" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="SINGLE">단발</SelectItem>
-                      <SelectItem value="RECURRING">정기</SelectItem>
+                      <SelectItem value="RECURRING">지속발주 가능</SelectItem>
+                      <SelectItem value="SINGLE">단타성 제품</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -448,74 +543,233 @@ export default function ProposalsPage() {
 
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setShowForm(false)}>취소</Button>
-              <Button type="submit" disabled={uploading}>제출</Button>
+              <Button type="submit" disabled={uploading}>등록</Button>
             </div>
           </form>
         </Card>
       )}
 
-      {/* 제안 목록 */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">제안 목록</h2>
-        {proposals.length === 0 ? (
-          <div className="text-center text-muted-foreground py-8">등록된 제안이 없습니다</div>
-        ) : (
-          <div className="space-y-4">
-            {proposals.map((proposal) => (
-              <div key={proposal.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex gap-3">
-                    {proposal.imageMain && (
-                      <img src={proposal.imageMain} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />
-                    )}
-                    <div>
-                      <h3 className="text-lg font-semibold">{proposal.productName}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {proposal.companyName} | {proposal.contact} | {proposal.phone}
-                      </p>
-                      {proposal.brand && (
-                        <Badge variant="outline" className="mt-1 text-xs">{proposal.brand}</Badge>
-                      )}
-                    </div>
-                  </div>
-                  <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md ${statusColors[proposal.status]}`}>
-                    {statusIcons[proposal.status]}
-                    {statusLabels[proposal.status]}
-                  </span>
-                </div>
-                <div className="mb-3">
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-medium">카테고리:</span> {proposal.category}
-                    {proposal.subcategory && ` > ${proposal.subcategory}`}
-                  </p>
-                  {proposal.sampleType && (
-                    <p className="text-sm text-muted-foreground">
-                      <span className="font-medium">샘플:</span>{" "}
-                      {proposal.sampleType === "FREE" ? "무료" : `유료 (${proposal.samplePrice?.toLocaleString()}원)`}
-                    </p>
-                  )}
-                  <div
-                    className="text-sm mt-2 prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(proposal.description) }}
+      {/* 카테고리 탭 */}
+      <div className="flex flex-wrap gap-2 border-b pb-3">
+        {ALL_CATEGORIES.map((cat) => {
+          const count = cat === "전체"
+            ? proposals.length
+            : proposals.filter((p) => p.category === cat).length;
+          const active = activeCategory === cat;
+          return (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setActiveCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                active
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {cat} <span className={active ? "opacity-80" : "text-muted-foreground"}>({count})</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 카드 그리드 — 카테고리별 그룹 */}
+      {filteredProposals.length === 0 ? (
+        <Card className="p-12 text-center">
+          <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+          <div className="text-muted-foreground">
+            {activeCategory === "전체"
+              ? "등록된 상품이 없습니다"
+              : `"${activeCategory}" 카테고리에 등록된 상품이 없습니다`}
+          </div>
+        </Card>
+      ) : (
+        <div className="space-y-8">
+          {Object.entries(groupedByCategory).map(([category, items]) => (
+            <section key={category}>
+              <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                {category}
+                <span className="text-sm text-muted-foreground font-normal">({items.length})</span>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {items.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    proposal={p}
+                    onClick={() => setDetailProposal(p)}
                   />
-                </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-3">
-                  <span>
-                    제출: {proposal.user.name} |{" "}
-                    {new Date(proposal.createdAt).toLocaleString("ko-KR")}
-                  </span>
-                  {isMasterOrSubMaster && proposal.status === "PENDING" && (
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => handleStatusChange(proposal.id, "APPROVED")} className="text-green-600 border-green-600 hover:bg-green-50">승인</Button>
-                      <Button size="sm" variant="outline" onClick={() => handleStatusChange(proposal.id, "REJECTED")} className="text-red-600 border-red-600 hover:bg-red-50">거절</Button>
-                    </div>
-                  )}
-                </div>
+                ))}
               </div>
-            ))}
+            </section>
+          ))}
+        </div>
+      )}
+
+      {/* 상세 모달 */}
+      {detailProposal && (
+        <DetailModal
+          proposal={detailProposal}
+          onClose={() => setDetailProposal(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ──────────────── 카드 컴포넌트 ────────────────
+function ProductCard({ proposal, onClick }: { proposal: Proposal; onClick: () => void }) {
+  const supplyTypeBadge = proposal.supplyType === "RECURRING"
+    ? { label: "지속발주", color: "bg-green-100 text-green-800", icon: <Repeat className="h-3 w-3" /> }
+    : proposal.supplyType === "SINGLE"
+    ? { label: "단타성", color: "bg-amber-100 text-amber-800", icon: <Zap className="h-3 w-3" /> }
+    : null;
+
+  const stockLow = typeof proposal.stockQty === "number" && proposal.stockQty <= 10;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group text-left bg-white border rounded-lg overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all"
+    >
+      {/* 이미지 */}
+      <div className="aspect-square bg-gray-50 relative overflow-hidden">
+        {proposal.imageMain ? (
+          <img
+            src={proposal.imageMain}
+            alt={proposal.productName}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300">
+            <ImageIcon className="h-12 w-12" />
           </div>
         )}
-      </Card>
+        {/* 배지 오버레이 */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {supplyTypeBadge && (
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded ${supplyTypeBadge.color}`}>
+              {supplyTypeBadge.icon}
+              {supplyTypeBadge.label}
+            </span>
+          )}
+          {stockLow && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded bg-red-100 text-red-700">
+              재고 부족
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* 본문 */}
+      <div className="p-3 space-y-2">
+        {/* 카테고리 */}
+        <div className="text-xs text-muted-foreground">
+          {proposal.category}
+          {proposal.subcategory && ` › ${proposal.subcategory}`}
+        </div>
+
+        {/* 제품명 */}
+        <div className="font-semibold text-sm line-clamp-2 min-h-[2.5rem]">
+          {proposal.productName}
+        </div>
+
+        {/* 가격 */}
+        <div className="space-y-0.5 pt-1">
+          <div className="flex items-baseline justify-between text-xs">
+            <span className="text-muted-foreground">온라인 최저가</span>
+            <span className="line-through text-gray-400">{formatKRW(proposal.onlineLowestPrice)}</span>
+          </div>
+          <div className="flex items-baseline justify-between">
+            <span className="text-xs text-muted-foreground">공급가</span>
+            <span className="text-base font-bold text-blue-600">{formatKRW(proposal.supplyPrice)}</span>
+          </div>
+        </div>
+
+        {/* 메타 */}
+        <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t">
+          <span>유통기한 {formatDate(proposal.expiryDate)}</span>
+          <span>
+            재고{" "}
+            <span className={stockLow ? "text-red-600 font-medium" : "text-gray-700 font-medium"}>
+              {typeof proposal.stockQty === "number" ? proposal.stockQty.toLocaleString() : "—"}
+            </span>
+          </span>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+// ──────────────── 상세 모달 ────────────────
+function DetailModal({ proposal, onClose }: { proposal: Proposal; onClose: () => void }) {
+  const subImages: string[] = useMemo(() => {
+    try { return JSON.parse(proposal.imageSubs || "[]"); } catch { return []; }
+  }, [proposal.imageSubs]);
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+          <h3 className="text-lg font-semibold">{proposal.productName}</h3>
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* 이미지 */}
+          {proposal.imageMain && (
+            <img
+              src={proposal.imageMain}
+              alt={proposal.productName}
+              className="w-full max-h-96 object-contain bg-gray-50 rounded"
+            />
+          )}
+          {subImages.length > 0 && (
+            <div className="grid grid-cols-5 gap-2">
+              {subImages.map((url, i) => (
+                <img key={i} src={url} alt={`${proposal.productName} ${i + 1}`} className="aspect-square object-cover rounded border" />
+              ))}
+            </div>
+          )}
+
+          {/* 핵심 정보 */}
+          <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg text-sm">
+            <div><div className="text-muted-foreground text-xs">카테고리</div><div className="font-medium">{proposal.category}{proposal.subcategory && ` › ${proposal.subcategory}`}</div></div>
+            <div><div className="text-muted-foreground text-xs">브랜드</div><div className="font-medium">{proposal.brand || "—"}</div></div>
+            <div><div className="text-muted-foreground text-xs">온라인 최저가</div><div className="font-medium line-through text-gray-500">{formatKRW(proposal.onlineLowestPrice)}</div></div>
+            <div><div className="text-muted-foreground text-xs">공급가</div><div className="font-bold text-blue-600">{formatKRW(proposal.supplyPrice)}</div></div>
+            <div><div className="text-muted-foreground text-xs">유통기한</div><div className="font-medium">{formatDate(proposal.expiryDate)}</div></div>
+            <div><div className="text-muted-foreground text-xs">재고</div><div className="font-medium">{typeof proposal.stockQty === "number" ? proposal.stockQty.toLocaleString() : "—"}</div></div>
+            <div><div className="text-muted-foreground text-xs">발주 방식</div><div className="font-medium">{proposal.supplyType === "RECURRING" ? "지속발주 가능" : proposal.supplyType === "SINGLE" ? "단타성 제품" : "—"}</div></div>
+            <div><div className="text-muted-foreground text-xs">상품코드</div><div className="font-medium font-mono">{proposal.productCode || "—"}</div></div>
+          </div>
+
+          {/* 업체 정보 */}
+          <div className="text-sm">
+            <h4 className="font-semibold mb-2">공급업체</h4>
+            <div className="text-muted-foreground">
+              {proposal.companyName} | {proposal.contact} | {proposal.phone}
+            </div>
+          </div>
+
+          {/* 설명 */}
+          <div>
+            <h4 className="font-semibold mb-2 text-sm">상품 설명</h4>
+            <div
+              className="prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(proposal.description) }}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

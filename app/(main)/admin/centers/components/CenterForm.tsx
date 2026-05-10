@@ -47,6 +47,8 @@ function generateTemporaryPassword(length = 12): string {
 }
 
 // Form validation schema
+// edit 모드에서는 adminUsername / adminPassword 입력 칸이 렌더되지 않으므로
+// 두 필드는 schema 차원에서 optional. create 모드에서는 UI에서 required로 처리.
 const centerFormSchema = z.object({
   regionCode: z.string().min(1, "지역을 선택하세요"),
   phoneCode: z
@@ -66,26 +68,10 @@ const centerFormSchema = z.object({
     .regex(/^\d{3}-\d{2}-\d{5}$/, "XXX-XX-XXXXX 형식으로 입력하세요")
     .optional()
     .or(z.literal("")),
-  // 관리자 계정 (create 모드에서만, optional)
+  // 관리자 계정 (create 모드에서 필수, edit 모드에서는 사용 안함)
   adminUsername: z.string().min(3, "아이디는 3자 이상이어야 합니다").max(50).optional().or(z.literal("")),
   adminPassword: z.string().min(8, "비밀번호는 8자 이상이어야 합니다").optional().or(z.literal("")),
-  adminName: z.string().min(2, "이름은 2자 이상이어야 합니다").optional().or(z.literal("")),
-  adminEmail: z.string().email("올바른 이메일 형식이 아닙니다").optional().or(z.literal("")),
-  adminPhone: z.string().regex(/^010-\d{4}-\d{4}$/, "010-XXXX-XXXX 형식").optional().or(z.literal("")),
-}).refine(
-  (data) => {
-    // adminUsername이 있으면 adminPassword, adminName 필수
-    if (data.adminUsername && data.adminUsername.length > 0) {
-      if (!data.adminPassword || data.adminPassword.length < 8) return false;
-      if (!data.adminName || data.adminName.length < 2) return false;
-    }
-    return true;
-  },
-  {
-    message: "관리자 아이디를 입력하면 비밀번호(8자 이상)와 이름(2자 이상)도 필수입니다",
-    path: ["adminPassword"],
-  }
-);
+});
 
 type CenterFormValues = z.infer<typeof centerFormSchema>;
 
@@ -223,13 +209,19 @@ export function CenterForm({
         businessNo: values.businessNo || undefined,
       };
 
-      // 관리자 계정 정보 (create 모드에서만)
-      if (!isEditMode && values.adminUsername) {
+      // 관리자 계정 정보 (create 모드에서 필수)
+      // 관리자 이름은 센터 대표자 이름을 그대로 사용
+      // 연락처는 센터 대표자 연락처를 그대로 사용
+      if (!isEditMode) {
+        if (!values.adminUsername || !values.adminPassword) {
+          setError("관리자 아이디와 비밀번호는 필수입니다");
+          setLoading(false);
+          return;
+        }
         payload.adminUsername = values.adminUsername;
         payload.adminPassword = values.adminPassword;
-        payload.adminName = values.adminName;
-        payload.adminEmail = values.adminEmail || undefined;
-        payload.adminPhone = values.adminPhone || undefined;
+        payload.adminName = values.representative;
+        payload.adminPhone = values.representativePhone;
       }
 
       const url = isEditMode
@@ -411,16 +403,16 @@ export function CenterForm({
         </div>
       </Card>
 
-      {/* 관리자 계정 (create 모드에서만) */}
+      {/* 로그인 계정 (create 모드에서만) */}
       {!isEditMode && (
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-1">관리자 계정</h3>
+          <h3 className="text-lg font-semibold mb-1">센터 로그인 계정</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            센터 관리자(SUB_MASTER) 계정을 함께 생성합니다. 비워두면 센터코드로 자동 로그인됩니다.
+            이 센터에서 사용할 로그인 아이디와 비밀번호를 입력하세요. 첫 로그인 시 비밀번호 변경이 필요합니다.
           </p>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="adminUsername">관리자 아이디</Label>
+              <Label htmlFor="adminUsername">아이디 *</Label>
               <div className="flex gap-2 items-center">
                 <Input
                   id="adminUsername"
@@ -448,7 +440,7 @@ export function CenterForm({
             </div>
 
             <div>
-              <Label htmlFor="adminPassword">임시 비밀번호</Label>
+              <Label htmlFor="adminPassword">비밀번호 *</Label>
               <div className="flex gap-2">
                 <Input
                   id="adminPassword"
@@ -470,46 +462,6 @@ export function CenterForm({
               {errors.adminPassword && (
                 <p className="text-sm text-destructive mt-1">{errors.adminPassword.message}</p>
               )}
-            </div>
-
-            <div>
-              <Label htmlFor="adminName">관리자 이름</Label>
-              <Input
-                id="adminName"
-                type="text"
-                placeholder="2자 이상"
-                {...register("adminName")}
-              />
-              {errors.adminName && (
-                <p className="text-sm text-destructive mt-1">{errors.adminName.message}</p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="adminEmail">이메일 (선택)</Label>
-                <Input
-                  id="adminEmail"
-                  type="email"
-                  placeholder="admin@example.com"
-                  {...register("adminEmail")}
-                />
-                {errors.adminEmail && (
-                  <p className="text-sm text-destructive mt-1">{errors.adminEmail.message}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="adminPhone">연락처 (선택)</Label>
-                <Input
-                  id="adminPhone"
-                  type="text"
-                  placeholder="010-0000-0000"
-                  {...register("adminPhone")}
-                />
-                {errors.adminPhone && (
-                  <p className="text-sm text-destructive mt-1">{errors.adminPhone.message}</p>
-                )}
-              </div>
             </div>
           </div>
         </Card>

@@ -33,25 +33,25 @@ export default function NewCenterPage() {
         <Card className="p-8">
           <div className="flex items-center gap-2 mb-6">
             <CheckCircle className="h-6 w-6 text-green-600" />
-            <h2 className="text-2xl font-bold">센터 및 관리자 계정 생성 완료</h2>
+            <h2 className="text-2xl font-bold">센터 및 로그인 계정 생성 완료</h2>
           </div>
 
           <div className="space-y-4">
             <div className="p-4 bg-muted rounded-lg space-y-3">
-              <h3 className="font-semibold text-lg">관리자 계정 정보</h3>
+              <h3 className="font-semibold text-lg">로그인 계정 정보</h3>
               <div className="grid grid-cols-[100px_1fr] gap-2 text-sm">
                 <span className="text-muted-foreground">아이디</span>
                 <span className="font-mono font-semibold">{adminResult.username}</span>
-                <span className="text-muted-foreground">임시 비밀번호</span>
+                <span className="text-muted-foreground">비밀번호</span>
                 <span className="font-mono font-semibold">{adminResult.temporaryPassword}</span>
-                <span className="text-muted-foreground">이름</span>
+                <span className="text-muted-foreground">담당자</span>
                 <span>{adminResult.name}</span>
               </div>
             </div>
 
             <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
               <span className="shrink-0 mt-0.5">&#9888;</span>
-              <span>임시 비밀번호는 이 화면에서만 확인 가능합니다. 반드시 복사하여 전달해 주세요. 첫 로그인 시 비밀번호 변경이 필요합니다.</span>
+              <span>비밀번호는 이 화면에서만 확인 가능합니다. 반드시 복사하여 전달해 주세요. 첫 로그인 시 비밀번호 변경이 필요합니다.</span>
             </div>
 
             <div className="flex gap-3 justify-end pt-2">

@@ -111,78 +111,74 @@ export const POST = withRole(["MASTER", "SUB_MASTER"], async (req: NextRequest, 
       request: req,
     });
 
-    // ── 관리자 계정 동시 생성 (선택) ──
-    let adminInfo: { username: string; temporaryPassword: string; name: string } | null = null;
-
+    // ── 센터 로그인 계정 동시 생성 (필수) ──
+    // 관리자 이름은 센터 대표자 이름을 그대로 사용
+    // 연락처는 대표자 연락처를 사용 (별도 입력 받지 않음)
     const adminUsername = (body.adminUsername as string || '').trim();
     const adminPassword = (body.adminPassword as string || '').trim();
-    const adminName = (body.adminName as string || '').trim();
+    const adminName = (body.adminName as string || body.representative as string || '').trim();
+    const adminPhone = (body.adminPhone as string || body.representativePhone as string || '').trim();
     const adminEmail = (body.adminEmail as string || '').trim();
-    const adminPhone = (body.adminPhone as string || '').trim();
 
-    if (adminUsername) {
-      // Validation
-      if (adminUsername.length < 3) {
-        return errors.badRequest('관리자 아이디는 3자 이상이어야 합니다');
-      }
-      if (!adminPassword || adminPassword.length < 8) {
-        return errors.badRequest('관리자 비밀번호는 8자 이상이어야 합니다');
-      }
-      if (!adminName || adminName.length < 2) {
-        return errors.badRequest('관리자 이름은 2자 이상이어야 합니다');
-      }
-
-      // Username 중복 체크
-      const existingUser = await prisma.user.findUnique({
-        where: { username: adminUsername },
-      });
-      if (existingUser) {
-        return errors.badRequest(`아이디 "${adminUsername}"는 이미 사용 중입니다`);
-      }
-
-      // SUB_MASTER 계정 생성
-      const passwordHash = await bcrypt.hash(adminPassword, 10);
-      const adminUser = await prisma.user.create({
-        data: {
-          username: adminUsername,
-          passwordHash,
-          name: adminName,
-          email: adminEmail || null,
-          phone: adminPhone || '',
-          role: 'SUB_MASTER',
-          centerId: center.id,
-          isActive: true,
-          contractStatus: 'APPROVED',
-          mustChangePassword: true,
-        },
-      });
-
-      adminInfo = {
-        username: adminUsername,
-        temporaryPassword: adminPassword,
-        name: adminName,
-      };
-
-      logAudit({
-        userId: user.userId,
-        userRole: user.role,
-        userName: user.name,
-        action: 'CREATE',
-        entityType: 'User',
-        entityId: adminUser.id,
-        entityName: adminUser.name,
-        after: { username: adminUsername, role: 'SUB_MASTER', centerId: center.id },
-        description: `센터 관리자 계정 생성: ${adminName} (${adminUsername}) → ${center.name}`,
-        request: req,
-      });
+    // Validation - 아이디/비밀번호는 필수
+    if (!adminUsername || adminUsername.length < 3) {
+      return errors.badRequest('센터 로그인 아이디는 3자 이상이어야 합니다');
     }
+    if (!adminPassword || adminPassword.length < 8) {
+      return errors.badRequest('센터 로그인 비밀번호는 8자 이상이어야 합니다');
+    }
+    if (!adminName || adminName.length < 2) {
+      return errors.badRequest('관리자 이름이 필요합니다 (대표자 이름 자동 사용)');
+    }
+
+    // Username 중복 체크
+    const existingUser = await prisma.user.findUnique({
+      where: { username: adminUsername },
+    });
+    if (existingUser) {
+      return errors.badRequest(`아이디 "${adminUsername}"는 이미 사용 중입니다`);
+    }
+
+    // SUB_MASTER 계정 생성
+    const passwordHash = await bcrypt.hash(adminPassword, 10);
+    const adminUser = await prisma.user.create({
+      data: {
+        username: adminUsername,
+        passwordHash,
+        name: adminName,
+        email: adminEmail || null,
+        phone: adminPhone || '',
+        role: 'SUB_MASTER',
+        centerId: center.id,
+        isActive: true,
+        contractStatus: 'APPROVED',
+        mustChangePassword: true,
+      },
+    });
+
+    const adminInfo = {
+      username: adminUsername,
+      temporaryPassword: adminPassword,
+      name: adminName,
+    };
+
+    logAudit({
+      userId: user.userId,
+      userRole: user.role,
+      userName: user.name,
+      action: 'CREATE',
+      entityType: 'User',
+      entityId: adminUser.id,
+      entityName: adminUser.name,
+      after: { username: adminUsername, role: 'SUB_MASTER', centerId: center.id },
+      description: `센터 로그인 계정 생성: ${adminName} (${adminUsername}) → ${center.name}`,
+      request: req,
+    });
 
     return created({
       center,
       admin: adminInfo,
-      message: adminInfo
-        ? `센터 및 관리자 계정이 생성되었습니다`
-        : '센터가 성공적으로 생성되었습니다',
+      message: '센터 및 로그인 계정이 생성되었습니다',
     });
   } catch (error) {
     console.error('Failed to create center:', error);

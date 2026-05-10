@@ -518,10 +518,17 @@ model Proposal {
   // ✨ PROPOSAL-06: 연관 상품코드
   productCode String?        // 본사 상품 코드 (예: [33])
 
+  // ✨ PROPOSAL-07: 쇼핑몰형 카드용 추가 필드 (모두 선택)
+  onlineLowestPrice Int?     // 온라인 최저가 (원)
+  supplyPrice       Int?     // 공급가 (원)
+  expiryDate        DateTime? // 유통기한 (YYYY-MM-DD)
+  stockQty          Int?     // 재고 갯수
+
   user User @relation(fields: [submittedBy], references: [id])
 
   @@index([status])
   @@index([submittedBy])
+  @@index([category])
 }
 
 enum ProposalStatus {
