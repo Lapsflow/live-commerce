@@ -200,21 +200,8 @@ test.describe('Phase 8B: 상품제안 즉시 APPROVED', () => {
     expect(body.data).toBeTruthy();
     createdProposalId = body.data.id;
 
-    // MASTER 등록 → 즉시 APPROVED (또는 API 컨텍스트에서 PENDING일 수 있음)
-    const status = body.data.status;
-    expect(['APPROVED', 'PENDING']).toContain(status);
-
-    // PENDING이면 수동 APPROVED 전환 (API request context에서 role 추출 이슈)
-    if (status === 'PENDING') {
-      const approveRes = await request.put(`${BASE_URL}/api/proposals/${createdProposalId}/status`, {
-        headers: POST_HEADERS,
-        data: { status: 'APPROVED' },
-      });
-      if (approveRes.ok()) {
-        const approveBody = await approveRes.json();
-        expect(approveBody.data.status).toBe('APPROVED');
-      }
-    }
+    // MASTER 등록 → 즉시 APPROVED (hotfix 적용 후)
+    expect(body.data.status).toBe('APPROVED');
   });
 
   test('7. 제안 목록에서 APPROVED 확인', async ({ request }) => {
@@ -233,8 +220,7 @@ test.describe('Phase 8B: 상품제안 즉시 APPROVED', () => {
 
     const found = body.data.find((p: { id: string }) => p.id === createdProposalId);
     expect(found).toBeTruthy();
-    // test 6에서 APPROVED 전환 시도했으므로 APPROVED 기대 (실패 시 PENDING 허용)
-    expect(['APPROVED', 'PENDING']).toContain(found.status);
+    expect(found.status).toBe('APPROVED');
   });
 
   test('8. 제안 상태 REJECTED 변경 가능 (API)', async ({ request }) => {
@@ -486,151 +472,301 @@ test.describe('Phase 8D: 상품제안 카드 UI', () => {
     const h1 = page.locator('h1');
     await expect(h1).toContainText('상품 제안', { timeout: 10000 });
 
-    // 부제목/설명 텍스트 확인 — 배포 버전에 따라 다를 수 있음
-    // 카드 UI: "발주 가능한", 리스트 UI: "제안 목록"
-    const cardSubtitle = page.getByText('발주 가능한', { exact: false });
-    const listSubtitle = page.getByText('제안 목록', { exact: false });
-    const hasCardUI = await cardSubtitle.isVisible({ timeout: 3000 }).catch(() => false);
-    const hasListUI = await listSubtitle.isVisible({ timeout: 2000 }).catch(() => false);
-    expect(hasCardUI || hasListUI).toBe(true);
+    // 카드 UI 부제목 확인
+    const subtitle = page.getByText('발주 가능한', { exact: false });
+    await expect(subtitle).toBeVisible({ timeout: 5000 });
   });
 
-  test('14. 카테고리 탭 렌더 확인', async ({ page }) => {
+  test('14. 카테고리 탭 7개 렌더 + 카운트 표시', async ({ page }) => {
     await page.goto(`${BASE_URL}/proposals`);
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.animate-spin', { state: 'hidden', timeout: 10000 }).catch(() => {});
 
-    // 카테고리 탭은 카드 UI에만 존재 — 리스트 UI에는 없음
-    const firstTab = page.locator('button', { hasText: /전체/ });
-    const hasTabs = await firstTab.isVisible({ timeout: 5000 }).catch(() => false);
-
-    if (!hasTabs) {
-      // 리스트 UI 배포 상태 — "제안 목록"이 보이면 PASS
-      const listHeading = page.getByText('제안 목록', { exact: false });
-      const hasList = await listHeading.isVisible({ timeout: 3000 }).catch(() => false);
-      if (hasList) {
-        test.skip(true, '카테고리 탭 미배포 (리스트 뷰) — 카드 UI 배포 후 재검증 필요');
-        return;
-      }
-      // 둘 다 없으면 실패
-      expect(hasTabs).toBe(true);
-      return;
-    }
-
+    // 탭 버튼은 rounded-full 클래스를 가짐 (카드 버튼과 구분)
     const expectedTabs = ['전체', '식품', '뷰티', '생활', '가전', '패션', '기타'];
     for (const tab of expectedTabs) {
-      const tabBtn = page.locator('button', { hasText: new RegExp(`${tab}`) });
+      const tabBtn = page.locator('button.rounded-full', { hasText: new RegExp(tab) });
       await expect(tabBtn).toBeVisible({ timeout: 5000 });
     }
   });
 
-  test('15. 카테고리 필터링 확인', async ({ page }) => {
+  test('15. "식품" 탭 클릭 → 식품 카드만 노출', async ({ page }) => {
     test.skip(seedIds.length === 0, '시드 데이터 생성 실패');
 
     await page.goto(`${BASE_URL}/proposals`);
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.animate-spin', { state: 'hidden', timeout: 10000 }).catch(() => {});
 
-    // 카드 UI 탭이 있는 경우에만 탭 필터링 테스트
+    // "식품" 탭 클릭
     const foodTab = page.locator('button', { hasText: /식품/ }).first();
-    const hasTabs = await foodTab.isVisible({ timeout: 5000 }).catch(() => false);
-
-    if (!hasTabs) {
-      test.skip(true, '카테고리 탭 미배포 (리스트 뷰) — 카드 UI 배포 후 재검증 필요');
-      return;
-    }
-
+    await expect(foodTab).toBeVisible({ timeout: 10000 });
     await foodTab.click();
     await page.waitForTimeout(500);
 
-    const foodCard = page.getByText(`시드식품_생활_${TS}`);
-    await expect(foodCard).toBeVisible({ timeout: 5000 });
+    // 식품 카드가 보여야 함
+    await expect(page.getByText(`시드식품_생활_${TS}`)).toBeVisible({ timeout: 5000 });
 
-    const beautyCard = page.getByText(`시드뷰티_화장품_${TS}`);
-    await expect(beautyCard).toBeHidden();
+    // 뷰티 카드는 보이지 않아야 함
+    await expect(page.getByText(`시드뷰티_화장품_${TS}`)).toBeHidden();
   });
 
-  test('16. 시드 제안이 페이지에 표시됨', async ({ page }) => {
+  test('16. 시드 제안이 카드 형태로 표시', async ({ page }) => {
     test.skip(seedIds.length === 0, '시드 데이터 생성 실패');
 
     await page.goto(`${BASE_URL}/proposals`);
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.animate-spin', { state: 'hidden', timeout: 10000 }).catch(() => {});
 
-    // 시드 상품명이 페이지에 보여야 함 (카드 뷰 또는 리스트 뷰)
+    // 전체 탭 활성 상태에서 시드 상품명 확인
     await expect(page.getByText(`시드식품_생활_${TS}`)).toBeVisible({ timeout: 10000 });
 
-    // 카드 UI인 경우 공급가 텍스트 확인, 리스트 UI인 경우 상품명만으로 충분
-    const priceText = page.getByText('8,500원');
-    const hasPrice = await priceText.isVisible({ timeout: 3000 }).catch(() => false);
-    // 리스트 뷰에서는 가격이 안 보일 수 있으므로 상품명 확인으로 PASS
-    if (!hasPrice) {
-      // 리스트 뷰 — 최소한 다른 시드 데이터도 보이는지 확인
-      await expect(page.getByText(`시드뷰티_화장품_${TS}`)).toBeVisible({ timeout: 5000 });
-    }
+    // 공급가 텍스트 확인 (8,500원 형태)
+    await expect(page.getByText('8,500원')).toBeVisible({ timeout: 5000 });
   });
 
-  test('17. 재고 부족 표시 확인', async ({ page }) => {
+  test('17. 재고 부족(≤10) 카드에 "재고 부족" 뱃지', async ({ page }) => {
     test.skip(seedIds.length < 2, '시드 데이터 부족');
 
     await page.goto(`${BASE_URL}/proposals`);
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.animate-spin', { state: 'hidden', timeout: 10000 }).catch(() => {});
 
-    // 재고부족 상품(stockQty=5)이 보이는지 확인
+    // 재고부족 상품(stockQty=5) 카드가 보이는지 확인
     await expect(page.getByText(`시드식품_가공_재고부족_${TS}`)).toBeVisible({ timeout: 10000 });
 
-    // "재고 부족" 뱃지는 카드 UI에만 존재
-    const badge = page.getByText('재고 부족');
-    const hasBadge = await badge.first().isVisible({ timeout: 3000 }).catch(() => false);
-    if (!hasBadge) {
-      // 리스트 뷰에서는 뱃지가 없으므로 상품 노출 확인으로 대체
-      test.skip(true, '재고 부족 뱃지 미배포 (리스트 뷰) — 카드 UI 배포 후 재검증 필요');
-      return;
-    }
+    // "재고 부족" 뱃지 확인
+    const cardButton = page.locator('button', { hasText: `시드식품_가공_재고부족_${TS}` });
+    const badge = cardButton.getByText('재고 부족');
+    await expect(badge).toBeVisible({ timeout: 5000 });
   });
 
-  test('18. 제안 상세 확인 (모달 또는 상세 행)', async ({ page }) => {
+  test('18. 카드 클릭 → 상세 모달 → 라벨 확인 → 닫기', async ({ page }) => {
     test.skip(seedIds.length === 0, '시드 데이터 생성 실패');
 
     await page.goto(`${BASE_URL}/proposals`);
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.animate-spin', { state: 'hidden', timeout: 10000 }).catch(() => {});
 
-    // 시드 데이터가 보이는지 확인
-    const seedText = page.getByText(`시드식품_생활_${TS}`);
-    await expect(seedText).toBeVisible({ timeout: 10000 });
+    // 시드 카드가 보이는지 확인
+    const card = page.locator('button', { hasText: `시드식품_생활_${TS}` });
+    await expect(card).toBeVisible({ timeout: 10000 });
+    await card.click();
 
-    // 카드 UI: button 클릭 → 모달, 리스트 UI: 행 클릭 또는 클릭 불가
-    const cardButton = page.locator('button', { hasText: `시드식품_생활_${TS}` });
-    const hasCardButton = await cardButton.isVisible({ timeout: 2000 }).catch(() => false);
+    // 모달 오픈 확인
+    const modal = page.locator('.fixed.inset-0, [role="dialog"]');
+    await expect(modal.first()).toBeVisible({ timeout: 5000 });
 
-    if (hasCardButton) {
-      // 카드 UI — 클릭하여 모달 확인
-      await cardButton.click();
-      const modal = page.locator('.fixed.inset-0, [role="dialog"]');
-      await expect(modal.first()).toBeVisible({ timeout: 5000 });
-
-      const labels = ['카테고리', '공급가', '재고'];
-      for (const label of labels) {
-        await expect(page.getByText(label, { exact: false }).first()).toBeVisible({ timeout: 3000 });
-      }
-
-      await page.keyboard.press('Escape');
-      await page.waitForTimeout(500);
-      const isStillOpen = await modal.first().isVisible().catch(() => false);
-      if (isStillOpen) {
-        const closeBtn = page.locator('.fixed.inset-0 button').filter({ has: page.locator('svg') }).first();
-        await closeBtn.click();
-      }
-      await expect(modal.first()).toBeHidden({ timeout: 3000 });
-    } else {
-      // 리스트 UI — 카테고리/설명 등 상세 정보가 행에 표시되는지 확인
-      const categoryText = page.getByText('식품', { exact: false });
-      await expect(categoryText.first()).toBeVisible({ timeout: 3000 });
-      // 리스트 UI에서 승인 상태 뱃지 확인
-      const statusBadge = page.getByText('승인', { exact: false });
-      await expect(statusBadge.first()).toBeVisible({ timeout: 3000 });
+    // 모달 내 라벨 확인
+    const labels = ['카테고리', '공급가', '재고'];
+    for (const label of labels) {
+      await expect(page.getByText(label, { exact: false }).first()).toBeVisible({ timeout: 3000 });
     }
+
+    // 닫기 — Escape 키 또는 X 버튼
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(500);
+
+    const isStillOpen = await modal.first().isVisible().catch(() => false);
+    if (isStillOpen) {
+      const closeBtn = page.locator('.fixed.inset-0 button').filter({ has: page.locator('svg') }).first();
+      await closeBtn.click();
+    }
+    await expect(modal.first()).toBeHidden({ timeout: 3000 });
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+// E. Hotfix 검증 (시나리오 19-24)
+// ══════════════════════════════════════════════════════════════
+
+test.describe('Phase 8E: Hotfix 검증', () => {
+  test.use({ storageState: 'playwright/.auth/admin.json' });
+
+  let hotfixProposalId: string | null = null;
+
+  test.afterAll(async ({ request }) => {
+    if (hotfixProposalId) {
+      await request.delete(`${BASE_URL}/api/proposals/${hotfixProposalId}`, {
+        headers: POST_HEADERS,
+      });
+    }
+  });
+
+  test('19. POST /api/proposals → status === APPROVED (hotfix 직접 검증)', async ({ request }) => {
+    const res = await request.post(`${BASE_URL}/api/proposals`, {
+      headers: POST_HEADERS,
+      data: {
+        companyName: `Hotfix검증업체_${TS}`,
+        contact: 'hotfix담당',
+        phone: '010-9999-0000',
+        productName: `Hotfix검증상품_${TS}`,
+        category: '식품',
+        subcategory: '생활식품',
+        description: 'Hotfix #2 검증: auth() 중복 호출 패치 확인',
+        supplyPrice: 5500,
+        stockQty: 100,
+      },
+    });
+
+    expect(res.status()).toBeLessThan(500);
+    if (res.status() === 401) {
+      test.skip(true, 'API 인증 세션 미전파');
+      return;
+    }
+
+    expect(res.ok()).toBeTruthy();
+    const body = await res.json();
+    expect(body.data).toBeTruthy();
+    hotfixProposalId = body.data.id;
+
+    // Hotfix 핵심 단언: PUT 우회 없이 POST 직접 APPROVED
+    expect(body.data.status).toBe('APPROVED');
+  });
+
+  test('20. PUT /api/proposals/{id}/status → REJECTED → APPROVED 순환', async ({ request }) => {
+    if (!hotfixProposalId) {
+      test.skip(true, '제안 생성 안됨 (이전 테스트 SKIP)');
+      return;
+    }
+
+    // APPROVED → REJECTED
+    const rejectRes = await request.put(`${BASE_URL}/api/proposals/${hotfixProposalId}/status`, {
+      headers: POST_HEADERS,
+      data: { status: 'REJECTED' },
+    });
+    expect(rejectRes.ok()).toBeTruthy();
+    const rejectBody = await rejectRes.json();
+    expect(rejectBody.data.status).toBe('REJECTED');
+
+    // REJECTED → APPROVED (복원)
+    const approveRes = await request.put(`${BASE_URL}/api/proposals/${hotfixProposalId}/status`, {
+      headers: POST_HEADERS,
+      data: { status: 'APPROVED' },
+    });
+    expect(approveRes.ok()).toBeTruthy();
+    const approveBody = await approveRes.json();
+    expect(approveBody.data.status).toBe('APPROVED');
+  });
+
+  test('21. GET /api/proposals 응답 시간 측정 (5회 평균)', async ({ request }) => {
+    const times: number[] = [];
+
+    for (let i = 0; i < 5; i++) {
+      const start = Date.now();
+      const res = await request.get(`${BASE_URL}/api/proposals`, {
+        headers: POST_HEADERS,
+      });
+      const elapsed = Date.now() - start;
+      times.push(elapsed);
+
+      expect(res.ok()).toBeTruthy();
+    }
+
+    const avg = times.reduce((a, b) => a + b, 0) / times.length;
+    const max = Math.max(...times);
+
+    // 로그 출력 (결과 보고용)
+    console.log(`GET /api/proposals 응답 시간: avg=${Math.round(avg)}ms, max=${max}ms, samples=[${times.join(',')}]`);
+
+    // 관대한 기준: 평균 5초 이내 (Vercel cold start 감안)
+    expect(avg).toBeLessThan(5000);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+// F. 카드 UI 재검증 (시나리오 22-23) — 배포 후
+// ══════════════════════════════════════════════════════════════
+
+test.describe('Phase 8F: 카드 UI 재검증', () => {
+  test.use({ storageState: 'playwright/.auth/admin.json' });
+
+  const seedIdsF: string[] = [];
+
+  test.beforeAll(async ({ request }) => {
+    const seeds = [
+      {
+        companyName: `재검증A_${TS}`,
+        contact: '담당A',
+        phone: '010-5555-1111',
+        productName: `재검증식품_${TS}`,
+        category: '식품',
+        subcategory: '생활식품',
+        description: '카드 UI 재검증 시드 — 식품',
+        supplyPrice: 7700,
+        stockQty: 150,
+      },
+      {
+        companyName: `재검증B_${TS}`,
+        contact: '담당B',
+        phone: '010-5555-2222',
+        productName: `재검증뷰티_${TS}`,
+        category: '뷰티',
+        subcategory: '화장품',
+        description: '카드 UI 재검증 시드 — 뷰티',
+        supplyPrice: 19000,
+        stockQty: 80,
+      },
+    ];
+
+    for (const seed of seeds) {
+      const res = await request.post(`${BASE_URL}/api/proposals`, {
+        headers: POST_HEADERS,
+        data: seed,
+      });
+      if (res.ok()) {
+        const body = await res.json();
+        if (body.data?.id) {
+          seedIdsF.push(body.data.id);
+        }
+      }
+    }
+  });
+
+  test.afterAll(async ({ request }) => {
+    for (const id of seedIdsF) {
+      await request.delete(`${BASE_URL}/api/proposals/${id}`, {
+        headers: POST_HEADERS,
+      });
+    }
+  });
+
+  test('22. 카테고리 탭 7개 렌더 + 기본 활성 탭 확인', async ({ page }) => {
+    await page.goto(`${BASE_URL}/proposals`);
+    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('.animate-spin', { state: 'hidden', timeout: 10000 }).catch(() => {});
+
+    // 탭 버튼은 rounded-full 클래스를 가짐 (카드 버튼과 구분)
+    const expectedTabs = ['전체', '식품', '뷰티', '생활', '가전', '패션', '기타'];
+    for (const tab of expectedTabs) {
+      const tabBtn = page.locator('button.rounded-full', { hasText: new RegExp(tab) });
+      await expect(tabBtn).toBeVisible({ timeout: 5000 });
+    }
+
+    // "전체" 탭이 기본 활성 상태인지 확인 (활성 탭은 blue 배경)
+    const allTab = page.locator('button.rounded-full', { hasText: /전체/ });
+    await expect(allTab).toHaveClass(/bg-blue/, { timeout: 3000 });
+  });
+
+  test('23. 식품 탭 클릭 → 식품 카드만 노출', async ({ page }) => {
+    test.skip(seedIdsF.length < 2, '시드 데이터 생성 실패');
+
+    await page.goto(`${BASE_URL}/proposals`);
+    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('.animate-spin', { state: 'hidden', timeout: 10000 }).catch(() => {});
+
+    // 먼저 전체 탭에서 두 시드 모두 보이는지 확인
+    await expect(page.getByText(`재검증식품_${TS}`)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(`재검증뷰티_${TS}`)).toBeVisible({ timeout: 5000 });
+
+    // "식품" 탭 클릭
+    const foodTab = page.locator('button', { hasText: /식품/ }).first();
+    await expect(foodTab).toBeVisible({ timeout: 5000 });
+    await foodTab.click();
+    await page.waitForTimeout(500);
+
+    // 식품 카드만 보여야 함
+    await expect(page.getByText(`재검증식품_${TS}`)).toBeVisible({ timeout: 5000 });
+    // 뷰티 카드는 숨겨져야 함
+    await expect(page.getByText(`재검증뷰티_${TS}`)).toBeHidden({ timeout: 3000 });
   });
 });
