@@ -1,8 +1,7 @@
 import { NextRequest } from "next/server";
-import { withRole } from "@/lib/api/middleware";
+import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
-import { auth } from "@/lib/auth";
 
 /**
  * GET /api/orders/:id
@@ -12,25 +11,18 @@ import { auth } from "@/lib/auth";
  *
  * 권한:
  * - SELLER: 본인 발주만 조회 가능
- * - MASTER, SUB_MASTER: 모든 발주 조회 가능
+ * - SUB_MASTER: 본인 센터 셀러 발주만 조회 가능
+ * - MASTER: 모든 발주 조회 가능
  */
 export const GET = withRole(
   ["MASTER", "SUB_MASTER", "SELLER"],
-  async (req: NextRequest) => {
+  async (req: NextRequest, user: AuthUser) => {
     try {
-      const session = await auth();
-      if (!session?.user) {
-        return errors.unauthorized();
-      }
-
       // URL에서 orderId 추출
       const orderId = req.url.split("/").filter(s => s).pop()?.split("?")[0];
       if (!orderId) {
         return errors.badRequest("Order ID가 필요합니다");
       }
-
-      const userRole = (session.user as any).role;
-      const userId = (session.user as any).userId;
 
       // 발주 조회
       const order = await prisma.order.findUnique({
@@ -41,6 +33,7 @@ export const GET = withRole(
               id: true,
               name: true,
               email: true,
+              centerId: true,
             },
           },
           items: {
@@ -67,9 +60,16 @@ export const GET = withRole(
         return errors.notFound("order");
       }
 
-      // 권한 검증
-      if (userRole === "SELLER" && order.sellerId !== userId) {
+      // 권한 검증: SELLER는 본인 발주만
+      if (user.role === "SELLER" && order.sellerId !== user.userId) {
         return errors.forbidden("본인의 발주만 조회할 수 있습니다");
+      }
+
+      // 권한 검증: SUB_MASTER는 본인 센터 셀러 발주만
+      if (user.role === "SUB_MASTER" && user.centerId) {
+        if (order.seller?.centerId !== user.centerId) {
+          return errors.forbidden("본인 센터의 발주만 조회할 수 있습니다");
+        }
       }
 
       return ok(order);

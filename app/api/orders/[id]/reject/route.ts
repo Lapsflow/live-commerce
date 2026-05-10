@@ -32,11 +32,23 @@ export const POST = withRole(
 
       const order = await prisma.order.findUnique({
         where: { id: orderId },
-        select: { id: true, orderNo: true, status: true },
+        include: {
+          seller: { select: { centerId: true } },
+        },
       });
 
       if (!order) {
         return errors.notFound("발주를 찾을 수 없습니다");
+      }
+
+      // SUB_MASTER: 본인 센터 셀러의 CENTER 발주만 반려 가능
+      if (user.role === "SUB_MASTER" && user.centerId) {
+        if (order.seller?.centerId !== user.centerId) {
+          return errors.forbidden("본인 센터의 발주만 반려할 수 있습니다");
+        }
+        if (order.productType === "HEADQUARTERS") {
+          return errors.forbidden("본사 제품 발주의 반려는 본사에서 처리합니다");
+        }
       }
 
       if (order.status !== "PENDING") {

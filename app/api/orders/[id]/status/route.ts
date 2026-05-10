@@ -38,10 +38,23 @@ export const PUT = withRole(
       // 발주가 존재하는지 확인
       const existing = await prisma.order.findUnique({
         where: { id: orderId },
+        include: {
+          seller: { select: { centerId: true } },
+        },
       });
 
       if (!existing) {
         return errors.notFound("order");
+      }
+
+      // SUB_MASTER: 본인 센터 셀러의 CENTER 발주만 상태 변경 가능
+      if (user.role === "SUB_MASTER" && user.centerId) {
+        if (existing.seller?.centerId !== user.centerId) {
+          return errors.forbidden("본인 센터의 발주만 상태 변경할 수 있습니다");
+        }
+        if (existing.productType === "HEADQUARTERS") {
+          return errors.forbidden("본사 제품 발주의 상태 변경은 본사에서 처리합니다");
+        }
       }
 
       // 상태 업데이트

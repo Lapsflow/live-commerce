@@ -42,9 +42,10 @@ const statusColors = {
 } as const;
 
 const statusLabels = {
-  PENDING: "대기",
+  PENDING: "발주요청",
   APPROVED: "승인",
-  REJECTED: "거절",
+  REJECTED: "반려",
+  CANCELLED: "취소",
 } as const;
 
 const paymentColors = {
@@ -66,8 +67,8 @@ const shippingColors = {
 
 const shippingLabels = {
   PENDING: "대기",
-  PREPARING: "발송준비",
-  SHIPPED: "출고완료",
+  PREPARING: "배송준비중",
+  SHIPPED: "배송완료",
   PARTIAL: "부분출고",
 } as const;
 

@@ -1,12 +1,8 @@
 {
-  "sessionCount": 96,
+  "sessionCount": 44,
   "lastSession": {
-    "startedAt": "2026-04-24T01:14:45.607Z",
+    "startedAt": "2026-05-10T03:04:09.315Z",
     "platform": "claude",
     "level": "Dynamic"
-  },
-  "currentFeature": "barcode-ui",
-  "pdcaPhase": "design",
-  "pdcaStartedAt": "2026-04-15T14:00:00.000Z",
-  "pdcaDesignedAt": "2026-04-15T14:30:00.000Z"
+  }
 }

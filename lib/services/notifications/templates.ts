@@ -154,6 +154,30 @@ export const TEMPLATES: Record<NotificationType, Template> = {
       `샘플 요청이 접수되었습니다. 확인해 주세요.`,
   },
 
+  // ── Phase 7: 신규 발주 접수 → 관리자 ──
+  ORDER_CREATED: {
+    templateId: "TPL_ORDER_CREATED",
+    description: "신규 발주 접수 알림 → 관리자",
+    buildMessage: (v) =>
+      `[슈퍼무진] 신규 발주 접수\n\n` +
+      `주문번호: ${v.orderNo || "-"}\n` +
+      `셀러: ${v.sellerName || "-"}\n` +
+      `상품 수: ${v.itemCount || "-"}건\n` +
+      `금액: ${v.totalAmount || "-"}원\n` +
+      `유형: ${v.productType || "-"}\n` +
+      `발주를 확인해 주세요.`,
+  },
+
+  // ── Phase 7: 입금확인 → 셀러 ──
+  ORDER_PAYMENT_CONFIRMED: {
+    templateId: "TPL_ORDER_PAYMENT_CONFIRMED",
+    description: "입금확인 알림 → 셀러",
+    buildMessage: (v) =>
+      `[슈퍼무진] 입금 확인 안내\n\n` +
+      `주문번호: ${v.orderNo || "-"}\n` +
+      `입금이 확인되었습니다. 출고 준비를 진행합니다.`,
+  },
+
   // ── ONEWMS 자동 등록 → 마스터 ──
   PRODUCT_AUTO_CREATED: {
     templateId: "TPL_PRODUCT_AUTO_CREATED",

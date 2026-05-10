@@ -8,6 +8,7 @@ import { reserveStock } from "@/lib/services/stock/reservation";
 import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMatching";
 import { logAudit } from "@/lib/services/audit";
 import { validateProductsForBroadcast } from "@/lib/services/products/canBroadcast";
+import { sendNotification } from "@/lib/services/notifications";
 
 // Phase 2: Order with Items Schema
 const orderItemSchema = z.object({
@@ -58,6 +59,11 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
     // Authorization: SELLER can only see their own orders
     if (user.role === "SELLER") {
       where.sellerId = user.userId;
+    }
+
+    // Phase 2: SUB_MASTER can only see orders from sellers in their center
+    if (user.role === "SUB_MASTER" && user.centerId) {
+      where.seller = { centerId: user.centerId };
     }
 
     const [orders, total] = await Promise.all([
@@ -117,7 +123,7 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
       data.items.map(async (item) => {
         const product = await prisma.product.findUnique({
           where: { id: item.productId },
-          select: { productType: true, name: true, barcode: true, supplyPrice: true, sellPrice: true, isActive: true },
+          select: { productType: true, managedBy: true, name: true, barcode: true, supplyPrice: true, sellPrice: true, isActive: true },
         });
 
         if (!product) {
@@ -182,6 +188,11 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
 
       const totalMargin = proportionalTotalAmount - totalSupply;
 
+      // Phase 5: Set processingCenterId for CENTER orders
+      const processingCenterId = productType === "CENTER"
+        ? (items[0] as any)?._product?.managedBy ?? null
+        : null;
+
       const order = await prisma.order.create({
         data: {
           orderNo,
@@ -194,6 +205,7 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
           phone: data.phone,
           address: data.address,
           productType, // Phase 2: Set product type
+          processingCenterId, // Phase 5: Center routing
           items: {
             create: items.map((item) => ({
               productId: item.productId,
@@ -270,6 +282,38 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
         });
       }
 
+      // Phase 7: 신규 발주 접수 알림 → 관리자 (fire-and-forget)
+      try {
+        const admins = await prisma.user.findMany({
+          where: { role: { in: ["MASTER", "SUB_MASTER"] } },
+          select: { name: true, phone: true, email: true },
+        });
+        const seller = await prisma.user.findUnique({
+          where: { id: sellerId },
+          select: { name: true },
+        });
+        for (const order of createdOrders) {
+          for (const admin of admins) {
+            if (admin.phone) {
+              sendNotification({
+                type: "ORDER_CREATED",
+                recipient: { name: admin.name, phone: admin.phone, email: admin.email || undefined },
+                variables: {
+                  orderNo: order.orderNo,
+                  sellerName: seller?.name || "-",
+                  itemCount: String(order.items.length),
+                  totalAmount: String(order.totalAmount),
+                  productType: order.productType || "-",
+                },
+                orderId: order.id,
+              }).catch((err) => console.error("[ORDER_CREATED_NOTIF]", err));
+            }
+          }
+        }
+      } catch (notifErr) {
+        console.error("[ORDER_CREATED_NOTIF]", notifErr);
+      }
+
       return ok({
         message: "주문이 상품 유형별로 분리되어 생성되었습니다.",
         orders: createdOrders,
@@ -328,6 +372,38 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
         description: `발주 생성: ${order.orderNo}`,
         request: req,
       });
+    }
+
+    // Phase 7: 신규 발주 접수 알림 → 관리자 (fire-and-forget)
+    try {
+      const admins = await prisma.user.findMany({
+        where: { role: { in: ["MASTER", "SUB_MASTER"] } },
+        select: { name: true, phone: true, email: true },
+      });
+      const seller = await prisma.user.findUnique({
+        where: { id: sellerId },
+        select: { name: true },
+      });
+      for (const order of createdOrders) {
+        for (const admin of admins) {
+          if (admin.phone) {
+            sendNotification({
+              type: "ORDER_CREATED",
+              recipient: { name: admin.name, phone: admin.phone, email: admin.email || undefined },
+              variables: {
+                orderNo: order.orderNo,
+                sellerName: seller?.name || "-",
+                itemCount: String(order.items.length),
+                totalAmount: String(order.totalAmount),
+                productType: order.productType || "-",
+              },
+              orderId: order.id,
+            }).catch((err) => console.error("[ORDER_CREATED_NOTIF]", err));
+          }
+        }
+      }
+    } catch (notifErr) {
+      console.error("[ORDER_CREATED_NOTIF]", notifErr);
     }
 
     return ok({

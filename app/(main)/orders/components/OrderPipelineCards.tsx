@@ -67,7 +67,7 @@ export default function OrderPipelineCards({
     },
     {
       key: "shipped",
-      label: "출고완료",
+      label: "배송완료",
       count: stats.shipped,
       icon: PackageCheck,
       color: "text-green-600",

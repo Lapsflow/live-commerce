@@ -3,6 +3,7 @@ import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { logAudit } from "@/lib/services/audit";
+import { sendNotification } from "@/lib/services/notifications";
 
 /**
  * POST /api/orders/:id/payment-confirm
@@ -22,16 +23,23 @@ export const POST = withRole(
 
       const order = await prisma.order.findUnique({
         where: { id: orderId },
-        select: {
-          id: true,
-          orderNo: true,
-          status: true,
-          paymentStatus: true,
+        include: {
+          seller: { select: { centerId: true } },
         },
       });
 
       if (!order) {
         return errors.notFound("발주를 찾을 수 없습니다");
+      }
+
+      // SUB_MASTER: 본인 센터 셀러의 CENTER 발주만 입금확인 가능
+      if (user.role === "SUB_MASTER" && user.centerId) {
+        if (order.seller?.centerId !== user.centerId) {
+          return errors.forbidden("본인 센터의 발주만 입금확인할 수 있습니다");
+        }
+        if (order.productType === "HEADQUARTERS") {
+          return errors.forbidden("본사 제품 발주의 입금확인은 본사에서 처리합니다");
+        }
       }
 
       if (order.status !== "APPROVED") {
@@ -63,6 +71,24 @@ export const POST = withRole(
         description: `입금확인: ${order.orderNo}`,
         request: req,
       });
+
+      // Phase 7: 입금확인 알림 → 셀러 (fire-and-forget)
+      try {
+        const seller = await prisma.user.findUnique({
+          where: { id: order.sellerId },
+          select: { name: true, phone: true, email: true },
+        });
+        if (seller?.phone) {
+          sendNotification({
+            type: "ORDER_PAYMENT_CONFIRMED",
+            recipient: { name: seller.name, phone: seller.phone, email: seller.email || undefined },
+            variables: { orderNo: order.orderNo },
+            orderId: order.id,
+          }).catch((err) => console.error("[PAYMENT_CONFIRM_NOTIF]", err));
+        }
+      } catch (notifErr) {
+        console.error("[PAYMENT_CONFIRM_NOTIF]", notifErr);
+      }
 
       return ok(updated);
     } catch (error) {

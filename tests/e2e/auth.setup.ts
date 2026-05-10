@@ -7,6 +7,6 @@ setup('authenticate as master (default auth)', async ({ page }) => {
   await page.fill('input[name="username"], input[id="username"], input[type="text"]', 'master');
   await page.fill('input[type="password"]', 'master1234');
   await page.click('button[type="submit"]');
-  await page.waitForURL(/\/dashboard/);
+  await page.waitForURL(/\/dashboard/, { timeout: 30000 });
   await page.context().storageState({ path: authFile });
 });

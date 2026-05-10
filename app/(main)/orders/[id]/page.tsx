@@ -83,9 +83,10 @@ type Order = {
 };
 
 const statusLabels: Record<string, string> = {
-  PENDING: "대기",
+  PENDING: "발주요청",
   APPROVED: "승인",
-  REJECTED: "거절",
+  REJECTED: "반려",
+  CANCELLED: "취소",
 };
 
 const paymentStatusLabels: Record<string, string> = {
@@ -95,8 +96,8 @@ const paymentStatusLabels: Record<string, string> = {
 
 const shippingStatusLabels: Record<string, string> = {
   PENDING: "대기",
-  PREPARING: "발송준비",
-  SHIPPED: "출고완료",
+  PREPARING: "배송준비중",
+  SHIPPED: "배송완료",
   PARTIAL: "부분출고",
 };
 
