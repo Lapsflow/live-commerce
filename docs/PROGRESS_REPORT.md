@@ -1,6 +1,6 @@
 # 9 Phase 일괄 구현 + Playwright 100% 검증 — 진행 보고서
 
-> 최종 업데이트: 2026-05-10 (고객 수락 검증)
+> 최종 업데이트: 2026-05-12 (2026-05-12 핫픽스 검증)
 
 ---
 
@@ -14,6 +14,8 @@
 | **Session 4** | Phase 8 (PROPOSAL-07) | **완료** | 아래 상세 참조 |
 | **Session 4-1** | Phase 8 Hotfix 재검증 | **완료** | 배포 후 재검증 |
 | **고객 수락 검증** | 운영 도메인 E2E | **완료** | 20 PASS / 0 FAIL / 0 SKIP |
+| **고객 수락 검증 Part 2** | 명명 통일 + 통합 발주서 | **완료** | 12 PASS / 0 FAIL / 0 SKIP |
+| **2026-05-12 핫픽스 검증** | 권한 격리 + 비활성화 UI + 운영 흐름 | **완료** | 14 PASS / 0 FAIL / 0 SKIP |
 | Session 5 | Phase 9 + 통합 회귀 | 대기 | |
 
 ---
@@ -91,6 +93,149 @@
 ### 최종 한 줄 요약
 
 **고객 수락 검증 결과: 20 시나리오 / 20 PASS / 0 FAIL / 0 SKIP (총 2분 36초). 고객 원본 요청 4개 항목 중 4개 완전 충족, 0개 부분 충족, 0개 미충족.**
+
+---
+
+## 고객 수락 검증 Part 2 (2026-05-12)
+
+### 검증 환경
+
+- **운영 URL**: https://www.supermujin.ai
+- **인증**: master / master1234 (MASTER 계정)
+- **방식**: 사이드바 클릭 기반 네비게이션 + API 직접 호출
+- **테스트 파일**: `tests/e2e/customer-acceptance-2026-05-12.spec.ts`
+
+### 사전 확인 (Pre-checks)
+
+| 항목 | 결과 |
+|------|------|
+| GET /api/orders/by-broadcast → 200 | PASS (count: 0, 데이터 없는 기간 정상) |
+| /users 페이지 '센터관리자' 뱃지 노출 | PASS (31개 뱃지 확인) |
+| pnpm tsc --noEmit | PASS |
+| pnpm build | PASS |
+
+### 시나리오별 결과
+
+| # | 카테고리 | 시나리오 | 결과 | 비고 |
+|---|----------|----------|------|------|
+| T01 | A. 명명 통일 | /users 페이지 SUB_MASTER → '센터관리자' 뱃지 | **PASS** | 31개 뱃지 확인 |
+| T02 | A. 명명 통일 | /users 페이지 MASTER → '마스터(본사)' 뱃지 | **PASS** | 2개 뱃지 확인 |
+| T03 | A. 명명 통일 | /users 페이지 SELLER → '셀러' 뱃지 | **PASS** | 16개 뱃지 확인 |
+| T04 | A. 명명 통일 | 사용자 추가 다이얼로그 역할 선택 '센터관리자' | **PASS** | SelectItem 확인 |
+| T05 | A. 명명 통일 | API /api/users → DB enum 'SUB_MASTER' 유지 | **PASS** | UI 라벨과 분리 |
+| T06 | B. 통합 발주서 | 사이드바 '방송별 통합 발주서' → /orders/by-broadcast | **PASS** | 사이드바 메뉴 정상 |
+| T07 | B. 통합 발주서 | 페이지 헤더 + 서브타이틀 표시 | **PASS** | h1 + 설명문 |
+| T08 | B. 통합 발주서 | 필터 영역 (시작일/종료일/발주상태/조회) | **PASS** | 4개 옵션 (전체/PENDING/APPROVED/REJECTED) |
+| T09 | B. 통합 발주서 | 요약 카드 4개 (방송 수/발주 건수/본사/센터) | **PASS** | 모든 카드 가시 |
+| T10 | B. 통합 발주서 | API → broadcasts 배열 + count + range | **PASS** | 구조 검증 |
+| T11 | C. 권한 격리 | 비인증 사용자 API 401 + 페이지 로그인 리다이렉트 | **PASS** | Node fetch로 검증 |
+| T12 | D. 회귀 | /centers 센터 추가 폼 + /proposals 카드 UI | **PASS** | 기존 기능 정상 |
+
+### 회귀 검증
+
+| 테스트 스위트 | 결과 |
+|---------------|------|
+| customer-acceptance-2026-05-10.spec.ts (20건) | **20 PASS / 0 FAIL** |
+| customer-acceptance-2026-05-12.spec.ts (12건) | **12 PASS / 0 FAIL** |
+
+### 변경 파일
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `lib/constants/role-labels.ts` | ROLE_LABELS / ROLE_COLORS 상수 정의 |
+| `components/users/user-add-dialog.tsx` | ROLE_LABELS 참조로 역할 텍스트 통일 |
+| `components/layout/sidebar.tsx` | '방송별 통합 발주서' 메뉴 추가 |
+| `app/(main)/orders/by-broadcast/page.tsx` | 방송별 통합 발주서 화면 (신규) |
+| `app/api/orders/by-broadcast/route.ts` | 방송별 통합 발주서 API (신규) |
+
+### 최종 한 줄 요약
+
+**PROPOSAL-07 Part 2 수락 검증: 12 시나리오 / 12 PASS / 0 FAIL / 0 SKIP (총 48.5초). 명명 통일 5건 + 통합 발주서 5건 + 권한 격리 1건 + 회귀 1건 모두 통과. 기존 20건 회귀 없음.**
+
+---
+
+## 2026-05-12 핫픽스 검증 (권한 격리 + 비활성화 UI + 운영 흐름 안내)
+
+### 검증 환경
+
+- **운영 URL**: https://www.supermujin.ai
+- **인증**: MASTER (`playwright/.auth/supermujin.json`) + SUB_MASTER (`playwright/.auth/supermujin-submaster.json`)
+- **방식**: 사이드바 클릭 기반 네비게이션 + 권한별 브라우저 컨텍스트 분리
+- **테스트 파일**: `tests/e2e/hotfix-2026-05-12.spec.ts`
+
+### 대표님 답변 반영 항목
+
+| Q | 답변 | 구현 내용 |
+|---|------|-----------|
+| Q1-B | SUB_MASTER에게 ONEWMS 위젯 숨김 | 대시보드 위젯 + API 호출 권한 격리 |
+| Q2-A | 자동 등록 미검토 뱃지 MASTER 전용 | 상품 관리 뱃지 + 본사 카탈로그 열람 전용 |
+| Q3-A | 발주 엑셀 업로드 안내 박스 | 컨펌 단계 흐름 + ONEWMS 매칭 안내 |
+
+### 사전 확인 (Pre-checks)
+
+| 항목 | 결과 |
+|------|------|
+| MASTER /dashboard → ONEWMS 위젯 가시 | PASS |
+| MASTER /products → 자동 등록 미검토 뱃지 가시 | PASS |
+| pnpm tsc --noEmit + build | PASS |
+| SUB_MASTER 인증 상태 생성 | PASS |
+
+### 시나리오별 결과
+
+| # | 카테고리 | 시나리오 | 결과 | 비고 |
+|---|----------|----------|------|------|
+| T01 | A. ONEWMS 위젯 | MASTER /dashboard → 위젯 가시 | **PASS** | "ONEWMS 연동 상태" + "실패 주문" + "재고 충돌" |
+| T02 | A. ONEWMS 위젯 | SUB_MASTER /dashboard → 위젯 미가시 | **PASS** | count=0 확인 |
+| T03 | A. ONEWMS 위젯 | SUB_MASTER → /api/onewms/stats 호출 차단 | **PASS** | 네트워크 요청 0건 |
+| T04 | B. 자동 등록 뱃지 | MASTER /products → 뱃지 가시 | **PASS** | "자동 등록 N건 미검토" |
+| T05 | B. 자동 등록 뱃지 | SUB_MASTER /products → 뱃지 미가시 | **PASS** | count=0 확인 |
+| T06 | C. 비활성화 UI | MASTER /users → 액션 컬럼 버튼 가시 | **PASS** | "비활성화" 버튼 확인 |
+| T07 | C. 비활성화 UI | '비활성화' 클릭 → 확인 다이얼로그 | **PASS** | "비활성화" 문자열 포함 |
+| T08 | C. 비활성화 UI | 확인 후 toast + 상태 변경 | **PASS** | "비활성화되었습니다" toast |
+| T09 | D. 센터 권한 격리 | SUB_MASTER → 기본 탭 '우리 센터 제품' | **PASS** | 첫 진입 시 CENTER 탭 |
+| T10 | D. 센터 권한 격리 | SUB_MASTER → '전체' 탭 미가시 | **PASS** | count=0 확인 |
+| T11 | D. 센터 권한 격리 | SUB_MASTER → '본사 카탈로그' → '열람 전용' 안내 | **PASS** | "열람만 가능하며" 텍스트 |
+| T12 | E. 발주 안내 | /orders/upload → 안내 박스 가시 | **PASS** | "발주 처리 흐름 안내" |
+| T13 | E. 발주 안내 | 안내 박스 ONEWMS 매칭 문구 | **PASS** | "ONEWMS에 매칭되지 않습니다" |
+| T14 | F. 회귀 | /centers + /proposals + /users 정상 | **PASS** | 3개 페이지 h1 + 비활성화 버튼 |
+
+### 카테고리별 요약
+
+| 카테고리 | 시나리오 | PASS | FAIL | SKIP |
+|----------|---------|------|------|------|
+| A. ONEWMS 위젯 권한 격리 | T01–T03 | 3 | 0 | 0 |
+| B. 자동 등록 미검토 뱃지 | T04–T05 | 2 | 0 | 0 |
+| C. 사용자 비활성화 UI | T06–T08 | 3 | 0 | 0 |
+| D. 상품 관리 센터 권한 격리 | T09–T11 | 3 | 0 | 0 |
+| E. 발주 엑셀 업로드 안내 | T12–T13 | 2 | 0 | 0 |
+| F. 회귀 점검 | T14 | 1 | 0 | 0 |
+| **합계** | **T01–T14** | **14** | **0** | **0** |
+
+### 회귀 검증
+
+| 테스트 스위트 | 결과 |
+|---------------|------|
+| customer-acceptance-2026-05-10.spec.ts (20건) | **20 PASS / 0 FAIL** |
+| customer-acceptance-2026-05-12.spec.ts (12건) | **12 PASS / 0 FAIL** |
+| hotfix-2026-05-12.spec.ts (14건) | **14 PASS / 0 FAIL** |
+
+### 변경 파일
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `tests/e2e/hotfix-2026-05-12.spec.ts` | 14 시나리오 E2E (신규) |
+| `scripts/create-submaster-auth.mjs` | SUB_MASTER 인증 상태 생성 헬퍼 (신규) |
+| `playwright/.auth/supermujin-submaster.json` | SUB_MASTER 인증 상태 (신규) |
+
+### 실행 정보
+
+- **총 실행시간**: 1분 18초 (핫픽스 14건) + 3분 6초 (회귀 20건) + 59초 (회귀 12건) = 약 5분 23초
+- **더미 사용자**: beforeAll에서 생성 → afterAll에서 자동 삭제 (cmp3fmush000b04laeolqkwrn)
+- **SUB_MASTER 테스트**: `browser.newContext({ storageState })` 방식으로 권한 분리
+
+### 최종 한 줄 요약
+
+**2026-05-12 핫픽스 검증: 14 시나리오 / 14 PASS / 0 FAIL / 0 SKIP (총 1분 18초). 대표님 답변 3개 항목 (Q1-B 위젯 격리, Q2-A 뱃지 격리, Q3-A 운영 안내) 모두 충족. 기존 32건 회귀 없음.**
 
 ---
 
@@ -600,4 +745,7 @@ docs/PROGRESS_REPORT.md                     — 본 보고서
 | Phase 7 | 3 | 4 | 7 | 37.1s |
 | Phase 8 (1차) | 14 | 4 | 18 | 72.0s |
 | Phase 8 (재검증+Hotfix) | 23 | 1 | 24 | 90.0s |
-| **합계 (최종)** | **94** | **16** | **110** | **357.3s** |
+| 고객 수락 검증 (05-10) | 20 | 0 | 20 | 156.0s |
+| 고객 수락 검증 Part 2 (05-12) | 12 | 0 | 12 | 48.5s |
+| 2026-05-12 핫픽스 검증 | 14 | 0 | 14 | 78.0s |
+| **합계 (최종)** | **140** | **16** | **156** | **639.8s** |

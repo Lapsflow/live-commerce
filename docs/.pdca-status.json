@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-05-10T03:05:37.063Z",
+  "lastUpdated": "2026-05-13T03:36:13.025Z",
   "activeFeatures": [
     "notifications",
     "[code]",
@@ -94,7 +94,8 @@
     "review",
     "force-sync",
     "(main)",
-    "9-flow"
+    "9-flow",
+    "editors"
   ],
   "primaryFeature": "notifications",
   "features": {
@@ -991,9 +992,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-01T03:40:56.310Z",
-        "lastUpdated": "2026-05-10T03:05:37.063Z"
+        "lastUpdated": "2026-05-13T02:18:06.490Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/phase-8-proposal-shop.spec.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/hotfix-2026-05-12.spec.ts"
     },
     "navigation": {
       "phase": "do",
@@ -1306,6 +1307,19 @@
         "lastUpdated": "2026-05-09T06:39:15.099Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/9-flow/09-ui-polish.spec.ts"
+    },
+    "editors": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-05-13T03:36:13.025Z",
+        "lastUpdated": "2026-05-13T03:36:13.025Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/editors/TipTapEditor.tsx"
     }
   },
   "pipeline": {
@@ -1316,7 +1330,7 @@
   "session": {
     "startedAt": "2026-04-28T06:44:38.229Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-05-10T03:05:37.063Z"
+    "lastActivity": "2026-05-13T03:36:13.025Z"
   },
   "history": [
     {
@@ -6038,6 +6052,132 @@
     {
       "timestamp": "2026-05-10T03:05:37.063Z",
       "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T04:57:59.059Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T04:58:42.063Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T04:58:57.718Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T04:59:02.366Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T05:01:28.426Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T05:01:38.077Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T05:33:38.917Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T05:36:39.968Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T05:36:46.508Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T05:36:55.373Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-10T05:37:01.440Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T01:48:50.788Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T01:50:20.093Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T01:50:29.743Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T01:51:49.197Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T01:52:57.208Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T01:53:23.034Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T01:54:18.584Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T02:16:19.870Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T02:18:06.490Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T03:36:13.025Z",
+      "feature": "editors",
       "phase": "do",
       "action": "updated"
     }
