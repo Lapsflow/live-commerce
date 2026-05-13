@@ -1,7 +1,6 @@
-# live-commerce — 프로젝트별 설정
+# live-commerce — 프로젝트 설정
 
-> 공통 스택: `.harness/base.md` 참고
-> 이 파일은 **live-commerce만의 차이점**만 기록
+> 프로젝트 전용 환경 정보를 기록합니다. 코딩 원칙은 `CLAUDE.md` (Boris's Principles) 참고.
 
 ---
 
@@ -16,8 +15,8 @@ Live commerce platform with ONEWMS integration, multi-marketplace support (Coupa
 
 ```
 브랜치    : main
-현재 작업 : Multi-Project Harness 통합
-다음 작업 : [기존 백로그 참조]
+현재 작업 : 기획서 v2 매핑 + 권한 격리 핫픽스 완료
+다음 작업 : 테스트 계정 정리 + 신윤송 중복 처리
 블로커    : 없음
 ```
 
@@ -26,7 +25,7 @@ Live commerce platform with ONEWMS integration, multi-marketplace support (Coupa
 ## 🔑 프로젝트 전용 환경변수
 
 ```bash
-# 공통 (.harness/base.md 참고)
+# 공통 인프라
 DATABASE_URL=                  # Neon PostgreSQL (live-commerce DB)
 NEXTAUTH_SECRET=               # openssl rand -base64 32
 NEXTAUTH_URL=                  # http://localhost:3000 (dev)
@@ -141,11 +140,14 @@ lib/services/onewms/       → ONEWMS 통합 (주의해서 수정)
 ## 📋 작업 계획
 
 ```
-[x] Multi-Project Harness 통합 설계
-[ ] .harness/ 파일 생성
-[ ] docs/project.md 작성
-[ ] CLAUDE.md 재작성
-[ ] 검증: tsc, lint, build
+[x] 기획서 v2 PDF 매핑
+[x] 권한 격리 핫픽스 (ONEWMS / 자동등록 뱃지)
+[x] 사용자 비활성화 UI
+[x] 상품 관리 센터 권한 격리
+[x] 발주 엑셀 업로드 WMS 매칭 안내
+[x] 보리스 원칙 적용 + 하네스 제거
+[ ] 테스트 계정 일괄 삭제 스크립트 실행
+[ ] 신윤송 중복 entry 정리
 ```
 
 ---
