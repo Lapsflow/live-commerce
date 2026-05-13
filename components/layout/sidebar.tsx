@@ -50,6 +50,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/centers", label: "센터 관리", icon: Building2 },
     { href: "/admin/contracts", label: "계약 승인", icon: ClipboardCheck },
     { href: "/orders", label: "발주 관리", icon: ShoppingCart },
+    { href: "/orders/by-broadcast", label: "방송별 통합 발주서", icon: Radio },
     { href: "/broadcasts", label: "방송 관리", icon: Radio },
     { href: "/broadcasts/calendar", label: "방송 캘린더", icon: Calendar },
     { href: "/products", label: "상품 관리", icon: Package },

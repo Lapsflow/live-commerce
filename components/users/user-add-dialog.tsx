@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ROLE_LABELS } from "@/lib/constants/role-labels";
 
 type Center = {
   id: string;
@@ -226,8 +227,8 @@ export function UserAddDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="SELLER">셀러</SelectItem>
-                    <SelectItem value="SUB_MASTER">센터 관리자</SelectItem>
+                    <SelectItem value="SELLER">{ROLE_LABELS["SELLER"]}</SelectItem>
+                    <SelectItem value="SUB_MASTER">{ROLE_LABELS["SUB_MASTER"]}</SelectItem>
                   </SelectContent>
                 </Select>
               ) : (
