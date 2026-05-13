@@ -83,60 +83,45 @@ export async function syncProductStock(productId: string): Promise<{
       },
     });
 
-    // Case 1: DB=0, ONEWMS>0 → 신상품 또는 첫 동기화. 무조건 자동 적용.
-    if (localQty === 0 && onewmsAvailableQty > 0) {
-      await prisma.product.update({
-        where: { id: productId },
-        data: { totalStock: onewmsAvailableQty },
-      });
+    // ─────────────────────────────────────────────────────────────
+    // 정책: ONEWMS 100% 일치 (2026-05-13 대표님 결정 — 옵션 A)
+    //   PDF v2 원칙 "본사 WMS 자동 동기화 / 데이터 100% 본사 보유" 충실 이행.
+    //   모든 차이를 ONEWMS 값으로 자동 적용. conflict 상태 생성 안 함.
+    //   단, 큰 차이(절댓값 > 5) 는 알람 로그로 추적 가능하게 남김.
+    // ─────────────────────────────────────────────────────────────
 
-      console.log(
-        `DB=0 auto-applied for ${product.code}: 0 → ${onewmsAvailableQty}`
-      );
-
+    // 차이가 없으면 그대로 종료
+    if (difference === 0) {
       return { success: true, conflict: false };
     }
 
-    // Case 2: Small difference (<=5 units) → 자동 적용
-    if (Math.abs(difference) <= 5) {
-      await prisma.product.update({
-        where: { id: productId },
-        data: { totalStock: onewmsAvailableQty },
-      });
-
-      console.log(
-        `Auto-resolved stock for ${product.code}: ${localQty} → ${onewmsAvailableQty}`
-      );
-
-      // Low stock alert
-      if (onewmsAvailableQty < 10) {
-        console.warn(
-          `[LOW STOCK ALERT] Product ${product.code} (${product.name}) has low stock: ${onewmsAvailableQty} units`
-        );
-      }
-
-      return { success: true, conflict: false };
-    }
-
-    // Case 3: DB>0, ONEWMS=0 → 출고 누락 또는 전량 출고 의심. conflict 생성.
-    // Case 4: Large difference (>5 units, 양쪽 모두 >0) → conflict 생성.
-    await prisma.onewmsStockSync.updateMany({
-      where: {
-        productId,
-        syncedAt: {
-          gte: new Date(Date.now() - 60000), // Last 1 minute
-        },
-      },
-      data: {
-        syncStatus: 'conflict',
-      },
+    // ONEWMS 값으로 자동 덮어쓰기
+    await prisma.product.update({
+      where: { id: productId },
+      data: { totalStock: onewmsAvailableQty },
     });
 
-    console.log(
-      `Conflict detected for ${product.code}: ONEWMS=${onewmsAvailableQty}, Local=${localQty}, Diff=${difference}`
-    );
+    // 큰 차이는 알람 로그 (운영 모니터링용)
+    if (Math.abs(difference) > 5) {
+      console.warn(
+        `[LARGE_DIFF_AUTO_APPLIED] ${product.code} (${product.name}): ` +
+          `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (차이 ${difference > 0 ? '+' : ''}${difference})`
+      );
+    } else {
+      console.log(
+        `Auto-applied stock for ${product.code}: ${localQty} → ${onewmsAvailableQty}`
+      );
+    }
 
-    return { success: true, conflict: true };
+    // Low stock alert
+    if (onewmsAvailableQty < 10) {
+      console.warn(
+        `[LOW STOCK ALERT] Product ${product.code} (${product.name}) has low stock: ${onewmsAvailableQty} units`
+      );
+    }
+
+    // 항상 자동 적용이므로 conflict 는 false
+    return { success: true, conflict: false };
   } catch (error) {
     console.error(`Stock sync failed for product ${productId}:`, error);
     const message = error instanceof Error ? error.message : 'Unknown error';

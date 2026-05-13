@@ -41,7 +41,8 @@ export default function StockConflictsList() {
   const offset = page * PAGE_SIZE;
 
   // Fetch conflicts (페이지네이션)
-  const { data, isLoading, error } = useQuery<ConflictsResponse>({
+  // placeholderData: 다음 페이지 로딩 중에도 이전 페이지 데이터 유지 → 깜빡임 없음
+  const { data, isLoading, isFetching, error } = useQuery<ConflictsResponse>({
     queryKey: ['stock-conflicts', page],
     queryFn: async () => {
       const params = new URLSearchParams({
@@ -54,6 +55,7 @@ export default function StockConflictsList() {
       // API 응답 구조: { data: { conflicts: [...], count, hasMore, ... } }
       return json.data ?? { conflicts: [], count: 0, returned: 0, limit: PAGE_SIZE, offset: 0, hasMore: false };
     },
+    placeholderData: (prev) => prev, // 이전 페이지 데이터 유지 (페이지 전환 깜빡임 방지)
     refetchInterval: 60000,
   });
 
@@ -264,17 +266,22 @@ export default function StockConflictsList() {
             <div className="mt-4 flex items-center justify-between border-t pt-4">
               <button
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={page === 0}
+                disabled={page === 0 || isFetching}
                 className="px-4 py-2 bg-grey-100 text-grey-700 rounded hover:bg-grey-200 disabled:opacity-40 disabled:cursor-not-allowed text-sm"
               >
                 ← 이전
               </button>
-              <div className="text-sm text-grey-600">
-                페이지 <span className="font-semibold">{page + 1}</span> / {totalPages}
+              <div className="text-sm text-grey-600 flex items-center gap-2">
+                <span>
+                  페이지 <span className="font-semibold">{page + 1}</span> / {totalPages}
+                </span>
+                {isFetching && (
+                  <span className="text-xs text-blue-500">⟳ 로딩 중</span>
+                )}
               </div>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                disabled={!hasMore}
+                disabled={!hasMore || isFetching}
                 className="px-4 py-2 bg-grey-100 text-grey-700 rounded hover:bg-grey-200 disabled:opacity-40 disabled:cursor-not-allowed text-sm"
               >
                 다음 →

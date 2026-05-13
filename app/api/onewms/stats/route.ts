@@ -45,10 +45,14 @@ export const GET = withRole(
         where: { status: 'shipped' },
       }),
 
-      // Stock conflicts
-      prisma.onewmsStockSync.count({
-        where: { syncStatus: 'conflict' },
-      }),
+      // Stock conflicts — 고유 상품 기준 카운트 (2026-05-13 hotfix)
+      // 기존: OnewmsStockSync 의 모든 conflict row 카운트 (중복 포함, 13,000+ 부풀려짐)
+      // 수정: DISTINCT productId 기준으로 실제 충돌 중인 상품 수만 반영
+      prisma.$queryRaw<{ count: bigint }[]>`
+        SELECT COUNT(DISTINCT "productId") AS count
+        FROM "OnewmsStockSync"
+        WHERE "syncStatus" = 'conflict'
+      `.then((rows) => Number(rows[0]?.count ?? 0)),
 
       // Recent stock syncs (last 24 hours)
       prisma.onewmsStockSync.findMany({
