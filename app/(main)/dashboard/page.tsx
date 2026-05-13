@@ -56,6 +56,7 @@ export default function DashboardPage() {
   const userRole = (session?.user as any)?.role;
   const isSeller = userRole === "SELLER";
   const isSubMaster = userRole === "SUB_MASTER";
+  const isMaster = userRole === "MASTER";
 
   // 역할별 KPI 레이블
   const kpiLabels = isSeller
@@ -79,9 +80,13 @@ export default function DashboardPage() {
   const fetchDashboard = useCallback(() => {
     setLoading(true);
     setError(null);
+    // ONEWMS 통계는 MASTER 본사 전용 — 다른 권한은 불필요 호출 차단
+    const onewmsPromise = isMaster
+      ? fetch("/api/onewms/stats").then((res) => res.ok ? res.json() : Promise.reject()).catch(() => null)
+      : Promise.resolve(null);
     Promise.all([
       fetch(`/api/stats/dashboard?fromDate=${fromDate}&toDate=${toDate}`).then((res) => res.ok ? res.json() : Promise.reject()),
-      fetch("/api/onewms/stats").then((res) => res.ok ? res.json() : Promise.reject()).catch(() => null)
+      onewmsPromise,
     ])
       .then(([dashboardData, onewmsData]) => {
         setStats(dashboardData.data);
@@ -94,7 +99,7 @@ export default function DashboardPage() {
         setError(err.message || "Failed to fetch dashboard stats");
         setLoading(false);
       });
-  }, [fromDate, toDate]);
+  }, [fromDate, toDate, isMaster]);
 
   useEffect(() => {
     fetchDashboard();
@@ -207,8 +212,8 @@ export default function DashboardPage() {
         </Card>
       )}
 
-      {/* ONEWMS 연동 상태 (관리자만) */}
-      {!isSeller && onewmsStats && (
+      {/* ONEWMS 연동 상태 (MASTER 본사 전용 - 기획서 v2 9페이지: ONEWMS는 본사 관리) */}
+      {isMaster && onewmsStats && (
         <Card className="p-6 border-blue-200 bg-blue-50/50">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">

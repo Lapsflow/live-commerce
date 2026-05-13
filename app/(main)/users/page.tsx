@@ -16,6 +16,7 @@ import {
   Plus,
   Edit,
   UserCheck,
+  UserX,
   Building2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -78,6 +79,16 @@ export default function UsersPage() {
 
   const handleToggleActive = async (user: User) => {
     const newActive = !user.isActive;
+    // 비활성화 시 확인 다이얼로그 (활성화는 즉시)
+    if (!newActive) {
+      const ok = window.confirm(
+        `${user.name} 계정을 비활성화하시겠습니까?\n\n` +
+          `비활성화하면 해당 사용자는 로그인할 수 없게 됩니다.\n` +
+          `발주 이력, 방송 이력 등 기존 데이터는 그대로 유지됩니다.\n` +
+          `필요 시 다시 활성화할 수 있습니다.`
+      );
+      if (!ok) return;
+    }
     try {
       const res = await fetch(`/api/users/${user.id}`, {
         method: "PUT",
@@ -427,18 +438,45 @@ function UserTable({
                     </td>
                   ))}
                   <td className="px-4 py-3 text-right">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(user);
-                      }}
-                      className="flex items-center gap-1"
-                    >
-                      <Edit className="h-4 w-4" />
-                      편집
-                    </Button>
+                    <div className="flex items-center gap-1 justify-end">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(user);
+                        }}
+                        className="flex items-center gap-1"
+                      >
+                        <Edit className="h-4 w-4" />
+                        편집
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onToggleActive?.(user);
+                        }}
+                        className={`flex items-center gap-1 ${
+                          user.isActive
+                            ? "text-red-600 hover:text-red-700 hover:bg-red-50"
+                            : "text-green-600 hover:text-green-700 hover:bg-green-50"
+                        }`}
+                      >
+                        {user.isActive ? (
+                          <>
+                            <UserX className="h-4 w-4" />
+                            비활성화
+                          </>
+                        ) : (
+                          <>
+                            <UserCheck className="h-4 w-4" />
+                            활성화
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))

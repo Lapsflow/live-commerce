@@ -126,8 +126,8 @@ export default function OrderUploadPage() {
       }
 
       toast({
-        title: "업로드 완료",
-        description: data.data.message,
+        title: "발주 업로드 완료",
+        description: `${data.data.message} · 발주 관리에서 컨펌하면 ONEWMS로 자동 동기화됩니다.`,
       });
 
       router.push("/orders");
@@ -159,6 +159,19 @@ export default function OrderUploadPage() {
   return (
     <div className="container mx-auto py-6">
       <h1 className="text-3xl font-bold mb-6">발주 대량 등록</h1>
+
+      {/* 운영 흐름 안내 — Q3-A: 컨펌 단계 유지 */}
+      <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm">
+        <div className="font-semibold text-amber-900 mb-1">발주 처리 흐름 안내</div>
+        <ol className="list-decimal list-inside text-amber-800 space-y-0.5">
+          <li>엑셀 업로드 → 발주가 본사 시스템에 접수됩니다.</li>
+          <li>본사 마스터가 발주 관리에서 컨펌하면 본사 제품은 ONEWMS로 자동 동기화됩니다.</li>
+          <li>센터 제품은 해당 센터로 발주서가 자동 발송됩니다.</li>
+        </ol>
+        <div className="mt-2 text-xs text-amber-700">
+          엑셀 업로드만으로는 ONEWMS에 매칭되지 않습니다. 본사 컨펌 단계가 필요합니다.
+        </div>
+      </div>
 
       {/* 템플릿 다운로드 */}
       <Card className="p-6 mb-6">

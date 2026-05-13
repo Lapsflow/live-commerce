@@ -120,25 +120,32 @@ export default function ProductsPage() {
   const userRole = (session?.user as any)?.role;
   const userCenterId = (session?.user as any)?.centerId;
   const isMasterOrSub = ["MASTER", "SUB_MASTER"].includes(userRole);
+  const isMaster = userRole === "MASTER";
+  const isSubMaster = userRole === "SUB_MASTER";
   const isSeller = userRole === "SELLER";
-  const canResetStock = isMasterOrSub;
+  // Q2-A: 본사 전용 관리 기능 - 재고 초기화, 자동 등록 검토는 MASTER만
+  const canResetStock = isMaster;
   const canAddProduct = isMasterOrSub;
   const canUploadExcel = isMasterOrSub;
+  const canReviewAutoCreated = isMaster;
 
-  const [productTypeFilter, setProductTypeFilter] = useState<"ALL" | "HEADQUARTERS" | "CENTER">("ALL");
+  // Q2-A: 센터 관리자는 기본적으로 자기 센터 제품을 먼저 봄. 본사 카탈로그는 별도 탭에서 열람만.
+  const [productTypeFilter, setProductTypeFilter] = useState<"ALL" | "HEADQUARTERS" | "CENTER">(
+    isSubMaster ? "CENTER" : "ALL"
+  );
   const [showInactive, setShowInactive] = useState(false);
   const [showAutoCreated, setShowAutoCreated] = useState(false);
   const [autoCreatedCount, setAutoCreatedCount] = useState(0);
   const [resetting, setResetting] = useState(false);
 
-  // Fetch unreviewed auto-created count (MASTER/SUB_MASTER only)
+  // Fetch unreviewed auto-created count (MASTER only - 본사 자동 등록은 본사가 검토)
   useEffect(() => {
-    if (!isMasterOrSub) return;
+    if (!canReviewAutoCreated) return;
     fetch("/api/products/auto-created?reviewed=false&limit=1")
       .then((r) => r.json())
       .then((d) => setAutoCreatedCount(d.data?.totalCount ?? 0))
       .catch(() => {});
-  }, [isMasterOrSub]);
+  }, [canReviewAutoCreated]);
 
   const params = new URLSearchParams();
   if (productTypeFilter !== "ALL") params.set("productType", productTypeFilter);
@@ -250,28 +257,38 @@ export default function ProductsPage() {
         )}
       </div>
 
-      {/* Product Type Filter */}
-      <div className="flex gap-2 items-center">
-        <Button
-          variant={productTypeFilter === "ALL" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setProductTypeFilter("ALL")}
-        >
-          전체
-        </Button>
+      {/* SUB_MASTER 본사 카탈로그 탭 안내 */}
+      {isSubMaster && productTypeFilter === "HEADQUARTERS" && (
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-800">
+          본사 제품 카탈로그입니다. 열람만 가능하며 수정 · 추가 · 삭제는 본사에서 진행합니다.
+        </div>
+      )}
+
+      {/* Product Type Filter — 권한별 라벨 차등 */}
+      <div className="flex gap-2 items-center flex-wrap">
+        {/* 전체 탭: SUB_MASTER 에게는 숨김 (자기/본사 구분 명확하게) */}
+        {!isSubMaster && (
+          <Button
+            variant={productTypeFilter === "ALL" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setProductTypeFilter("ALL")}
+          >
+            전체
+          </Button>
+        )}
         <Button
           variant={productTypeFilter === "HEADQUARTERS" ? "default" : "outline"}
           size="sm"
           onClick={() => setProductTypeFilter("HEADQUARTERS")}
         >
-          업체발주서 (본사)
+          {isSubMaster ? "본사 카탈로그 (열람 전용)" : "업체발주서 (본사)"}
         </Button>
         <Button
           variant={productTypeFilter === "CENTER" ? "default" : "outline"}
           size="sm"
           onClick={() => setProductTypeFilter("CENTER")}
         >
-          관리메이트 (센터)
+          {isSubMaster ? "우리 센터 제품" : "관리메이트 (센터)"}
         </Button>
         {!isSeller && (
           <>
@@ -286,7 +303,7 @@ export default function ProductsPage() {
             </Button>
           </>
         )}
-        {isMasterOrSub && autoCreatedCount > 0 && (
+        {canReviewAutoCreated && autoCreatedCount > 0 && (
           <>
             <div className="w-px h-6 bg-border mx-1" />
             <Button
