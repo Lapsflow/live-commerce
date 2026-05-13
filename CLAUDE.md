@@ -105,6 +105,24 @@ Live commerce platform with ONEWMS, multi-marketplace, and AI analysis.
 7. **Prisma generate 는 sandbox 에서 안 됨.**
    - 스키마/마이그레이션 수정 후 `prisma generate` 는 사용자의 로컬 머신에서 실행. 샌드박스는 binaries.prisma.sh 차단됨.
 
+8. **Playwright "100% PASS" 는 시나리오 범위 내에서만 의미가 있다.**
+   - 2026-05-12: 보고 메시지 검증 81개 시나리오 PASS 보고 후, 운영에서 마스터 → ONEWMS "전체 보기" 클릭 시 페이지 crash 발견.
+   - 갭 원인: 시나리오를 "메시지 항목별"로만 짰고, **위젯 안의 액션 버튼 클릭 → 다음 페이지 동선** 은 검증하지 않았음. "위젯이 렌더되면 OK"라는 안일한 기준.
+   - 또 다른 갭: **시드 데이터 1-2건으로는 페이지네이션 부재 같은 데이터 의존 버그가 안 잡힘.** 실제 운영 규모(13,000+) 데이터에서만 드러남.
+   - 다음부터: 모든 위젯/카드의 **"링크 클릭 → 진입 → 정상 로드"** 까지 검증 시나리오에 포함. 운영 환경 변수 (Vercel 프로덕션 DB)에서 직접 진입 검증을 최소 1회 추가.
+   - "PASS"를 그대로 전달하지 말고, 시나리오에 빠진 동선이 있는지 먼저 의심.
+
+9. **API 응답 구조와 클라이언트 fetch 처리는 항상 함께 확인.**
+   - 2026-05-12: `/api/onewms/stock/conflicts` API는 `ok({ conflicts, count })` 로 응답 → 응답 구조는 `{ data: { conflicts: [...], count } }`.
+   - 클라이언트는 `json.data` 를 직접 배열로 사용 → `data.map is not a function` TypeError.
+   - 데이터 0건일 때는 빈 화면으로 보여 발견되지 않음. 데이터가 있는 운영 환경에서만 crash.
+   - `ok<T>(data: T)` 헬퍼는 항상 `{ data: T }` 로 감싼다. 클라이언트는 `json.data.{필드}` 또는 `json.data` 가 어떤 타입인지 한 번 더 확인.
+
+10. **목록 API 와 목록 컴포넌트에는 반드시 페이지네이션부터.**
+    - 2026-05-12: `/api/onewms/stock/conflicts` 는 전체 충돌 13,104건을 한 번에 반환. 클라이언트는 13,104개 `<tr>` 렌더 시도 → 브라우저 OOM crash.
+    - 신규 목록 만들 때 기본 `limit=50` + `offset` 페이지네이션을 처음부터 도입.
+    - "운영 데이터가 적을 때는 괜찮겠지" 가정 금지.
+
 ---
 
 ## 🔑 프로젝트 특징
