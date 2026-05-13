@@ -135,6 +135,123 @@ export async function syncProductStock(productId: string): Promise<{
 }
 
 /**
+ * 특정 productId 들만 batch sync (발주 등록 시점 즉시 sync 용)
+ *
+ * 차이점:
+ *   - syncAllStocks: 모든 HEADQUARTERS 활성 상품
+ *   - syncStocksForProducts: 호출자가 지정한 productId 만
+ *
+ * 정책: 100% ONEWMS 일치 (옵션 A) — 동일
+ */
+export async function syncStocksForProducts(productIds: string[]): Promise<SyncStatsResult> {
+  const stats: SyncStatsResult = {
+    totalProducts: 0,
+    synced: 0,
+    conflicts: 0,
+    errors: 0,
+    errorDetails: [],
+  };
+
+  if (productIds.length === 0) return stats;
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        id: { in: productIds },
+        productType: 'HEADQUARTERS',
+        onewmsCode: { not: null },
+      },
+      select: { id: true, code: true, name: true, onewmsCode: true },
+    });
+
+    stats.totalProducts = products.length;
+    if (products.length === 0) return stats;
+
+    const client = createOnewmsClient();
+    const batchSize = 100;
+
+    for (let i = 0; i < products.length; i += batchSize) {
+      const batch = products.slice(i, i + batchSize);
+      const ids = batch.map((p) => p.onewmsCode!).join(',');
+
+      try {
+        const stockData = await client.getStockInfo('product_id', ids);
+
+        const applyResults = await Promise.allSettled(
+          batch.map(async (product) => {
+            const stockEntry = stockData[product.onewmsCode!];
+            let onewmsAvailableQty = 0;
+            if (stockEntry?.stock) {
+              for (const wh of Object.values(stockEntry.stock)) {
+                onewmsAvailableQty += Number(wh.stock) || 0;
+              }
+            }
+            const dbProduct = await prisma.product.findUnique({
+              where: { id: product.id },
+              select: { totalStock: true },
+            });
+            const localQty = dbProduct?.totalStock ?? 0;
+            const difference = onewmsAvailableQty - localQty;
+
+            await prisma.onewmsStockSync.create({
+              data: {
+                productId: product.id,
+                productCode: product.onewmsCode!,
+                availableQty: onewmsAvailableQty,
+                totalQty: onewmsAvailableQty,
+                localQty,
+                difference,
+                syncStatus: 'synced',
+                syncedAt: new Date(),
+              },
+            });
+
+            if (difference !== 0) {
+              await prisma.product.update({
+                where: { id: product.id },
+                data: { totalStock: onewmsAvailableQty },
+              });
+              if (Math.abs(difference) > 5) {
+                console.warn(
+                  `[ORDER_PRESYNC_LARGE_DIFF] ${product.code}: ` +
+                    `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (차이 ${difference > 0 ? '+' : ''}${difference})`
+                );
+              }
+            }
+            return { success: true };
+          })
+        );
+
+        applyResults.forEach((r, idx) => {
+          if (r.status === 'fulfilled') {
+            stats.synced++;
+          } else {
+            stats.errors++;
+            stats.errorDetails.push({
+              productId: batch[idx].id,
+              error: r.reason instanceof Error ? r.reason.message : String(r.reason),
+            });
+          }
+        });
+      } catch (batchErr) {
+        for (const product of batch) {
+          stats.errors++;
+          stats.errorDetails.push({
+            productId: product.id,
+            error: batchErr instanceof Error ? batchErr.message : 'Batch API call failed',
+          });
+        }
+      }
+    }
+
+    return stats;
+  } catch (error: unknown) {
+    console.error('syncStocksForProducts failed:', error);
+    throw error;
+  }
+}
+
+/**
  * Sync all products with ONEWMS stock data
  */
 export async function syncAllStocks(): Promise<SyncStatsResult> {
@@ -163,56 +280,110 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
     });
 
     stats.totalProducts = products.length;
-    console.log(`Starting stock sync for ${stats.totalProducts} products (HEADQUARTERS + active)`);
+    console.log(`Starting BATCH stock sync for ${stats.totalProducts} products (HEADQUARTERS + active)`);
 
-    // Sync products in parallel (batches of 20, 500ms delay)
-    const batchSize = 20;
-    const batchDelayMs = 500;
+    // Batch sync — ONEWMS get_stock_info API 는 ids 콤마 구분 다중 조회 지원
+    // 한 번에 100개씩 묶어서 호출 → API 호출 수 1/100
+    const batchSize = 100;
+    const batchDelayMs = 300;
+    const client = createOnewmsClient();
+
     for (let i = 0; i < products.length; i += batchSize) {
       const batch = products.slice(i, i + batchSize);
+      const ids = batch.map((p) => p.onewmsCode!).join(',');
 
-      const results = await Promise.allSettled(
-        batch.map((product) => syncProductStock(product.id))
-      );
+      try {
+        // 1회 API 호출로 batch 전체 재고 조회
+        const stockData = await client.getStockInfo('product_id', ids);
 
-      // Aggregate results
-      results.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          const r = result.value;
-          if (r.success) {
-            stats.synced++;
-            if (r.conflict) {
-              stats.conflicts++;
+        // 각 상품에 대해 정책 적용 (100% ONEWMS 일치)
+        const applyResults = await Promise.allSettled(
+          batch.map(async (product) => {
+            const stockEntry = stockData[product.onewmsCode!];
+            let onewmsAvailableQty = 0;
+            if (stockEntry?.stock) {
+              for (const wh of Object.values(stockEntry.stock)) {
+                onewmsAvailableQty += Number(wh.stock) || 0;
+              }
             }
+            // 현재 DB 재고 조회
+            const dbProduct = await prisma.product.findUnique({
+              where: { id: product.id },
+              select: { totalStock: true },
+            });
+            const localQty = dbProduct?.totalStock ?? 0;
+            const difference = onewmsAvailableQty - localQty;
+
+            // sync 이력 기록
+            await prisma.onewmsStockSync.create({
+              data: {
+                productId: product.id,
+                productCode: product.onewmsCode!,
+                availableQty: onewmsAvailableQty,
+                totalQty: onewmsAvailableQty,
+                localQty,
+                difference,
+                syncStatus: 'synced',
+                syncedAt: new Date(),
+              },
+            });
+
+            if (difference === 0) {
+              return { success: true, code: product.code };
+            }
+
+            // ONEWMS 값으로 자동 적용 (100% 일치 정책)
+            await prisma.product.update({
+              where: { id: product.id },
+              data: { totalStock: onewmsAvailableQty },
+            });
+
+            if (Math.abs(difference) > 5) {
+              console.warn(
+                `[LARGE_DIFF_AUTO_APPLIED] ${product.code}: ` +
+                  `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (차이 ${difference > 0 ? '+' : ''}${difference})`
+              );
+            }
+            return { success: true, code: product.code };
+          })
+        );
+
+        applyResults.forEach((r, idx) => {
+          if (r.status === 'fulfilled') {
+            stats.synced++;
           } else {
             stats.errors++;
             stats.errorDetails.push({
-              productId: batch[index].id,
-              error: r.error || 'Unknown error',
+              productId: batch[idx].id,
+              error: r.reason instanceof Error ? r.reason.message : String(r.reason),
             });
           }
-        } else {
+        });
+      } catch (batchErr) {
+        console.error('Batch sync failed for batch starting at', i, ':', batchErr);
+        // batch 단위 실패 → batch 안의 모든 상품을 error로 기록
+        for (const product of batch) {
           stats.errors++;
           stats.errorDetails.push({
-            productId: batch[index].id,
-            error: result.reason?.message || 'Promise rejected',
+            productId: product.id,
+            error: batchErr instanceof Error ? batchErr.message : 'Batch API call failed',
           });
         }
-      });
-
-      // Progress log every 100 products
-      if ((i + batchSize) % 100 < batchSize) {
-        console.log(`  Progress: ${Math.min(i + batchSize, products.length)}/${products.length}`);
       }
 
-      // Small delay between batches to avoid rate limiting
+      // Progress log
+      console.log(
+        `  Batch progress: ${Math.min(i + batchSize, products.length)}/${products.length}`
+      );
+
+      // Small delay between batches
       if (i + batchSize < products.length) {
         await new Promise((resolve) => setTimeout(resolve, batchDelayMs));
       }
     }
 
     console.log(
-      `Stock sync completed: ${stats.synced}/${stats.totalProducts} synced, ${stats.conflicts} conflicts, ${stats.errors} errors`
+      `Batch stock sync completed: ${stats.synced}/${stats.totalProducts} synced, ${stats.errors} errors`
     );
 
     return stats;

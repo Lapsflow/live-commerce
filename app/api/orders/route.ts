@@ -9,6 +9,7 @@ import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMa
 import { logAudit } from "@/lib/services/audit";
 import { validateProductsForBroadcast } from "@/lib/services/products/canBroadcast";
 import { sendNotification } from "@/lib/services/notifications";
+import { syncStocksForProducts } from "@/lib/services/onewms/stockSync";
 
 // Phase 2: Order with Items Schema
 const orderItemSchema = z.object({
@@ -163,6 +164,31 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
     // Group by product type
     const wmsItems = itemsWithProducts.filter((item) => item.productType === "HEADQUARTERS");
     const centerItems = itemsWithProducts.filter((item) => item.productType === "CENTER");
+
+    // ─────────────────────────────────────────────────────────────
+    // 발주 시점 즉시 ONEWMS 재고 sync (2026-05-13 대표님 결정 옵션 B)
+    //   본사 제품(HEADQUARTERS)에 대해서만 발주 등록 직전 batch sync
+    //   발주 검증 + 차감이 ONEWMS 최신 재고 기준으로 이루어지도록.
+    //   sync 실패해도 발주 흐름 자체는 막지 않음 (fire-and-forget + await).
+    //   5초 timeout 으로 ONEWMS 응답 지연 시 발주 차단 방지.
+    // ─────────────────────────────────────────────────────────────
+    if (wmsItems.length > 0) {
+      const hqProductIds = wmsItems.map((item) => item.productId);
+      try {
+        await Promise.race([
+          syncStocksForProducts(hqProductIds),
+          new Promise<void>((_, reject) =>
+            setTimeout(() => reject(new Error("ONEWMS sync timeout")), 5000)
+          ),
+        ]);
+      } catch (syncErr) {
+        // 동기화 실패해도 발주는 계속 진행 (운영 안정성 우선)
+        console.warn(
+          "[ORDER_PRESYNC] ONEWMS sync 실패, cron sync 결과 사용:",
+          syncErr instanceof Error ? syncErr.message : syncErr
+        );
+      }
+    }
 
     const createdOrders = [];
 
