@@ -28,6 +28,7 @@ import {
   // Sheet
   SheetInfo,
   AddSheetRequest,
+  AddSheetItemsRequest,
   // Onedas
   OnedasPackingInfo,
   OnedasPackingDetailInfo,
@@ -304,11 +305,33 @@ export class OnewmsClient {
   }
 
   /**
-   * Add product
-   * @param product - Product data
+   * Add product to ONEWMS
+   * @param product - Product information
+   * @returns Product IDs from ONEWMS (link_id and product_id array)
+   * @throws OnewmsApiError if API returns error
    */
-  async addProduct(product: AddProductRequest): Promise<void> {
-    await this.request('add_product', product);
+  async addProduct(product: AddProductRequest): Promise<{
+    link_id: string;
+    product_id: string[];
+  }> {
+    const response = await this.request<{
+      link_id: string;
+      product_id: string | string[];
+    }>('add_product', product);
+
+    if (!response.data) {
+      throw new OnewmsApiError(
+        response.error,
+        response.msg || 'No data in response'
+      );
+    }
+
+    return {
+      link_id: response.data.link_id,
+      product_id: Array.isArray(response.data.product_id)
+        ? response.data.product_id
+        : [response.data.product_id],
+    };
   }
 
   // ============================================
@@ -371,27 +394,90 @@ export class OnewmsClient {
   // ============================================
 
   /**
-   * Get sheet list
-   * @param startDate - Start date (optional)
-   * @param endDate - End date (optional)
+   * Get sheet list with pagination
+   * @param params Query parameters
+   * @returns Paginated sheet list
    */
-  async getSheetList(
-    startDate?: string,
-    endDate?: string
-  ): Promise<SheetInfo[]> {
-    const response = await this.request<SheetInfo[]>('get_sheet_list', {
-      start_date: startDate,
-      end_date: endDate,
-    });
-    return response.data || [];
+  async getSheetList(params: {
+    sheet_type: 'STOCK_IN_SHEET' | 'STOCK_OUT_SHEET' | 'STOCK_ARRANGE_SHEET' | 'STOCK_SHIFT_SHEET';
+    date_type: 0 | 1 | 2;  // 0=sheet_date, 1=created_date, 2=modified_date
+    start_date: string;    // YYYY-MM-DD
+    end_date: string;      // YYYY-MM-DD
+    sheet_seq?: string;
+    status?: string;
+    sub_domain_seq?: string;
+    limit?: number;        // pagination
+    page?: number;         // pagination
+  }): Promise<{
+    sheets: SheetInfo[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const response = await this.request<SheetInfo[]>('get_sheet_list', params);
+    return {
+      sheets: response.data || [],
+      total: parseInt(String(response.total || 0), 10),
+      page: parseInt(String(response.page || 1), 10),
+      limit: parseInt(String(response.limit || 50), 10),
+    };
   }
 
   /**
-   * Add sheet
-   * @param sheet - Sheet data
+   * Create new sheet in ONEWMS (without items)
+   * @param req Sheet creation request
+   * @returns Sheet sequence and number
    */
-  async addSheet(sheet: AddSheetRequest): Promise<void> {
-    await this.request('add_sheet', sheet);
+  async addSheet(req: AddSheetRequest): Promise<{
+    sheet_seq: string;
+    sheet_no: string;
+  }> {
+    const response = await this.request<{
+      sheet_seq?: string;
+      sheet_no?: string;
+    }>('add_sheet', req);
+
+    if (!response.data || !response.data.sheet_seq) {
+      throw new OnewmsApiError(
+        response.error,
+        'Failed to create sheet'
+      );
+    }
+
+    return {
+      sheet_seq: response.data.sheet_seq,
+      sheet_no: response.data.sheet_no || '',
+    };
+  }
+
+  /**
+   * Add items to existing sheet
+   * @param sheetSeq Sheet sequence ID
+   * @param items Items to add
+   * @returns Number of rows added
+   */
+  async addSheetItems(
+    sheetSeq: string,
+    items: Array<{
+      supply_code: string;
+      product_id?: string;
+      quantity: number;
+      unit_price?: number;
+      [key: string]: unknown;
+    }>
+  ): Promise<{ rows_added: number }> {
+    const response = await this.request<{
+      rows_added?: number;
+      success_count?: number;
+    }>('add_sheet_items', {
+      sheet_seq: sheetSeq,
+      items,
+    });
+
+    const rowsAdded = response.data?.rows_added || response.data?.success_count || 0;
+    return {
+      rows_added: parseInt(String(rowsAdded), 10),
+    };
   }
 
   // ============================================
@@ -399,27 +485,33 @@ export class OnewmsClient {
   // ============================================
 
   /**
-   * Get Onedas packing number
-   * @param orderNo - Order number
+   * Get Onedas packing picking list by work date
+   * @param workDate - Work date in YYYY-MM-DD format
+   * @returns Picking and packing order list
    */
-  async getOnedasPackingNo(orderNo: string): Promise<OnedasPackingInfo> {
+  async getOnedasPackingNo(workDate: string): Promise<OnedasPackingInfo> {
     const response = await this.request<OnedasPackingInfo>(
       'get_onedas_packing_no',
-      { order_no: orderNo }
+      { work_date: workDate }
     );
     return response.data || {};
   }
 
   /**
-   * Get Onedas packing number detail
-   * @param packingNo - Packing number
+   * Get detailed Onedas packing information by picking list
+   * @param pickingList - Array of {work_date, no, no_sub} objects
+   * @returns Detailed picking information with lot/expire info
    */
   async getOnedasPackingNoDetail(
-    packingNo: string
+    pickingList: Array<{
+      work_date: string;   // YYYY-MM-DD
+      no: string | number; // picking order no
+      no_sub: string | number; // picking order sub no
+    }>
   ): Promise<OnedasPackingDetailInfo> {
     const response = await this.request<OnedasPackingDetailInfo>(
       'get_onedas_packing_no_detail',
-      { packing_no: packingNo }
+      { picking_list: pickingList }
     );
     return response.data || {};
   }

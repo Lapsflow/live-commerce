@@ -59,12 +59,14 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
     }
 
     // Validate required fields (with null guard)
-    if (!order.recipient?.trim()) {
+    if (!order.recipient || !order.recipient.trim()) {
       return {
         success: false,
         error: 'Order missing required recipient name',
       };
     }
+    // Type narrowing: after guard check, assign to ensure TypeScript recognizes non-null
+    const recipientName = order.recipient.trim();
     // Phone and address can be empty but should have safe defaults
     const recipientPhone = order.phone?.trim() || '';
     const recipientAddress = order.address?.trim() || '';
@@ -110,7 +112,7 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
       order_id: onewmsOrderNo,                        // 주문번호 (필수)
       shop_product_id: item.product.onewmsCode!,      // 상품코드 (필수)
       qty: item.quantity,                             // 수량 (필수)
-      recv_name: order.recipient.trim(),              // 수령자명 (필수, null guard)
+      recv_name: recipientName,                       // 수령자명 (필수, null guard narrowed)
       recv_mobile: recipientPhone,                     // 수령자 휴대폰 (선택)
       recv_address: recipientAddress,                 // 수령자 주소 (선택)
       product_name: item.product.name,                // 상품명 (선택)

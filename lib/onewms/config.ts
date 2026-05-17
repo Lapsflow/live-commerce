@@ -104,3 +104,33 @@ export function getOnewmsConfig(): OnewmsConfig {
 export function setOnewmsConfig(config: OnewmsConfig): void {
   OnewmsConfigManager.getInstance().setConfig(config);
 }
+
+/**
+ * Assert ONEWMS shop_id is configured
+ * Called before operations requiring shop_id (e.g., set_orders)
+ *
+ * @throws Error if shopId not configured
+ */
+export function assertShopId(): string {
+  const manager = OnewmsConfigManager.getInstance();
+
+  // Auto-load from env if not configured
+  if (!manager.isConfigured()) {
+    try {
+      manager.loadFromEnv();
+    } catch (error) {
+      // Ignore if env vars not available
+    }
+  }
+
+  const config = manager.getConfig();
+  if (!config.shopId) {
+    throw new Error(
+      '❌ ONEWMS_SHOP_ID not configured.\n' +
+      'Run: pnpm tsx scripts/onewms-bootstrap-shop.ts\n' +
+      'Then add ONEWMS_SHOP_ID to .env.local'
+    );
+  }
+
+  return config.shopId;
+}

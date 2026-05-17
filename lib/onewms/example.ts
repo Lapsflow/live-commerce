@@ -41,19 +41,26 @@ async function orderExamples() {
   // 1. Create a new order
   try {
     await client.createOrder({
-      order_no: 'LC-2026-04-09-001',
-      order_date: '2026-04-09',
-      recipient_name: '홍길동',
-      recipient_phone: '010-1234-5678',
-      recipient_address: '서울시 강남구 테헤란로 123',
-      products: [
+      shop_id: 'your_shop_id', // P0: 판매처코드 (필수)
+      collect_date: '2026-04-09', // 발주일 (선택)
+      rows: [
         {
-          product_code: 'PROD-001',
-          quantity: 2,
+          order_id: 'LC-2026-04-09-001',
+          shop_product_id: 'PROD-001',
+          qty: 2,
+          recv_name: '홍길동',
+          recv_mobile: '010-1234-5678',
+          recv_address: '서울시 강남구 테헤란로 123',
+          product_name: '테스트 상품 1',
         },
         {
-          product_code: 'PROD-002',
-          quantity: 1,
+          order_id: 'LC-2026-04-09-001',
+          shop_product_id: 'PROD-002',
+          qty: 1,
+          recv_name: '홍길동',
+          recv_mobile: '010-1234-5678',
+          recv_address: '서울시 강남구 테헤란로 123',
+          product_name: '테스트 상품 2',
         },
       ],
     });
@@ -70,7 +77,7 @@ async function orderExamples() {
       date_type: 'order_date',
       start_date: '2026-04-09',
       end_date: '2026-04-09',
-      order_no: 'LC-2026-04-09-001',
+      order_id: 'LC-2026-04-09-001', // ✅ Changed: order_no → order_id
     });
     console.log('📦 Orders:', orders);
 
@@ -100,13 +107,14 @@ async function orderExamples() {
 
   // 3. Set transport number
   await client.setTransportNumber({
-    order_no: 'LC-2026-04-09-001',
+    seq: '12345', // ✅ Changed: order_no → seq (관리번호)
     trans_no: '1234567890123',
+    trans_corp: 'CU', // ✅ Added: 택배사 (필수)
   });
 
   // 4. Process shipping
   await client.setTransportPos({
-    order_no: 'LC-2026-04-09-001',
+    trans_no: '1234567890123', // ✅ Changed: order_no → trans_no
   });
 
   // 5. Get invoice image
@@ -114,12 +122,12 @@ async function orderExamples() {
   console.log('📄 Invoice URL:', invoiceUrl);
 
   // 6. Cancel shipping (if needed)
-  // await client.cancelTransportPos({ order_no: 'LC-2026-04-09-001' });
+  // await client.cancelTransportPos({ trans_no: '1234567890123' }); // ✅ Changed: order_no → trans_no
 
   // 7. Set order label
   await client.setOrderLabel({
-    order_no: 'LC-2026-04-09-001',
-    label: 'urgent',
+    seq: '12345', // ✅ Changed: order_no → seq
+    label_name: 'urgent', // ✅ Changed: label → label_name
   });
 }
 
@@ -133,6 +141,7 @@ async function productExamples() {
   // 1. Add a new product
   await client.addProduct({
     product_code: 'PROD-001',
+    name: '라이브 커머스 인기 상품', // ✅ Changed: product_name → name (필수)
     product_name: '라이브 커머스 인기 상품',
     barcode: '8801234567890',
   });
@@ -203,7 +212,7 @@ async function sheetExamples() {
 
   // 1. Add inbound sheet
   await client.addSheet({
-    sheet_type: 'INBOUND',
+    sheet_type: 'STOCK_IN_SHEET', // ✅ Changed: 'INBOUND' → 'STOCK_IN_SHEET' (enum)
     sheet_date: '2026-04-09',
     products: [
       {
@@ -218,8 +227,13 @@ async function sheetExamples() {
   });
 
   // 2. Get recent sheets
-  const sheets = await client.getSheetList('2026-04-01', '2026-04-09');
-  console.log('📋 Sheets:', sheets.length);
+  const sheetResult = await client.getSheetList({
+    sheet_type: 'STOCK_IN_SHEET',
+    date_type: 0, // 0=sheet_date
+    start_date: '2026-04-01',
+    end_date: '2026-04-09',
+  });
+  console.log(`📋 Sheets (${sheetResult.total} total):`, sheetResult.sheets.length);
 }
 
 // ============================================
@@ -255,12 +269,16 @@ async function liveCommerceIntegration() {
 
       // Create order in ONEWMS
       await client.createOrder({
-        order_no: order.order_no,
-        order_date: new Date().toISOString().split('T')[0],
-        recipient_name: order.customer_name,
-        recipient_phone: order.phone,
-        recipient_address: order.address,
-        products: order.products,
+        shop_id: 'your_shop_id', // P0: 판매처코드
+        collect_date: new Date().toISOString().split('T')[0],
+        rows: order.products.map((product) => ({
+          order_id: order.order_no,
+          shop_product_id: product.product_code,
+          qty: product.quantity,
+          recv_name: order.customer_name,
+          recv_mobile: order.phone,
+          recv_address: order.address,
+        })),
       });
 
       console.log(`✅ Order ${order.order_no} processed successfully`);

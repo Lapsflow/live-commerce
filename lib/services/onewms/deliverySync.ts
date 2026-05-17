@@ -93,10 +93,10 @@ export async function syncOrderDeliveryStatus(orderId: string): Promise<{
       order_id: mapping.onewmsOrderNo,  // ✅ Changed: order_no → order_id
     });
 
-    // Filter by order_id (seq will be used once available from set_trans_no response)
+    // Filter by order_id (seq from set_trans_no response to be stored in future migration)
     const orderInfo = orderList.find(
       (o) => o.order_id === mapping.onewmsOrderNo
-    ) || (mapping.seq && orderList.find((o) => o.seq === mapping.seq)) || orderList[0];
+    ) || orderList[0];
 
     if (!orderInfo) {
       return { success: true, updated: false };

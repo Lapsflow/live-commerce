@@ -197,7 +197,7 @@ export interface CreateOrderRequest {
 export interface SetTransportNumberRequest {
   seq: string;                  // 관리번호 (get_order_info 응답의 seq) — 필수
   trans_no: string;             // 송장번호 — 필수
-  trans_corp?: string;          // 택배사 — 필수
+  trans_corp: string;           // 택배사 — 필수 (ONEWMS API 문서 확인: 기타정보조회에서 조회)
   trans_pos?: 0 | 1;            // 송장위치 — 선택
   type?: 0 | 1 | 2;             // 타입 — 선택
   [key: string]: unknown;
@@ -261,9 +261,25 @@ export interface CodeMatchInfo {
 }
 
 export interface AddProductRequest {
-  product_code: string;
-  product_name: string;
-  barcode?: string;
+  // 필수
+  name: string;                 // 상품명 (필수)
+
+  // 강권
+  supply_code?: string;         // 공급코드
+
+  // 선택
+  barcode?: string;             // 바코드
+  link_id?: string;             // 링크코드
+  origin?: string;              // 원산지
+  maker?: string;               // 제조사
+  brand?: string;               // 브랜드
+  org_price?: number;           // 원가
+  supply_price?: number;        // 공급가
+  shop_price?: number;          // 판매가
+  market_price?: number;        // 시장가
+  stock_manage?: '0' | '1';     // 재고관리 여부 ('0'=미관리, '1'=관리)
+  options?: string;             // 옵션
+
   [key: string]: unknown;
 }
 
@@ -346,19 +362,41 @@ export interface StockTransactionDetailInfo {
 
 export interface SheetInfo {
   sheet_no?: string;
+  sheet_seq?: string;      // 전표 시퀀스
   sheet_type?: string;
   sheet_date?: string;
+  sheet_name?: string;     // 전표 이름
+  status?: string;         // 상태 코드 (0=요청, 1=작업중, 2=완료, 3=삭제)
+  warehouse_seq?: string;  // 창고 시퀀스
+  created_at?: string;     // 생성 일시
   [key: string]: unknown;
 }
 
 export interface AddSheetRequest {
-  sheet_type: string;
-  sheet_date: string;
-  products: Array<{
-    product_code: string;
-    quantity: number;
-    [key: string]: unknown;
-  }>;
+  // 필수
+  sheet_type: 'STOCK_IN_SHEET' | 'STOCK_OUT_SHEET' | 'STOCK_ARRANGE_SHEET' | 'STOCK_SHIFT_SHEET';
+
+  // 강권 (대부분 필수)
+  sheet_name?: string;           // 시트 이름
+  warehouse_seq?: string;        // 창고 시퀀스
+  stock_type_seq?: string;       // 재고타입 시퀀스
+  job_type_seq?: string;         // 작업타입 시퀀스
+
+  // 선택
+  supply_code?: string;          // 공급코드
+  partner_code?: string;         // 파트너코드
+  sub_domain_seq?: string;       // 서브도메인
+  warehouse_shift_seq?: string;  // 창고이동 시퀀스 (STOCK_SHIFT_SHEET 용)
+  stock_type_shift_seq?: string; // 재고타입이동 시퀀스 (STOCK_SHIFT_SHEET 용)
+
+  [key: string]: unknown;
+}
+
+export interface AddSheetItemsRequest {
+  supply_code: string;
+  product_id?: string;
+  quantity: number;
+  unit_price?: number;
   [key: string]: unknown;
 }
 
@@ -367,17 +405,51 @@ export interface AddSheetRequest {
 // ============================================
 
 export interface OnedasPackingInfo {
-  packing_no?: string;
-  order_no?: string;
+  picking_orders?: Array<{
+    picking_order_no: string;     // 집품 주문번호
+    work_date: string;            // 작업일
+    location: string;             // 위치
+    product_id: string;           // 상품ID
+    qty: number;                  // 수량
+    crdate?: string;              // 생성일시
+    no_sub?: number;              // 총 패킹차수
+    cnt?: number;                 // 총 송장수
+    picking_unit?: number;        // 작업인원
+    status?: number;              // 상태
+    [key: string]: unknown;
+  }>;
+  packing_orders?: Array<{
+    work_date: string;
+    no: number | string;
+    no_sub: number | string;
+    crdate?: string;
+    cnt?: number;
+    picking_unit?: number;
+    status?: number;
+    [key: string]: unknown;
+  }>;
   [key: string]: unknown;
 }
 
 export interface OnedasPackingDetailInfo {
-  packing_no?: string;
-  order_no?: string;
-  products?: Array<{
-    product_code: string;
-    quantity: number;
+  picking_orders?: Array<{
+    picking_order_no: string;
+    work_date: string;
+    location: string;
+    product_id: string;
+    qty: number;
+    expire_date?: string;         // 유효기한
+    lot_no?: string;              // 로트번호
+    ma_date?: string;             // 제조일자
+    name?: string;                // 상품명
+    options?: string;             // 옵션
+    no_sub?: number;
+    no_sub_qty?: number;
+    total_qty?: number;
+    order_id?: string;
+    trans_no?: string;
+    p_barcode?: string;
+    multi_location?: string;      // 멀티로케이션 여부
     [key: string]: unknown;
   }>;
   [key: string]: unknown;
