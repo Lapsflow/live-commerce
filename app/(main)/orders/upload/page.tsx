@@ -33,6 +33,7 @@ export default function OrderUploadPage() {
   const [preview, setPreview] = useState<PreviewRow[] | null>(null);
   const [uploadError, setUploadError] = useState<any>(null);
   const [isCreditTrade, setIsCreditTrade] = useState(false);
+  const [progress, setProgress] = useState<{ processed: number; total: number } | null>(null); // ✅ Task 6
   const router = useRouter();
   const { toast } = useToast();
 
@@ -112,11 +113,7 @@ export default function OrderUploadPage() {
 
     setLoading(true);
     setUploadError(null);
-    const formData = new FormData();
-    formData.append("file", file);
-    if (isCreditTrade) {
-      formData.append("isCreditTrade", "true");
-    }
+    setProgress(null);
 
     // ✅ Task 4/5: X-Idempotency-Key 생성 (UUID v4)
     const idempotencyKey =
@@ -124,16 +121,71 @@ export default function OrderUploadPage() {
         ? crypto.randomUUID()
         : `fallback-${Date.now()}-${Math.random()}`;
 
+    // ✅ Task 6: UploadJob ID 생성 (진행률 폴링용)
+    const jobId =
+      typeof window !== "undefined" && typeof crypto !== "undefined"
+        ? crypto.randomUUID()
+        : `job-${Date.now()}`;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    if (isCreditTrade) {
+      formData.append("isCreditTrade", "true");
+    }
+
+    let pollInterval: NodeJS.Timeout | null = null;
+
     try {
-      const res = await fetch("/api/orders/bulk", {
+      // ✅ Task 6 + B-1: fetch Promise 시작 (await 없이) 그리고 병행 폴링
+      const fetchPromise = fetch("/api/orders/bulk", {
         method: "POST",
         headers: {
-          "X-Idempotency-Key": idempotencyKey, // ✅ Task 4: 요청 중복 방지
+          "X-Idempotency-Key": idempotencyKey,
         },
         body: formData,
       });
 
+      // 폴링 즉시 시작 (POST 와 병행)
+      let retryCount = 0;
+      const MAX_RETRIES = 5;
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/orders/bulk/progress/${jobId}`);
+          if (!res.ok) {
+            retryCount++;
+            if (retryCount >= MAX_RETRIES && pollInterval) {
+              clearInterval(pollInterval);
+              pollInterval = null;
+            }
+            return;
+          }
+          retryCount = 0;
+          const data = await res.json();
+          setProgress({
+            processed: data.data.processedItems,
+            total: data.data.totalItems,
+          });
+          if (data.data.status !== "processing" && pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+          }
+        } catch (err) {
+          retryCount++;
+          if (retryCount >= MAX_RETRIES && pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+          }
+        }
+      }, 1000);
+
+      const res = await fetchPromise;
       const data = await res.json();
+
+      // ✅ B-1: POST 응답 도착 시 명시적 clearInterval
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
 
       if (!res.ok) {
         // ✅ Task 4: 409 Conflict (이미 처리 중)
@@ -173,11 +225,7 @@ export default function OrderUploadPage() {
         });
       }
 
-      // ✅ Task 6: UploadJob 진행률 폴링 (추후 B-1 구현 시 활용)
-      // if (data.data?.jobId) {
-      //   pollProgress(data.data.jobId);
-      // }
-
+      setFile(null);
       router.push("/orders");
     } catch (err: any) {
       toast({
@@ -186,7 +234,15 @@ export default function OrderUploadPage() {
         variant: "destructive",
       });
     } finally {
+      // ✅ B-1: 폴링 정리
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
       setLoading(false);
+      setProgress(null);
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem(submitKey);
+      }
     }
   };
 
@@ -268,6 +324,29 @@ export default function OrderUploadPage() {
                   {loading ? "처리 중..." : "업로드"}
                 </Button>
               </div>
+
+              {/* ✅ Task 6: 진행률 표시 UI */}
+              {loading && progress && (
+                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded">
+                  <p className="font-semibold text-blue-900">발주 처리 중</p>
+                  <div className="w-full bg-gray-200 rounded h-2 mt-2">
+                    <div
+                      className="bg-blue-500 h-2 rounded transition-all"
+                      style={{
+                        width: `${(progress.processed / progress.total) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <p className="text-sm text-blue-700 mt-1">
+                    {progress.processed}/{progress.total} 처리 중...
+                  </p>
+                </div>
+              )}
+              {loading && !progress && (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  발주 처리 시작 중...
+                </p>
+              )}
             </>
           )}
         </div>

@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-05-17T14:05:46.074Z",
+  "lastUpdated": "2026-05-17T14:11:55.075Z",
   "activeFeatures": [
     "notifications",
     "[code]",
@@ -97,7 +97,9 @@
     "9-flow",
     "editors",
     "helpers",
-    "[jobId]"
+    "[jobId]",
+    "cleanup-idempotency",
+    "cleanup-upload-jobs"
   ],
   "primaryFeature": "notifications",
   "features": {
@@ -279,7 +281,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T02:40:37.920Z",
-        "lastUpdated": "2026-05-17T14:05:46.074Z"
+        "lastUpdated": "2026-05-17T14:11:20.175Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/orders/upload/page.tsx"
     },
@@ -461,9 +463,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T03:53:01.445Z",
-        "lastUpdated": "2026-05-17T13:55:21.785Z"
+        "lastUpdated": "2026-05-17T14:11:40.394Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/onewms/client.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/onewms/stockSync.ts"
     },
     "stock-sync": {
       "phase": "do",
@@ -1348,6 +1350,32 @@
         "lastUpdated": "2026-05-17T14:03:42.495Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/bulk/progress/[jobId]/route.ts"
+    },
+    "cleanup-idempotency": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-05-17T14:11:50.684Z",
+        "lastUpdated": "2026-05-17T14:11:50.684Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/cron/cleanup-idempotency/route.ts"
+    },
+    "cleanup-upload-jobs": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-05-17T14:11:55.075Z",
+        "lastUpdated": "2026-05-17T14:11:55.075Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/cron/cleanup-upload-jobs/route.ts"
     }
   },
   "pipeline": {
@@ -1358,7 +1386,7 @@
   "session": {
     "startedAt": "2026-04-28T06:44:38.229Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-05-17T14:05:46.074Z"
+    "lastActivity": "2026-05-17T14:11:55.075Z"
   },
   "history": [
     {
@@ -6800,6 +6828,42 @@
     {
       "timestamp": "2026-05-17T14:05:46.074Z",
       "feature": "upload",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:10:48.243Z",
+      "feature": "upload",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:11:04.291Z",
+      "feature": "upload",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:11:20.175Z",
+      "feature": "upload",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:11:40.394Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:11:50.684Z",
+      "feature": "cleanup-idempotency",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:11:55.075Z",
+      "feature": "cleanup-upload-jobs",
       "phase": "do",
       "action": "updated"
     }

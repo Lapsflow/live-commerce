@@ -175,7 +175,8 @@ export async function syncStocksForProducts(productIds: string[]): Promise<SyncS
       const ids = batch.map((p) => p.onewmsCode!).join(',');
 
       try {
-        const stockData = await client.getStockInfo('product_id', ids);
+        // ✅ B-2: Batch 호출에 30초 timeout 설정 (기본 10초에서 확장)
+        const stockData = await client.getStockInfo('product_id', ids, undefined, { timeoutMs: 30000 });
 
         const applyResults = await Promise.allSettled(
           batch.map(async (product) => {
