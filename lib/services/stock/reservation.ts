@@ -46,6 +46,139 @@ interface ReleaseResult {
 // ─── Functions ───
 
 /**
+ * 여러 주문의 같은 상품 재고를 한 번에 선점 (bulk upload 최적화)
+ * - 같은 productId의 수량을 합산
+ * - ONEWMS 실시간 조회 (Promise.allSettled)
+ * - 한 트랜잭션에서 모든 product의 reservedStock 원자적 update
+ * - atomic update 패턴: UPDATE WHERE totalStock - reservedStock >= totalQty
+ */
+export async function reserveStockBulk(
+  productQtyMap: Map<string, number>,
+  options: { orderIds: string[] }
+): Promise<{ success: boolean; failed: Array<{ productId: string; reason: string }> }> {
+  try {
+    const productIds = Array.from(productQtyMap.keys());
+
+    // 1. 상품 정보 조회
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: {
+        id: true,
+        name: true,
+        totalStock: true,
+        reservedStock: true,
+        productType: true,
+        onewmsCode: true,
+      },
+    });
+
+    const productMap = new Map(products.map((p) => [p.id, p]));
+
+    // 2. ONEWMS 실시간 조회 (본사 상품만)
+    const hqProducts = products.filter(
+      (p) => p.productType === "HEADQUARTERS" && p.onewmsCode
+    );
+    const realtimeStocks = new Map<string, number>();
+    if (hqProducts.length > 0) {
+      const settled = await Promise.allSettled(
+        hqProducts.map(async (p) => {
+          const stock = await getRealtimeStock(p.onewmsCode!);
+          return { id: p.id, stock };
+        })
+      );
+      for (const result of settled) {
+        if (result.status === "fulfilled" && result.value.stock !== null) {
+          realtimeStocks.set(result.value.id, result.value.stock);
+        }
+      }
+    }
+
+    // 3. 트랜잭션: 모든 product 의 reservedStock 원자적 update
+    const failed: Array<{ productId: string; reason: string }> = [];
+
+    await prisma.$transaction(
+      async (tx) => {
+        for (const [productId, qty] of productQtyMap.entries()) {
+          const product = productMap.get(productId);
+          if (!product) {
+            failed.push({ productId, reason: "상품을 찾을 수 없습니다" });
+            continue;
+          }
+
+          // 본사 상품: ONEWMS 실시간값으로 DB 갱신
+          const realtimeStock = realtimeStocks.get(productId);
+          if (
+            product.productType === "HEADQUARTERS" &&
+            product.onewmsCode &&
+            realtimeStock !== undefined
+          ) {
+            await tx.product.update({
+              where: { id: productId },
+              data: { totalStock: realtimeStock },
+            });
+          }
+
+          // ✅ Atomic update: $executeRaw 사용 (ReadCommitted isolation에서 race condition 방지)
+          const updated = await tx.$executeRaw`
+            UPDATE "Product"
+            SET "reservedStock" = "reservedStock" + ${qty}
+            WHERE id = ${productId}
+              AND "totalStock" - "reservedStock" >= ${qty}
+          `;
+
+          if (updated === 0) {
+            failed.push({
+              productId,
+              reason: `재고 부족: 다른 발주가 선점했습니다`,
+            });
+          } else {
+            // StockReservation 레코드 생성 (각 주문별로)
+            for (const orderId of options.orderIds) {
+              const order = await tx.order.findUnique({
+                where: { id: orderId },
+                select: {
+                  items: {
+                    where: { productId },
+                    select: { quantity: true },
+                  },
+                },
+              });
+
+              if (order && order.items.length > 0) {
+                const itemQty = order.items[0].quantity;
+                await tx.stockReservation.create({
+                  data: {
+                    orderId,
+                    productId,
+                    quantity: itemQty,
+                    status: "ACTIVE",
+                  },
+                });
+              }
+            }
+          }
+        }
+      },
+      {
+        isolationLevel: "ReadCommitted",
+        timeout: 15000,
+      }
+    );
+
+    return { success: failed.length === 0, failed };
+  } catch (err: any) {
+    console.error("[RESERVE_STOCK_BULK ERROR]", err);
+    return {
+      success: false,
+      failed: Array.from(productQtyMap.entries()).map(([productId]) => ({
+        productId,
+        reason: err.message,
+      })),
+    };
+  }
+}
+
+/**
  * 가용 재고 확인 (ONEWMS 실시간)
  * 본사 상품: ONEWMS realtime - reservedStock
  * 센터 상품: DB totalStock - reservedStock

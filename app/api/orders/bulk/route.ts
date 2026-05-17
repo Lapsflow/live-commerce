@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 import * as xlsx from "xlsx";
 import { matchOrderItems, type MatchedItem } from "@/lib/services/orders/productMatching";
-import { reserveStock } from "@/lib/services/stock/reservation";
+import { reserveStock, reserveStockBulk } from "@/lib/services/stock/reservation";
 import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMatching";
 import { logAudit } from "@/lib/services/audit";
 
@@ -105,6 +105,7 @@ export const POST = withRole(
       // 전체 매칭 성공 → 주문 생성 (Stage 2는 PENDING 상태로 담당자 검수 대기)
       const sellerId = user.userId;
       let created = 0;
+      const createdOrders: any[] = []; // ✅ Task 1: 생성된 주문 배열
 
       // 주문번호별 그룹핑 (같은 주문번호 = 같은 주문의 여러 아이템)
       const orderGroups = new Map<string, { items: typeof items; matches: MatchedItem[] }>();
@@ -166,12 +167,7 @@ export const POST = withRole(
           },
         });
 
-        // 재고 선점
-        try {
-          await reserveStock(order.id);
-        } catch (err) {
-          console.error("[BULK ORDER] Stock reserve failed:", order.id, err);
-        }
+        createdOrders.push(order); // ✅ Task 1: 생성된 주문 저장
 
         // 방송 매칭
         try {
@@ -181,6 +177,23 @@ export const POST = withRole(
         }
 
         created++;
+      }
+
+      // ✅ Task 1: 배치 재고 선점 (같은 상품 그룹핑)
+      const reserveMap = new Map<string, number>();
+      for (const createdOrder of createdOrders) {
+        for (const item of createdOrder.items) {
+          const key = item.productId;
+          reserveMap.set(key, (reserveMap.get(key) ?? 0) + item.quantity);
+        }
+      }
+
+      const reserveResult = await reserveStockBulk(reserveMap, {
+        orderIds: createdOrders.map((o) => o.id),
+      });
+
+      if (!reserveResult.success && reserveResult.failed.length > 0) {
+        console.warn("[BULK UPLOAD] Stock reservation partial failure:", reserveResult.failed);
       }
 
       logAudit({
