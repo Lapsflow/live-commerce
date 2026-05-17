@@ -213,6 +213,7 @@ export const POST = withRole(
               })),
             },
           },
+          include: { items: true },
         });
 
         createdOrders.push(order); // ✅ Task 1: 생성된 주문 저장
