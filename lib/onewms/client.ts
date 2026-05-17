@@ -180,7 +180,8 @@ export class OnewmsClient {
   /**
    * Get order information.
    * Required: date_type, start_date, end_date.
-   * Optional filters: status, order_cs, hold, order_id, trans_no, product_id, shop_id, sub_domain_seq, etc.
+   * Optional filters: order_id, trans_no, seq (NOT order_no — unsupported by API).
+   * @deprecated order_no parameter removed — use order_id, trans_no, or seq instead
    */
   async getOrderInfo(params: {
     date_type: string;      // order_date, trans_date, collect_date, ready_date, trans_date_pos, cancel_date, change_date, cs_date
@@ -189,11 +190,10 @@ export class OnewmsClient {
     status?: string;        // 주문상태 필터
     order_cs?: string;      // CS상태 필터
     hold?: string;          // 보류상태 필터
-    order_id?: string;      // 주문번호
-    order_no?: string;      // 주문번호 (legacy)
-    trans_no?: string;      // 송장번호
+    order_id?: string;      // 주문번호 (주문 고유 ID)
+    trans_no?: string;      // 송장번호 (배송번호로 조회)
     product_id?: string;    // 상품코드
-    seq?: string;           // 관리번호
+    seq?: string;           // 관리번호 (set_trans_no 응답의 seq 사용)
     shop_id?: string;       // 판매처코드
     sub_domain_seq?: string; // 화주번호 (get_etc_info warehouse의 seq)
     packing_type?: string;  // single_qty, multi_qty, single_product, multi_product, single_product_multi_qty
@@ -205,11 +205,27 @@ export class OnewmsClient {
   }
 
   /**
-   * Create order
-   * @param order - Order data
+   * Create order (set_orders)
+   *
+   * Request structure:
+   * - shop_id: 판매처코드 (query param)
+   * - collect_date?: 발주일 (query param, optional)
+   * - rows: CreateOrderRow[] (JSON array — form-encoded as "data" or "rows")
+   *
+   * ⚠️ NOTE: 정확한 JSON 배열 키명(data/rows/orders) 및 form-encoding 방식은
+   *           ONEWMS API 스펙 확인 후 조정이 필요합니다.
+   *           현재 가정: rows 배열을 "data" 키로 form-encoded 전송
+   *
+   * @param req - Order request with shop_id, collect_date, and rows
    */
-  async createOrder(order: CreateOrderRequest): Promise<void> {
-    await this.request('set_orders', order);
+  async createOrder(req: CreateOrderRequest): Promise<void> {
+    // Transform CreateOrderRequest to match form-encoded expected by ONEWMS
+    // The request() method will JSON.stringify the rows array
+    await this.request('set_orders', {
+      shop_id: req.shop_id,
+      ...(req.collect_date && { collect_date: req.collect_date }),
+      data: req.rows, // ⚠️ Assuming "data" key — verify with ONEWMS
+    });
   }
 
   /**
