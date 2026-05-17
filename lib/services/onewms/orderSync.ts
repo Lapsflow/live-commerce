@@ -5,7 +5,8 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { createOnewmsClient } from '@/lib/onewms';
-import type { CreateOrderRequest } from '@/lib/onewms/types';
+import { getOnewmsConfig } from '@/lib/onewms/config';
+import type { CreateOrderRequest, CreateOrderRow } from '@/lib/onewms/types';
 
 interface SyncResult {
   success: boolean;
@@ -57,13 +58,16 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
       return { success: false, error: 'Order already synced to ONEWMS' };
     }
 
-    // Validate required fields
-    if (!order.recipient || !order.phone || !order.address) {
+    // Validate required fields (with null guard)
+    if (!order.recipient?.trim()) {
       return {
         success: false,
-        error: 'Order missing required recipient information',
+        error: 'Order missing required recipient name',
       };
     }
+    // Phone and address can be empty but should have safe defaults
+    const recipientPhone = order.phone?.trim() || '';
+    const recipientAddress = order.address?.trim() || '';
 
     // Validate all products have ONEWMS codes
     const missingCodes = order.items.filter((item) => !item.product.onewmsCode);
@@ -82,17 +86,41 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
     const randomSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
     const onewmsOrderNo = `LIVE-${dateStr}-${randomSuffix}`;
 
-    // Prepare ONEWMS order request
+    // Get shop_id from config (P0 hotfix requirement)
+    let shopId: string;
+    try {
+      const config = getOnewmsConfig();
+      if (!config.shopId) {
+        return {
+          success: false,
+          error: 'ONEWMS_SHOP_ID not configured. Run: pnpm tsx scripts/onewms-bootstrap-shop.ts',
+        };
+      }
+      shopId = config.shopId;
+    } catch (err) {
+      return {
+        success: false,
+        error: 'Failed to load ONEWMS configuration',
+      };
+    }
+
+    // Prepare ONEWMS order request (P0 hotfix: new schema with rows array)
+    // Each OrderItem becomes one row in the set_orders JSON array
+    const orderRows: CreateOrderRow[] = order.items.map((item) => ({
+      order_id: onewmsOrderNo,                        // 주문번호 (필수)
+      shop_product_id: item.product.onewmsCode!,      // 상품코드 (필수)
+      qty: item.quantity,                             // 수량 (필수)
+      recv_name: order.recipient.trim(),              // 수령자명 (필수, null guard)
+      recv_mobile: recipientPhone,                     // 수령자 휴대폰 (선택)
+      recv_address: recipientAddress,                 // 수령자 주소 (선택)
+      product_name: item.product.name,                // 상품명 (선택)
+      ...(order.memo && { memo: order.memo }),        // 배송메모 (선택, Schema 확인 후 포함)
+    }));
+
     const onewmsRequest: CreateOrderRequest = {
-      order_no: onewmsOrderNo,
-      order_date: order.createdAt.toISOString().slice(0, 10),
-      recipient_name: order.recipient,
-      recipient_phone: order.phone,
-      recipient_address: order.address,
-      products: order.items.map((item) => ({
-        product_code: item.product.onewmsCode!,
-        quantity: item.quantity,
-      })),
+      shop_id: shopId,                                // P0: 판매처코드 (필수)
+      collect_date: order.createdAt.toISOString().slice(0, 10), // 발주일 (선택)
+      rows: orderRows,                                 // P0: 주문 행 배열
     };
 
     // Use transaction to ensure data consistency

@@ -85,17 +85,18 @@ export async function syncOrderDeliveryStatus(orderId: string): Promise<{
       .toISOString()
       .slice(0, 10);
 
+    // P0 hotfix: Changed from order_no to order_id (order_no unsupported by ONEWMS API)
     const orderList = await client.getOrderInfo({
       date_type: 'order_date',
       start_date: thirtyDaysAgo,
       end_date: today,
-      order_no: mapping.onewmsOrderNo,
+      order_id: mapping.onewmsOrderNo,  // ✅ Changed: order_no → order_id
     });
 
-    // API filters by order_no param; take first matching result
+    // Filter by order_id (seq will be used once available from set_trans_no response)
     const orderInfo = orderList.find(
-      (o) => o.order_no === mapping.onewmsOrderNo || o.order_id === mapping.onewmsOrderNo
-    ) || orderList[0];
+      (o) => o.order_id === mapping.onewmsOrderNo
+    ) || (mapping.seq && orderList.find((o) => o.seq === mapping.seq)) || orderList[0];
 
     if (!orderInfo) {
       return { success: true, updated: false };
