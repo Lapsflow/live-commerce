@@ -48,11 +48,17 @@ export class OnewmsClient {
 
   /**
    * Make API request (standard {error, msg, data} wrapper)
+   * ✅ Task 2: timeoutMs 옵션 추가 (기본 10초)
    */
   private async request<T>(
     action: string,
-    params: Record<string, unknown> = {}
+    params: Record<string, unknown> = {},
+    options?: { timeoutMs?: number }
   ): Promise<OnewmsApiResponse<T>> {
+    const timeoutMs = options?.timeoutMs ?? 10000; // 기본 10초
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     const requestBody: OnewmsApiRequest = {
       partner_key: this.config.partnerKey,
       domain_key: this.config.domainKey,
@@ -80,6 +86,7 @@ export class OnewmsClient {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: formData.toString(),
+        signal: controller.signal, // ✅ AbortController signal 추가
       });
 
       if (!response.ok) {
@@ -99,6 +106,14 @@ export class OnewmsClient {
 
       return data;
     } catch (error) {
+      // ✅ AbortError 처리 (timeout)
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw new OnewmsApiError(
+          -1,
+          `ONEWMS API timeout (${timeoutMs}ms)`,
+          undefined
+        );
+      }
       if (error instanceof OnewmsApiError) {
         throw error;
       }
@@ -107,17 +122,25 @@ export class OnewmsClient {
         error instanceof Error ? error.message : 'Network error',
         undefined
       );
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
   /**
    * Make API request for endpoints that return raw data without {error, msg, data} wrapper.
    * e.g. get_stock_tx_info returns nested JSON directly.
+   * ✅ Task 2: timeoutMs 옵션 추가 (기본 10초)
    */
   private async requestRaw<T>(
     action: string,
-    params: Record<string, unknown> = {}
+    params: Record<string, unknown> = {},
+    options?: { timeoutMs?: number }
   ): Promise<T> {
+    const timeoutMs = options?.timeoutMs ?? 10000; // 기본 10초
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     const requestBody: OnewmsApiRequest = {
       partner_key: this.config.partnerKey,
       domain_key: this.config.domainKey,
@@ -144,6 +167,7 @@ export class OnewmsClient {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: formData.toString(),
+        signal: controller.signal, // ✅ AbortController signal 추가
       });
 
       if (!response.ok) {
@@ -163,6 +187,14 @@ export class OnewmsClient {
 
       return data as T;
     } catch (error) {
+      // ✅ AbortError 처리 (timeout)
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw new OnewmsApiError(
+          -1,
+          `ONEWMS API timeout (${timeoutMs}ms)`,
+          undefined
+        );
+      }
       if (error instanceof OnewmsApiError) {
         throw error;
       }
@@ -171,6 +203,8 @@ export class OnewmsClient {
         error instanceof Error ? error.message : 'Network error',
         undefined
       );
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
@@ -350,13 +384,18 @@ export class OnewmsClient {
   async getStockInfo(
     type: StockInfoType,
     ids: string,
-    params?: { warehouse_seq?: string; stock_type?: string; include_ready_trans?: string; page?: number; limit?: number }
+    params?: { warehouse_seq?: string; stock_type?: string; include_ready_trans?: string; page?: number; limit?: number },
+    options?: { timeoutMs?: number } // ✅ B-2: timeoutMs 옵션 지원
   ): Promise<StockInfoResponse> {
-    const response = await this.request<StockInfoResponse>('get_stock_info', {
-      type,
-      ids,
-      ...params,
-    });
+    const response = await this.request<StockInfoResponse>(
+      'get_stock_info',
+      {
+        type,
+        ids,
+        ...params,
+      },
+      options // ✅ B-2: 옵션 전달
+    );
     return response.data || {};
   }
 
