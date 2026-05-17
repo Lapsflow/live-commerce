@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-05-17T14:04:58.623Z",
+  "lastUpdated": "2026-05-17T14:05:46.074Z",
   "activeFeatures": [
     "notifications",
     "[code]",
@@ -279,7 +279,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T02:40:37.920Z",
-        "lastUpdated": "2026-05-06T03:33:19.659Z"
+        "lastUpdated": "2026-05-17T14:05:46.074Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/orders/upload/page.tsx"
     },
@@ -1358,7 +1358,7 @@
   "session": {
     "startedAt": "2026-04-28T06:44:38.229Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-05-17T14:04:58.623Z"
+    "lastActivity": "2026-05-17T14:05:46.074Z"
   },
   "history": [
     {
@@ -6794,6 +6794,12 @@
     {
       "timestamp": "2026-05-17T14:04:58.623Z",
       "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:05:46.074Z",
+      "feature": "upload",
       "phase": "do",
       "action": "updated"
     }

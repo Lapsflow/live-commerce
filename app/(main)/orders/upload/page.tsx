@@ -92,7 +92,23 @@ export default function OrderUploadPage() {
 
   // Stage 2: 업로드 (전체 매칭 성공 시만 가능)
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file || loading) return;
+
+    // ✅ Task 5: sessionStorage 가드 (30초 내 중복 제출 방지)
+    const submitKey = `bulk-upload-${file.name}-${file.size}-${file.lastModified}`;
+    if (typeof window !== "undefined" && sessionStorage.getItem(submitKey)) {
+      toast({
+        title: "이미 처리 중인 업로드가 있습니다",
+        description: "30초 후에 다시 시도해주세요. 페이지 새로고침/재클릭 금지.",
+        variant: "destructive",
+      });
+      return;
+    }
+    sessionStorage.setItem(submitKey, Date.now().toString());
+    setTimeout(
+      () => typeof window !== "undefined" && sessionStorage.removeItem(submitKey),
+      30000
+    );
 
     setLoading(true);
     setUploadError(null);
@@ -102,15 +118,34 @@ export default function OrderUploadPage() {
       formData.append("isCreditTrade", "true");
     }
 
+    // ✅ Task 4/5: X-Idempotency-Key 생성 (UUID v4)
+    const idempotencyKey =
+      typeof window !== "undefined" && typeof crypto !== "undefined"
+        ? crypto.randomUUID()
+        : `fallback-${Date.now()}-${Math.random()}`;
+
     try {
       const res = await fetch("/api/orders/bulk", {
         method: "POST",
+        headers: {
+          "X-Idempotency-Key": idempotencyKey, // ✅ Task 4: 요청 중복 방지
+        },
         body: formData,
       });
 
       const data = await res.json();
 
       if (!res.ok) {
+        // ✅ Task 4: 409 Conflict (이미 처리 중)
+        if (res.status === 409) {
+          toast({
+            title: "이미 처리 중입니다",
+            description: data.error?.message || "30초 후에 다시 시도해주세요.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         // Stage 1 에러: 매칭 실패 표시
         if (data.error?.code === "MATCHING_FAILED") {
           setUploadError(data.error);
@@ -125,10 +160,23 @@ export default function OrderUploadPage() {
         return;
       }
 
-      toast({
-        title: "발주 업로드 완료",
-        description: `${data.data.message} · 발주 관리에서 컨펌하면 ONEWMS로 자동 동기화됩니다.`,
-      });
+      // ✅ B-3: 캐시된 응답 감지
+      if (data.data?.cached) {
+        toast({
+          title: "이전 결과를 불러왔습니다",
+          description: "같은 파일이 최근에 업로드되었습니다.",
+        });
+      } else {
+        toast({
+          title: "발주 업로드 완료",
+          description: `${data.data.message} · 발주 관리에서 컨펌하면 ONEWMS로 자동 동기화됩니다.`,
+        });
+      }
+
+      // ✅ Task 6: UploadJob 진행률 폴링 (추후 B-1 구현 시 활용)
+      // if (data.data?.jobId) {
+      //   pollProgress(data.data.jobId);
+      // }
 
       router.push("/orders");
     } catch (err: any) {
