@@ -269,6 +269,18 @@ node_modules/
 - 자금 정산 자동화 (PDF v2 안정화 후 단계)
 - 락(Lock) · 자체 라이브 등록 등 고도화 (PDF v2 운영 데이터 누적 후)
 
+11. **외부 API 문서를 먼저 확인하지 않으면 Agent도 추측에 의존한다.**
+    - 2026-05-15: P1 API 정리 과정에서 5명 Agent 병렬 실행. Agent 4가 ONEWMS 공식 문서(16-onedas_packing.md, 15-sheet_management.md)를 읽지 않고 "합리적으로 보이는" 필드명 추론.
+    - **문제**:
+      - OnedasPackingInfo: picking_order_no 포함 → 공식문서에 없음. 실제는 work_date, no, crdate, no_sub, cnt, picking_unit, status
+      - OnedasPackingDetailInfo: picking_orders wrapper → 공식문서는 data wrapper
+      - AddSheetItemsRequest: supply_code, quantity, unit_price → 공식문서는 product_id|link_id, qty, memo, expire_date, lot_no, location
+    - **교훈**:
+      1. 외부 서드파티 API는 "공식 문서 테이블" > 추론. 테이블에 없는 필드는 존재하지 않는다고 가정.
+      2. Agents가 "그럴듯한 필드명" 패턴을 보면, 원본 문서에서 차용한 게 아닐 수도 있음. 특히 add/get/set 명사 필드 추론 위험.
+      3. 복잡한 P1/P2 타입은 마지막에 한 번씩 공식문서 크로스체크. git diff로 추가/제거된 필드 전수 검토.
+    - **적용**: 외부 API 타입 정의할 때 항상 공식 .md 테이블 스샷을 주석으로 명시. Agent도 테이블을 읽게 강제.
+
 ---
 
-_최초 작성: 2026-04-15 · 보리스 원칙 적용: 2026-05-12_
+_최초 작성: 2026-04-15 · 보리스 원칙 적용: 2026-05-12 · 학습 #11 추가: 2026-05-15_

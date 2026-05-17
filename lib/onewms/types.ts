@@ -393,10 +393,16 @@ export interface AddSheetRequest {
 }
 
 export interface AddSheetItemsRequest {
-  supply_code: string;
-  product_id?: string;
-  quantity: number;
-  unit_price?: number;
+  // 필수 (product_id 또는 link_id 중 하나)
+  product_id?: string;           // 상품ID
+  link_id?: string;              // 링크ID
+  qty: number;                   // 수량 (필수)
+
+  // 선택
+  memo?: string;                 // 메모
+  expire_date?: string;          // 유효기한
+  lot_no?: string;               // 로트번호
+  location?: string;             // 로케이션
   [key: string]: unknown;
 }
 
@@ -406,50 +412,45 @@ export interface AddSheetItemsRequest {
 
 export interface OnedasPackingInfo {
   picking_orders?: Array<{
-    picking_order_no: string;     // 집품 주문번호
     work_date: string;            // 작업일
-    location: string;             // 위치
-    product_id: string;           // 상품ID
-    qty: number;                  // 수량
+    no: number | string;          // 피킹차수
     crdate?: string;              // 생성일시
-    no_sub?: number;              // 총 패킹차수
+    no_sub?: number | string;     // 총 패킹차수
     cnt?: number;                 // 총 송장수
     picking_unit?: number;        // 작업인원
     status?: number;              // 상태
-    [key: string]: unknown;
-  }>;
-  packing_orders?: Array<{
-    work_date: string;
-    no: number | string;
-    no_sub: number | string;
-    crdate?: string;
-    cnt?: number;
-    picking_unit?: number;
-    status?: number;
+    packing_orders?: Array<{
+      work_date: string;
+      no: number | string;
+      no_sub: number | string;
+      crdate?: string;
+      cnt?: number;
+      picking_unit?: number;
+      status?: number;
+      [key: string]: unknown;
+    }>;
     [key: string]: unknown;
   }>;
   [key: string]: unknown;
 }
 
 export interface OnedasPackingDetailInfo {
-  picking_orders?: Array<{
-    picking_order_no: string;
-    work_date: string;
-    location: string;
-    product_id: string;
-    qty: number;
+  data?: Array<{
+    multi_location?: string;      // 멀티로케이션 여부
+    location?: string;            // 위치
     expire_date?: string;         // 유효기한
     lot_no?: string;              // 로트번호
     ma_date?: string;             // 제조일자
+    product_id?: string;          // 상품ID
     name?: string;                // 상품명
     options?: string;             // 옵션
-    no_sub?: number;
-    no_sub_qty?: number;
-    total_qty?: number;
-    order_id?: string;
-    trans_no?: string;
-    p_barcode?: string;
-    multi_location?: string;      // 멀티로케이션 여부
+    no_sub?: number;              // 패킹차수
+    no_sub_qty?: number;          // 패킹당 수량
+    qty?: number;                 // 총 수량
+    total_qty?: number;           // 총 수량
+    order_id?: string;            // 주문번호
+    trans_no?: string;            // 송장번호
+    p_barcode?: string;           // 상품 바코드
     [key: string]: unknown;
   }>;
   [key: string]: unknown;
