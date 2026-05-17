@@ -143,6 +143,16 @@ export type NotificationLog = $Result.DefaultSelection<Prisma.$NotificationLogPa
  * 
  */
 export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
+/**
+ * Model IdempotencyKey
+ * 
+ */
+export type IdempotencyKey = $Result.DefaultSelection<Prisma.$IdempotencyKeyPayload>
+/**
+ * Model UploadJob
+ * 
+ */
+export type UploadJob = $Result.DefaultSelection<Prisma.$UploadJobPayload>
 
 /**
  * Enums
@@ -734,6 +744,26 @@ export class PrismaClient<
     * ```
     */
   get auditLog(): Prisma.AuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.idempotencyKey`: Exposes CRUD operations for the **IdempotencyKey** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more IdempotencyKeys
+    * const idempotencyKeys = await prisma.idempotencyKey.findMany()
+    * ```
+    */
+  get idempotencyKey(): Prisma.IdempotencyKeyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.uploadJob`: Exposes CRUD operations for the **UploadJob** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UploadJobs
+    * const uploadJobs = await prisma.uploadJob.findMany()
+    * ```
+    */
+  get uploadJob(): Prisma.UploadJobDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1193,7 +1223,9 @@ export namespace Prisma {
     MarketPricing: 'MarketPricing',
     ScanLog: 'ScanLog',
     NotificationLog: 'NotificationLog',
-    AuditLog: 'AuditLog'
+    AuditLog: 'AuditLog',
+    IdempotencyKey: 'IdempotencyKey',
+    UploadJob: 'UploadJob'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1209,7 +1241,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "center" | "productCenterStock" | "orderSellerMatching" | "order" | "orderItem" | "stockReservation" | "broadcast" | "sale" | "proposal" | "proposalCart" | "onewmsOrderMapping" | "onewmsStockSync" | "onewmsDeliveryLog" | "warehouse" | "barcodeMaster" | "warehouseInventory" | "stockMovement" | "aIAnalysis" | "aIUsageStats" | "rateLimit" | "marketPricing" | "scanLog" | "notificationLog" | "auditLog"
+      modelProps: "user" | "product" | "center" | "productCenterStock" | "orderSellerMatching" | "order" | "orderItem" | "stockReservation" | "broadcast" | "sale" | "proposal" | "proposalCart" | "onewmsOrderMapping" | "onewmsStockSync" | "onewmsDeliveryLog" | "warehouse" | "barcodeMaster" | "warehouseInventory" | "stockMovement" | "aIAnalysis" | "aIUsageStats" | "rateLimit" | "marketPricing" | "scanLog" | "notificationLog" | "auditLog" | "idempotencyKey" | "uploadJob"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3137,6 +3169,154 @@ export namespace Prisma {
           }
         }
       }
+      IdempotencyKey: {
+        payload: Prisma.$IdempotencyKeyPayload<ExtArgs>
+        fields: Prisma.IdempotencyKeyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IdempotencyKeyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IdempotencyKeyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
+          }
+          findFirst: {
+            args: Prisma.IdempotencyKeyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IdempotencyKeyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
+          }
+          findMany: {
+            args: Prisma.IdempotencyKeyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>[]
+          }
+          create: {
+            args: Prisma.IdempotencyKeyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
+          }
+          createMany: {
+            args: Prisma.IdempotencyKeyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IdempotencyKeyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>[]
+          }
+          delete: {
+            args: Prisma.IdempotencyKeyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
+          }
+          update: {
+            args: Prisma.IdempotencyKeyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
+          }
+          deleteMany: {
+            args: Prisma.IdempotencyKeyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IdempotencyKeyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IdempotencyKeyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>[]
+          }
+          upsert: {
+            args: Prisma.IdempotencyKeyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdempotencyKeyPayload>
+          }
+          aggregate: {
+            args: Prisma.IdempotencyKeyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIdempotencyKey>
+          }
+          groupBy: {
+            args: Prisma.IdempotencyKeyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IdempotencyKeyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IdempotencyKeyCountArgs<ExtArgs>
+            result: $Utils.Optional<IdempotencyKeyCountAggregateOutputType> | number
+          }
+        }
+      }
+      UploadJob: {
+        payload: Prisma.$UploadJobPayload<ExtArgs>
+        fields: Prisma.UploadJobFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UploadJobFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UploadJobFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>
+          }
+          findFirst: {
+            args: Prisma.UploadJobFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UploadJobFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>
+          }
+          findMany: {
+            args: Prisma.UploadJobFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>[]
+          }
+          create: {
+            args: Prisma.UploadJobCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>
+          }
+          createMany: {
+            args: Prisma.UploadJobCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UploadJobCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>[]
+          }
+          delete: {
+            args: Prisma.UploadJobDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>
+          }
+          update: {
+            args: Prisma.UploadJobUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>
+          }
+          deleteMany: {
+            args: Prisma.UploadJobDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UploadJobUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UploadJobUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>[]
+          }
+          upsert: {
+            args: Prisma.UploadJobUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UploadJobPayload>
+          }
+          aggregate: {
+            args: Prisma.UploadJobAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUploadJob>
+          }
+          groupBy: {
+            args: Prisma.UploadJobGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UploadJobGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UploadJobCountArgs<ExtArgs>
+            result: $Utils.Optional<UploadJobCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3271,6 +3451,8 @@ export namespace Prisma {
     scanLog?: ScanLogOmit
     notificationLog?: NotificationLogOmit
     auditLog?: AuditLogOmit
+    idempotencyKey?: IdempotencyKeyOmit
+    uploadJob?: UploadJobOmit
   }
 
   /* Types for Logging */
@@ -35977,6 +36159,2140 @@ export namespace Prisma {
 
 
   /**
+   * Model IdempotencyKey
+   */
+
+  export type AggregateIdempotencyKey = {
+    _count: IdempotencyKeyCountAggregateOutputType | null
+    _min: IdempotencyKeyMinAggregateOutputType | null
+    _max: IdempotencyKeyMaxAggregateOutputType | null
+  }
+
+  export type IdempotencyKeyMinAggregateOutputType = {
+    key: string | null
+    endpoint: string | null
+    userId: string | null
+    status: string | null
+    errorMsg: string | null
+    createdAt: Date | null
+    expiresAt: Date | null
+  }
+
+  export type IdempotencyKeyMaxAggregateOutputType = {
+    key: string | null
+    endpoint: string | null
+    userId: string | null
+    status: string | null
+    errorMsg: string | null
+    createdAt: Date | null
+    expiresAt: Date | null
+  }
+
+  export type IdempotencyKeyCountAggregateOutputType = {
+    key: number
+    endpoint: number
+    userId: number
+    response: number
+    status: number
+    errorMsg: number
+    createdAt: number
+    expiresAt: number
+    _all: number
+  }
+
+
+  export type IdempotencyKeyMinAggregateInputType = {
+    key?: true
+    endpoint?: true
+    userId?: true
+    status?: true
+    errorMsg?: true
+    createdAt?: true
+    expiresAt?: true
+  }
+
+  export type IdempotencyKeyMaxAggregateInputType = {
+    key?: true
+    endpoint?: true
+    userId?: true
+    status?: true
+    errorMsg?: true
+    createdAt?: true
+    expiresAt?: true
+  }
+
+  export type IdempotencyKeyCountAggregateInputType = {
+    key?: true
+    endpoint?: true
+    userId?: true
+    response?: true
+    status?: true
+    errorMsg?: true
+    createdAt?: true
+    expiresAt?: true
+    _all?: true
+  }
+
+  export type IdempotencyKeyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IdempotencyKey to aggregate.
+     */
+    where?: IdempotencyKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IdempotencyKeys to fetch.
+     */
+    orderBy?: IdempotencyKeyOrderByWithRelationInput | IdempotencyKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IdempotencyKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IdempotencyKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IdempotencyKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned IdempotencyKeys
+    **/
+    _count?: true | IdempotencyKeyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IdempotencyKeyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IdempotencyKeyMaxAggregateInputType
+  }
+
+  export type GetIdempotencyKeyAggregateType<T extends IdempotencyKeyAggregateArgs> = {
+        [P in keyof T & keyof AggregateIdempotencyKey]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIdempotencyKey[P]>
+      : GetScalarType<T[P], AggregateIdempotencyKey[P]>
+  }
+
+
+
+
+  export type IdempotencyKeyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IdempotencyKeyWhereInput
+    orderBy?: IdempotencyKeyOrderByWithAggregationInput | IdempotencyKeyOrderByWithAggregationInput[]
+    by: IdempotencyKeyScalarFieldEnum[] | IdempotencyKeyScalarFieldEnum
+    having?: IdempotencyKeyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IdempotencyKeyCountAggregateInputType | true
+    _min?: IdempotencyKeyMinAggregateInputType
+    _max?: IdempotencyKeyMaxAggregateInputType
+  }
+
+  export type IdempotencyKeyGroupByOutputType = {
+    key: string
+    endpoint: string
+    userId: string
+    response: JsonValue | null
+    status: string
+    errorMsg: string | null
+    createdAt: Date
+    expiresAt: Date
+    _count: IdempotencyKeyCountAggregateOutputType | null
+    _min: IdempotencyKeyMinAggregateOutputType | null
+    _max: IdempotencyKeyMaxAggregateOutputType | null
+  }
+
+  type GetIdempotencyKeyGroupByPayload<T extends IdempotencyKeyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IdempotencyKeyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IdempotencyKeyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IdempotencyKeyGroupByOutputType[P]>
+            : GetScalarType<T[P], IdempotencyKeyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IdempotencyKeySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    key?: boolean
+    endpoint?: boolean
+    userId?: boolean
+    response?: boolean
+    status?: boolean
+    errorMsg?: boolean
+    createdAt?: boolean
+    expiresAt?: boolean
+  }, ExtArgs["result"]["idempotencyKey"]>
+
+  export type IdempotencyKeySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    key?: boolean
+    endpoint?: boolean
+    userId?: boolean
+    response?: boolean
+    status?: boolean
+    errorMsg?: boolean
+    createdAt?: boolean
+    expiresAt?: boolean
+  }, ExtArgs["result"]["idempotencyKey"]>
+
+  export type IdempotencyKeySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    key?: boolean
+    endpoint?: boolean
+    userId?: boolean
+    response?: boolean
+    status?: boolean
+    errorMsg?: boolean
+    createdAt?: boolean
+    expiresAt?: boolean
+  }, ExtArgs["result"]["idempotencyKey"]>
+
+  export type IdempotencyKeySelectScalar = {
+    key?: boolean
+    endpoint?: boolean
+    userId?: boolean
+    response?: boolean
+    status?: boolean
+    errorMsg?: boolean
+    createdAt?: boolean
+    expiresAt?: boolean
+  }
+
+  export type IdempotencyKeyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"key" | "endpoint" | "userId" | "response" | "status" | "errorMsg" | "createdAt" | "expiresAt", ExtArgs["result"]["idempotencyKey"]>
+
+  export type $IdempotencyKeyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "IdempotencyKey"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      key: string
+      endpoint: string
+      userId: string
+      response: Prisma.JsonValue | null
+      status: string
+      errorMsg: string | null
+      createdAt: Date
+      expiresAt: Date
+    }, ExtArgs["result"]["idempotencyKey"]>
+    composites: {}
+  }
+
+  type IdempotencyKeyGetPayload<S extends boolean | null | undefined | IdempotencyKeyDefaultArgs> = $Result.GetResult<Prisma.$IdempotencyKeyPayload, S>
+
+  type IdempotencyKeyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IdempotencyKeyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IdempotencyKeyCountAggregateInputType | true
+    }
+
+  export interface IdempotencyKeyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['IdempotencyKey'], meta: { name: 'IdempotencyKey' } }
+    /**
+     * Find zero or one IdempotencyKey that matches the filter.
+     * @param {IdempotencyKeyFindUniqueArgs} args - Arguments to find a IdempotencyKey
+     * @example
+     * // Get one IdempotencyKey
+     * const idempotencyKey = await prisma.idempotencyKey.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IdempotencyKeyFindUniqueArgs>(args: SelectSubset<T, IdempotencyKeyFindUniqueArgs<ExtArgs>>): Prisma__IdempotencyKeyClient<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one IdempotencyKey that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IdempotencyKeyFindUniqueOrThrowArgs} args - Arguments to find a IdempotencyKey
+     * @example
+     * // Get one IdempotencyKey
+     * const idempotencyKey = await prisma.idempotencyKey.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IdempotencyKeyFindUniqueOrThrowArgs>(args: SelectSubset<T, IdempotencyKeyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IdempotencyKeyClient<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IdempotencyKey that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdempotencyKeyFindFirstArgs} args - Arguments to find a IdempotencyKey
+     * @example
+     * // Get one IdempotencyKey
+     * const idempotencyKey = await prisma.idempotencyKey.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IdempotencyKeyFindFirstArgs>(args?: SelectSubset<T, IdempotencyKeyFindFirstArgs<ExtArgs>>): Prisma__IdempotencyKeyClient<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IdempotencyKey that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdempotencyKeyFindFirstOrThrowArgs} args - Arguments to find a IdempotencyKey
+     * @example
+     * // Get one IdempotencyKey
+     * const idempotencyKey = await prisma.idempotencyKey.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IdempotencyKeyFindFirstOrThrowArgs>(args?: SelectSubset<T, IdempotencyKeyFindFirstOrThrowArgs<ExtArgs>>): Prisma__IdempotencyKeyClient<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more IdempotencyKeys that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdempotencyKeyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all IdempotencyKeys
+     * const idempotencyKeys = await prisma.idempotencyKey.findMany()
+     * 
+     * // Get first 10 IdempotencyKeys
+     * const idempotencyKeys = await prisma.idempotencyKey.findMany({ take: 10 })
+     * 
+     * // Only select the `key`
+     * const idempotencyKeyWithKeyOnly = await prisma.idempotencyKey.findMany({ select: { key: true } })
+     * 
+     */
+    findMany<T extends IdempotencyKeyFindManyArgs>(args?: SelectSubset<T, IdempotencyKeyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a IdempotencyKey.
+     * @param {IdempotencyKeyCreateArgs} args - Arguments to create a IdempotencyKey.
+     * @example
+     * // Create one IdempotencyKey
+     * const IdempotencyKey = await prisma.idempotencyKey.create({
+     *   data: {
+     *     // ... data to create a IdempotencyKey
+     *   }
+     * })
+     * 
+     */
+    create<T extends IdempotencyKeyCreateArgs>(args: SelectSubset<T, IdempotencyKeyCreateArgs<ExtArgs>>): Prisma__IdempotencyKeyClient<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many IdempotencyKeys.
+     * @param {IdempotencyKeyCreateManyArgs} args - Arguments to create many IdempotencyKeys.
+     * @example
+     * // Create many IdempotencyKeys
+     * const idempotencyKey = await prisma.idempotencyKey.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IdempotencyKeyCreateManyArgs>(args?: SelectSubset<T, IdempotencyKeyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many IdempotencyKeys and returns the data saved in the database.
+     * @param {IdempotencyKeyCreateManyAndReturnArgs} args - Arguments to create many IdempotencyKeys.
+     * @example
+     * // Create many IdempotencyKeys
+     * const idempotencyKey = await prisma.idempotencyKey.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many IdempotencyKeys and only return the `key`
+     * const idempotencyKeyWithKeyOnly = await prisma.idempotencyKey.createManyAndReturn({
+     *   select: { key: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IdempotencyKeyCreateManyAndReturnArgs>(args?: SelectSubset<T, IdempotencyKeyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a IdempotencyKey.
+     * @param {IdempotencyKeyDeleteArgs} args - Arguments to delete one IdempotencyKey.
+     * @example
+     * // Delete one IdempotencyKey
+     * const IdempotencyKey = await prisma.idempotencyKey.delete({
+     *   where: {
+     *     // ... filter to delete one IdempotencyKey
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IdempotencyKeyDeleteArgs>(args: SelectSubset<T, IdempotencyKeyDeleteArgs<ExtArgs>>): Prisma__IdempotencyKeyClient<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one IdempotencyKey.
+     * @param {IdempotencyKeyUpdateArgs} args - Arguments to update one IdempotencyKey.
+     * @example
+     * // Update one IdempotencyKey
+     * const idempotencyKey = await prisma.idempotencyKey.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IdempotencyKeyUpdateArgs>(args: SelectSubset<T, IdempotencyKeyUpdateArgs<ExtArgs>>): Prisma__IdempotencyKeyClient<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more IdempotencyKeys.
+     * @param {IdempotencyKeyDeleteManyArgs} args - Arguments to filter IdempotencyKeys to delete.
+     * @example
+     * // Delete a few IdempotencyKeys
+     * const { count } = await prisma.idempotencyKey.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IdempotencyKeyDeleteManyArgs>(args?: SelectSubset<T, IdempotencyKeyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IdempotencyKeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdempotencyKeyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many IdempotencyKeys
+     * const idempotencyKey = await prisma.idempotencyKey.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IdempotencyKeyUpdateManyArgs>(args: SelectSubset<T, IdempotencyKeyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IdempotencyKeys and returns the data updated in the database.
+     * @param {IdempotencyKeyUpdateManyAndReturnArgs} args - Arguments to update many IdempotencyKeys.
+     * @example
+     * // Update many IdempotencyKeys
+     * const idempotencyKey = await prisma.idempotencyKey.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more IdempotencyKeys and only return the `key`
+     * const idempotencyKeyWithKeyOnly = await prisma.idempotencyKey.updateManyAndReturn({
+     *   select: { key: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IdempotencyKeyUpdateManyAndReturnArgs>(args: SelectSubset<T, IdempotencyKeyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one IdempotencyKey.
+     * @param {IdempotencyKeyUpsertArgs} args - Arguments to update or create a IdempotencyKey.
+     * @example
+     * // Update or create a IdempotencyKey
+     * const idempotencyKey = await prisma.idempotencyKey.upsert({
+     *   create: {
+     *     // ... data to create a IdempotencyKey
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the IdempotencyKey we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IdempotencyKeyUpsertArgs>(args: SelectSubset<T, IdempotencyKeyUpsertArgs<ExtArgs>>): Prisma__IdempotencyKeyClient<$Result.GetResult<Prisma.$IdempotencyKeyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of IdempotencyKeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdempotencyKeyCountArgs} args - Arguments to filter IdempotencyKeys to count.
+     * @example
+     * // Count the number of IdempotencyKeys
+     * const count = await prisma.idempotencyKey.count({
+     *   where: {
+     *     // ... the filter for the IdempotencyKeys we want to count
+     *   }
+     * })
+    **/
+    count<T extends IdempotencyKeyCountArgs>(
+      args?: Subset<T, IdempotencyKeyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IdempotencyKeyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a IdempotencyKey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdempotencyKeyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IdempotencyKeyAggregateArgs>(args: Subset<T, IdempotencyKeyAggregateArgs>): Prisma.PrismaPromise<GetIdempotencyKeyAggregateType<T>>
+
+    /**
+     * Group by IdempotencyKey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdempotencyKeyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IdempotencyKeyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IdempotencyKeyGroupByArgs['orderBy'] }
+        : { orderBy?: IdempotencyKeyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IdempotencyKeyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIdempotencyKeyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the IdempotencyKey model
+   */
+  readonly fields: IdempotencyKeyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for IdempotencyKey.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IdempotencyKeyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the IdempotencyKey model
+   */
+  interface IdempotencyKeyFieldRefs {
+    readonly key: FieldRef<"IdempotencyKey", 'String'>
+    readonly endpoint: FieldRef<"IdempotencyKey", 'String'>
+    readonly userId: FieldRef<"IdempotencyKey", 'String'>
+    readonly response: FieldRef<"IdempotencyKey", 'Json'>
+    readonly status: FieldRef<"IdempotencyKey", 'String'>
+    readonly errorMsg: FieldRef<"IdempotencyKey", 'String'>
+    readonly createdAt: FieldRef<"IdempotencyKey", 'DateTime'>
+    readonly expiresAt: FieldRef<"IdempotencyKey", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * IdempotencyKey findUnique
+   */
+  export type IdempotencyKeyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * Filter, which IdempotencyKey to fetch.
+     */
+    where: IdempotencyKeyWhereUniqueInput
+  }
+
+  /**
+   * IdempotencyKey findUniqueOrThrow
+   */
+  export type IdempotencyKeyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * Filter, which IdempotencyKey to fetch.
+     */
+    where: IdempotencyKeyWhereUniqueInput
+  }
+
+  /**
+   * IdempotencyKey findFirst
+   */
+  export type IdempotencyKeyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * Filter, which IdempotencyKey to fetch.
+     */
+    where?: IdempotencyKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IdempotencyKeys to fetch.
+     */
+    orderBy?: IdempotencyKeyOrderByWithRelationInput | IdempotencyKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IdempotencyKeys.
+     */
+    cursor?: IdempotencyKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IdempotencyKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IdempotencyKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IdempotencyKeys.
+     */
+    distinct?: IdempotencyKeyScalarFieldEnum | IdempotencyKeyScalarFieldEnum[]
+  }
+
+  /**
+   * IdempotencyKey findFirstOrThrow
+   */
+  export type IdempotencyKeyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * Filter, which IdempotencyKey to fetch.
+     */
+    where?: IdempotencyKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IdempotencyKeys to fetch.
+     */
+    orderBy?: IdempotencyKeyOrderByWithRelationInput | IdempotencyKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IdempotencyKeys.
+     */
+    cursor?: IdempotencyKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IdempotencyKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IdempotencyKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IdempotencyKeys.
+     */
+    distinct?: IdempotencyKeyScalarFieldEnum | IdempotencyKeyScalarFieldEnum[]
+  }
+
+  /**
+   * IdempotencyKey findMany
+   */
+  export type IdempotencyKeyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * Filter, which IdempotencyKeys to fetch.
+     */
+    where?: IdempotencyKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IdempotencyKeys to fetch.
+     */
+    orderBy?: IdempotencyKeyOrderByWithRelationInput | IdempotencyKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing IdempotencyKeys.
+     */
+    cursor?: IdempotencyKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IdempotencyKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IdempotencyKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IdempotencyKeys.
+     */
+    distinct?: IdempotencyKeyScalarFieldEnum | IdempotencyKeyScalarFieldEnum[]
+  }
+
+  /**
+   * IdempotencyKey create
+   */
+  export type IdempotencyKeyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * The data needed to create a IdempotencyKey.
+     */
+    data: XOR<IdempotencyKeyCreateInput, IdempotencyKeyUncheckedCreateInput>
+  }
+
+  /**
+   * IdempotencyKey createMany
+   */
+  export type IdempotencyKeyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many IdempotencyKeys.
+     */
+    data: IdempotencyKeyCreateManyInput | IdempotencyKeyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IdempotencyKey createManyAndReturn
+   */
+  export type IdempotencyKeyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * The data used to create many IdempotencyKeys.
+     */
+    data: IdempotencyKeyCreateManyInput | IdempotencyKeyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IdempotencyKey update
+   */
+  export type IdempotencyKeyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * The data needed to update a IdempotencyKey.
+     */
+    data: XOR<IdempotencyKeyUpdateInput, IdempotencyKeyUncheckedUpdateInput>
+    /**
+     * Choose, which IdempotencyKey to update.
+     */
+    where: IdempotencyKeyWhereUniqueInput
+  }
+
+  /**
+   * IdempotencyKey updateMany
+   */
+  export type IdempotencyKeyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update IdempotencyKeys.
+     */
+    data: XOR<IdempotencyKeyUpdateManyMutationInput, IdempotencyKeyUncheckedUpdateManyInput>
+    /**
+     * Filter which IdempotencyKeys to update
+     */
+    where?: IdempotencyKeyWhereInput
+    /**
+     * Limit how many IdempotencyKeys to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IdempotencyKey updateManyAndReturn
+   */
+  export type IdempotencyKeyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * The data used to update IdempotencyKeys.
+     */
+    data: XOR<IdempotencyKeyUpdateManyMutationInput, IdempotencyKeyUncheckedUpdateManyInput>
+    /**
+     * Filter which IdempotencyKeys to update
+     */
+    where?: IdempotencyKeyWhereInput
+    /**
+     * Limit how many IdempotencyKeys to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IdempotencyKey upsert
+   */
+  export type IdempotencyKeyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * The filter to search for the IdempotencyKey to update in case it exists.
+     */
+    where: IdempotencyKeyWhereUniqueInput
+    /**
+     * In case the IdempotencyKey found by the `where` argument doesn't exist, create a new IdempotencyKey with this data.
+     */
+    create: XOR<IdempotencyKeyCreateInput, IdempotencyKeyUncheckedCreateInput>
+    /**
+     * In case the IdempotencyKey was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IdempotencyKeyUpdateInput, IdempotencyKeyUncheckedUpdateInput>
+  }
+
+  /**
+   * IdempotencyKey delete
+   */
+  export type IdempotencyKeyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+    /**
+     * Filter which IdempotencyKey to delete.
+     */
+    where: IdempotencyKeyWhereUniqueInput
+  }
+
+  /**
+   * IdempotencyKey deleteMany
+   */
+  export type IdempotencyKeyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IdempotencyKeys to delete
+     */
+    where?: IdempotencyKeyWhereInput
+    /**
+     * Limit how many IdempotencyKeys to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * IdempotencyKey without action
+   */
+  export type IdempotencyKeyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdempotencyKey
+     */
+    select?: IdempotencyKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdempotencyKey
+     */
+    omit?: IdempotencyKeyOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model UploadJob
+   */
+
+  export type AggregateUploadJob = {
+    _count: UploadJobCountAggregateOutputType | null
+    _avg: UploadJobAvgAggregateOutputType | null
+    _sum: UploadJobSumAggregateOutputType | null
+    _min: UploadJobMinAggregateOutputType | null
+    _max: UploadJobMaxAggregateOutputType | null
+  }
+
+  export type UploadJobAvgAggregateOutputType = {
+    totalItems: number | null
+    processedItems: number | null
+  }
+
+  export type UploadJobSumAggregateOutputType = {
+    totalItems: number | null
+    processedItems: number | null
+  }
+
+  export type UploadJobMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    endpoint: string | null
+    totalItems: number | null
+    processedItems: number | null
+    status: string | null
+    errorMessage: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UploadJobMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    endpoint: string | null
+    totalItems: number | null
+    processedItems: number | null
+    status: string | null
+    errorMessage: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UploadJobCountAggregateOutputType = {
+    id: number
+    userId: number
+    endpoint: number
+    totalItems: number
+    processedItems: number
+    status: number
+    result: number
+    errorMessage: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type UploadJobAvgAggregateInputType = {
+    totalItems?: true
+    processedItems?: true
+  }
+
+  export type UploadJobSumAggregateInputType = {
+    totalItems?: true
+    processedItems?: true
+  }
+
+  export type UploadJobMinAggregateInputType = {
+    id?: true
+    userId?: true
+    endpoint?: true
+    totalItems?: true
+    processedItems?: true
+    status?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UploadJobMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    endpoint?: true
+    totalItems?: true
+    processedItems?: true
+    status?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UploadJobCountAggregateInputType = {
+    id?: true
+    userId?: true
+    endpoint?: true
+    totalItems?: true
+    processedItems?: true
+    status?: true
+    result?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type UploadJobAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UploadJob to aggregate.
+     */
+    where?: UploadJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UploadJobs to fetch.
+     */
+    orderBy?: UploadJobOrderByWithRelationInput | UploadJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UploadJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UploadJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UploadJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UploadJobs
+    **/
+    _count?: true | UploadJobCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UploadJobAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UploadJobSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UploadJobMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UploadJobMaxAggregateInputType
+  }
+
+  export type GetUploadJobAggregateType<T extends UploadJobAggregateArgs> = {
+        [P in keyof T & keyof AggregateUploadJob]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUploadJob[P]>
+      : GetScalarType<T[P], AggregateUploadJob[P]>
+  }
+
+
+
+
+  export type UploadJobGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UploadJobWhereInput
+    orderBy?: UploadJobOrderByWithAggregationInput | UploadJobOrderByWithAggregationInput[]
+    by: UploadJobScalarFieldEnum[] | UploadJobScalarFieldEnum
+    having?: UploadJobScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UploadJobCountAggregateInputType | true
+    _avg?: UploadJobAvgAggregateInputType
+    _sum?: UploadJobSumAggregateInputType
+    _min?: UploadJobMinAggregateInputType
+    _max?: UploadJobMaxAggregateInputType
+  }
+
+  export type UploadJobGroupByOutputType = {
+    id: string
+    userId: string
+    endpoint: string
+    totalItems: number
+    processedItems: number
+    status: string
+    result: JsonValue | null
+    errorMessage: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: UploadJobCountAggregateOutputType | null
+    _avg: UploadJobAvgAggregateOutputType | null
+    _sum: UploadJobSumAggregateOutputType | null
+    _min: UploadJobMinAggregateOutputType | null
+    _max: UploadJobMaxAggregateOutputType | null
+  }
+
+  type GetUploadJobGroupByPayload<T extends UploadJobGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UploadJobGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UploadJobGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UploadJobGroupByOutputType[P]>
+            : GetScalarType<T[P], UploadJobGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UploadJobSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    endpoint?: boolean
+    totalItems?: boolean
+    processedItems?: boolean
+    status?: boolean
+    result?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["uploadJob"]>
+
+  export type UploadJobSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    endpoint?: boolean
+    totalItems?: boolean
+    processedItems?: boolean
+    status?: boolean
+    result?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["uploadJob"]>
+
+  export type UploadJobSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    endpoint?: boolean
+    totalItems?: boolean
+    processedItems?: boolean
+    status?: boolean
+    result?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["uploadJob"]>
+
+  export type UploadJobSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    endpoint?: boolean
+    totalItems?: boolean
+    processedItems?: boolean
+    status?: boolean
+    result?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type UploadJobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "endpoint" | "totalItems" | "processedItems" | "status" | "result" | "errorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["uploadJob"]>
+
+  export type $UploadJobPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UploadJob"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      endpoint: string
+      totalItems: number
+      processedItems: number
+      status: string
+      result: Prisma.JsonValue | null
+      errorMessage: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["uploadJob"]>
+    composites: {}
+  }
+
+  type UploadJobGetPayload<S extends boolean | null | undefined | UploadJobDefaultArgs> = $Result.GetResult<Prisma.$UploadJobPayload, S>
+
+  type UploadJobCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UploadJobFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UploadJobCountAggregateInputType | true
+    }
+
+  export interface UploadJobDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UploadJob'], meta: { name: 'UploadJob' } }
+    /**
+     * Find zero or one UploadJob that matches the filter.
+     * @param {UploadJobFindUniqueArgs} args - Arguments to find a UploadJob
+     * @example
+     * // Get one UploadJob
+     * const uploadJob = await prisma.uploadJob.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UploadJobFindUniqueArgs>(args: SelectSubset<T, UploadJobFindUniqueArgs<ExtArgs>>): Prisma__UploadJobClient<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UploadJob that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UploadJobFindUniqueOrThrowArgs} args - Arguments to find a UploadJob
+     * @example
+     * // Get one UploadJob
+     * const uploadJob = await prisma.uploadJob.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UploadJobFindUniqueOrThrowArgs>(args: SelectSubset<T, UploadJobFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UploadJobClient<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UploadJob that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UploadJobFindFirstArgs} args - Arguments to find a UploadJob
+     * @example
+     * // Get one UploadJob
+     * const uploadJob = await prisma.uploadJob.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UploadJobFindFirstArgs>(args?: SelectSubset<T, UploadJobFindFirstArgs<ExtArgs>>): Prisma__UploadJobClient<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UploadJob that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UploadJobFindFirstOrThrowArgs} args - Arguments to find a UploadJob
+     * @example
+     * // Get one UploadJob
+     * const uploadJob = await prisma.uploadJob.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UploadJobFindFirstOrThrowArgs>(args?: SelectSubset<T, UploadJobFindFirstOrThrowArgs<ExtArgs>>): Prisma__UploadJobClient<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UploadJobs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UploadJobFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UploadJobs
+     * const uploadJobs = await prisma.uploadJob.findMany()
+     * 
+     * // Get first 10 UploadJobs
+     * const uploadJobs = await prisma.uploadJob.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const uploadJobWithIdOnly = await prisma.uploadJob.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UploadJobFindManyArgs>(args?: SelectSubset<T, UploadJobFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UploadJob.
+     * @param {UploadJobCreateArgs} args - Arguments to create a UploadJob.
+     * @example
+     * // Create one UploadJob
+     * const UploadJob = await prisma.uploadJob.create({
+     *   data: {
+     *     // ... data to create a UploadJob
+     *   }
+     * })
+     * 
+     */
+    create<T extends UploadJobCreateArgs>(args: SelectSubset<T, UploadJobCreateArgs<ExtArgs>>): Prisma__UploadJobClient<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UploadJobs.
+     * @param {UploadJobCreateManyArgs} args - Arguments to create many UploadJobs.
+     * @example
+     * // Create many UploadJobs
+     * const uploadJob = await prisma.uploadJob.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UploadJobCreateManyArgs>(args?: SelectSubset<T, UploadJobCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UploadJobs and returns the data saved in the database.
+     * @param {UploadJobCreateManyAndReturnArgs} args - Arguments to create many UploadJobs.
+     * @example
+     * // Create many UploadJobs
+     * const uploadJob = await prisma.uploadJob.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UploadJobs and only return the `id`
+     * const uploadJobWithIdOnly = await prisma.uploadJob.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UploadJobCreateManyAndReturnArgs>(args?: SelectSubset<T, UploadJobCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UploadJob.
+     * @param {UploadJobDeleteArgs} args - Arguments to delete one UploadJob.
+     * @example
+     * // Delete one UploadJob
+     * const UploadJob = await prisma.uploadJob.delete({
+     *   where: {
+     *     // ... filter to delete one UploadJob
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UploadJobDeleteArgs>(args: SelectSubset<T, UploadJobDeleteArgs<ExtArgs>>): Prisma__UploadJobClient<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UploadJob.
+     * @param {UploadJobUpdateArgs} args - Arguments to update one UploadJob.
+     * @example
+     * // Update one UploadJob
+     * const uploadJob = await prisma.uploadJob.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UploadJobUpdateArgs>(args: SelectSubset<T, UploadJobUpdateArgs<ExtArgs>>): Prisma__UploadJobClient<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UploadJobs.
+     * @param {UploadJobDeleteManyArgs} args - Arguments to filter UploadJobs to delete.
+     * @example
+     * // Delete a few UploadJobs
+     * const { count } = await prisma.uploadJob.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UploadJobDeleteManyArgs>(args?: SelectSubset<T, UploadJobDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UploadJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UploadJobUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UploadJobs
+     * const uploadJob = await prisma.uploadJob.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UploadJobUpdateManyArgs>(args: SelectSubset<T, UploadJobUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UploadJobs and returns the data updated in the database.
+     * @param {UploadJobUpdateManyAndReturnArgs} args - Arguments to update many UploadJobs.
+     * @example
+     * // Update many UploadJobs
+     * const uploadJob = await prisma.uploadJob.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UploadJobs and only return the `id`
+     * const uploadJobWithIdOnly = await prisma.uploadJob.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UploadJobUpdateManyAndReturnArgs>(args: SelectSubset<T, UploadJobUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UploadJob.
+     * @param {UploadJobUpsertArgs} args - Arguments to update or create a UploadJob.
+     * @example
+     * // Update or create a UploadJob
+     * const uploadJob = await prisma.uploadJob.upsert({
+     *   create: {
+     *     // ... data to create a UploadJob
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UploadJob we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UploadJobUpsertArgs>(args: SelectSubset<T, UploadJobUpsertArgs<ExtArgs>>): Prisma__UploadJobClient<$Result.GetResult<Prisma.$UploadJobPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UploadJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UploadJobCountArgs} args - Arguments to filter UploadJobs to count.
+     * @example
+     * // Count the number of UploadJobs
+     * const count = await prisma.uploadJob.count({
+     *   where: {
+     *     // ... the filter for the UploadJobs we want to count
+     *   }
+     * })
+    **/
+    count<T extends UploadJobCountArgs>(
+      args?: Subset<T, UploadJobCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UploadJobCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UploadJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UploadJobAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UploadJobAggregateArgs>(args: Subset<T, UploadJobAggregateArgs>): Prisma.PrismaPromise<GetUploadJobAggregateType<T>>
+
+    /**
+     * Group by UploadJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UploadJobGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UploadJobGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UploadJobGroupByArgs['orderBy'] }
+        : { orderBy?: UploadJobGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UploadJobGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUploadJobGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UploadJob model
+   */
+  readonly fields: UploadJobFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UploadJob.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UploadJobClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UploadJob model
+   */
+  interface UploadJobFieldRefs {
+    readonly id: FieldRef<"UploadJob", 'String'>
+    readonly userId: FieldRef<"UploadJob", 'String'>
+    readonly endpoint: FieldRef<"UploadJob", 'String'>
+    readonly totalItems: FieldRef<"UploadJob", 'Int'>
+    readonly processedItems: FieldRef<"UploadJob", 'Int'>
+    readonly status: FieldRef<"UploadJob", 'String'>
+    readonly result: FieldRef<"UploadJob", 'Json'>
+    readonly errorMessage: FieldRef<"UploadJob", 'String'>
+    readonly createdAt: FieldRef<"UploadJob", 'DateTime'>
+    readonly updatedAt: FieldRef<"UploadJob", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UploadJob findUnique
+   */
+  export type UploadJobFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * Filter, which UploadJob to fetch.
+     */
+    where: UploadJobWhereUniqueInput
+  }
+
+  /**
+   * UploadJob findUniqueOrThrow
+   */
+  export type UploadJobFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * Filter, which UploadJob to fetch.
+     */
+    where: UploadJobWhereUniqueInput
+  }
+
+  /**
+   * UploadJob findFirst
+   */
+  export type UploadJobFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * Filter, which UploadJob to fetch.
+     */
+    where?: UploadJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UploadJobs to fetch.
+     */
+    orderBy?: UploadJobOrderByWithRelationInput | UploadJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UploadJobs.
+     */
+    cursor?: UploadJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UploadJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UploadJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UploadJobs.
+     */
+    distinct?: UploadJobScalarFieldEnum | UploadJobScalarFieldEnum[]
+  }
+
+  /**
+   * UploadJob findFirstOrThrow
+   */
+  export type UploadJobFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * Filter, which UploadJob to fetch.
+     */
+    where?: UploadJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UploadJobs to fetch.
+     */
+    orderBy?: UploadJobOrderByWithRelationInput | UploadJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UploadJobs.
+     */
+    cursor?: UploadJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UploadJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UploadJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UploadJobs.
+     */
+    distinct?: UploadJobScalarFieldEnum | UploadJobScalarFieldEnum[]
+  }
+
+  /**
+   * UploadJob findMany
+   */
+  export type UploadJobFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * Filter, which UploadJobs to fetch.
+     */
+    where?: UploadJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UploadJobs to fetch.
+     */
+    orderBy?: UploadJobOrderByWithRelationInput | UploadJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UploadJobs.
+     */
+    cursor?: UploadJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UploadJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UploadJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UploadJobs.
+     */
+    distinct?: UploadJobScalarFieldEnum | UploadJobScalarFieldEnum[]
+  }
+
+  /**
+   * UploadJob create
+   */
+  export type UploadJobCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * The data needed to create a UploadJob.
+     */
+    data: XOR<UploadJobCreateInput, UploadJobUncheckedCreateInput>
+  }
+
+  /**
+   * UploadJob createMany
+   */
+  export type UploadJobCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UploadJobs.
+     */
+    data: UploadJobCreateManyInput | UploadJobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UploadJob createManyAndReturn
+   */
+  export type UploadJobCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * The data used to create many UploadJobs.
+     */
+    data: UploadJobCreateManyInput | UploadJobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UploadJob update
+   */
+  export type UploadJobUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * The data needed to update a UploadJob.
+     */
+    data: XOR<UploadJobUpdateInput, UploadJobUncheckedUpdateInput>
+    /**
+     * Choose, which UploadJob to update.
+     */
+    where: UploadJobWhereUniqueInput
+  }
+
+  /**
+   * UploadJob updateMany
+   */
+  export type UploadJobUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UploadJobs.
+     */
+    data: XOR<UploadJobUpdateManyMutationInput, UploadJobUncheckedUpdateManyInput>
+    /**
+     * Filter which UploadJobs to update
+     */
+    where?: UploadJobWhereInput
+    /**
+     * Limit how many UploadJobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UploadJob updateManyAndReturn
+   */
+  export type UploadJobUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * The data used to update UploadJobs.
+     */
+    data: XOR<UploadJobUpdateManyMutationInput, UploadJobUncheckedUpdateManyInput>
+    /**
+     * Filter which UploadJobs to update
+     */
+    where?: UploadJobWhereInput
+    /**
+     * Limit how many UploadJobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UploadJob upsert
+   */
+  export type UploadJobUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * The filter to search for the UploadJob to update in case it exists.
+     */
+    where: UploadJobWhereUniqueInput
+    /**
+     * In case the UploadJob found by the `where` argument doesn't exist, create a new UploadJob with this data.
+     */
+    create: XOR<UploadJobCreateInput, UploadJobUncheckedCreateInput>
+    /**
+     * In case the UploadJob was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UploadJobUpdateInput, UploadJobUncheckedUpdateInput>
+  }
+
+  /**
+   * UploadJob delete
+   */
+  export type UploadJobDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+    /**
+     * Filter which UploadJob to delete.
+     */
+    where: UploadJobWhereUniqueInput
+  }
+
+  /**
+   * UploadJob deleteMany
+   */
+  export type UploadJobDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UploadJobs to delete
+     */
+    where?: UploadJobWhereInput
+    /**
+     * Limit how many UploadJobs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UploadJob without action
+   */
+  export type UploadJobDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UploadJob
+     */
+    select?: UploadJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UploadJob
+     */
+    omit?: UploadJobOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -36482,6 +38798,36 @@ export namespace Prisma {
   };
 
   export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+  export const IdempotencyKeyScalarFieldEnum: {
+    key: 'key',
+    endpoint: 'endpoint',
+    userId: 'userId',
+    response: 'response',
+    status: 'status',
+    errorMsg: 'errorMsg',
+    createdAt: 'createdAt',
+    expiresAt: 'expiresAt'
+  };
+
+  export type IdempotencyKeyScalarFieldEnum = (typeof IdempotencyKeyScalarFieldEnum)[keyof typeof IdempotencyKeyScalarFieldEnum]
+
+
+  export const UploadJobScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    endpoint: 'endpoint',
+    totalItems: 'totalItems',
+    processedItems: 'processedItems',
+    status: 'status',
+    result: 'result',
+    errorMessage: 'errorMessage',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type UploadJobScalarFieldEnum = (typeof UploadJobScalarFieldEnum)[keyof typeof UploadJobScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -39461,6 +41807,152 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
     metadata?: JsonNullableWithAggregatesFilter<"AuditLog">
     createdAt?: DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
+  }
+
+  export type IdempotencyKeyWhereInput = {
+    AND?: IdempotencyKeyWhereInput | IdempotencyKeyWhereInput[]
+    OR?: IdempotencyKeyWhereInput[]
+    NOT?: IdempotencyKeyWhereInput | IdempotencyKeyWhereInput[]
+    key?: StringFilter<"IdempotencyKey"> | string
+    endpoint?: StringFilter<"IdempotencyKey"> | string
+    userId?: StringFilter<"IdempotencyKey"> | string
+    response?: JsonNullableFilter<"IdempotencyKey">
+    status?: StringFilter<"IdempotencyKey"> | string
+    errorMsg?: StringNullableFilter<"IdempotencyKey"> | string | null
+    createdAt?: DateTimeFilter<"IdempotencyKey"> | Date | string
+    expiresAt?: DateTimeFilter<"IdempotencyKey"> | Date | string
+  }
+
+  export type IdempotencyKeyOrderByWithRelationInput = {
+    key?: SortOrder
+    endpoint?: SortOrder
+    userId?: SortOrder
+    response?: SortOrderInput | SortOrder
+    status?: SortOrder
+    errorMsg?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+  }
+
+  export type IdempotencyKeyWhereUniqueInput = Prisma.AtLeast<{
+    key?: string
+    AND?: IdempotencyKeyWhereInput | IdempotencyKeyWhereInput[]
+    OR?: IdempotencyKeyWhereInput[]
+    NOT?: IdempotencyKeyWhereInput | IdempotencyKeyWhereInput[]
+    endpoint?: StringFilter<"IdempotencyKey"> | string
+    userId?: StringFilter<"IdempotencyKey"> | string
+    response?: JsonNullableFilter<"IdempotencyKey">
+    status?: StringFilter<"IdempotencyKey"> | string
+    errorMsg?: StringNullableFilter<"IdempotencyKey"> | string | null
+    createdAt?: DateTimeFilter<"IdempotencyKey"> | Date | string
+    expiresAt?: DateTimeFilter<"IdempotencyKey"> | Date | string
+  }, "key">
+
+  export type IdempotencyKeyOrderByWithAggregationInput = {
+    key?: SortOrder
+    endpoint?: SortOrder
+    userId?: SortOrder
+    response?: SortOrderInput | SortOrder
+    status?: SortOrder
+    errorMsg?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+    _count?: IdempotencyKeyCountOrderByAggregateInput
+    _max?: IdempotencyKeyMaxOrderByAggregateInput
+    _min?: IdempotencyKeyMinOrderByAggregateInput
+  }
+
+  export type IdempotencyKeyScalarWhereWithAggregatesInput = {
+    AND?: IdempotencyKeyScalarWhereWithAggregatesInput | IdempotencyKeyScalarWhereWithAggregatesInput[]
+    OR?: IdempotencyKeyScalarWhereWithAggregatesInput[]
+    NOT?: IdempotencyKeyScalarWhereWithAggregatesInput | IdempotencyKeyScalarWhereWithAggregatesInput[]
+    key?: StringWithAggregatesFilter<"IdempotencyKey"> | string
+    endpoint?: StringWithAggregatesFilter<"IdempotencyKey"> | string
+    userId?: StringWithAggregatesFilter<"IdempotencyKey"> | string
+    response?: JsonNullableWithAggregatesFilter<"IdempotencyKey">
+    status?: StringWithAggregatesFilter<"IdempotencyKey"> | string
+    errorMsg?: StringNullableWithAggregatesFilter<"IdempotencyKey"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"IdempotencyKey"> | Date | string
+    expiresAt?: DateTimeWithAggregatesFilter<"IdempotencyKey"> | Date | string
+  }
+
+  export type UploadJobWhereInput = {
+    AND?: UploadJobWhereInput | UploadJobWhereInput[]
+    OR?: UploadJobWhereInput[]
+    NOT?: UploadJobWhereInput | UploadJobWhereInput[]
+    id?: StringFilter<"UploadJob"> | string
+    userId?: StringFilter<"UploadJob"> | string
+    endpoint?: StringFilter<"UploadJob"> | string
+    totalItems?: IntFilter<"UploadJob"> | number
+    processedItems?: IntFilter<"UploadJob"> | number
+    status?: StringFilter<"UploadJob"> | string
+    result?: JsonNullableFilter<"UploadJob">
+    errorMessage?: StringNullableFilter<"UploadJob"> | string | null
+    createdAt?: DateTimeFilter<"UploadJob"> | Date | string
+    updatedAt?: DateTimeFilter<"UploadJob"> | Date | string
+  }
+
+  export type UploadJobOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    endpoint?: SortOrder
+    totalItems?: SortOrder
+    processedItems?: SortOrder
+    status?: SortOrder
+    result?: SortOrderInput | SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UploadJobWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: UploadJobWhereInput | UploadJobWhereInput[]
+    OR?: UploadJobWhereInput[]
+    NOT?: UploadJobWhereInput | UploadJobWhereInput[]
+    userId?: StringFilter<"UploadJob"> | string
+    endpoint?: StringFilter<"UploadJob"> | string
+    totalItems?: IntFilter<"UploadJob"> | number
+    processedItems?: IntFilter<"UploadJob"> | number
+    status?: StringFilter<"UploadJob"> | string
+    result?: JsonNullableFilter<"UploadJob">
+    errorMessage?: StringNullableFilter<"UploadJob"> | string | null
+    createdAt?: DateTimeFilter<"UploadJob"> | Date | string
+    updatedAt?: DateTimeFilter<"UploadJob"> | Date | string
+  }, "id">
+
+  export type UploadJobOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    endpoint?: SortOrder
+    totalItems?: SortOrder
+    processedItems?: SortOrder
+    status?: SortOrder
+    result?: SortOrderInput | SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: UploadJobCountOrderByAggregateInput
+    _avg?: UploadJobAvgOrderByAggregateInput
+    _max?: UploadJobMaxOrderByAggregateInput
+    _min?: UploadJobMinOrderByAggregateInput
+    _sum?: UploadJobSumOrderByAggregateInput
+  }
+
+  export type UploadJobScalarWhereWithAggregatesInput = {
+    AND?: UploadJobScalarWhereWithAggregatesInput | UploadJobScalarWhereWithAggregatesInput[]
+    OR?: UploadJobScalarWhereWithAggregatesInput[]
+    NOT?: UploadJobScalarWhereWithAggregatesInput | UploadJobScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UploadJob"> | string
+    userId?: StringWithAggregatesFilter<"UploadJob"> | string
+    endpoint?: StringWithAggregatesFilter<"UploadJob"> | string
+    totalItems?: IntWithAggregatesFilter<"UploadJob"> | number
+    processedItems?: IntWithAggregatesFilter<"UploadJob"> | number
+    status?: StringWithAggregatesFilter<"UploadJob"> | string
+    result?: JsonNullableWithAggregatesFilter<"UploadJob">
+    errorMessage?: StringNullableWithAggregatesFilter<"UploadJob"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"UploadJob"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"UploadJob"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -42483,6 +44975,174 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type IdempotencyKeyCreateInput = {
+    key: string
+    endpoint: string
+    userId: string
+    response?: NullableJsonNullValueInput | InputJsonValue
+    status?: string
+    errorMsg?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+  }
+
+  export type IdempotencyKeyUncheckedCreateInput = {
+    key: string
+    endpoint: string
+    userId: string
+    response?: NullableJsonNullValueInput | InputJsonValue
+    status?: string
+    errorMsg?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+  }
+
+  export type IdempotencyKeyUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    response?: NullableJsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    errorMsg?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IdempotencyKeyUncheckedUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    response?: NullableJsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    errorMsg?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IdempotencyKeyCreateManyInput = {
+    key: string
+    endpoint: string
+    userId: string
+    response?: NullableJsonNullValueInput | InputJsonValue
+    status?: string
+    errorMsg?: string | null
+    createdAt?: Date | string
+    expiresAt: Date | string
+  }
+
+  export type IdempotencyKeyUpdateManyMutationInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    response?: NullableJsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    errorMsg?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IdempotencyKeyUncheckedUpdateManyInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    response?: NullableJsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    errorMsg?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UploadJobCreateInput = {
+    id?: string
+    userId: string
+    endpoint: string
+    totalItems: number
+    processedItems?: number
+    status?: string
+    result?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UploadJobUncheckedCreateInput = {
+    id?: string
+    userId: string
+    endpoint: string
+    totalItems: number
+    processedItems?: number
+    status?: string
+    result?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UploadJobUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    totalItems?: IntFieldUpdateOperationsInput | number
+    processedItems?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    result?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UploadJobUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    totalItems?: IntFieldUpdateOperationsInput | number
+    processedItems?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    result?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UploadJobCreateManyInput = {
+    id?: string
+    userId: string
+    endpoint: string
+    totalItems: number
+    processedItems?: number
+    status?: string
+    result?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UploadJobUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    totalItems?: IntFieldUpdateOperationsInput | number
+    processedItems?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    result?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UploadJobUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    totalItems?: IntFieldUpdateOperationsInput | number
+    processedItems?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    result?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -44776,6 +47436,84 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAuditActionFilter<$PrismaModel>
     _max?: NestedEnumAuditActionFilter<$PrismaModel>
+  }
+
+  export type IdempotencyKeyCountOrderByAggregateInput = {
+    key?: SortOrder
+    endpoint?: SortOrder
+    userId?: SortOrder
+    response?: SortOrder
+    status?: SortOrder
+    errorMsg?: SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+  }
+
+  export type IdempotencyKeyMaxOrderByAggregateInput = {
+    key?: SortOrder
+    endpoint?: SortOrder
+    userId?: SortOrder
+    status?: SortOrder
+    errorMsg?: SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+  }
+
+  export type IdempotencyKeyMinOrderByAggregateInput = {
+    key?: SortOrder
+    endpoint?: SortOrder
+    userId?: SortOrder
+    status?: SortOrder
+    errorMsg?: SortOrder
+    createdAt?: SortOrder
+    expiresAt?: SortOrder
+  }
+
+  export type UploadJobCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    endpoint?: SortOrder
+    totalItems?: SortOrder
+    processedItems?: SortOrder
+    status?: SortOrder
+    result?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UploadJobAvgOrderByAggregateInput = {
+    totalItems?: SortOrder
+    processedItems?: SortOrder
+  }
+
+  export type UploadJobMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    endpoint?: SortOrder
+    totalItems?: SortOrder
+    processedItems?: SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UploadJobMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    endpoint?: SortOrder
+    totalItems?: SortOrder
+    processedItems?: SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UploadJobSumOrderByAggregateInput = {
+    totalItems?: SortOrder
+    processedItems?: SortOrder
   }
 
   export type UserCreatechannelsInput = {

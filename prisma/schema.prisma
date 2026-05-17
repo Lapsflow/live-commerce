@@ -858,3 +858,34 @@ enum AuditAction {
   PASSWORD_CHANGED
   STATUS_CHANGED
 }
+
+// ──────────────────────── Idempotency & Duplicate Prevention ────────────────────────
+
+model IdempotencyKey {
+  key        String   @id // UUID v4
+  endpoint   String   // "POST /api/orders/bulk"
+  userId     String
+  response   Json?    // 캐시된 응답 (success 시)
+  status     String   @default("processing") // processing | completed | failed
+  errorMsg   String?
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime // createdAt + 30s
+
+  @@index([expiresAt])
+  @@index([userId, createdAt])
+}
+
+model UploadJob {
+  id             String   @id @default(cuid())
+  userId         String
+  endpoint       String   // "POST /api/orders/bulk"
+  totalItems     Int
+  processedItems Int      @default(0)
+  status         String   @default("processing") // processing | completed | failed
+  result         Json?    // completed 시 응답
+  errorMessage   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}

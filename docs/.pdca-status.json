@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-05-17T13:55:52.676Z",
+  "lastUpdated": "2026-05-17T14:04:58.623Z",
   "activeFeatures": [
     "notifications",
     "[code]",
@@ -96,7 +96,8 @@
     "(main)",
     "9-flow",
     "editors",
-    "helpers"
+    "helpers",
+    "[jobId]"
   ],
   "primaryFeature": "notifications",
   "features": {
@@ -304,7 +305,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T02:41:09.709Z",
-        "lastUpdated": "2026-05-17T13:54:28.983Z"
+        "lastUpdated": "2026-05-17T14:04:58.623Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/bulk/route.ts"
     },
@@ -1334,6 +1335,19 @@
         "lastUpdated": "2026-05-13T06:21:27.675Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/helpers/console-watcher.ts"
+    },
+    "[jobId]": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-05-17T14:02:49.910Z",
+        "lastUpdated": "2026-05-17T14:03:42.495Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/bulk/progress/[jobId]/route.ts"
     }
   },
   "pipeline": {
@@ -1344,7 +1358,7 @@
   "session": {
     "startedAt": "2026-04-28T06:44:38.229Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-05-17T13:55:52.676Z"
+    "lastActivity": "2026-05-17T14:04:58.623Z"
   },
   "history": [
     {
@@ -6726,6 +6740,60 @@
     {
       "timestamp": "2026-05-17T13:55:52.676Z",
       "feature": "stock",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:02:18.288Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:02:23.833Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:02:33.354Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:02:40.481Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:02:49.910Z",
+      "feature": "[jobId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:03:42.495Z",
+      "feature": "[jobId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:04:11.986Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:04:34.020Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T14:04:58.623Z",
+      "feature": "bulk",
       "phase": "do",
       "action": "updated"
     }

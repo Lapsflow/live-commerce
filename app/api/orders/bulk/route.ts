@@ -19,6 +19,10 @@ const bulkDeleteSchema = z.object({
 export const POST = withRole(
   ["MASTER", "SUB_MASTER", "SELLER"],
   async (req: NextRequest, user: AuthUser) => {
+    // ✅ Task 4: Idempotency Key 검증 (catch 블록에서 접근할 수 있도록 외부에 선언)
+    const idempotencyKey = req.headers.get("X-Idempotency-Key");
+    let uploadJobId: string | null = null;
+
     try {
       const formData = await req.formData();
       const file = formData.get("file") as File | null;
@@ -27,6 +31,37 @@ export const POST = withRole(
 
       if (!file) {
         return errors.badRequest("파일이 필요합니다.");
+      }
+
+      if (!isPreview && idempotencyKey) {
+        // 기존 요청 확인
+        const existing = await prisma.idempotencyKey.findUnique({
+          where: { key: idempotencyKey },
+        });
+
+        if (existing) {
+          if (existing.status === "processing") {
+            return errors.conflict("이미 처리 중인 업로드입니다. 30초 후 다시 시도해주세요.");
+          }
+          if (existing.status === "completed" && existing.response) {
+            // ✅ B-3: 캐시된 응답 반환 (cached: true 플래그)
+            return ok({ ...(existing.response as any), cached: true });
+          }
+        }
+
+        // 새 요청 기록
+        await prisma.idempotencyKey.create({
+          data: {
+            key: idempotencyKey,
+            endpoint: "POST /api/orders/bulk",
+            userId: user.userId,
+            expiresAt: new Date(Date.now() + 30000), // 30초 후 만료
+          },
+        });
+
+        // ✅ Task 6: UploadJob 생성 (진행률 폴링용)
+        // Job은 excel 파싱 후에 총 아이템 수가 나오므로 미리 생성할 수 없음
+        // 매칭 후에 생성
       }
 
       // Excel 파싱
@@ -107,6 +142,19 @@ export const POST = withRole(
       let created = 0;
       const createdOrders: any[] = []; // ✅ Task 1: 생성된 주문 배열
 
+      // ✅ Task 6: UploadJob 생성 (진행률 추적)
+      if (!isPreview && idempotencyKey) {
+        uploadJobId = (
+          await prisma.uploadJob.create({
+            data: {
+              userId: user.userId,
+              endpoint: "POST /api/orders/bulk",
+              totalItems: items.length,
+            },
+          })
+        ).id;
+      }
+
       // 주문번호별 그룹핑 (같은 주문번호 = 같은 주문의 여러 아이템)
       const orderGroups = new Map<string, { items: typeof items; matches: MatchedItem[] }>();
       for (let i = 0; i < items.length; i++) {
@@ -177,6 +225,14 @@ export const POST = withRole(
         }
 
         created++;
+
+        // ✅ Task 6: UploadJob 진행률 업데이트
+        if (uploadJobId) {
+          await prisma.uploadJob.update({
+            where: { id: uploadJobId },
+            data: { processedItems: created },
+          });
+        }
       }
 
       // ✅ Task 1: 배치 재고 선점 (같은 상품 그룹핑)
@@ -208,13 +264,65 @@ export const POST = withRole(
         request: req,
       });
 
-      return ok({
+      const response = {
         created,
         totalItems: items.length,
         message: `${created}건의 발주가 생성되었습니다. 담당자 검수를 기다려주세요.`,
-      });
+        ...(uploadJobId && { jobId: uploadJobId }),
+      };
+
+      // ✅ Task 4: IdempotencyKey 응답 캐싱
+      if (idempotencyKey) {
+        await prisma.idempotencyKey.update({
+          where: { key: idempotencyKey },
+          data: {
+            status: "completed",
+            response,
+          },
+        });
+      }
+
+      // ✅ Task 6: UploadJob 완료
+      if (uploadJobId) {
+        await prisma.uploadJob.update({
+          where: { id: uploadJobId },
+          data: {
+            status: "completed",
+            result: response,
+          },
+        });
+      }
+
+      return ok(response);
     } catch (err: any) {
       console.error("[BULK ORDER ERROR]", err);
+
+      // ✅ Task 4: IdempotencyKey 실패 기록
+      if (idempotencyKey) {
+        await prisma.idempotencyKey.update({
+          where: { key: idempotencyKey },
+          data: {
+            status: "failed",
+            errorMsg: err.message,
+          },
+        }).catch((updateErr) => {
+          console.error("[BULK ORDER] Failed to update IdempotencyKey:", updateErr);
+        });
+      }
+
+      // ✅ Task 6: UploadJob 실패 기록
+      if (uploadJobId) {
+        await prisma.uploadJob.update({
+          where: { id: uploadJobId },
+          data: {
+            status: "failed",
+            errorMessage: err.message,
+          },
+        }).catch((updateErr) => {
+          console.error("[BULK ORDER] Failed to update UploadJob:", updateErr);
+        });
+      }
+
       return errors.internal(err.message || "발주 업로드 실패");
     }
   }
