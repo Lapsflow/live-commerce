@@ -4,7 +4,6 @@ import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { z } from "zod";
-import { reserveStock } from "@/lib/services/stock/reservation";
 import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMatching";
 import { logAudit } from "@/lib/services/audit";
 import { validateProductsForBroadcast } from "@/lib/services/products/canBroadcast";
@@ -262,25 +261,6 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
 
       createdOrders.push(wmsOrder, centerOrder);
 
-      // ✨ 재고 선점: split 주문에도 적용
-      for (const order of createdOrders) {
-        const reserveResult = await reserveStock(order.id);
-        if (!reserveResult.success) {
-          // 실패 시 생성된 주문 soft cancel
-          for (const o of createdOrders) {
-            await prisma.order.update({
-              where: { id: o.id },
-              data: { status: "CANCELLED", cancelledAt: new Date(), cancelReason: "STOCK_RESERVE_FAILED" },
-            }).catch(() => {});
-          }
-          return error(
-            "STOCK_RESERVE_FAILED",
-            reserveResult.error || "재고 선점 실패",
-            400
-          );
-        }
-      }
-
       // ✨ LIVE-03: 발주서→방송 자동 매칭 (split 주문도)
       const splitMatchResults = [];
       for (const order of createdOrders) {
@@ -354,23 +334,6 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
       // Only CENTER items
       const order = await createOrderWithItems(centerItems, "CENTER", "");
       createdOrders.push(order);
-    }
-
-    // ✨ 재고 선점: 생성된 주문에 대해 재고 선점 처리
-    for (const order of createdOrders) {
-      const reserveResult = await reserveStock(order.id);
-      if (!reserveResult.success) {
-        // 선점 실패 시 주문 soft cancel (hard delete 금지)
-        await prisma.order.update({
-          where: { id: order.id },
-          data: { status: "CANCELLED", cancelledAt: new Date(), cancelReason: "STOCK_RESERVE_FAILED" },
-        });
-        return error(
-          "STOCK_RESERVE_FAILED",
-          reserveResult.error || "재고 선점 실패",
-          400
-        );
-      }
     }
 
     // ✨ LIVE-03: 발주서→방송 자동 매칭 (실패해도 주문 생성은 유지)

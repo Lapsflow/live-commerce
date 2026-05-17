@@ -289,6 +289,8 @@ model Order {
   paymentStatus  PaymentStatus  @default(UNPAID)
   shippingStatus ShippingStatus @default(PENDING)
   paidAt         DateTime? // 입금 완료 시각
+  stockShortageReason     String?    // JSON: [{productId, reason}]
+  stockShortageDetectedAt DateTime?  // 재고 부족 감지 시각
 
   // ✨ 가상계좌 정보 (Toss Payments)
   virtualAccount       String?   // 가상계좌 번호
@@ -332,6 +334,7 @@ model Order {
   @@index([productType])
   @@index([expiresAt, paymentStatus, status]) // ✨ cron 만료 조회 최적화
   @@index([broadcastId]) // ✨ LIVE-03: 방송별 발주 조회
+  @@index([stockShortageDetectedAt]) // ✨ 재고 부족 필터링
 }
 
 enum OrderStatus {

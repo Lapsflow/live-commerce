@@ -5,7 +5,6 @@ import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 import * as xlsx from "xlsx";
 import { matchOrderItems, type MatchedItem } from "@/lib/services/orders/productMatching";
-import { reserveStock, reserveStockBulk } from "@/lib/services/stock/reservation";
 import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMatching";
 import { logAudit } from "@/lib/services/audit";
 
@@ -234,23 +233,6 @@ export const POST = withRole(
             data: { processedItems: created },
           });
         }
-      }
-
-      // ✅ Task 1: 배치 재고 선점 (같은 상품 그룹핑)
-      const reserveMap = new Map<string, number>();
-      for (const createdOrder of createdOrders) {
-        for (const item of createdOrder.items) {
-          const key = item.productId;
-          reserveMap.set(key, (reserveMap.get(key) ?? 0) + item.quantity);
-        }
-      }
-
-      const reserveResult = await reserveStockBulk(reserveMap, {
-        orderIds: createdOrders.map((o) => o.id),
-      });
-
-      if (!reserveResult.success && reserveResult.failed.length > 0) {
-        console.warn("[BULK UPLOAD] Stock reservation partial failure:", reserveResult.failed);
       }
 
       logAudit({

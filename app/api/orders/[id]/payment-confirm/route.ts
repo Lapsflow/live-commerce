@@ -4,6 +4,7 @@ import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { logAudit } from "@/lib/services/audit";
 import { sendNotification } from "@/lib/services/notifications";
+import { reserveStockBulk } from "@/lib/services/stock/reservation";
 
 /**
  * POST /api/orders/:id/payment-confirm
@@ -57,6 +58,53 @@ export const POST = withRole(
           paidAt: new Date(),
         },
       });
+
+      // ✅ Task 1: 입금 완료 시점에 재고 차감 (선착순)
+      try {
+        // 1. Order + items 재조회
+        const orderWithItems = await prisma.order.findUnique({
+          where: { id: orderId },
+          include: { items: { include: { product: true } } },
+        });
+
+        if (orderWithItems?.items && orderWithItems.items.length > 0) {
+          // 2. productId/qty Map 생성
+          const reserveMap = new Map<string, number>();
+          for (const item of orderWithItems.items) {
+            reserveMap.set(item.productId, item.quantity);
+          }
+
+          // 3. reserveStockBulk 호출
+          const reserveResult = await reserveStockBulk(reserveMap, {
+            orderIds: [orderId],
+          });
+
+          // 4. 결과 처리 (자동 취소 X, 입금은 무조건 PAID)
+          if (reserveResult.failed.length > 0) {
+            // 일부/전부 실패: 재고 부족 기록
+            await prisma.order.update({
+              where: { id: orderId },
+              data: {
+                stockShortageReason: JSON.stringify(reserveResult.failed),
+                stockShortageDetectedAt: new Date(),
+              },
+            });
+            console.warn("[PAYMENT-CONFIRM] Stock shortage detected:", reserveResult.failed);
+          }
+        }
+      } catch (err: any) {
+        // 재고 차감 실패해도 입금 처리는 계속 (PDF §7.2)
+        console.error("[PAYMENT-CONFIRM] Stock reservation error:", err);
+        await prisma.order.update({
+          where: { id: orderId },
+          data: {
+            stockShortageReason: JSON.stringify({
+              error: err.message || "Stock reservation failed",
+            }),
+            stockShortageDetectedAt: new Date(),
+          },
+        });
+      }
 
       logAudit({
         userId: user.userId,
