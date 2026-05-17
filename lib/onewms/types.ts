@@ -11,6 +11,7 @@ export interface OnewmsConfig {
   partnerKey: string;
   domainKey: string;
   apiUrl?: string;
+  shopId?: string;           // P0: 판매처코드 (set_orders 필수 파라미터)
 }
 
 export interface OnewmsApiRequest {
@@ -145,33 +146,72 @@ export interface OrderInfo {
   [key: string]: unknown;
 }
 
+/** P0: set_orders API — 각 OrderItem마다 1 row (배열 요소) */
+export interface CreateOrderRow {
+  // 필수 필드
+  order_id: string;             // 주문번호 (Order.onewmsOrderNo)
+  shop_product_id: string;      // 판매처상품코드 (OrderItem.product.onewmsCode)
+  qty: number;                  // 주문수량
+  recv_name: string;            // 수령자명 (Order.recipient, null guard 필수)
+
+  // 필수 또는 권장 필드
+  recv_mobile?: string;         // 수령자핸드폰 (Order.phone)
+  recv_address?: string;        // 수령자주소 (Order.address)
+
+  // 선택 필드
+  order_id_seq?: string;        // 주문상세번호
+  order_id_seq2?: string;       // 주문상세번호2
+  order_type?: string;          // 주문구분
+  order_type2?: string;         // 주문구분2
+  product_name?: string;        // 판매처상품명
+  options?: string;             // 판매처옵션
+  trans_who?: string;           // 선착불 ("선불"|"착불")
+  order_date?: string;          // 주문일자 (ISO date)
+  order_time?: string;          // 주문일시 (HH:mm:ss)
+  order_name?: string;          // 주문자명
+  order_tel?: string;           // 주문자연락처
+  order_mobile?: string;        // 주문자핸드폰
+  order_email?: string;         // 주문자이메일
+  order_zip?: string;           // 주문자우편번호
+  order_address?: string;       // 주문자주소
+  recv_email?: string;          // 수령자이메일
+  recv_tel?: string;            // 수령자연락처
+  recv_zip?: string;            // 수령자우편번호
+  memo?: string;                // 배송메모 (Order.memo)
+  cust_id?: string;             // 고객ID
+  trans_due_date?: string;      // 배송예정일
+  [key: string]: unknown;
+}
+
+/** P0: set_orders API request (query params + JSON array) */
 export interface CreateOrderRequest {
-  order_no: string;
-  order_date: string;
-  recipient_name: string;
-  recipient_phone: string;
-  recipient_address: string;
-  products: Array<{
-    product_code: string;
-    quantity: number;
-    [key: string]: unknown;
-  }>;
-  [key: string]: unknown;
+  // Query parameters (client.ts에서 처리)
+  shop_id: string;              // 판매처코드 (필수, 사용자정의판매처만가능)
+  collect_date?: string;        // 발주일 (YY-MM-DD, 기본값: 현재일자)
+
+  // JSON body (POST로 전송할 행 배열)
+  rows: CreateOrderRow[];        // 각 주문 행 (주문 1건 = 상품 1개당 row 1개)
 }
 
+/** P0: set_trans_no API — 송장번호 입력 */
 export interface SetTransportNumberRequest {
-  order_no: string;
-  trans_no: string;
+  seq: string;                  // 관리번호 (get_order_info 응답의 seq) — 필수
+  trans_no: string;             // 송장번호 — 필수
+  trans_corp?: string;          // 택배사 — 필수
+  trans_pos?: 0 | 1;            // 송장위치 — 선택
+  type?: 0 | 1 | 2;             // 타입 — 선택
   [key: string]: unknown;
 }
 
+/** P1: set_trans_pos API — 송장 위치 설정 */
 export interface SetTransportPosRequest {
-  order_no: string;
+  trans_no: string;             // 송장번호 — 필수 (변경: order_no → trans_no)
   [key: string]: unknown;
 }
 
+/** P1: cancel_trans_pos API — 송장 위치 취소 */
 export interface CancelTransportPosRequest {
-  order_no: string;
+  trans_no: string;             // 송장번호 — 필수 (변경: order_no → trans_no)
   [key: string]: unknown;
 }
 
@@ -180,9 +220,10 @@ export interface TransportInvoiceRequest {
   [key: string]: unknown;
 }
 
+/** P1: set_order_label API — 주문라벨 설정 */
 export interface SetOrderLabelRequest {
-  order_no: string;
-  label: string;
+  seq: string;                  // 관리번호 — 필수 (변경: order_no → seq)
+  label_name: string;           // 라벨명 — 필수 (변경: label → label_name)
   [key: string]: unknown;
 }
 
