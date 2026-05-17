@@ -48,11 +48,16 @@ export class OnewmsConfigManager {
 
   /**
    * Load configuration from environment variables
+   *
+   * Required: ONEWMS_PARTNER_KEY, ONEWMS_DOMAIN_KEY
+   * Optional: ONEWMS_API_URL (defaults to https://api.onewms.co.kr/api.php)
+   * P0 Required for set_orders: ONEWMS_SHOP_ID (판매처코드)
    */
   loadFromEnv(): void {
     const partnerKey = process.env.ONEWMS_PARTNER_KEY;
     const domainKey = process.env.ONEWMS_DOMAIN_KEY;
     const apiUrl = process.env.ONEWMS_API_URL;
+    const shopId = process.env.ONEWMS_SHOP_ID;
 
     if (!partnerKey || !domainKey) {
       throw new Error(
@@ -60,10 +65,17 @@ export class OnewmsConfigManager {
       );
     }
 
+    if (!shopId) {
+      console.warn(
+        '⚠️ ONEWMS_SHOP_ID not configured. set_orders API calls will fail.'
+      );
+    }
+
     this.setConfig({
       partnerKey,
       domainKey,
       apiUrl,
+      shopId,
     });
   }
 }
