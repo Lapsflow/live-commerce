@@ -2,7 +2,7 @@
   "cookies": [
     {
       "name": "__Host-authjs.csrf-token",
-      "value": "5deb0fc528e67177d6ed628449fce3f9c0c9229cb116d901c8bf1fa6459c5907%7C116449ac2d8ef9d52d8af9bc96caa3a8cc22d91a116ef193b1b6e96d6e29a32d",
+      "value": "c9c889e51282ca943f2c930ff0aa01c6e7b927f5b741e8ff196d55bb97cc4786%7Cca49e89984548e587df997a5403af18605ab546546651b3abade85af854ad6d4",
       "domain": "live-commerce-opal.vercel.app",
       "path": "/",
       "expires": -1,
@@ -22,10 +22,10 @@
     },
     {
       "name": "__Secure-authjs.session-token",
-      "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoibV9FU2M5bVdYY3k1QVA3TFczUjk0bE4zakNYVldtVGNtRHkzczl4c2tKdElKcWFoZmd0QmgwanVNSGZfNHZmbVdaNF9kNDJUOUVaN09YT1dVTTZVR3cifQ..Gk6DNGbFPiFl1oeQG4xBZQ.p2IKf7RESylROL2dwxOPYPIFShjsyY5hIStODpccmInHptuQ4wBNTUqO5Hr1K1cDyxvAbenn5GRG7NeXGlPn3rbG3Zno6Yf-iFfdb1zXAV9o8dLnsxQ7rh7HuM0-OaZmgHB9rqnSqJ_l-_ZbZWHndqYIeRjqUopqbmzQWkeAnrkXptHa29kEZ-XQp6at-lAtazBtlz3bjUN5mKFaHIYuYOpQYjlP0y39VcUDhdq7BA-ko1OqjVpqOQuouRQ9wbjsS9zfV-aBMnNj0cjR614Yn6_4ORNqQ8RJ_NVnF29KvR4jDXkHlVGGoGxrZ8WPZSVrIZY6vAiLWt5bByD_w8RnNA.43_aQlmNEsJAvLpNcjts06OJw-ciWrgUWMc4yyBl9Ro",
+      "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoibV9FU2M5bVdYY3k1QVA3TFczUjk0bE4zakNYVldtVGNtRHkzczl4c2tKdElKcWFoZmd0QmgwanVNSGZfNHZmbVdaNF9kNDJUOUVaN09YT1dVTTZVR3cifQ..qdNPiWJmSPSg8WUsNiz45A.BdNR0UsWCiwYkMlqt21m0WUChkIAccR1dDkpPCPhiRZyzxjjdVvlpK_oV2JHNTbTEUwFMkVZ26Sa20eYQDEnqnNYCwJQ7dFzdx5QiiV5yuEi2FzDmT5NuC7wueqi0tO-Pc4f497k9J9sb9j3iDQJ23wDFu6CDuxaCWtN3tK93KG5PYa2DA0f9laamMDuFjN0-CIg3dam7pj7PZSZd5t79TtwTcY2WIXwMxOYO1jBZrvBUhlbCSddqkaPQDn2nOo-KsvWeDwcPnFRZbWE9UUdUxwiZ25J7UGSZZ_rTTKm7WL08iKKWzYs7QKOtg6kU0-YAvCsvLhtP_m2kq2rSeYkKA.by72wqQsWwxm1QeaU-hgialez9VPNew6r_IOCvxJxKY",
       "domain": "live-commerce-opal.vercel.app",
       "path": "/",
-      "expires": 1778667882.109371,
+      "expires": 1778683381.735651,
       "httpOnly": true,
       "secure": true,
       "sameSite": "Lax"

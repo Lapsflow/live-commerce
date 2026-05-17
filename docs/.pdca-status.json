@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-05-13T03:36:13.025Z",
+  "lastUpdated": "2026-05-17T13:55:52.676Z",
   "activeFeatures": [
     "notifications",
     "[code]",
@@ -95,7 +95,8 @@
     "force-sync",
     "(main)",
     "9-flow",
-    "editors"
+    "editors",
+    "helpers"
   ],
   "primaryFeature": "notifications",
   "features": {
@@ -199,9 +200,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-29T04:46:49.833Z",
-        "lastUpdated": "2026-05-06T05:14:55.196Z"
+        "lastUpdated": "2026-05-17T07:27:59.820Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/scripts/analyze-order-form.js"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/scripts/check-onewms-mapping.ts"
     },
     "audit": {
       "phase": "do",
@@ -303,7 +304,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T02:41:09.709Z",
-        "lastUpdated": "2026-05-06T03:33:48.516Z"
+        "lastUpdated": "2026-05-17T13:54:28.983Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/bulk/route.ts"
     },
@@ -459,9 +460,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T03:53:01.445Z",
-        "lastUpdated": "2026-05-06T06:23:52.342Z"
+        "lastUpdated": "2026-05-17T13:55:21.785Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/onewms/autoRegister.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/onewms/client.ts"
     },
     "stock-sync": {
       "phase": "do",
@@ -992,9 +993,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-01T03:40:56.310Z",
-        "lastUpdated": "2026-05-13T02:18:06.490Z"
+        "lastUpdated": "2026-05-15T09:07:30.983Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/hotfix-2026-05-12.spec.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/price-sync-diagnosis-2026-05-13.spec.ts"
     },
     "navigation": {
       "phase": "do",
@@ -1031,7 +1032,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-02T03:54:52.483Z",
-        "lastUpdated": "2026-05-02T03:56:16.011Z"
+        "lastUpdated": "2026-05-17T13:55:52.676Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/stock/reservation.ts"
     },
@@ -1320,6 +1321,19 @@
         "lastUpdated": "2026-05-13T03:36:13.025Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/editors/TipTapEditor.tsx"
+    },
+    "helpers": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-05-13T06:15:32.205Z",
+        "lastUpdated": "2026-05-13T06:21:27.675Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/tests/e2e/helpers/console-watcher.ts"
     }
   },
   "pipeline": {
@@ -1330,7 +1344,7 @@
   "session": {
     "startedAt": "2026-04-28T06:44:38.229Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-05-13T03:36:13.025Z"
+    "lastActivity": "2026-05-17T13:55:52.676Z"
   },
   "history": [
     {
@@ -6178,6 +6192,540 @@
     {
       "timestamp": "2026-05-13T03:36:13.025Z",
       "feature": "editors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:39:40.687Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:44:19.375Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:44:28.694Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:44:37.528Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:44:53.422Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:45:03.165Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:56:02.018Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:56:10.319Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:56:22.363Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:56:33.787Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T04:56:40.587Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T05:01:05.860Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T05:07:20.681Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T05:14:02.702Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:06:56.424Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:06:59.964Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:07:02.481Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:15:32.205Z",
+      "feature": "helpers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:16:05.868Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:16:33.293Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:16:50.239Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:17:32.699Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:21:27.675Z",
+      "feature": "helpers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:24:02.325Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:34:34.859Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:34:39.565Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:34:43.954Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:40:51.472Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:40:57.309Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T06:41:01.493Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T08:23:21.911Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T08:24:05.961Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-13T08:24:33.551Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-15T09:06:52.805Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-15T09:07:30.983Z",
+      "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-15T09:07:46.437Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-15T09:07:49.630Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-15T09:07:55.049Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:16:25.951Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:16:37.500Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:16:54.449Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:17:01.519Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:17:09.647Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:17:14.092Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:17:22.452Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:17:32.624Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:17:45.069Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:23:50.487Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:23:53.803Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:23:58.636Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:24:01.373Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:24:05.930Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:24:10.652Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:24:17.712Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:49:09.321Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:58:05.668Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:58:09.686Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:58:16.159Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:58:36.731Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:58:41.818Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:58:44.037Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:58:53.967Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T03:59:08.543Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T04:00:17.277Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T04:01:02.334Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T04:01:05.745Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T04:01:18.922Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T04:08:29.784Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T04:08:32.550Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T04:08:33.489Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T07:11:28.144Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T07:11:35.374Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T07:11:37.586Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T07:11:45.717Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T07:11:53.052Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T07:17:39.735Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T07:27:59.820Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:53:05.741Z",
+      "feature": "stock",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:53:10.545Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:53:29.123Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:53:52.704Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:54:03.561Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:54:14.509Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:54:24.795Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:54:28.983Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:55:01.332Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:55:08.608Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:55:21.785Z",
+      "feature": "onewms",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T13:55:52.676Z",
+      "feature": "stock",
       "phase": "do",
       "action": "updated"
     }

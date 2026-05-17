@@ -17,7 +17,14 @@
  *   - 위젯 및 충돌 목록에 0건으로 표시됨
  */
 
-import { prisma } from '../lib/db/prisma';
+import { PrismaClient } from '../lib/generated/prisma/client';
+import { PrismaNeon } from '@prisma/adapter-neon';
+import 'dotenv/config';
+
+const url = process.env.DIRECT_URL || process.env.DATABASE_URL || '';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const adapter = new PrismaNeon({ connectionString: url } as any);
+const prisma = new PrismaClient({ adapter } as unknown as ConstructorParameters<typeof PrismaClient>[0]);
 
 async function main() {
   const apply = process.argv.includes('--apply');

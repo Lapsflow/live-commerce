@@ -60,3 +60,4 @@ docs/.pdca-status*.json
 docs/.pdca-status*.txt
 docs/.bkit-memory.json
 .claude/agent-memory/
+.env*.local

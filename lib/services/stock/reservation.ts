@@ -305,52 +305,32 @@ export async function reserveStock(
         }
       }
 
-      // 2. Serializable 트랜잭션으로 선점
+      // 2. ✅ Task 3: ReadCommitted + atomic update ($executeRaw)
       await prisma.$transaction(
         async (tx) => {
           for (const item of order.items) {
-            const product = await tx.product.findUnique({
-              where: { id: item.productId },
-              select: {
-                id: true,
-                totalStock: true,
-                reservedStock: true,
-                productType: true,
-                onewmsCode: true,
-              },
-            });
-
-            if (!product) {
-              throw new Error(`상품을 찾을 수 없습니다: ${item.productId}`);
-            }
-
-            // 본사 상품: ONEWMS 실시간 값으로 DB 갱신
-            let baseStock = product.totalStock;
-            const realtimeStock = realtimeStocks.get(product.id);
-            if (
-              product.productType === "HEADQUARTERS" &&
-              product.onewmsCode &&
-              realtimeStock !== undefined
-            ) {
-              baseStock = realtimeStock;
+            // 본사 상품: ONEWMS 실시간 값으로 DB 갱신 (transaction 외부의 값 사용)
+            const realtimeStock = realtimeStocks.get(item.productId);
+            if (realtimeStock !== undefined) {
               await tx.product.update({
-                where: { id: product.id },
+                where: { id: item.productId },
                 data: { totalStock: realtimeStock },
               });
             }
 
-            const available = baseStock - product.reservedStock;
-            if (available < item.quantity) {
+            // ✅ atomic update: WHERE 조건으로 race condition 방지
+            const updated = await tx.$executeRaw`
+              UPDATE "Product"
+              SET "reservedStock" = "reservedStock" + ${item.quantity}
+              WHERE id = ${item.productId}
+                AND "totalStock" - "reservedStock" >= ${item.quantity}
+            `;
+
+            if (updated === 0) {
               throw new Error(
-                `재고 부족: ${item.productName} (가용: ${available}, 요청: ${item.quantity})`
+                `재고 부족: ${item.productName} (다른 발주가 선점했습니다)`
               );
             }
-
-            // reservedStock 증가
-            await tx.product.update({
-              where: { id: item.productId },
-              data: { reservedStock: { increment: item.quantity } },
-            });
 
             // StockReservation 레코드 생성
             await tx.stockReservation.create({
@@ -372,8 +352,8 @@ export async function reserveStock(
           });
         },
         {
-          isolationLevel: "Serializable",
-          timeout: 10000,
+          isolationLevel: "ReadCommitted", // ✅ Task 3: Serializable → ReadCommitted
+          timeout: 15000,
         }
       );
 
