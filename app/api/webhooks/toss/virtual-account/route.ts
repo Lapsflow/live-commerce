@@ -1,6 +1,7 @@
 /**
  * POST /api/webhooks/toss/virtual-account
- * Toss Payments webhook for virtual account payment confirmation
+ * @deprecated Manual virtual account workflow no longer uses Toss webhooks
+ * Toss Payments webhook for virtual account payment confirmation (no longer in use)
  */
 
 import { NextRequest, NextResponse } from 'next/server';

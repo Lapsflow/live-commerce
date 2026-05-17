@@ -91,6 +91,7 @@ const statusLabels: Record<string, string> = {
 
 const paymentStatusLabels: Record<string, string> = {
   UNPAID: "입금확인전",
+  PENDING_CONFIRMATION: "입금확인중",
   PAID: "입금완료",
 };
 
@@ -145,12 +146,35 @@ export default function OrderDetailPage() {
     }
   };
 
+  // ✅ Task 2G: 입금확인중 상태 전환
+  const handlePaymentPending = async () => {
+    if (!confirm("입금확인중으로 변경하시겠습니까?")) return;
+
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/payment-pending`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("입금확인중으로 변경되었습니다.");
+        loadOrderDetail();
+      } else {
+        toast.error(data.error?.message || "상태 변경 실패");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleConfirmPayment = async () => {
     if (!confirm("입금확인 하시겠습니까? WMS 주문이 자동 생성됩니다.")) return;
 
     setActionLoading(true);
     try {
-      const res = await fetch(`/api/orders/${orderId}/confirm-payment`, {
+      const res = await fetch(`/api/orders/${orderId}/payment-confirm`, {
         method: "POST",
       });
       const data = await res.json();
@@ -441,6 +465,38 @@ export default function OrderDetailPage() {
         paymentStatus={order.paymentStatus}
         totalAmount={order.totalAmount}
       />
+
+      {/* ✅ Task 2G: 입금 상태 전환 버튼 */}
+      {isAdmin && order.status === "APPROVED" && (
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold text-grey-900 mb-4">입금 상태 관리</h2>
+          <div className="flex gap-2">
+            {order.paymentStatus === "UNPAID" && (
+              <Button
+                onClick={handlePaymentPending}
+                disabled={actionLoading}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Clock className="h-4 w-4 mr-2" />
+                {actionLoading ? "처리 중..." : "입금확인중으로 변경"}
+              </Button>
+            )}
+            {order.paymentStatus === "PENDING_CONFIRMATION" && (
+              <Button
+                onClick={handleConfirmPayment}
+                disabled={actionLoading}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                {actionLoading ? "처리 중..." : "입금완료로 변경"}
+              </Button>
+            )}
+            {order.paymentStatus === "PAID" && (
+              <span className="text-sm text-grey-600">입금이 완료되었습니다</span>
+            )}
+          </div>
+        </Card>
+      )}
 
       {/* ONEWMS Info Card */}
       <OnewmsInfo orderId={order.id} />

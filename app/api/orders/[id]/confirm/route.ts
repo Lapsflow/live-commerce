@@ -21,6 +21,15 @@ export const POST = withRole(
         return errors.badRequest("Order ID가 필요합니다");
       }
 
+      // ✅ Task 2D: Request body에서 expiryAt 읽기
+      let expiryAt: string | undefined;
+      try {
+        const body = await req.json();
+        expiryAt = body.expiryAt;
+      } catch {
+        // Body 없거나 JSON 파싱 실패 시 무시
+      }
+
       const order = await prisma.order.findUnique({
         where: { id: orderId },
         include: {
@@ -51,6 +60,8 @@ export const POST = withRole(
         data: {
           status: "APPROVED",
           approvedAt: new Date(),
+          // ✅ Task 2D: virtualAccountExpiry 저장 (expiresAt 아님!)
+          virtualAccountExpiry: expiryAt ? new Date(expiryAt) : null,
         },
       });
 
@@ -65,7 +76,9 @@ export const POST = withRole(
           },
           variables: {
             orderNo: order.orderNo,
-            sellerName: order.seller.name,
+            // ✅ Task 2D: 금액 및 입금기한 추가
+            amount: order.totalAmount.toString(),
+            expiryAt: expiryAt || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           },
           orderId: order.id,
         }).catch((err) => console.error("[ORDER_CONFIRMED_NOTIF]", err));

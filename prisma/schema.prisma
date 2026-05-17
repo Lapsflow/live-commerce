@@ -345,9 +345,10 @@ enum OrderStatus {
 }
 
 enum PaymentStatus {
-  UNPAID         // 입금확인전
-  PAID           // 입금완료
-  PAYMENT_FAILED // 가상계좌 발급 실패
+  UNPAID                  // 입금확인전
+  PENDING_CONFIRMATION    // 입금확인중
+  PAID                    // 입금완료
+  PAYMENT_FAILED          // 가상계좌 발급 실패
 }
 
 enum ShippingStatus {

@@ -47,9 +47,12 @@ export const POST = withRole(
         return errors.badRequest(`발주가 승인(APPROVED) 상태가 아닙니다. 현재: ${order.status}`);
       }
 
-      if (order.paymentStatus !== "UNPAID") {
+      // ✅ Task 2F: UNPAID 또는 PENDING_CONFIRMATION 상태 모두 허용
+      if (order.paymentStatus !== "UNPAID" && order.paymentStatus !== "PENDING_CONFIRMATION") {
         return errors.badRequest(`이미 입금 처리된 발주입니다. 현재: ${order.paymentStatus}`);
       }
+
+      const beforePaymentStatus = order.paymentStatus;
 
       const updated = await prisma.order.update({
         where: { id: orderId },
@@ -114,7 +117,8 @@ export const POST = withRole(
         entityType: "Order",
         entityId: order.id,
         entityName: order.orderNo,
-        before: { paymentStatus: "UNPAID" },
+        // ✅ Task 2F: Before 상태 동적으로 기록 (UNPAID 또는 PENDING_CONFIRMATION)
+        before: { paymentStatus: beforePaymentStatus },
         after: { paymentStatus: "PAID" },
         description: `입금확인: ${order.orderNo}`,
         request: req,

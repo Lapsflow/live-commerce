@@ -25,11 +25,12 @@ export const TEMPLATES: Record<NotificationType, Template> = {
     description: "가상계좌 발급 안내 → 셀러",
     buildMessage: (v) =>
       `[슈퍼무진] 가상계좌 발급 안내\n\n` +
-      `주문번호: ${v.orderCode || "-"}\n` +
+      `주문번호: ${v.orderNo || "-"}\n` +
       `금액: ${v.amount || "-"}원\n` +
-      `은행: ${v.bank || "-"}\n` +
-      `계좌번호: ${v.accountNumber || "-"}\n` +
-      `입금기한: ${v.expiryAt || "-"}\n` +
+      `\n입금 계좌\n` +
+      `${process.env.NEXT_PUBLIC_VIRTUAL_ACCOUNT_BANK || "기업은행"} ${process.env.NEXT_PUBLIC_VIRTUAL_ACCOUNT_NUMBER || "054-141023-04-013"}\n` +
+      `예금주 ${process.env.NEXT_PUBLIC_VIRTUAL_ACCOUNT_HOLDER || "한국무진유통"}\n` +
+      `\n입금기한: ${v.expiryAt || "-"}\n` +
       `기한 내 입금해 주세요.`,
   },
 

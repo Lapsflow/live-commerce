@@ -1,6 +1,7 @@
 /**
  * POST /api/payments/create-virtual-account
- * Create virtual account for order payment via Toss Payments
+ * @deprecated Use manual virtual account via /api/orders/:id/confirm with expiryAt parameter
+ * Create virtual account for order payment via Toss Payments (no longer in use)
  */
 
 import { NextRequest } from 'next/server';
