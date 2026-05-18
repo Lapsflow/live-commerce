@@ -156,7 +156,7 @@ export const PUT = withRole(
 /**
  * DELETE /api/users/:id
  *
- * 사용자 삭제
+ * 사용자 삭제 (cascade: Order, Broadcast / SetNull: Sale, Proposal, ScanLog, AuditLog)
  * 권한: MASTER만 가능
  */
 export const DELETE = withRole(
@@ -189,11 +189,23 @@ export const DELETE = withRole(
         return errors.notFound("user");
       }
 
-      // 사용자 삭제
+      // 삭제 전 cascade/setNull 카운트 조회
+      const [orderCount, broadcastCount, saleCount, proposalCount, scanLogCount, auditLogCount] =
+        await Promise.all([
+          prisma.order.count({ where: { sellerId: userId } }),
+          prisma.broadcast.count({ where: { sellerId: userId } }),
+          prisma.sale.count({ where: { sellerId: userId } }),
+          prisma.proposal.count({ where: { submittedBy: userId } }),
+          prisma.scanLog.count({ where: { userId: userId } }),
+          prisma.auditLog.count({ where: { userId: userId } }),
+        ]);
+
+      // 사용자 삭제 (cascade 자동 실행)
       await prisma.user.delete({
         where: { id: userId },
       });
 
+      // Audit log: cascade/setNull 분류 메타데이터 기록
       logAudit({
         userId: currentUserId,
         userRole: (session.user as any).role,
@@ -203,7 +215,11 @@ export const DELETE = withRole(
         entityId: userId,
         entityName: existing.name,
         before: { name: existing.name, role: existing.role, email: existing.email },
-        description: `사용자 삭제: ${existing.name} (${existing.role})`,
+        metadata: {
+          cascade: { orders: orderCount, broadcasts: broadcastCount },
+          setNull: { sales: saleCount, proposals: proposalCount, scanLogs: scanLogCount, auditLogs: auditLogCount },
+        } as Record<string, unknown>,
+        description: `사용자 삭제: ${existing.name} (${existing.role}) - 발주 ${orderCount}건, 방송 ${broadcastCount}건 함께 삭제`,
         request: req,
       });
 

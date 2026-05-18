@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-05-17T14:11:55.075Z",
+  "lastUpdated": "2026-05-18T03:10:31.899Z",
   "activeFeatures": [
     "notifications",
     "[code]",
@@ -99,7 +99,9 @@
     "helpers",
     "[jobId]",
     "cleanup-idempotency",
-    "cleanup-upload-jobs"
+    "cleanup-upload-jobs",
+    "payment-pending",
+    "delete-impact"
   ],
   "primaryFeature": "notifications",
   "features": {
@@ -112,7 +114,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-28T06:44:38.229Z",
-        "lastUpdated": "2026-05-09T03:25:35.372Z"
+        "lastUpdated": "2026-05-17T17:00:49.066Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/lib/services/notifications/templates.ts"
     },
@@ -164,9 +166,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-29T03:12:26.462Z",
-        "lastUpdated": "2026-05-06T02:38:17.973Z"
+        "lastUpdated": "2026-05-18T03:10:31.899Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/components/users/user-add-dialog.tsx"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/users/page.tsx"
     },
     "layout": {
       "phase": "do",
@@ -229,9 +231,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T02:39:20.380Z",
-        "lastUpdated": "2026-05-09T02:37:27.843Z"
+        "lastUpdated": "2026-05-18T02:57:22.819Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/[id]/route.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/users/[id]/route.ts"
     },
     "live-commerce": {
       "phase": "do",
@@ -294,7 +296,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T02:40:51.108Z",
-        "lastUpdated": "2026-05-09T03:27:43.362Z"
+        "lastUpdated": "2026-05-17T16:36:54.407Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/route.ts"
     },
@@ -307,7 +309,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T02:41:09.709Z",
-        "lastUpdated": "2026-05-17T14:04:58.623Z"
+        "lastUpdated": "2026-05-17T16:37:13.793Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/bulk/route.ts"
     },
@@ -619,7 +621,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-01T01:08:51.114Z",
-        "lastUpdated": "2026-05-09T03:16:49.002Z"
+        "lastUpdated": "2026-05-17T17:01:02.683Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/[id]/confirm/route.ts"
     },
@@ -879,7 +881,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-01T01:12:46.866Z",
-        "lastUpdated": "2026-05-01T01:12:46.866Z"
+        "lastUpdated": "2026-05-17T17:02:23.335Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/payments/create-virtual-account/route.ts"
     },
@@ -1139,9 +1141,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-03T06:30:50.591Z",
-        "lastUpdated": "2026-05-03T06:30:50.591Z"
+        "lastUpdated": "2026-05-17T17:02:27.651Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/proposals/payment/virtual-account/route.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/webhooks/toss/virtual-account/route.ts"
     },
     "preview": {
       "phase": "do",
@@ -1243,7 +1245,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-06T03:22:52.232Z",
-        "lastUpdated": "2026-05-09T03:27:49.630Z"
+        "lastUpdated": "2026-05-17T17:01:28.406Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/[id]/payment-confirm/route.ts"
     },
@@ -1376,6 +1378,32 @@
         "lastUpdated": "2026-05-17T14:11:55.075Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/cron/cleanup-upload-jobs/route.ts"
+    },
+    "payment-pending": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-05-17T17:01:18.496Z",
+        "lastUpdated": "2026-05-17T17:01:18.496Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/orders/[id]/payment-pending/route.ts"
+    },
+    "delete-impact": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-05-18T02:57:13.942Z",
+        "lastUpdated": "2026-05-18T02:57:13.942Z"
+      },
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/users/[id]/delete-impact/route.ts"
     }
   },
   "pipeline": {
@@ -1386,7 +1414,7 @@
   "session": {
     "startedAt": "2026-04-28T06:44:38.229Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-05-17T14:11:55.075Z"
+    "lastActivity": "2026-05-18T03:10:31.899Z"
   },
   "history": [
     {
@@ -6864,6 +6892,180 @@
     {
       "timestamp": "2026-05-17T14:11:55.075Z",
       "feature": "cleanup-upload-jobs",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T15:03:03.293Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T16:36:36.517Z",
+      "feature": "orders",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T16:36:46.461Z",
+      "feature": "orders",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T16:36:54.407Z",
+      "feature": "orders",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T16:37:02.707Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T16:37:13.793Z",
+      "feature": "bulk",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T16:38:54.529Z",
+      "feature": "payment-confirm",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T16:39:04.699Z",
+      "feature": "payment-confirm",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:00:49.066Z",
+      "feature": "notifications",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:01:02.683Z",
+      "feature": "confirm",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:01:18.496Z",
+      "feature": "payment-pending",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:01:23.462Z",
+      "feature": "payment-confirm",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:01:28.406Z",
+      "feature": "payment-confirm",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:01:38.037Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:01:45.935Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:01:53.132Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:02:07.038Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:02:18.949Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:02:23.335Z",
+      "feature": "create-virtual-account",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-17T17:02:27.651Z",
+      "feature": "virtual-account",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T02:57:13.942Z",
+      "feature": "delete-impact",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T02:57:22.819Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T02:58:46.266Z",
+      "feature": "users",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T02:58:50.209Z",
+      "feature": "users",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T02:58:53.403Z",
+      "feature": "users",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T02:58:56.327Z",
+      "feature": "users",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T02:58:59.853Z",
+      "feature": "users",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T02:59:04.673Z",
+      "feature": "users",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T03:10:31.899Z",
+      "feature": "users",
       "phase": "do",
       "action": "updated"
     }

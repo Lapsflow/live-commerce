@@ -286,9 +286,11 @@ model Order {
   totalMargin Int @default(0) // 총 마진
 
   // ✨ 입금/출고 상태 추적
-  paymentStatus  PaymentStatus  @default(UNPAID)
-  shippingStatus ShippingStatus @default(PENDING)
-  paidAt         DateTime? // 입금 완료 시각
+  paymentStatus           PaymentStatus  @default(UNPAID)
+  shippingStatus          ShippingStatus @default(PENDING)
+  paidAt                  DateTime? // 입금 완료 시각
+  stockShortageReason     String? // JSON: [{productId, reason}]
+  stockShortageDetectedAt DateTime? // 재고 부족 감지 시각
 
   // ✨ 가상계좌 정보 (Toss Payments)
   virtualAccount       String? // 가상계좌 번호
@@ -316,7 +318,7 @@ model Order {
   taxInvoiceNumber   String? // 세금계산서 번호
 
   // Relations
-  seller             User                  @relation(fields: [sellerId], references: [id])
+  seller             User                  @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   processingCenter   Center?               @relation(fields: [processingCenterId], references: [id], onDelete: SetNull)
   broadcast          Broadcast?            @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
   items              OrderItem[]
@@ -332,6 +334,7 @@ model Order {
   @@index([productType])
   @@index([expiresAt, paymentStatus, status]) // ✨ cron 만료 조회 최적화
   @@index([broadcastId]) // ✨ LIVE-03: 방송별 발주 조회
+  @@index([stockShortageDetectedAt]) // ✨ 재고 부족 필터링
 }
 
 enum OrderStatus {
@@ -343,6 +346,7 @@ enum OrderStatus {
 
 enum PaymentStatus {
   UNPAID // 입금확인전
+  PENDING_CONFIRMATION // 입금확인중
   PAID // 입금완료
   PAYMENT_FAILED // 가상계좌 발급 실패
 }
@@ -431,7 +435,7 @@ model Broadcast {
   updatedAt        DateTime          @updatedAt
 
   // Relations
-  seller   User    @relation(fields: [sellerId], references: [id])
+  seller   User    @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   center   Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
   rejecter User?   @relation("BroadcastRejecter", fields: [rejectedBy], references: [id], onDelete: SetNull)
   sales    Sale[]
@@ -466,7 +470,7 @@ enum BroadcastStatus {
 model Sale {
   id          String   @id @default(cuid())
   saleNo      String   @unique
-  sellerId    String
+  sellerId    String? // ✨ nullable: SetNull onDelete 지원
   productId   String
   broadcastId String?
   quantity    Int
@@ -476,7 +480,7 @@ model Sale {
   createdAt   DateTime @default(now())
 
   // Relations
-  seller    User       @relation(fields: [sellerId], references: [id])
+  seller    User?      @relation(fields: [sellerId], references: [id], onDelete: SetNull)
   product   Product    @relation(fields: [productId], references: [id])
   broadcast Broadcast? @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
 
@@ -498,7 +502,7 @@ model Proposal {
   subcategory String? // ✨ PROPOSAL-04: 소분류 카테고리
   description String
   status      ProposalStatus @default(PENDING)
-  submittedBy String
+  submittedBy String? // ✨ nullable: SetNull onDelete 지원
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
@@ -524,7 +528,7 @@ model Proposal {
   expiryDate        DateTime? // 유통기한 (YYYY-MM-DD)
   stockQty          Int? // 재고 갯수
 
-  user User @relation(fields: [submittedBy], references: [id])
+  user User? @relation(fields: [submittedBy], references: [id], onDelete: SetNull)
 
   @@index([status])
   @@index([submittedBy])
@@ -760,7 +764,7 @@ model MarketPricing {
 
 model ScanLog {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String? // ✨ nullable: SetNull onDelete 지원 (Cascade → SetNull)
   productId String?
   barcode   String
   scanType  ScanType
@@ -770,7 +774,7 @@ model ScanLog {
   metadata  Json?
 
   // Relations
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   center  Center?  @relation(fields: [centerId], references: [id], onDelete: SetNull)
 

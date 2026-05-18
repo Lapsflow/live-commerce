@@ -18,6 +18,7 @@ import {
   UserCheck,
   UserX,
   Building2,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -105,6 +106,43 @@ export default function UsersPage() {
       toast.success(newActive ? "계정이 활성화되었습니다" : "계정이 비활성화되었습니다");
     } catch (err: any) {
       toast.error(err.message || "상태 변경 중 오류가 발생했습니다");
+    }
+  };
+
+  const handleDeleteUser = async (user: User) => {
+    try {
+      // 1. DELETE-IMPACT 조회
+      const impactRes = await fetch(`/api/users/${user.id}/delete-impact`);
+      if (!impactRes.ok) throw new Error("영향도 조회 실패");
+      const impactData = await impactRes.json();
+      const { cascade, setNull } = impactData.data;
+
+      // 2. Confirmation dialog with breakdown
+      const message = `${user.name} 계정을 삭제하시겠습니까?\n\n` +
+        `⚠️ 이 작업은 되돌릴 수 없습니다.\n\n` +
+        `삭제될 항목:\n` +
+        `  • 발주: ${cascade.orders}건\n` +
+        `  • 방송: ${cascade.broadcasts}건\n\n` +
+        `데이터 보존 (이력 유지):\n` +
+        `  • 판매: ${setNull.sales}건\n` +
+        `  • 제안: ${setNull.proposals}건\n` +
+        `  • 스캔: ${setNull.scanLogs}건\n` +
+        `  • 감사로그: ${setNull.auditLogs}건`;
+
+      const ok = window.confirm(message);
+      if (!ok) return;
+
+      // 3. DELETE API call
+      const res = await fetch(`/api/users/${user.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error?.message || "삭제 실패");
+      }
+
+      setUsers((prev) => prev.filter((u) => u.id !== user.id));
+      toast.success(`${user.name} 계정이 삭제되었습니다`);
+    } catch (err: any) {
+      toast.error(err.message || "삭제 중 오류가 발생했습니다");
     }
   };
 
@@ -230,6 +268,7 @@ export default function UsersPage() {
               onEdit={handleEditUser}
               onRowClick={(user) => router.push(`/users/${user.id}`)}
               onToggleActive={handleToggleActive}
+              onDelete={handleDeleteUser}
             />
           </TabsContent>
 
@@ -241,6 +280,7 @@ export default function UsersPage() {
               onEdit={handleEditUser}
               onRowClick={(user) => router.push(`/users/${user.id}`)}
               onToggleActive={handleToggleActive}
+              onDelete={handleDeleteUser}
             />
           </TabsContent>
 
@@ -349,12 +389,14 @@ function UserTable({
   onEdit,
   onRowClick,
   onToggleActive,
+  onDelete,
 }: {
   users: User[];
   columns: ColumnKey[];
   onEdit: (user: User) => void;
   onRowClick: (user: User) => void;
   onToggleActive?: (user: User) => void;
+  onDelete?: (user: User) => void;
 }) {
   return (
     <Card className="p-6">
@@ -475,6 +517,18 @@ function UserTable({
                             활성화
                           </>
                         )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete?.(user);
+                        }}
+                        className="flex items-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        삭제
                       </Button>
                     </div>
                   </td>

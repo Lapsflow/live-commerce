@@ -219,6 +219,7 @@ export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
 export const PaymentStatus: {
   UNPAID: 'UNPAID',
+  PENDING_CONFIRMATION: 'PENDING_CONFIRMATION',
   PAID: 'PAID',
   PAYMENT_FAILED: 'PAYMENT_FAILED'
 };
@@ -477,7 +478,7 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
 
@@ -814,8 +815,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 7.8.0
-   * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+   * Prisma Client JS version: 7.6.0
+   * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
    */
   export type PrismaVersion = {
     client: string
@@ -11156,6 +11157,8 @@ export namespace Prisma {
     paymentStatus: $Enums.PaymentStatus | null
     shippingStatus: $Enums.ShippingStatus | null
     paidAt: Date | null
+    stockShortageReason: string | null
+    stockShortageDetectedAt: Date | null
     virtualAccount: string | null
     virtualAccountBank: string | null
     virtualAccountExpiry: Date | null
@@ -11190,6 +11193,8 @@ export namespace Prisma {
     paymentStatus: $Enums.PaymentStatus | null
     shippingStatus: $Enums.ShippingStatus | null
     paidAt: Date | null
+    stockShortageReason: string | null
+    stockShortageDetectedAt: Date | null
     virtualAccount: string | null
     virtualAccountBank: string | null
     virtualAccountExpiry: Date | null
@@ -11224,6 +11229,8 @@ export namespace Prisma {
     paymentStatus: number
     shippingStatus: number
     paidAt: number
+    stockShortageReason: number
+    stockShortageDetectedAt: number
     virtualAccount: number
     virtualAccountBank: number
     virtualAccountExpiry: number
@@ -11270,6 +11277,8 @@ export namespace Prisma {
     paymentStatus?: true
     shippingStatus?: true
     paidAt?: true
+    stockShortageReason?: true
+    stockShortageDetectedAt?: true
     virtualAccount?: true
     virtualAccountBank?: true
     virtualAccountExpiry?: true
@@ -11304,6 +11313,8 @@ export namespace Prisma {
     paymentStatus?: true
     shippingStatus?: true
     paidAt?: true
+    stockShortageReason?: true
+    stockShortageDetectedAt?: true
     virtualAccount?: true
     virtualAccountBank?: true
     virtualAccountExpiry?: true
@@ -11338,6 +11349,8 @@ export namespace Prisma {
     paymentStatus?: true
     shippingStatus?: true
     paidAt?: true
+    stockShortageReason?: true
+    stockShortageDetectedAt?: true
     virtualAccount?: true
     virtualAccountBank?: true
     virtualAccountExpiry?: true
@@ -11459,6 +11472,8 @@ export namespace Prisma {
     paymentStatus: $Enums.PaymentStatus
     shippingStatus: $Enums.ShippingStatus
     paidAt: Date | null
+    stockShortageReason: string | null
+    stockShortageDetectedAt: Date | null
     virtualAccount: string | null
     virtualAccountBank: string | null
     virtualAccountExpiry: Date | null
@@ -11512,6 +11527,8 @@ export namespace Prisma {
     paymentStatus?: boolean
     shippingStatus?: boolean
     paidAt?: boolean
+    stockShortageReason?: boolean
+    stockShortageDetectedAt?: boolean
     virtualAccount?: boolean
     virtualAccountBank?: boolean
     virtualAccountExpiry?: boolean
@@ -11555,6 +11572,8 @@ export namespace Prisma {
     paymentStatus?: boolean
     shippingStatus?: boolean
     paidAt?: boolean
+    stockShortageReason?: boolean
+    stockShortageDetectedAt?: boolean
     virtualAccount?: boolean
     virtualAccountBank?: boolean
     virtualAccountExpiry?: boolean
@@ -11592,6 +11611,8 @@ export namespace Prisma {
     paymentStatus?: boolean
     shippingStatus?: boolean
     paidAt?: boolean
+    stockShortageReason?: boolean
+    stockShortageDetectedAt?: boolean
     virtualAccount?: boolean
     virtualAccountBank?: boolean
     virtualAccountExpiry?: boolean
@@ -11629,6 +11650,8 @@ export namespace Prisma {
     paymentStatus?: boolean
     shippingStatus?: boolean
     paidAt?: boolean
+    stockShortageReason?: boolean
+    stockShortageDetectedAt?: boolean
     virtualAccount?: boolean
     virtualAccountBank?: boolean
     virtualAccountExpiry?: boolean
@@ -11644,7 +11667,7 @@ export namespace Prisma {
     taxInvoiceNumber?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "isCreditTrade" | "broadcastId" | "matchType" | "taxInvoiceIssued" | "taxInvoiceIssuedAt" | "taxInvoiceNumber", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNo" | "sellerId" | "processingCenterId" | "status" | "totalAmount" | "memo" | "uploadedAt" | "approvedAt" | "createdAt" | "updatedAt" | "recipient" | "phone" | "address" | "totalMargin" | "paymentStatus" | "shippingStatus" | "paidAt" | "stockShortageReason" | "stockShortageDetectedAt" | "virtualAccount" | "virtualAccountBank" | "virtualAccountExpiry" | "productType" | "expiresAt" | "cancelledAt" | "cancelReason" | "isCreditTrade" | "broadcastId" | "matchType" | "taxInvoiceIssued" | "taxInvoiceIssuedAt" | "taxInvoiceNumber", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
     processingCenter?: boolean | Order$processingCenterArgs<ExtArgs>
@@ -11698,6 +11721,8 @@ export namespace Prisma {
       paymentStatus: $Enums.PaymentStatus
       shippingStatus: $Enums.ShippingStatus
       paidAt: Date | null
+      stockShortageReason: string | null
+      stockShortageDetectedAt: Date | null
       virtualAccount: string | null
       virtualAccountBank: string | null
       virtualAccountExpiry: Date | null
@@ -12160,6 +12185,8 @@ export namespace Prisma {
     readonly paymentStatus: FieldRef<"Order", 'PaymentStatus'>
     readonly shippingStatus: FieldRef<"Order", 'ShippingStatus'>
     readonly paidAt: FieldRef<"Order", 'DateTime'>
+    readonly stockShortageReason: FieldRef<"Order", 'String'>
+    readonly stockShortageDetectedAt: FieldRef<"Order", 'DateTime'>
     readonly virtualAccount: FieldRef<"Order", 'String'>
     readonly virtualAccountBank: FieldRef<"Order", 'String'>
     readonly virtualAccountExpiry: FieldRef<"Order", 'DateTime'>
@@ -16647,7 +16674,7 @@ export namespace Prisma {
   export type SaleGroupByOutputType = {
     id: string
     saleNo: string
-    sellerId: string
+    sellerId: string | null
     productId: string
     broadcastId: string | null
     quantity: number
@@ -16687,7 +16714,7 @@ export namespace Prisma {
     totalPrice?: boolean
     saleDate?: boolean
     createdAt?: boolean
-    seller?: boolean | UserDefaultArgs<ExtArgs>
+    seller?: boolean | Sale$sellerArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
     broadcast?: boolean | Sale$broadcastArgs<ExtArgs>
   }, ExtArgs["result"]["sale"]>
@@ -16703,7 +16730,7 @@ export namespace Prisma {
     totalPrice?: boolean
     saleDate?: boolean
     createdAt?: boolean
-    seller?: boolean | UserDefaultArgs<ExtArgs>
+    seller?: boolean | Sale$sellerArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
     broadcast?: boolean | Sale$broadcastArgs<ExtArgs>
   }, ExtArgs["result"]["sale"]>
@@ -16719,7 +16746,7 @@ export namespace Prisma {
     totalPrice?: boolean
     saleDate?: boolean
     createdAt?: boolean
-    seller?: boolean | UserDefaultArgs<ExtArgs>
+    seller?: boolean | Sale$sellerArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
     broadcast?: boolean | Sale$broadcastArgs<ExtArgs>
   }, ExtArgs["result"]["sale"]>
@@ -16739,17 +16766,17 @@ export namespace Prisma {
 
   export type SaleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "saleNo" | "sellerId" | "productId" | "broadcastId" | "quantity" | "unitPrice" | "totalPrice" | "saleDate" | "createdAt", ExtArgs["result"]["sale"]>
   export type SaleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    seller?: boolean | UserDefaultArgs<ExtArgs>
+    seller?: boolean | Sale$sellerArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
     broadcast?: boolean | Sale$broadcastArgs<ExtArgs>
   }
   export type SaleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    seller?: boolean | UserDefaultArgs<ExtArgs>
+    seller?: boolean | Sale$sellerArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
     broadcast?: boolean | Sale$broadcastArgs<ExtArgs>
   }
   export type SaleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    seller?: boolean | UserDefaultArgs<ExtArgs>
+    seller?: boolean | Sale$sellerArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
     broadcast?: boolean | Sale$broadcastArgs<ExtArgs>
   }
@@ -16757,14 +16784,14 @@ export namespace Prisma {
   export type $SalePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Sale"
     objects: {
-      seller: Prisma.$UserPayload<ExtArgs>
+      seller: Prisma.$UserPayload<ExtArgs> | null
       product: Prisma.$ProductPayload<ExtArgs>
       broadcast: Prisma.$BroadcastPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       saleNo: string
-      sellerId: string
+      sellerId: string | null
       productId: string
       broadcastId: string | null
       quantity: number
@@ -17166,7 +17193,7 @@ export namespace Prisma {
    */
   export interface Prisma__SaleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    seller<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    seller<T extends Sale$sellerArgs<ExtArgs> = {}>(args?: Subset<T, Sale$sellerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     broadcast<T extends Sale$broadcastArgs<ExtArgs> = {}>(args?: Subset<T, Sale$broadcastArgs<ExtArgs>>): Prisma__BroadcastClient<$Result.GetResult<Prisma.$BroadcastPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -17609,6 +17636,25 @@ export namespace Prisma {
   }
 
   /**
+   * Sale.seller
+   */
+  export type Sale$sellerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * Sale.broadcast
    */
   export type Sale$broadcastArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17951,7 +17997,7 @@ export namespace Prisma {
     subcategory: string | null
     description: string
     status: $Enums.ProposalStatus
-    submittedBy: string
+    submittedBy: string | null
     createdAt: Date
     updatedAt: Date
     imageMain: string | null
@@ -18012,7 +18058,7 @@ export namespace Prisma {
     supplyPrice?: boolean
     expiryDate?: boolean
     stockQty?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Proposal$userArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
   export type ProposalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18040,7 +18086,7 @@ export namespace Prisma {
     supplyPrice?: boolean
     expiryDate?: boolean
     stockQty?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Proposal$userArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
   export type ProposalSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18068,7 +18114,7 @@ export namespace Prisma {
     supplyPrice?: boolean
     expiryDate?: boolean
     stockQty?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Proposal$userArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
   export type ProposalSelectScalar = {
@@ -18100,19 +18146,19 @@ export namespace Prisma {
 
   export type ProposalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "companyName" | "contact" | "phone" | "productName" | "category" | "subcategory" | "description" | "status" | "submittedBy" | "createdAt" | "updatedAt" | "imageMain" | "imageSubs" | "sampleType" | "samplePrice" | "quantityLimit" | "supplyType" | "brand" | "productCode" | "onlineLowestPrice" | "supplyPrice" | "expiryDate" | "stockQty", ExtArgs["result"]["proposal"]>
   export type ProposalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Proposal$userArgs<ExtArgs>
   }
   export type ProposalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Proposal$userArgs<ExtArgs>
   }
   export type ProposalIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Proposal$userArgs<ExtArgs>
   }
 
   export type $ProposalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Proposal"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -18124,7 +18170,7 @@ export namespace Prisma {
       subcategory: string | null
       description: string
       status: $Enums.ProposalStatus
-      submittedBy: string
+      submittedBy: string | null
       createdAt: Date
       updatedAt: Date
       imageMain: string | null
@@ -18533,7 +18579,7 @@ export namespace Prisma {
    */
   export interface Prisma__ProposalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends Proposal$userArgs<ExtArgs> = {}>(args?: Subset<T, Proposal$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18985,6 +19031,25 @@ export namespace Prisma {
      * Limit how many Proposals to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Proposal.user
+   */
+  export type Proposal$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -32885,7 +32950,7 @@ export namespace Prisma {
 
   export type ScanLogGroupByOutputType = {
     id: string
-    userId: string
+    userId: string | null
     productId: string | null
     barcode: string
     scanType: $Enums.ScanType
@@ -32924,7 +32989,7 @@ export namespace Prisma {
     centerId?: boolean
     scannedAt?: boolean
     metadata?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | ScanLog$userArgs<ExtArgs>
     product?: boolean | ScanLog$productArgs<ExtArgs>
     center?: boolean | ScanLog$centerArgs<ExtArgs>
   }, ExtArgs["result"]["scanLog"]>
@@ -32939,7 +33004,7 @@ export namespace Prisma {
     centerId?: boolean
     scannedAt?: boolean
     metadata?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | ScanLog$userArgs<ExtArgs>
     product?: boolean | ScanLog$productArgs<ExtArgs>
     center?: boolean | ScanLog$centerArgs<ExtArgs>
   }, ExtArgs["result"]["scanLog"]>
@@ -32954,7 +33019,7 @@ export namespace Prisma {
     centerId?: boolean
     scannedAt?: boolean
     metadata?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | ScanLog$userArgs<ExtArgs>
     product?: boolean | ScanLog$productArgs<ExtArgs>
     center?: boolean | ScanLog$centerArgs<ExtArgs>
   }, ExtArgs["result"]["scanLog"]>
@@ -32973,17 +33038,17 @@ export namespace Prisma {
 
   export type ScanLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "productId" | "barcode" | "scanType" | "quantity" | "centerId" | "scannedAt" | "metadata", ExtArgs["result"]["scanLog"]>
   export type ScanLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | ScanLog$userArgs<ExtArgs>
     product?: boolean | ScanLog$productArgs<ExtArgs>
     center?: boolean | ScanLog$centerArgs<ExtArgs>
   }
   export type ScanLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | ScanLog$userArgs<ExtArgs>
     product?: boolean | ScanLog$productArgs<ExtArgs>
     center?: boolean | ScanLog$centerArgs<ExtArgs>
   }
   export type ScanLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | ScanLog$userArgs<ExtArgs>
     product?: boolean | ScanLog$productArgs<ExtArgs>
     center?: boolean | ScanLog$centerArgs<ExtArgs>
   }
@@ -32991,13 +33056,13 @@ export namespace Prisma {
   export type $ScanLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ScanLog"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
       product: Prisma.$ProductPayload<ExtArgs> | null
       center: Prisma.$CenterPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      userId: string
+      userId: string | null
       productId: string | null
       barcode: string
       scanType: $Enums.ScanType
@@ -33399,7 +33464,7 @@ export namespace Prisma {
    */
   export interface Prisma__ScanLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends ScanLog$userArgs<ExtArgs> = {}>(args?: Subset<T, ScanLog$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     product<T extends ScanLog$productArgs<ExtArgs> = {}>(args?: Subset<T, ScanLog$productArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     center<T extends ScanLog$centerArgs<ExtArgs> = {}>(args?: Subset<T, ScanLog$centerArgs<ExtArgs>>): Prisma__CenterClient<$Result.GetResult<Prisma.$CenterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -33838,6 +33903,25 @@ export namespace Prisma {
      * Limit how many ScanLogs to delete.
      */
     limit?: number
+  }
+
+  /**
+   * ScanLog.user
+   */
+  export type ScanLog$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -38450,6 +38534,8 @@ export namespace Prisma {
     paymentStatus: 'paymentStatus',
     shippingStatus: 'shippingStatus',
     paidAt: 'paidAt',
+    stockShortageReason: 'stockShortageReason',
+    stockShortageDetectedAt: 'stockShortageDetectedAt',
     virtualAccount: 'virtualAccount',
     virtualAccountBank: 'virtualAccountBank',
     virtualAccountExpiry: 'virtualAccountExpiry',
@@ -39894,6 +39980,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFilter<"Order"> | $Enums.ShippingStatus
     paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    stockShortageReason?: StringNullableFilter<"Order"> | string | null
+    stockShortageDetectedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     virtualAccount?: StringNullableFilter<"Order"> | string | null
     virtualAccountBank?: StringNullableFilter<"Order"> | string | null
     virtualAccountExpiry?: DateTimeNullableFilter<"Order"> | Date | string | null
@@ -39936,6 +40024,8 @@ export namespace Prisma {
     paymentStatus?: SortOrder
     shippingStatus?: SortOrder
     paidAt?: SortOrderInput | SortOrder
+    stockShortageReason?: SortOrderInput | SortOrder
+    stockShortageDetectedAt?: SortOrderInput | SortOrder
     virtualAccount?: SortOrderInput | SortOrder
     virtualAccountBank?: SortOrderInput | SortOrder
     virtualAccountExpiry?: SortOrderInput | SortOrder
@@ -39981,6 +40071,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFilter<"Order"> | $Enums.ShippingStatus
     paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    stockShortageReason?: StringNullableFilter<"Order"> | string | null
+    stockShortageDetectedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     virtualAccount?: StringNullableFilter<"Order"> | string | null
     virtualAccountBank?: StringNullableFilter<"Order"> | string | null
     virtualAccountExpiry?: DateTimeNullableFilter<"Order"> | Date | string | null
@@ -40023,6 +40115,8 @@ export namespace Prisma {
     paymentStatus?: SortOrder
     shippingStatus?: SortOrder
     paidAt?: SortOrderInput | SortOrder
+    stockShortageReason?: SortOrderInput | SortOrder
+    stockShortageDetectedAt?: SortOrderInput | SortOrder
     virtualAccount?: SortOrderInput | SortOrder
     virtualAccountBank?: SortOrderInput | SortOrder
     virtualAccountExpiry?: SortOrderInput | SortOrder
@@ -40065,6 +40159,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusWithAggregatesFilter<"Order"> | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusWithAggregatesFilter<"Order"> | $Enums.ShippingStatus
     paidAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    stockShortageReason?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    stockShortageDetectedAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     virtualAccount?: StringNullableWithAggregatesFilter<"Order"> | string | null
     virtualAccountBank?: StringNullableWithAggregatesFilter<"Order"> | string | null
     virtualAccountExpiry?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
@@ -40388,7 +40484,7 @@ export namespace Prisma {
     NOT?: SaleWhereInput | SaleWhereInput[]
     id?: StringFilter<"Sale"> | string
     saleNo?: StringFilter<"Sale"> | string
-    sellerId?: StringFilter<"Sale"> | string
+    sellerId?: StringNullableFilter<"Sale"> | string | null
     productId?: StringFilter<"Sale"> | string
     broadcastId?: StringNullableFilter<"Sale"> | string | null
     quantity?: IntFilter<"Sale"> | number
@@ -40396,7 +40492,7 @@ export namespace Prisma {
     totalPrice?: IntFilter<"Sale"> | number
     saleDate?: DateTimeFilter<"Sale"> | Date | string
     createdAt?: DateTimeFilter<"Sale"> | Date | string
-    seller?: XOR<UserScalarRelationFilter, UserWhereInput>
+    seller?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     broadcast?: XOR<BroadcastNullableScalarRelationFilter, BroadcastWhereInput> | null
   }
@@ -40404,7 +40500,7 @@ export namespace Prisma {
   export type SaleOrderByWithRelationInput = {
     id?: SortOrder
     saleNo?: SortOrder
-    sellerId?: SortOrder
+    sellerId?: SortOrderInput | SortOrder
     productId?: SortOrder
     broadcastId?: SortOrderInput | SortOrder
     quantity?: SortOrder
@@ -40423,7 +40519,7 @@ export namespace Prisma {
     AND?: SaleWhereInput | SaleWhereInput[]
     OR?: SaleWhereInput[]
     NOT?: SaleWhereInput | SaleWhereInput[]
-    sellerId?: StringFilter<"Sale"> | string
+    sellerId?: StringNullableFilter<"Sale"> | string | null
     productId?: StringFilter<"Sale"> | string
     broadcastId?: StringNullableFilter<"Sale"> | string | null
     quantity?: IntFilter<"Sale"> | number
@@ -40431,7 +40527,7 @@ export namespace Prisma {
     totalPrice?: IntFilter<"Sale"> | number
     saleDate?: DateTimeFilter<"Sale"> | Date | string
     createdAt?: DateTimeFilter<"Sale"> | Date | string
-    seller?: XOR<UserScalarRelationFilter, UserWhereInput>
+    seller?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     broadcast?: XOR<BroadcastNullableScalarRelationFilter, BroadcastWhereInput> | null
   }, "id" | "saleNo">
@@ -40439,7 +40535,7 @@ export namespace Prisma {
   export type SaleOrderByWithAggregationInput = {
     id?: SortOrder
     saleNo?: SortOrder
-    sellerId?: SortOrder
+    sellerId?: SortOrderInput | SortOrder
     productId?: SortOrder
     broadcastId?: SortOrderInput | SortOrder
     quantity?: SortOrder
@@ -40460,7 +40556,7 @@ export namespace Prisma {
     NOT?: SaleScalarWhereWithAggregatesInput | SaleScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Sale"> | string
     saleNo?: StringWithAggregatesFilter<"Sale"> | string
-    sellerId?: StringWithAggregatesFilter<"Sale"> | string
+    sellerId?: StringNullableWithAggregatesFilter<"Sale"> | string | null
     productId?: StringWithAggregatesFilter<"Sale"> | string
     broadcastId?: StringNullableWithAggregatesFilter<"Sale"> | string | null
     quantity?: IntWithAggregatesFilter<"Sale"> | number
@@ -40483,7 +40579,7 @@ export namespace Prisma {
     subcategory?: StringNullableFilter<"Proposal"> | string | null
     description?: StringFilter<"Proposal"> | string
     status?: EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
-    submittedBy?: StringFilter<"Proposal"> | string
+    submittedBy?: StringNullableFilter<"Proposal"> | string | null
     createdAt?: DateTimeFilter<"Proposal"> | Date | string
     updatedAt?: DateTimeFilter<"Proposal"> | Date | string
     imageMain?: StringNullableFilter<"Proposal"> | string | null
@@ -40498,7 +40594,7 @@ export namespace Prisma {
     supplyPrice?: IntNullableFilter<"Proposal"> | number | null
     expiryDate?: DateTimeNullableFilter<"Proposal"> | Date | string | null
     stockQty?: IntNullableFilter<"Proposal"> | number | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type ProposalOrderByWithRelationInput = {
@@ -40511,7 +40607,7 @@ export namespace Prisma {
     subcategory?: SortOrderInput | SortOrder
     description?: SortOrder
     status?: SortOrder
-    submittedBy?: SortOrder
+    submittedBy?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     imageMain?: SortOrderInput | SortOrder
@@ -40542,7 +40638,7 @@ export namespace Prisma {
     subcategory?: StringNullableFilter<"Proposal"> | string | null
     description?: StringFilter<"Proposal"> | string
     status?: EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
-    submittedBy?: StringFilter<"Proposal"> | string
+    submittedBy?: StringNullableFilter<"Proposal"> | string | null
     createdAt?: DateTimeFilter<"Proposal"> | Date | string
     updatedAt?: DateTimeFilter<"Proposal"> | Date | string
     imageMain?: StringNullableFilter<"Proposal"> | string | null
@@ -40557,7 +40653,7 @@ export namespace Prisma {
     supplyPrice?: IntNullableFilter<"Proposal"> | number | null
     expiryDate?: DateTimeNullableFilter<"Proposal"> | Date | string | null
     stockQty?: IntNullableFilter<"Proposal"> | number | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type ProposalOrderByWithAggregationInput = {
@@ -40570,7 +40666,7 @@ export namespace Prisma {
     subcategory?: SortOrderInput | SortOrder
     description?: SortOrder
     status?: SortOrder
-    submittedBy?: SortOrder
+    submittedBy?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     imageMain?: SortOrderInput | SortOrder
@@ -40605,7 +40701,7 @@ export namespace Prisma {
     subcategory?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
     description?: StringWithAggregatesFilter<"Proposal"> | string
     status?: EnumProposalStatusWithAggregatesFilter<"Proposal"> | $Enums.ProposalStatus
-    submittedBy?: StringWithAggregatesFilter<"Proposal"> | string
+    submittedBy?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Proposal"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Proposal"> | Date | string
     imageMain?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
@@ -41549,7 +41645,7 @@ export namespace Prisma {
     OR?: ScanLogWhereInput[]
     NOT?: ScanLogWhereInput | ScanLogWhereInput[]
     id?: StringFilter<"ScanLog"> | string
-    userId?: StringFilter<"ScanLog"> | string
+    userId?: StringNullableFilter<"ScanLog"> | string | null
     productId?: StringNullableFilter<"ScanLog"> | string | null
     barcode?: StringFilter<"ScanLog"> | string
     scanType?: EnumScanTypeFilter<"ScanLog"> | $Enums.ScanType
@@ -41557,14 +41653,14 @@ export namespace Prisma {
     centerId?: StringNullableFilter<"ScanLog"> | string | null
     scannedAt?: DateTimeFilter<"ScanLog"> | Date | string
     metadata?: JsonNullableFilter<"ScanLog">
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
   }
 
   export type ScanLogOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    userId?: SortOrderInput | SortOrder
     productId?: SortOrderInput | SortOrder
     barcode?: SortOrder
     scanType?: SortOrder
@@ -41582,7 +41678,7 @@ export namespace Prisma {
     AND?: ScanLogWhereInput | ScanLogWhereInput[]
     OR?: ScanLogWhereInput[]
     NOT?: ScanLogWhereInput | ScanLogWhereInput[]
-    userId?: StringFilter<"ScanLog"> | string
+    userId?: StringNullableFilter<"ScanLog"> | string | null
     productId?: StringNullableFilter<"ScanLog"> | string | null
     barcode?: StringFilter<"ScanLog"> | string
     scanType?: EnumScanTypeFilter<"ScanLog"> | $Enums.ScanType
@@ -41590,14 +41686,14 @@ export namespace Prisma {
     centerId?: StringNullableFilter<"ScanLog"> | string | null
     scannedAt?: DateTimeFilter<"ScanLog"> | Date | string
     metadata?: JsonNullableFilter<"ScanLog">
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
   }, "id">
 
   export type ScanLogOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    userId?: SortOrderInput | SortOrder
     productId?: SortOrderInput | SortOrder
     barcode?: SortOrder
     scanType?: SortOrder
@@ -41617,7 +41713,7 @@ export namespace Prisma {
     OR?: ScanLogScalarWhereWithAggregatesInput[]
     NOT?: ScanLogScalarWhereWithAggregatesInput | ScanLogScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ScanLog"> | string
-    userId?: StringWithAggregatesFilter<"ScanLog"> | string
+    userId?: StringNullableWithAggregatesFilter<"ScanLog"> | string | null
     productId?: StringNullableWithAggregatesFilter<"ScanLog"> | string | null
     barcode?: StringWithAggregatesFilter<"ScanLog"> | string
     scanType?: EnumScanTypeWithAggregatesFilter<"ScanLog"> | $Enums.ScanType
@@ -42836,6 +42932,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -42877,6 +42975,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -42914,6 +43014,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -42955,6 +43057,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -42994,6 +43098,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -43026,6 +43132,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -43059,6 +43167,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -43412,7 +43522,7 @@ export namespace Prisma {
     totalPrice: number
     saleDate?: Date | string
     createdAt?: Date | string
-    seller: UserCreateNestedOneWithoutSalesInput
+    seller?: UserCreateNestedOneWithoutSalesInput
     product: ProductCreateNestedOneWithoutSalesInput
     broadcast?: BroadcastCreateNestedOneWithoutSalesInput
   }
@@ -43420,7 +43530,7 @@ export namespace Prisma {
   export type SaleUncheckedCreateInput = {
     id?: string
     saleNo: string
-    sellerId: string
+    sellerId?: string | null
     productId: string
     broadcastId?: string | null
     quantity: number
@@ -43438,7 +43548,7 @@ export namespace Prisma {
     totalPrice?: IntFieldUpdateOperationsInput | number
     saleDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: UserUpdateOneRequiredWithoutSalesNestedInput
+    seller?: UserUpdateOneWithoutSalesNestedInput
     product?: ProductUpdateOneRequiredWithoutSalesNestedInput
     broadcast?: BroadcastUpdateOneWithoutSalesNestedInput
   }
@@ -43446,7 +43556,7 @@ export namespace Prisma {
   export type SaleUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     saleNo?: StringFieldUpdateOperationsInput | string
-    sellerId?: StringFieldUpdateOperationsInput | string
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: StringFieldUpdateOperationsInput | string
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
@@ -43459,7 +43569,7 @@ export namespace Prisma {
   export type SaleCreateManyInput = {
     id?: string
     saleNo: string
-    sellerId: string
+    sellerId?: string | null
     productId: string
     broadcastId?: string | null
     quantity: number
@@ -43482,7 +43592,7 @@ export namespace Prisma {
   export type SaleUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     saleNo?: StringFieldUpdateOperationsInput | string
-    sellerId?: StringFieldUpdateOperationsInput | string
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: StringFieldUpdateOperationsInput | string
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
@@ -43516,7 +43626,7 @@ export namespace Prisma {
     supplyPrice?: number | null
     expiryDate?: Date | string | null
     stockQty?: number | null
-    user: UserCreateNestedOneWithoutProposalsInput
+    user?: UserCreateNestedOneWithoutProposalsInput
   }
 
   export type ProposalUncheckedCreateInput = {
@@ -43529,7 +43639,7 @@ export namespace Prisma {
     subcategory?: string | null
     description: string
     status?: $Enums.ProposalStatus
-    submittedBy: string
+    submittedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     imageMain?: string | null
@@ -43570,7 +43680,7 @@ export namespace Prisma {
     supplyPrice?: NullableIntFieldUpdateOperationsInput | number | null
     expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     stockQty?: NullableIntFieldUpdateOperationsInput | number | null
-    user?: UserUpdateOneRequiredWithoutProposalsNestedInput
+    user?: UserUpdateOneWithoutProposalsNestedInput
   }
 
   export type ProposalUncheckedUpdateInput = {
@@ -43583,7 +43693,7 @@ export namespace Prisma {
     subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
-    submittedBy?: StringFieldUpdateOperationsInput | string
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     imageMain?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43610,7 +43720,7 @@ export namespace Prisma {
     subcategory?: string | null
     description: string
     status?: $Enums.ProposalStatus
-    submittedBy: string
+    submittedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     imageMain?: string | null
@@ -43663,7 +43773,7 @@ export namespace Prisma {
     subcategory?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
-    submittedBy?: StringFieldUpdateOperationsInput | string
+    submittedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     imageMain?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44685,14 +44795,14 @@ export namespace Prisma {
     quantity?: number | null
     scannedAt?: Date | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutScanLogsInput
+    user?: UserCreateNestedOneWithoutScanLogsInput
     product?: ProductCreateNestedOneWithoutScanLogsInput
     center?: CenterCreateNestedOneWithoutScanLogsInput
   }
 
   export type ScanLogUncheckedCreateInput = {
     id?: string
-    userId: string
+    userId?: string | null
     productId?: string | null
     barcode: string
     scanType: $Enums.ScanType
@@ -44709,14 +44819,14 @@ export namespace Prisma {
     quantity?: NullableIntFieldUpdateOperationsInput | number | null
     scannedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutScanLogsNestedInput
+    user?: UserUpdateOneWithoutScanLogsNestedInput
     product?: ProductUpdateOneWithoutScanLogsNestedInput
     center?: CenterUpdateOneWithoutScanLogsNestedInput
   }
 
   export type ScanLogUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: StringFieldUpdateOperationsInput | string
     scanType?: EnumScanTypeFieldUpdateOperationsInput | $Enums.ScanType
@@ -44728,7 +44838,7 @@ export namespace Prisma {
 
   export type ScanLogCreateManyInput = {
     id?: string
-    userId: string
+    userId?: string | null
     productId?: string | null
     barcode: string
     scanType: $Enums.ScanType
@@ -44749,7 +44859,7 @@ export namespace Prisma {
 
   export type ScanLogUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: StringFieldUpdateOperationsInput | string
     scanType?: EnumScanTypeFieldUpdateOperationsInput | $Enums.ScanType
@@ -46095,6 +46205,8 @@ export namespace Prisma {
     paymentStatus?: SortOrder
     shippingStatus?: SortOrder
     paidAt?: SortOrder
+    stockShortageReason?: SortOrder
+    stockShortageDetectedAt?: SortOrder
     virtualAccount?: SortOrder
     virtualAccountBank?: SortOrder
     virtualAccountExpiry?: SortOrder
@@ -46134,6 +46246,8 @@ export namespace Prisma {
     paymentStatus?: SortOrder
     shippingStatus?: SortOrder
     paidAt?: SortOrder
+    stockShortageReason?: SortOrder
+    stockShortageDetectedAt?: SortOrder
     virtualAccount?: SortOrder
     virtualAccountBank?: SortOrder
     virtualAccountExpiry?: SortOrder
@@ -46168,6 +46282,8 @@ export namespace Prisma {
     paymentStatus?: SortOrder
     shippingStatus?: SortOrder
     paidAt?: SortOrder
+    stockShortageReason?: SortOrder
+    stockShortageDetectedAt?: SortOrder
     virtualAccount?: SortOrder
     virtualAccountBank?: SortOrder
     virtualAccountExpiry?: SortOrder
@@ -49230,10 +49346,12 @@ export namespace Prisma {
     connect?: BroadcastWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutSalesNestedInput = {
+  export type UserUpdateOneWithoutSalesNestedInput = {
     create?: XOR<UserCreateWithoutSalesInput, UserUncheckedCreateWithoutSalesInput>
     connectOrCreate?: UserCreateOrConnectWithoutSalesInput
     upsert?: UserUpsertWithoutSalesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSalesInput, UserUpdateWithoutSalesInput>, UserUncheckedUpdateWithoutSalesInput>
   }
@@ -49266,10 +49384,12 @@ export namespace Prisma {
     set?: $Enums.ProposalStatus
   }
 
-  export type UserUpdateOneRequiredWithoutProposalsNestedInput = {
+  export type UserUpdateOneWithoutProposalsNestedInput = {
     create?: XOR<UserCreateWithoutProposalsInput, UserUncheckedCreateWithoutProposalsInput>
     connectOrCreate?: UserCreateOrConnectWithoutProposalsInput
     upsert?: UserUpsertWithoutProposalsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProposalsInput, UserUpdateWithoutProposalsInput>, UserUncheckedUpdateWithoutProposalsInput>
   }
@@ -49638,10 +49758,12 @@ export namespace Prisma {
     set?: $Enums.ScanType
   }
 
-  export type UserUpdateOneRequiredWithoutScanLogsNestedInput = {
+  export type UserUpdateOneWithoutScanLogsNestedInput = {
     create?: XOR<UserCreateWithoutScanLogsInput, UserUncheckedCreateWithoutScanLogsInput>
     connectOrCreate?: UserCreateOrConnectWithoutScanLogsInput
     upsert?: UserUpsertWithoutScanLogsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutScanLogsInput, UserUpdateWithoutScanLogsInput>, UserUncheckedUpdateWithoutScanLogsInput>
   }
@@ -50295,6 +50417,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -50334,6 +50458,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -50815,6 +50941,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFilter<"Order"> | $Enums.ShippingStatus
     paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    stockShortageReason?: StringNullableFilter<"Order"> | string | null
+    stockShortageDetectedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     virtualAccount?: StringNullableFilter<"Order"> | string | null
     virtualAccountBank?: StringNullableFilter<"Order"> | string | null
     virtualAccountExpiry?: DateTimeNullableFilter<"Order"> | Date | string | null
@@ -50909,7 +51037,7 @@ export namespace Prisma {
     NOT?: SaleScalarWhereInput | SaleScalarWhereInput[]
     id?: StringFilter<"Sale"> | string
     saleNo?: StringFilter<"Sale"> | string
-    sellerId?: StringFilter<"Sale"> | string
+    sellerId?: StringNullableFilter<"Sale"> | string | null
     productId?: StringFilter<"Sale"> | string
     broadcastId?: StringNullableFilter<"Sale"> | string | null
     quantity?: IntFilter<"Sale"> | number
@@ -50948,7 +51076,7 @@ export namespace Prisma {
     subcategory?: StringNullableFilter<"Proposal"> | string | null
     description?: StringFilter<"Proposal"> | string
     status?: EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
-    submittedBy?: StringFilter<"Proposal"> | string
+    submittedBy?: StringNullableFilter<"Proposal"> | string | null
     createdAt?: DateTimeFilter<"Proposal"> | Date | string
     updatedAt?: DateTimeFilter<"Proposal"> | Date | string
     imageMain?: StringNullableFilter<"Proposal"> | string | null
@@ -51050,7 +51178,7 @@ export namespace Prisma {
     OR?: ScanLogScalarWhereInput[]
     NOT?: ScanLogScalarWhereInput | ScanLogScalarWhereInput[]
     id?: StringFilter<"ScanLog"> | string
-    userId?: StringFilter<"ScanLog"> | string
+    userId?: StringNullableFilter<"ScanLog"> | string | null
     productId?: StringNullableFilter<"ScanLog"> | string | null
     barcode?: StringFilter<"ScanLog"> | string
     scanType?: EnumScanTypeFilter<"ScanLog"> | $Enums.ScanType
@@ -51142,14 +51270,14 @@ export namespace Prisma {
     totalPrice: number
     saleDate?: Date | string
     createdAt?: Date | string
-    seller: UserCreateNestedOneWithoutSalesInput
+    seller?: UserCreateNestedOneWithoutSalesInput
     broadcast?: BroadcastCreateNestedOneWithoutSalesInput
   }
 
   export type SaleUncheckedCreateWithoutProductInput = {
     id?: string
     saleNo: string
-    sellerId: string
+    sellerId?: string | null
     broadcastId?: string | null
     quantity: number
     unitPrice: number
@@ -51405,13 +51533,13 @@ export namespace Prisma {
     quantity?: number | null
     scannedAt?: Date | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutScanLogsInput
+    user?: UserCreateNestedOneWithoutScanLogsInput
     center?: CenterCreateNestedOneWithoutScanLogsInput
   }
 
   export type ScanLogUncheckedCreateWithoutProductInput = {
     id?: string
-    userId: string
+    userId?: string | null
     barcode: string
     scanType: $Enums.ScanType
     quantity?: number | null
@@ -51862,6 +51990,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -51901,6 +52031,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -51994,13 +52126,13 @@ export namespace Prisma {
     quantity?: number | null
     scannedAt?: Date | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutScanLogsInput
+    user?: UserCreateNestedOneWithoutScanLogsInput
     product?: ProductCreateNestedOneWithoutScanLogsInput
   }
 
   export type ScanLogUncheckedCreateWithoutCenterInput = {
     id?: string
-    userId: string
+    userId?: string | null
     productId?: string | null
     barcode: string
     scanType: $Enums.ScanType
@@ -52471,6 +52603,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -52511,6 +52645,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -52737,6 +52873,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -52777,6 +52915,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -53650,6 +53790,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -53690,6 +53832,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -53847,6 +53991,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -53887,6 +54033,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -54034,6 +54182,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -54074,6 +54224,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -54231,6 +54383,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -54271,6 +54425,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -54600,14 +54756,14 @@ export namespace Prisma {
     totalPrice: number
     saleDate?: Date | string
     createdAt?: Date | string
-    seller: UserCreateNestedOneWithoutSalesInput
+    seller?: UserCreateNestedOneWithoutSalesInput
     product: ProductCreateNestedOneWithoutSalesInput
   }
 
   export type SaleUncheckedCreateWithoutBroadcastInput = {
     id?: string
     saleNo: string
-    sellerId: string
+    sellerId?: string | null
     productId: string
     quantity: number
     unitPrice: number
@@ -54643,6 +54799,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -54683,6 +54841,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -55942,6 +56102,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -55982,6 +56144,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -56034,6 +56198,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -56074,6 +56240,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -56326,6 +56494,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -56366,6 +56536,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -56418,6 +56590,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -56458,6 +56632,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -58251,6 +58427,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -58416,6 +58594,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -58455,6 +58635,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -58493,6 +58675,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -58931,7 +59115,7 @@ export namespace Prisma {
   export type SaleCreateManyProductInput = {
     id?: string
     saleNo: string
-    sellerId: string
+    sellerId?: string | null
     broadcastId?: string | null
     quantity: number
     unitPrice: number
@@ -59022,7 +59206,7 @@ export namespace Prisma {
 
   export type ScanLogCreateManyProductInput = {
     id?: string
-    userId: string
+    userId?: string | null
     barcode: string
     scanType: $Enums.ScanType
     quantity?: number | null
@@ -59088,14 +59272,14 @@ export namespace Prisma {
     totalPrice?: IntFieldUpdateOperationsInput | number
     saleDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: UserUpdateOneRequiredWithoutSalesNestedInput
+    seller?: UserUpdateOneWithoutSalesNestedInput
     broadcast?: BroadcastUpdateOneWithoutSalesNestedInput
   }
 
   export type SaleUncheckedUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     saleNo?: StringFieldUpdateOperationsInput | string
-    sellerId?: StringFieldUpdateOperationsInput | string
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
@@ -59107,7 +59291,7 @@ export namespace Prisma {
   export type SaleUncheckedUpdateManyWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     saleNo?: StringFieldUpdateOperationsInput | string
-    sellerId?: StringFieldUpdateOperationsInput | string
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     broadcastId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
@@ -59363,13 +59547,13 @@ export namespace Prisma {
     quantity?: NullableIntFieldUpdateOperationsInput | number | null
     scannedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutScanLogsNestedInput
+    user?: UserUpdateOneWithoutScanLogsNestedInput
     center?: CenterUpdateOneWithoutScanLogsNestedInput
   }
 
   export type ScanLogUncheckedUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: StringFieldUpdateOperationsInput | string
     scanType?: EnumScanTypeFieldUpdateOperationsInput | $Enums.ScanType
     quantity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -59380,7 +59564,7 @@ export namespace Prisma {
 
   export type ScanLogUncheckedUpdateManyWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: StringFieldUpdateOperationsInput | string
     scanType?: EnumScanTypeFieldUpdateOperationsInput | $Enums.ScanType
     quantity?: NullableIntFieldUpdateOperationsInput | number | null
@@ -59469,6 +59653,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -59507,7 +59693,7 @@ export namespace Prisma {
 
   export type ScanLogCreateManyCenterInput = {
     id?: string
-    userId: string
+    userId?: string | null
     productId?: string | null
     barcode: string
     scanType: $Enums.ScanType
@@ -59647,6 +59833,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59686,6 +59874,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59724,6 +59914,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -59813,13 +60005,13 @@ export namespace Prisma {
     quantity?: NullableIntFieldUpdateOperationsInput | number | null
     scannedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutScanLogsNestedInput
+    user?: UserUpdateOneWithoutScanLogsNestedInput
     product?: ProductUpdateOneWithoutScanLogsNestedInput
   }
 
   export type ScanLogUncheckedUpdateWithoutCenterInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: StringFieldUpdateOperationsInput | string
     scanType?: EnumScanTypeFieldUpdateOperationsInput | $Enums.ScanType
@@ -59830,7 +60022,7 @@ export namespace Prisma {
 
   export type ScanLogUncheckedUpdateManyWithoutCenterInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: NullableStringFieldUpdateOperationsInput | string | null
     barcode?: StringFieldUpdateOperationsInput | string
     scanType?: EnumScanTypeFieldUpdateOperationsInput | $Enums.ScanType
@@ -60030,7 +60222,7 @@ export namespace Prisma {
   export type SaleCreateManyBroadcastInput = {
     id?: string
     saleNo: string
-    sellerId: string
+    sellerId?: string | null
     productId: string
     quantity: number
     unitPrice: number
@@ -60058,6 +60250,8 @@ export namespace Prisma {
     paymentStatus?: $Enums.PaymentStatus
     shippingStatus?: $Enums.ShippingStatus
     paidAt?: Date | string | null
+    stockShortageReason?: string | null
+    stockShortageDetectedAt?: Date | string | null
     virtualAccount?: string | null
     virtualAccountBank?: string | null
     virtualAccountExpiry?: Date | string | null
@@ -60080,14 +60274,14 @@ export namespace Prisma {
     totalPrice?: IntFieldUpdateOperationsInput | number
     saleDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    seller?: UserUpdateOneRequiredWithoutSalesNestedInput
+    seller?: UserUpdateOneWithoutSalesNestedInput
     product?: ProductUpdateOneRequiredWithoutSalesNestedInput
   }
 
   export type SaleUncheckedUpdateWithoutBroadcastInput = {
     id?: StringFieldUpdateOperationsInput | string
     saleNo?: StringFieldUpdateOperationsInput | string
-    sellerId?: StringFieldUpdateOperationsInput | string
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
@@ -60099,7 +60293,7 @@ export namespace Prisma {
   export type SaleUncheckedUpdateManyWithoutBroadcastInput = {
     id?: StringFieldUpdateOperationsInput | string
     saleNo?: StringFieldUpdateOperationsInput | string
-    sellerId?: StringFieldUpdateOperationsInput | string
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     unitPrice?: IntFieldUpdateOperationsInput | number
@@ -60125,6 +60319,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60165,6 +60361,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -60203,6 +60401,8 @@ export namespace Prisma {
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     shippingStatus?: EnumShippingStatusFieldUpdateOperationsInput | $Enums.ShippingStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stockShortageReason?: NullableStringFieldUpdateOperationsInput | string | null
+    stockShortageDetectedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     virtualAccount?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountBank?: NullableStringFieldUpdateOperationsInput | string | null
     virtualAccountExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
