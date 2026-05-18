@@ -74,7 +74,12 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
         orderBy: { createdAt: "desc" },
         include: {
           seller: {
-            select: { id: true, name: true, email: true },
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              center: { select: { name: true } },
+            },
           },
           broadcast: {
             select: { id: true, code: true, platform: true, scheduledAt: true, status: true },

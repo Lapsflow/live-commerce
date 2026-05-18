@@ -354,7 +354,8 @@ enum PaymentStatus {
 enum ShippingStatus {
   PENDING // 대기
   PREPARING // 발송준비
-  SHIPPED // 출고완료
+  SHIPPED // 배송중
+  DELIVERED // 배송완료
   PARTIAL // 부분출고
 }
 

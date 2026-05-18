@@ -27,6 +27,13 @@ import OrderPipelineCards from "./components/OrderPipelineCards";
 import ExpiryTimer from "./components/ExpiryTimer";
 import { getOrderStatusLabel, getOrderStatusColor } from "@/lib/utils/order-status-label";
 import {
+  PAYMENT_STATUS_LABELS,
+  SHIPPING_STATUS_LABELS,
+  paymentStatusVariant,
+  shippingStatusVariant,
+} from "@/lib/constants/order-labels";
+import type { PaymentStatus, ShippingStatus } from "@/types/order";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -211,90 +218,52 @@ export default function OrdersPage() {
 
   const columns: ColumnDef<Order>[] = [
     {
-      accessorKey: "orderNo",
-      header: "주문번호",
+      accessorKey: "seller.center.name",
+      header: "센터명",
+      cell: ({ row }) => row.original.seller?.center?.name ?? "-",
     },
     {
-      accessorKey: "seller",
-      header: "판매자",
+      accessorKey: "seller.name",
+      header: "셀러명",
       cell: ({ row }) => row.original.seller?.name ?? "-",
     },
     {
       accessorKey: "paymentStatus",
       header: "입금상태",
       cell: ({ row }) => {
-        const paymentStatus = row.original.paymentStatus;
+        const status = row.original.paymentStatus as PaymentStatus;
         return (
-          <Badge variant="outline" className={paymentColors[paymentStatus]}>
-            {paymentLabels[paymentStatus]}
+          <Badge variant={paymentStatusVariant(status)}>
+            {PAYMENT_STATUS_LABELS[status]}
           </Badge>
         );
       },
-    },
-    {
-      id: "expiryTimer",
-      header: "남은시간",
-      cell: ({ row }) => (
-        <ExpiryTimer
-          expiresAt={row.original.expiresAt}
-          status={row.original.status}
-          paymentStatus={row.original.paymentStatus}
-        />
-      ),
     },
     {
       accessorKey: "shippingStatus",
       header: "출고상태",
       cell: ({ row }) => {
-        const shippingStatus = row.original.shippingStatus;
+        const status = row.original.shippingStatus as ShippingStatus;
         return (
-          <Badge variant="outline" className={shippingColors[shippingStatus]}>
-            {shippingLabels[shippingStatus]}
+          <Badge variant={shippingStatusVariant(status)}>
+            {SHIPPING_STATUS_LABELS[status]}
           </Badge>
         );
       },
     },
     {
-      id: "combinedStatus",
-      header: "발주상태",
-      cell: ({ row }) => {
-        const o = row.original;
-        const label = getOrderStatusLabel({
-          status: o.status as any,
-          paymentStatus: o.paymentStatus as any,
-          shippingStatus: o.shippingStatus as any,
-        });
-        const colorClass = getOrderStatusColor(label);
-        return (
-          <Badge variant="outline" className={colorClass}>
-            {label}
-          </Badge>
-        );
-      },
-    },
-    {
-      accessorKey: "totalAmount",
-      header: "공급가합계",
-      cell: ({ row }) => `${row.original.totalAmount.toLocaleString()}원`,
-    },
-    {
-      accessorKey: "totalMargin",
-      header: "마진",
-      cell: ({ row }) => {
-        const margin = (row.original as any).totalMargin;
-        if (margin == null) return "-";
-        return (
-          <span className={margin > 0 ? "text-green-600 font-medium" : "text-red-600"}>
-            {margin.toLocaleString()}원
-          </span>
-        );
-      },
-    },
-    {
-      accessorKey: "uploadedAt",
+      accessorKey: "createdAt",
       header: "등록일",
-      cell: ({ row }) =>
-        new Date(row.original.uploadedAt).toLocaleDateString(),
+      cell: ({ row }) => {
+        const date = new Date(row.original.createdAt);
+        return date.toLocaleString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      },
     },
     {
       id: "actions",

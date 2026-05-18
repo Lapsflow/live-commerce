@@ -1,8 +1,12 @@
 import type { User } from "./user";
 
 export type OrderStatus = "PENDING" | "APPROVED" | "REJECTED";
-export type PaymentStatus = "UNPAID" | "PAID";
-export type ShippingStatus = "PENDING" | "PREPARING" | "SHIPPED" | "PARTIAL";
+export type PaymentStatus =
+  | "UNPAID"
+  | "PENDING_CONFIRMATION"
+  | "PAID"
+  | "PAYMENT_FAILED";
+export type ShippingStatus = "PENDING" | "PREPARING" | "SHIPPED" | "DELIVERED" | "PARTIAL";
 
 // Phase 2: Updated OrderItem type with product details and margin fields
 export interface OrderItem {
@@ -35,6 +39,9 @@ export interface Order {
     id: string;
     name: string;
     email: string;
+    center?: {
+      name: string;
+    } | null;
   };
   status: OrderStatus;
   productType: "HEADQUARTERS" | "CENTER"; // Added

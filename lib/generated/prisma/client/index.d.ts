@@ -231,6 +231,7 @@ export const ShippingStatus: {
   PENDING: 'PENDING',
   PREPARING: 'PREPARING',
   SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
   PARTIAL: 'PARTIAL'
 };
 
