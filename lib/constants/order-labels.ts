@@ -10,7 +10,7 @@ export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
 export const SHIPPING_STATUS_LABELS: Record<ShippingStatus, string> = {
   PENDING: "배송대기",
   PREPARING: "배송준비중",
-  SHIPPED: "배송완료",
+  SHIPPED: "배송중",
   DELIVERED: "배송완료",
   PARTIAL: "부분배송",
 };
