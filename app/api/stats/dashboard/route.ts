@@ -128,7 +128,9 @@ export async function GET(req: NextRequest) {
     }));
 
     // 셀러 정보 조회
-    const sellerIdList = sellerRankingRaw.map((item) => item.sellerId);
+    const sellerIdList = sellerRankingRaw
+      .map((item) => item.sellerId)
+      .filter((id): id is string => id !== null);
     const sellers = await prisma.user.findMany({
       where: { id: { in: sellerIdList } },
       select: { id: true, name: true },
@@ -137,10 +139,10 @@ export async function GET(req: NextRequest) {
     const sellerMap = new Map(sellers.map((s) => [s.id, s]));
 
     const sellerRanking = sellerRankingRaw.map((item) => {
-      const seller = sellerMap.get(item.sellerId);
+      const seller = item.sellerId ? sellerMap.get(item.sellerId) : null;
       return {
         sellerId: item.sellerId,
-        sellerName: seller?.name || "알 수 없음",
+        sellerName: seller?.name || (item.sellerId ? "알 수 없음" : "삭제된 셀러"),
         totalSales: item._sum.totalPrice || 0,
         count: item._count,
       };

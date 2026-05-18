@@ -48,7 +48,9 @@ export async function GET(req: NextRequest) {
         take: 5,
       });
 
-      const sellerIds = sellerTop.map((s) => s.sellerId);
+      const sellerIds = sellerTop
+        .map((s) => s.sellerId)
+        .filter((id): id is string => id !== null);
       const sellers = await prisma.user.findMany({
         where: { id: { in: sellerIds } },
         select: { id: true, name: true },
@@ -58,7 +60,7 @@ export async function GET(req: NextRequest) {
       return ok({
         type: "sales",
         topItems: sellerTop.map((s) => ({
-          name: sellerMap.get(s.sellerId) || "알 수 없음",
+          name: s.sellerId ? sellerMap.get(s.sellerId) || "알 수 없음" : "삭제된 셀러",
           value: s._sum.totalPrice || 0,
         })),
       });

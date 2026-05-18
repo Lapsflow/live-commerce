@@ -147,8 +147,10 @@ export const GET = withRole(
       salesWithProducts.forEach((sale) => {
         const margin =
           (sale.unitPrice - sale.product.supplyPrice) * sale.quantity;
-        const currentMargin = marginBySeller.get(sale.sellerId) || 0;
-        marginBySeller.set(sale.sellerId, currentMargin + margin);
+        if (sale.sellerId) {
+          const currentMargin = marginBySeller.get(sale.sellerId) || 0;
+          marginBySeller.set(sale.sellerId, currentMargin + margin);
+        }
       });
 
       // Seller 정보와 통계 병합

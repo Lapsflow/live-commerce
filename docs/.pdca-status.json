@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-05-18T03:10:31.899Z",
+  "lastUpdated": "2026-05-18T03:15:56.103Z",
   "activeFeatures": [
     "notifications",
     "[code]",
@@ -231,9 +231,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-04-30T02:39:20.380Z",
-        "lastUpdated": "2026-05-18T02:57:22.819Z"
+        "lastUpdated": "2026-05-18T03:15:47.546Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/users/[id]/route.ts"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/stats/admin/[id]/route.ts"
     },
     "live-commerce": {
       "phase": "do",
@@ -842,9 +842,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-01T01:11:23.955Z",
-        "lastUpdated": "2026-05-06T02:59:56.741Z"
+        "lastUpdated": "2026-05-18T03:15:56.103Z"
       },
-      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/(main)/dashboard/page.tsx"
+      "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/stats/dashboard/route.ts"
     },
     "analytics": {
       "phase": "do",
@@ -1102,7 +1102,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-05-03T06:22:52.919Z",
-        "lastUpdated": "2026-05-03T06:22:52.919Z"
+        "lastUpdated": "2026-05-18T03:15:51.702Z"
       },
       "lastFile": "/Users/jinwoo/Desktop/live-commerce/app/api/stats/dashboard/drilldown/route.ts"
     },
@@ -1414,7 +1414,7 @@
   "session": {
     "startedAt": "2026-04-28T06:44:38.229Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-05-18T03:10:31.899Z"
+    "lastActivity": "2026-05-18T03:15:56.103Z"
   },
   "history": [
     {
@@ -7066,6 +7066,24 @@
     {
       "timestamp": "2026-05-18T03:10:31.899Z",
       "feature": "users",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T03:15:47.546Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T03:15:51.702Z",
+      "feature": "drilldown",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-05-18T03:15:56.103Z",
+      "feature": "dashboard",
       "phase": "do",
       "action": "updated"
     }
