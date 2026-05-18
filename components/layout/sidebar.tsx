@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Radio,
   ShoppingCart,
-  TrendingUp,
   Barcode,
   Users,
   BarChart,
@@ -23,6 +22,7 @@ import {
   Store,
   Activity,
   FileSpreadsheet,
+  AlertCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { NavItem } from "./nav-item";
@@ -60,6 +60,7 @@ const menuByRole: Record<string, MenuItem[]> = {
     { href: "/samples/requests", label: "샘플 요청", icon: FlaskConical },
     { href: "/barcode", label: "바코드", icon: Barcode },
     { href: "/admin/audit-log", label: "변경 이력", icon: History },
+    { href: "/admin/order-errors", label: "발주 오류", icon: AlertCircle },
     { href: "/admin/sync-monitor", label: "동기화 모니터", icon: Activity },
   ],
   SUB_MASTER: [
@@ -79,7 +80,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const userRole = (session?.user as any)?.role || "SELLER";
+  const userRole = ((session?.user as Record<string, unknown>)?.role as string) || "SELLER";
   const menuItems = menuByRole[userRole] || menuByRole.SELLER;
 
   return (
