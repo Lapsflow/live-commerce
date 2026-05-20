@@ -1,10 +1,18 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 import { securityLogger } from "@/lib/logger";
 import { logAudit } from "@/lib/services/audit";
 import { findOrCreateCenterAccount } from "@/lib/services/center-auth";
+
+// Bug #8 fix: NextAuth v5 는 throw new Error() 의 message 를 클라이언트에 노출하지 않음.
+// CredentialsSignin 클래스를 상속하고 code 프로퍼티를 지정해야 result.code 로 전달됨.
+class AuthError extends CredentialsSignin {
+  constructor(public code: string) {
+    super(code);
+  }
+}
 
 declare module "next-auth" {
   interface User {
@@ -83,7 +91,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!bypassEnabled) {
           if (!user.passwordHash) {
             securityLogger.authFailed({ reason: "no_password_set", username });
-            throw new Error("INVALID_CREDENTIALS");
+            throw new AuthError("INVALID_CREDENTIALS");
           }
           const isValid = await bcrypt.compare(
             credentials.password as string,
@@ -102,7 +110,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               description: `로그인 실패 (비밀번호 불일치): ${username}`,
               metadata: { reason: "invalid_password" },
             });
-            throw new Error("INVALID_CREDENTIALS");
+            throw new AuthError("INVALID_CREDENTIALS");
           }
         }
 
@@ -112,7 +120,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             reason: "account_deactivated",
             username,
           });
-          throw new Error("ACCOUNT_DEACTIVATED");
+          throw new AuthError("ACCOUNT_DEACTIVATED");
         }
 
         // Phase 1: Contract status validation for SELLER role
@@ -123,7 +131,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               username,
               contractStatus: user.contractStatus,
             });
-            throw new Error("CONTRACT_PENDING");
+            throw new AuthError("CONTRACT_PENDING");
           }
 
           if (user.contractStatus === "REJECTED") {
@@ -132,7 +140,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               username,
               contractStatus: user.contractStatus,
             });
-            throw new Error("CONTRACT_REJECTED");
+            throw new AuthError("CONTRACT_REJECTED");
           }
         }
 

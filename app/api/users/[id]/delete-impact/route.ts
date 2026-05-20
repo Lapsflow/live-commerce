@@ -13,8 +13,13 @@ export const GET = withRole(
   ["MASTER"],
   async (req: NextRequest) => {
     try {
-      const userId = req.url.split("/").filter((s) => s).pop()?.split("?")[0];
-      if (!userId) {
+      // URL: /api/users/{id}/delete-impact
+      // 마지막 segment 는 "delete-impact", 그 앞 segment 가 userId
+      const pathname = new URL(req.url).pathname;
+      const segments = pathname.split("/").filter((s) => s);
+      // segments = ["api", "users", "{id}", "delete-impact"]
+      const userId = segments[segments.length - 2];
+      if (!userId || userId === "users") {
         return errors.badRequest("User ID가 필요합니다");
       }
 

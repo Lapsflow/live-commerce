@@ -168,6 +168,30 @@ export default function OrdersPage() {
     }
   };
 
+  // PDF §5: UNPAID → PENDING_CONFIRMATION (입금 확인 중)
+  const handlePaymentPending = async (orderId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("입금 확인 중으로 변경하시겠습니까?\n(은행 입금 내역을 확인했으나 최종 검증 전 단계)")) return;
+
+    setActionLoading(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/payment-pending`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("입금 확인 중으로 변경되었습니다.");
+        refresh();
+      } else {
+        toast.error(data.error?.message || "상태 변경 실패");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleShip = async (orderId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!confirm("출고 처리하시겠습니까?")) return;
@@ -276,11 +300,14 @@ export default function OrdersPage() {
         if (isReadOnly) return null;
 
         const canApprove = isAdmin && order.status === "PENDING";
-        const canPaymentConfirm = isAdmin && order.status === "APPROVED" && order.paymentStatus === "UNPAID";
+        // PDF §5 3단계 입금 흐름: UNPAID → PENDING_CONFIRMATION → PAID
+        const canMarkPending = isAdmin && order.status === "APPROVED" && order.paymentStatus === "UNPAID";
+        const canPaymentConfirm = isAdmin && order.status === "APPROVED" &&
+          (order.paymentStatus === "UNPAID" || order.paymentStatus === "PENDING_CONFIRMATION");
         const canShip = isAdmin && order.status === "APPROVED" && order.paymentStatus === "PAID" && order.shippingStatus === "PENDING";
         const canCancel = order.status === "PENDING" && order.paymentStatus === "UNPAID";
 
-        if (!canApprove && !canPaymentConfirm && !canShip && !canCancel) return null;
+        if (!canApprove && !canMarkPending && !canPaymentConfirm && !canShip && !canCancel) return null;
 
         return (
           <div className="flex gap-1 flex-wrap">
@@ -313,6 +340,18 @@ export default function OrdersPage() {
                 </Button>
               </>
             )}
+            {canMarkPending && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 px-2 text-xs text-amber-700 border-amber-300 hover:bg-amber-50"
+                onClick={(e) => handlePaymentPending(order.id, e)}
+                disabled={isLoading}
+              >
+                <CheckCircle className="h-3 w-3 mr-1" />
+                입금확인중
+              </Button>
+            )}
             {canPaymentConfirm && (
               <Button
                 size="sm"
@@ -322,7 +361,7 @@ export default function OrdersPage() {
                 disabled={isLoading}
               >
                 <CheckCircle className="h-3 w-3 mr-1" />
-                입금확인
+                입금완료
               </Button>
             )}
             {canShip && (

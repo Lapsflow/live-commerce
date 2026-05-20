@@ -46,7 +46,13 @@ export default function OrderUploadPage() {
   };
 
   const handleDownloadTemplate = () => {
-    window.open("/api/orders/template", "_blank");
+    // 팝업 차단/새탭 렌더 회피: anchor download 패턴
+    const link = document.createElement("a");
+    link.href = "/api/orders/template";
+    link.download = "order-template.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Stage 1: 미리보기 (상품 매칭 결과 확인)

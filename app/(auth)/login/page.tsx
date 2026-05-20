@@ -35,7 +35,11 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      const errorMessage = errorMessages[result.error] || "로그인에 실패했습니다";
+      // Bug #8 fix: NextAuth v5 는 result.error 에 "CredentialsSignin" 만 담고,
+      // 실제 throw 한 code 는 result.code 에 담는다. code 가 있으면 우선 사용.
+      const code = (result as { code?: string }).code;
+      const lookupKey = code || result.error;
+      const errorMessage = errorMessages[lookupKey] || "로그인에 실패했습니다";
       setError(errorMessage);
       setLoading(false);
     } else {

@@ -39,22 +39,41 @@ export const PUT = withRole(
     });
 
     // LIVE-09: 방송 승인 알림 → 셀러
+    // Bug #6 fix: Vercel serverless에서 fire-and-forget이 killed될 수 있어 await로 변경
     if (updated.seller?.phone) {
-      sendNotification({
-        type: "BROADCAST_APPROVED",
-        recipient: {
-          name: updated.seller.name,
-          phone: updated.seller.phone,
-          email: updated.seller.email || undefined,
-        },
-        variables: {
-          broadcastTitle: updated.code || broadcastId,
-          scheduledAt: updated.scheduledAt
-            ? new Date(updated.scheduledAt).toLocaleString("ko-KR")
-            : "-",
-        },
+      try {
+        // 전화번호 정규화 (하이픈 제거 — Solapi 요구사항)
+        const phoneNormalized = updated.seller.phone.replace(/-/g, "").trim();
+        const result = await sendNotification({
+          type: "BROADCAST_APPROVED",
+          recipient: {
+            name: updated.seller.name,
+            phone: phoneNormalized,
+            email: updated.seller.email || undefined,
+          },
+          variables: {
+            broadcastTitle: updated.code || broadcastId,
+            scheduledAt: updated.scheduledAt
+              ? new Date(updated.scheduledAt).toLocaleString("ko-KR")
+              : "-",
+          },
+          broadcastId,
+        });
+        if (!result.success) {
+          console.error("[BROADCAST_APPROVE_NOTIFICATION] failed:", {
+            phone: phoneNormalized,
+            error: result.error,
+            channel: result.channel,
+          });
+        }
+      } catch (err) {
+        console.error("[BROADCAST_APPROVE_NOTIFICATION] exception:", err);
+      }
+    } else {
+      console.warn("[BROADCAST_APPROVE_NOTIFICATION] seller.phone missing:", {
         broadcastId,
-      }).catch((err) => console.error("[BROADCAST_APPROVE_NOTIFICATION]", err));
+        sellerId: updated.sellerId,
+      });
     }
 
     logAudit({

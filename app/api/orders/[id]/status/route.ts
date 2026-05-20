@@ -7,7 +7,7 @@ import { z } from "zod";
 import { logAudit } from "@/lib/services/audit";
 
 const statusUpdateSchema = z.object({
-  paymentStatus: z.enum(["UNPAID", "PAID", "PAYMENT_FAILED"]).optional(),
+  paymentStatus: z.enum(["UNPAID", "PENDING_CONFIRMATION", "PAID", "PAYMENT_FAILED"]).optional(),
   shippingStatus: z.enum(["PENDING", "PREPARING", "SHIPPED", "PARTIAL"]).optional(),
 });
 

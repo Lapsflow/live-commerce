@@ -498,6 +498,58 @@ export default function OrderDetailPage() {
         </Card>
       )}
 
+      {/* ✅ Bug #5 fix: 출고 상태 수동 변경 UI */}
+      {isAdmin && order.status === "APPROVED" && order.paymentStatus === "PAID" && (
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold text-grey-900 mb-4">
+            <Truck className="h-5 w-5 inline mr-2" />
+            출고 상태 관리
+          </h2>
+          <p className="text-sm text-grey-600 mb-3">
+            현재 상태: <strong>{shippingStatusLabels[order.shippingStatus]}</strong>
+            {order.onewmsMapping && (
+              <span className="ml-2 text-xs text-grey-500">
+                (ONEWMS 송장: {order.onewmsMapping.transNo || "미발급"})
+              </span>
+            )}
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            {(["PENDING", "PREPARING", "SHIPPED", "PARTIAL"] as const).map((s) => (
+              <Button
+                key={s}
+                size="sm"
+                variant={order.shippingStatus === s ? "default" : "outline"}
+                disabled={actionLoading || order.shippingStatus === s}
+                onClick={async () => {
+                  if (!confirm(`출고 상태를 "${shippingStatusLabels[s]}"(으)로 변경하시겠습니까?`)) return;
+                  setActionLoading(true);
+                  try {
+                    const res = await fetch(`/api/orders/${orderId}/status`, {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ shippingStatus: s }),
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                      toast.success("출고 상태가 변경되었습니다.");
+                      loadOrderDetail();
+                    } else {
+                      toast.error(data.error?.message || "상태 변경 실패");
+                    }
+                  } catch {
+                    toast.error("서버 오류가 발생했습니다.");
+                  } finally {
+                    setActionLoading(false);
+                  }
+                }}
+              >
+                {shippingStatusLabels[s]}
+              </Button>
+            ))}
+          </div>
+        </Card>
+      )}
+
       {/* ONEWMS Info Card */}
       <OnewmsInfo orderId={order.id} />
 

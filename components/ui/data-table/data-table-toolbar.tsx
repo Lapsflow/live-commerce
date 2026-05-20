@@ -157,16 +157,13 @@ function DataTableToolbarInner<TData>({
           </Button>
         )}
 
-        {/* 컬럼 표시/숨기기 */}
+        {/* 컬럼 표시/숨기기 — Bug #3 fix: base-ui Trigger 는 asChild + Button 패턴 필요 */}
         <DropdownMenu>
-          <DropdownMenuTrigger
-            className={cn(
-              buttonVariants({ variant: "outline", size: "sm" }),
-              "h-9"
-            )}
-          >
-            <SlidersHorizontal className="mr-1.5 size-3.5" />
-            <span className="hidden sm:inline">컬럼</span>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-9">
+              <SlidersHorizontal className="mr-1.5 size-3.5" />
+              <span className="hidden sm:inline">컬럼</span>
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuLabel>표시 컬럼</DropdownMenuLabel>
