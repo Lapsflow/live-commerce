@@ -165,73 +165,97 @@ export const POST = withRole(
         orderGroups.get(key)!.matches.push(matchResults[i]);
       }
 
+      // PDF §4.2: 혼합 발주(본사+센터)는 시스템이 본사 제품/센터 제품으로 자동 분리하여 각각 발주
+      // 운영 검증(#5): 같은 주문번호에 본사·센터 제품이 섞여 있으면 2개의 Order 로 분할 생성
       for (const [orderNoKey, group] of orderGroups) {
         const firstItem = group.items[0];
-        const orderNo = orderNoKey.startsWith("AUTO-")
-          ? `ORD-${Date.now().toString(36).toUpperCase()}-${(created + 1).toString().padStart(3, "0")}`
-          : orderNoKey;
 
-        const totalAmount = group.items.reduce((sum, it) => sum + it.totalAmount, 0);
-        const totalSupply = group.matches.reduce(
-          (sum, m, i) => sum + (m.product?.supplyPrice || 0) * group.items[i].quantity,
-          0
-        );
-
-        // 상품 유형 결정
-        const productTypes = group.matches.map((m) => m.product?.productType);
-        const hasWms = productTypes.includes("HEADQUARTERS");
-        const hasCenter = productTypes.includes("CENTER");
-        const productType = hasWms && !hasCenter ? "HEADQUARTERS" as const
-          : !hasWms && hasCenter ? "CENTER" as const
-          : null;
-
-        const order = await prisma.order.create({
-          data: {
-            orderNo,
-            sellerId,
-            status: "PENDING", // Stage 2: 담당자 검수 대기
-            totalAmount,
-            isCreditTrade,
-            ...(isCreditTrade ? { paymentStatus: "PAID" as const, paidAt: new Date() } : {}),
-            totalMargin: totalAmount - totalSupply,
-            memo: firstItem.memo || undefined,
-            recipient: firstItem.recipient || undefined,
-            phone: firstItem.phone || undefined,
-            address: firstItem.address || undefined,
-            productType,
-            items: {
-              create: group.matches.map((m, i) => ({
-                productId: m.product!.id,
-                quantity: group.items[i].quantity,
-                barcode: m.product!.barcode,
-                productName: m.product!.name,
-                supplyPrice: m.product!.supplyPrice,
-                totalSupply: m.product!.supplyPrice * group.items[i].quantity,
-                margin: group.items[i].totalAmount - m.product!.supplyPrice * group.items[i].quantity,
-                productType: (m.product!.productType as "HEADQUARTERS" | "CENTER") || "HEADQUARTERS",
-              })),
-            },
-          },
-          include: { items: true },
+        // productType 별 split (HEADQUARTERS / CENTER)
+        const hqIndices: number[] = [];
+        const ctIndices: number[] = [];
+        group.matches.forEach((m, i) => {
+          if (m.product?.productType === "HEADQUARTERS") hqIndices.push(i);
+          else if (m.product?.productType === "CENTER") ctIndices.push(i);
         });
 
-        createdOrders.push(order); // ✅ Task 1: 생성된 주문 저장
-
-        // 방송 매칭
-        try {
-          await matchOrderToBroadcast(order.id, sellerId, new Date());
-        } catch (err) {
-          console.error("[BULK ORDER] Broadcast match failed:", order.id, err);
+        const subGroups: Array<{
+          productType: "HEADQUARTERS" | "CENTER";
+          suffix: string;
+          indices: number[];
+        }> = [];
+        if (hqIndices.length > 0) {
+          subGroups.push({ productType: "HEADQUARTERS", suffix: "-HQ", indices: hqIndices });
+        }
+        if (ctIndices.length > 0) {
+          subGroups.push({ productType: "CENTER", suffix: "-CT", indices: ctIndices });
         }
 
-        created++;
+        // suffix 는 혼합일 때만 부여 (단일 type 이면 원본 orderNo 유지)
+        const isSplit = subGroups.length > 1;
 
-        // ✅ Task 6: UploadJob 진행률 업데이트
-        if (uploadJobId) {
-          await prisma.uploadJob.update({
-            where: { id: uploadJobId },
-            data: { processedItems: created },
+        for (const sub of subGroups) {
+          const baseOrderNo = orderNoKey.startsWith("AUTO-")
+            ? `ORD-${Date.now().toString(36).toUpperCase()}-${(created + 1).toString().padStart(3, "0")}`
+            : orderNoKey;
+          const orderNo = isSplit ? `${baseOrderNo}${sub.suffix}` : baseOrderNo;
+
+          const subItems = sub.indices.map((i) => group.items[i]);
+          const subMatches = sub.indices.map((i) => group.matches[i]);
+
+          const totalAmount = subItems.reduce((sum, it) => sum + it.totalAmount, 0);
+          const totalSupply = subMatches.reduce(
+            (sum, m, idx) => sum + (m.product?.supplyPrice || 0) * subItems[idx].quantity,
+            0
+          );
+
+          const order = await prisma.order.create({
+            data: {
+              orderNo,
+              sellerId,
+              status: "PENDING", // Stage 2: 담당자 검수 대기
+              totalAmount,
+              isCreditTrade,
+              ...(isCreditTrade ? { paymentStatus: "PAID" as const, paidAt: new Date() } : {}),
+              totalMargin: totalAmount - totalSupply,
+              memo: firstItem.memo || undefined,
+              recipient: firstItem.recipient || undefined,
+              phone: firstItem.phone || undefined,
+              address: firstItem.address || undefined,
+              productType: sub.productType,
+              items: {
+                create: subMatches.map((m, idx) => ({
+                  productId: m.product!.id,
+                  quantity: subItems[idx].quantity,
+                  barcode: m.product!.barcode,
+                  productName: m.product!.name,
+                  supplyPrice: m.product!.supplyPrice,
+                  totalSupply: m.product!.supplyPrice * subItems[idx].quantity,
+                  margin: subItems[idx].totalAmount - m.product!.supplyPrice * subItems[idx].quantity,
+                  productType: sub.productType,
+                })),
+              },
+            },
+            include: { items: true },
           });
+
+          createdOrders.push(order); // ✅ Task 1: 생성된 주문 저장
+
+          // 방송 매칭
+          try {
+            await matchOrderToBroadcast(order.id, sellerId, new Date());
+          } catch (err) {
+            console.error("[BULK ORDER] Broadcast match failed:", order.id, err);
+          }
+
+          created++;
+
+          // ✅ Task 6: UploadJob 진행률 업데이트
+          if (uploadJobId) {
+            await prisma.uploadJob.update({
+              where: { id: uploadJobId },
+              data: { processedItems: created },
+            });
+          }
         }
       }
 

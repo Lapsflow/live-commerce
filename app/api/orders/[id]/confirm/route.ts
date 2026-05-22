@@ -65,30 +65,56 @@ export const POST = withRole(
         },
       });
 
-      // 셀러에게 알림
+      // 운영 검증(#7): Vercel serverless 의 fire-and-forget Promise kill 문제 → await 로 변경.
+      // 셀러 SMS/알림톡이 컨펌 직후 항상 발송되도록 보장한다 (CLAUDE.md 학습 #8 패턴).
+      let notificationError: string | null = null;
       if (order.seller.phone) {
-        sendNotification({
-          type: "ORDER_CONFIRMED",
-          recipient: {
-            name: order.seller.name,
-            phone: order.seller.phone,
-            email: order.seller.email || undefined,
-          },
-          variables: {
-            orderNo: order.orderNo,
-            // ✅ Task 2D: 금액 및 입금기한 추가
-            amount: order.totalAmount.toString(),
-            expiryAt: expiryAt || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          },
-          orderId: order.id,
-        }).catch((err) => console.error("[ORDER_CONFIRMED_NOTIF]", err));
+        try {
+          const phoneNormalized = order.seller.phone.replace(/-/g, "").trim();
+          const notifResult = await sendNotification({
+            type: "ORDER_CONFIRMED",
+            recipient: {
+              name: order.seller.name,
+              phone: phoneNormalized,
+              email: order.seller.email || undefined,
+            },
+            variables: {
+              orderNo: order.orderNo,
+              amount: order.totalAmount.toString(),
+              expiryAt: expiryAt || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            },
+            orderId: order.id,
+          });
+          if (!notifResult.success) {
+            notificationError = notifResult.error || "알림 발송 실패";
+            console.error("[ORDER_CONFIRMED_NOTIF] failed:", { orderId, error: notificationError });
+          }
+        } catch (err) {
+          notificationError = err instanceof Error ? err.message : "알림 발송 예외";
+          console.error("[ORDER_CONFIRMED_NOTIF] exception:", err);
+        }
       }
 
-      // Phase 4: 본사 상품 발주 컨펌 시 ONEWMS 자동 동기화 (fire-and-forget)
+      // 운영 검증(#4): 본사 제품 발주는 컨펌 즉시 ONEWMS 등록.
+      // await 로 변경하여 응답에 sync 결과 포함 (실패 시 관리자 화면 /admin/order-errors 에서 확인).
+      const onewmsSync: { attempted: boolean; success: boolean; onewmsOrderNo?: string; error?: string } = {
+        attempted: false,
+        success: false,
+      };
       if (order.productType === "HEADQUARTERS") {
-        syncOrderToOnewms(orderId).catch((err) =>
-          console.error("[AUTO_WMS_SYNC]", orderId, err)
-        );
+        onewmsSync.attempted = true;
+        try {
+          const syncResult = await syncOrderToOnewms(orderId);
+          onewmsSync.success = syncResult.success;
+          onewmsSync.onewmsOrderNo = syncResult.onewmsOrderNo;
+          onewmsSync.error = syncResult.error;
+          if (!syncResult.success) {
+            console.error("[AUTO_WMS_SYNC] failed:", orderId, syncResult.error);
+          }
+        } catch (err) {
+          onewmsSync.error = err instanceof Error ? err.message : "ONEWMS sync 예외";
+          console.error("[AUTO_WMS_SYNC] exception:", orderId, err);
+        }
       }
 
       logAudit({
@@ -100,12 +126,25 @@ export const POST = withRole(
         entityId: order.id,
         entityName: order.orderNo,
         before: { status: "PENDING" },
-        after: { status: "APPROVED" },
-        description: `발주 컨펌: ${order.orderNo}`,
+        after: {
+          status: "APPROVED",
+          notificationSent: notificationError === null,
+          notificationError,
+          onewmsSync,
+        },
+        description: `발주 컨펌: ${order.orderNo}${onewmsSync.attempted ? (onewmsSync.success ? " · ONEWMS 등록 성공" : ` · ONEWMS 등록 실패(${onewmsSync.error || "unknown"})`) : ""}`,
         request: req,
       });
 
-      return ok(updated);
+      return ok({
+        ...updated,
+        notification: {
+          attempted: !!order.seller.phone,
+          success: notificationError === null,
+          error: notificationError,
+        },
+        onewmsSync,
+      });
     } catch (error) {
       console.error("[Order Confirm] Error:", error);
       return errors.internal("발주 컨펌 실패");

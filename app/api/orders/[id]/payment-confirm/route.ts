@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db/prisma";
 import { logAudit } from "@/lib/services/audit";
 import { sendNotification } from "@/lib/services/notifications";
 import { reserveStockBulk } from "@/lib/services/stock/reservation";
+import { syncOrderToOnewms } from "@/lib/services/onewms/orderSync";
 
 /**
  * POST /api/orders/:id/payment-confirm
@@ -124,25 +125,69 @@ export const POST = withRole(
         request: req,
       });
 
-      // Phase 7: 입금확인 알림 → 셀러 (fire-and-forget)
+      // 운영 검증(#7): 입금확인 알림 → 셀러. fire-and-forget 대신 await 로 발송 보장.
+      let notificationError: string | null = null;
       try {
         const seller = await prisma.user.findUnique({
           where: { id: order.sellerId },
           select: { name: true, phone: true, email: true },
         });
         if (seller?.phone) {
-          sendNotification({
+          const phoneNormalized = seller.phone.replace(/-/g, "").trim();
+          const notifResult = await sendNotification({
             type: "ORDER_PAYMENT_CONFIRMED",
-            recipient: { name: seller.name, phone: seller.phone, email: seller.email || undefined },
+            recipient: { name: seller.name, phone: phoneNormalized, email: seller.email || undefined },
             variables: { orderNo: order.orderNo },
             orderId: order.id,
-          }).catch((err) => console.error("[PAYMENT_CONFIRM_NOTIF]", err));
+          });
+          if (!notifResult.success) {
+            notificationError = notifResult.error || "알림 발송 실패";
+            console.error("[PAYMENT_CONFIRM_NOTIF] failed:", { orderId, error: notificationError });
+          }
         }
       } catch (notifErr) {
-        console.error("[PAYMENT_CONFIRM_NOTIF]", notifErr);
+        notificationError = notifErr instanceof Error ? notifErr.message : "알림 발송 예외";
+        console.error("[PAYMENT_CONFIRM_NOTIF] exception:", notifErr);
       }
 
-      return ok(updated);
+      // 운영 검증(#4): 입금완료 시점에 ONEWMS 등록 안전망.
+      // 컨펌 시점에 sync 가 실패했거나, 혼합발주 분리 이전에 productType=null 로 누락되었던 케이스를 보완.
+      // HEADQUARTERS 발주만 ONEWMS 등록 대상이며, 이미 sent 상태면 skip.
+      const onewmsSync: { attempted: boolean; success: boolean; onewmsOrderNo?: string; error?: string; alreadySynced?: boolean } = {
+        attempted: false,
+        success: false,
+      };
+      if (order.productType === "HEADQUARTERS") {
+        onewmsSync.attempted = true;
+        try {
+          const existing = await prisma.onewmsOrderMapping.findUnique({
+            where: { orderId },
+            select: { status: true, onewmsOrderNo: true },
+          });
+          if (existing?.status === "sent") {
+            onewmsSync.success = true;
+            onewmsSync.alreadySynced = true;
+            onewmsSync.onewmsOrderNo = existing.onewmsOrderNo;
+          } else {
+            const syncResult = await syncOrderToOnewms(orderId);
+            onewmsSync.success = syncResult.success;
+            onewmsSync.onewmsOrderNo = syncResult.onewmsOrderNo;
+            onewmsSync.error = syncResult.error;
+            if (!syncResult.success) {
+              console.error("[PAYMENT_CONFIRM_WMS_SYNC] failed:", orderId, syncResult.error);
+            }
+          }
+        } catch (err) {
+          onewmsSync.error = err instanceof Error ? err.message : "ONEWMS sync 예외";
+          console.error("[PAYMENT_CONFIRM_WMS_SYNC] exception:", orderId, err);
+        }
+      }
+
+      return ok({
+        ...updated,
+        notification: { success: notificationError === null, error: notificationError },
+        onewmsSync,
+      });
     } catch (error) {
       console.error("[Payment Confirm] Error:", error);
       return errors.internal("입금확인 실패");

@@ -67,6 +67,14 @@ export async function matchOrderItems(
           },
         });
         if (product) {
+          // 운영 검증(#6): 코드는 일치하지만 입력 바코드가 다른 경우 오류 반환.
+          // 예: 코드 [33] 이 맞지만 바코드를 다른 상품 바코드로 변경한 케이스 — 매칭은 막아야 함.
+          const inputBarcode = item.barcode?.trim();
+          if (inputBarcode && product.barcode && inputBarcode !== product.barcode) {
+            result.error = `바코드 불일치: 코드 [${codeClean}] 의 정상 바코드는 ${product.barcode} 인데 입력값은 ${inputBarcode} 입니다. (상품: ${product.name})`;
+            results.push(result);
+            continue;
+          }
           result.matched = true;
           result.matchMethod = "CODE";
           result.product = product;
