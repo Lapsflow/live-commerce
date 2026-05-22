@@ -242,25 +242,74 @@ export class OnewmsClient {
   /**
    * Create order (set_orders)
    *
-   * Request structure:
-   * - shop_id: 판매처코드 (query param)
-   * - collect_date?: 발주일 (query param, optional)
-   * - rows: CreateOrderRow[] (JSON array — form-encoded as "data" or "rows")
+   * 공식 문서 02-set_orders.md + 15-sheet_management.md (add_sheet_items) + 16-onedas_packing.md
+   * (get_onedas_packing_no_detail) 패턴 정합:
+   * - JSON 배열을 받는 ONEWMS API 는 application/json Content-Type 으로 raw JSON body 전송
+   * - URL query 에 action + partner_key/domain_key + shop_id + collect_date
+   * - 16-onedas_packing.md curl 예시 그대로 적용
    *
-   * ⚠️ NOTE: 정확한 JSON 배열 키명(data/rows/orders) 및 form-encoding 방식은
-   *           ONEWMS API 스펙 확인 후 조정이 필요합니다.
-   *           현재 가정: rows 배열을 "data" 키로 form-encoded 전송
+   * 운영 검증(#4): 기존 코드는 form-urlencoded body 의 "data" 필드에 JSON.stringify(rows) 를
+   * 넣어 전송 → ONEWMS PHP 가 raw JSON body 를 기대했을 경우 200 OK 가 와도 실제 등록 0건
+   * → 입금완료 후 WMS 에서 주문조회 불가. 본 수정으로 공식 패턴(방식 B)에 맞춤.
    *
    * @param req - Order request with shop_id, collect_date, and rows
    */
   async createOrder(req: CreateOrderRequest): Promise<void> {
-    // Transform CreateOrderRequest to match form-encoded expected by ONEWMS
-    // The request() method will JSON.stringify the rows array
-    await this.request('set_orders', {
+    const apiUrl = this.config.apiUrl || 'https://api.onewms.co.kr/api.php';
+
+    const queryParams = new URLSearchParams({
+      partner_key: this.config.partnerKey,
+      domain_key: this.config.domainKey,
+      action: 'set_orders',
       shop_id: req.shop_id,
       ...(req.collect_date && { collect_date: req.collect_date }),
-      data: req.rows, // ⚠️ Assuming "data" key — verify with ONEWMS
     });
+
+    const url = `${apiUrl}?${queryParams.toString()}`;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // set_orders 는 배열이라 15초
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(req.rows), // raw JSON 배열 (공식 02-set_orders.md JSON 예시 형식)
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new OnewmsApiError(
+          response.status,
+          `set_orders HTTP error: ${response.status} ${response.statusText}`,
+          undefined
+        );
+      }
+
+      const data = await response.json();
+
+      if (typeof data === 'object' && data !== null && 'error' in data && data.error !== 0) {
+        throw new OnewmsApiError(
+          data.error,
+          data.msg || 'set_orders rejected by ONEWMS',
+          data
+        );
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw new OnewmsApiError(-1, 'set_orders timeout (15s)', undefined);
+      }
+      if (error instanceof OnewmsApiError) throw error;
+      throw new OnewmsApiError(
+        -1,
+        error instanceof Error ? error.message : 'set_orders network error',
+        undefined
+      );
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   /**

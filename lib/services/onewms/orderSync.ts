@@ -106,23 +106,43 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
       };
     }
 
-    // Prepare ONEWMS order request (P0 hotfix: new schema with rows array)
-    // Each OrderItem becomes one row in the set_orders JSON array
-    const orderRows: CreateOrderRow[] = order.items.map((item) => ({
-      order_id: onewmsOrderNo,                        // 주문번호 (필수)
-      shop_product_id: item.product.onewmsCode!,      // 상품코드 (필수)
-      qty: item.quantity,                             // 수량 (필수)
-      recv_name: recipientName,                       // 수령자명 (필수, null guard narrowed)
-      recv_mobile: recipientPhone,                     // 수령자 휴대폰 (선택)
-      recv_address: recipientAddress,                 // 수령자 주소 (선택)
-      product_name: item.product.name,                // 상품명 (선택)
-      ...(order.memo && { memo: order.memo }),        // 배송메모 (선택, Schema 확인 후 포함)
+    // Prepare ONEWMS order request (공식 02-set_orders.md 정합)
+    // 각 OrderItem 이 set_orders JSON 배열의 row 1개
+    // PDF §4.2 요구: "판매처 식별자 = 셀러 username" → cust_id 필드에 매핑
+    // 운영 검증(#4) 보강: 셀러 이름·전화번호·username 을 주문자 정보로 ONEWMS 측에 전달
+    //   하여 WMS 운영자가 어떤 셀러의 주문인지 식별 가능하게 함.
+    const sellerUsername = (order.seller as { username?: string })?.username || order.seller?.id || '';
+    const sellerName = order.seller?.name || '';
+    const sellerPhone = (order.seller as { phone?: string })?.phone?.replace(/-/g, '').trim() || '';
+    const createdAtIso = order.createdAt.toISOString();
+    const orderDate = createdAtIso.slice(0, 10);              // YYYY-MM-DD
+    const orderTime = createdAtIso.slice(11, 19);             // HH:MM:SS
+
+    const orderRows: CreateOrderRow[] = order.items.map((item, idx) => ({
+      order_id: onewmsOrderNo,                                // 주문번호 (필수, varchar(40))
+      order_id_seq: String(idx + 1),                          // 주문상세번호 (item 식별용)
+      shop_product_id: item.product.onewmsCode!,              // 판매처상품코드 (필수)
+      qty: item.quantity,                                     // 주문수량 (필수)
+      recv_name: recipientName,                               // 수령자명 (필수)
+      recv_mobile: recipientPhone,                            // 수령자핸드폰
+      recv_address: recipientAddress,                         // 수령자주소
+      product_name: item.product.name,                        // 판매처상품명
+      order_date: orderDate,                                  // 주문일자 (운영 추적용)
+      order_time: orderTime,                                  // 주문일시 (운영 추적용)
+      ...(sellerName && { order_name: sellerName }),          // 주문자명 = 셀러 이름
+      ...(sellerPhone && { order_mobile: sellerPhone }),      // 주문자핸드폰 = 셀러 전화
+      ...(sellerUsername && { cust_id: sellerUsername }),     // PDF §4.2: 판매처 식별자 = 셀러 username
+      ...(order.memo && { memo: order.memo }),                // 배송메모
     }));
 
+    // collect_date: 공식 문서 표기는 YY-MM-DD (2자리 연도) 이지만 PHP date 파싱은 4자리도 허용.
+    // 보수적으로 공식 표기 그대로 따라 YY-MM-DD 로 전송 (운영 검증 #4 안전망).
+    const collectDateYY = order.createdAt.toISOString().slice(2, 10); // 26-05-22
+
     const onewmsRequest: CreateOrderRequest = {
-      shop_id: shopId,                                // P0: 판매처코드 (필수)
-      collect_date: order.createdAt.toISOString().slice(0, 10), // 발주일 (선택)
-      rows: orderRows,                                 // P0: 주문 행 배열
+      shop_id: shopId,                                // 판매처코드 (필수)
+      collect_date: collectDateYY,                    // 발주일 (YY-MM-DD)
+      rows: orderRows,                                // JSON body 로 전송될 row 배열
     };
 
     // Use transaction to ensure data consistency
