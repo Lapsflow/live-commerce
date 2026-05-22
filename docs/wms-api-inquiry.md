@@ -84,4 +84,58 @@ API 문서에 `get_code_match`가 존재하는 것을 확인했습니다.
 
 ---
 
+## 4. set_orders — 본문 형식 명시 부재 (신규 / 핵심)
+
+공식 문서 02-set_orders.md 에 다음 사항이 명시되어 있지 않아 정확한 호출 형식을
+결정할 수 없습니다. 발주 컨펌 시 200 OK 응답이라도 ONEWMS 측에서 실제 등록이
+누락되어 슈퍼무진 → ONEWMS 주문조회가 안 되는 사례가 운영에서 발생 중입니다.
+
+**문의 — set_orders 정상 호출 curl 예시 1건 부탁드립니다.** 다음 사항을 명확히
+확인 부탁드립니다.
+
+(1) **Content-Type**: `application/x-www-form-urlencoded` 인지 `application/json`
+    인지 (16-onedas_packing.md 의 get_onedas_packing_no_detail 은 application/json
+    을 사용. set_orders 도 동일한가요?)
+
+(2) **JSON 배열 위치**:
+    - (a) URL query 에 partner_key/domain_key/action/shop_id/collect_date,
+          body 에 raw JSON 배열 `[{...},{...}]` — add_sheet_items 패턴
+    - (b) form body 에 `data=[{...},{...}]` 처럼 키로 감싸기
+    - (c) form body 에 `orders=[{...},{...}]` 처럼 다른 키
+    - (d) 그 외
+
+(3) **sub_domain_seq 전달 필요 여부**: 위 #3 의 sub_domain_seq=20 환경에서
+    set_orders 호출 시 화주 식별을 위해 sub_domain_seq 를 query 에 명시적으로
+    포함해야 하나요? (현재는 shop_id 만 보내고 있음)
+
+(4) **셀러 식별자 매핑**: 슈퍼무진은 다수의 셀러가 한국무진유통(shop_id 10063)
+    이라는 단일 판매처로 발주합니다. ONEWMS 측에서 어떤 셀러의 주문인지 구분
+    가능하도록 `cust_id` 에 셀러 username 을 넣으면 운영 화면에서 식별
+    가능한가요? 다른 권장 필드가 있다면 안내 부탁드립니다.
+
+**참고 — 현재 운영 호출 페이로드**:
+```
+URL query: action=set_orders, shop_id=10063, collect_date=26-05-22
+Headers: Content-Type: application/json
+Body: [
+  {
+    "order_id": "LIVE-20260522-A1B2C",
+    "order_id_seq": "1",
+    "shop_product_id": "PROD123",
+    "qty": 2,
+    "recv_name": "홍길동",
+    "recv_mobile": "01012345678",
+    "recv_address": "서울시 ...",
+    "product_name": "테스트상품",
+    "order_date": "2026-05-22",
+    "order_time": "10:30:00",
+    "order_name": "셀러A",
+    "order_mobile": "01099998888",
+    "cust_id": "seller_a"
+  }
+]
+```
+
+---
+
 감사합니다.
