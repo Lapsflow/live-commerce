@@ -84,50 +84,81 @@ API 문서에 `get_code_match`가 존재하는 것을 확인했습니다.
 
 ---
 
-## 4. set_orders — 본문 형식 명시 부재 (신규 / 핵심)
+## 4. set_orders — success 응답인데 주문이 실제로 등록 안 됨 (★ 가장 핵심)
 
-공식 문서 02-set_orders.md 에 다음 사항이 명시되어 있지 않아 정확한 호출 형식을
-결정할 수 없습니다. 발주 컨펌 시 200 OK 응답이라도 ONEWMS 측에서 실제 등록이
-누락되어 슈퍼무진 → ONEWMS 주문조회가 안 되는 사례가 운영에서 발생 중입니다.
+자체 검증 7회 수행 후에도 원인 미확정. 한국무진(슈퍼무진) 측 ONEWMS
+운영자 화면에서 직접 확인이 필요합니다.
 
-**문의 — set_orders 정상 호출 curl 예시 1건 부탁드립니다.** 다음 사항을 명확히
-확인 부탁드립니다.
+### 자체 검증으로 확정된 사실 (코드 수정 완료)
 
-(1) **Content-Type**: `application/x-www-form-urlencoded` 인지 `application/json`
-    인지 (16-onedas_packing.md 의 get_onedas_packing_no_detail 은 application/json
-    을 사용. set_orders 도 동일한가요?)
+- ✅ `shop_id=10063` = 한국무진유통 (get_etc_info 로 확인)
+- ✅ `sub_domain_seq=62` = 한국무진유통 화주 (get_etc_info?search_type=sub_domain
+  응답의 code='62', shop=['10063'] 확인 — 우리 코드는 sub_domain_seq=62
+  자동 전달하도록 수정 완료)
+- ✅ get_order_info 정상 호출 (read 권한 정상). 한국무진유통 영역에서 30일간
+  total=530 건 조회 가능
+- ✅ set_orders 호출 형식: application/json + URL query + raw JSON 배열 body
+  (16-onedas_packing.md 의 curl 예시와 동일 패턴). 모든 응답이 `error:0 success`
 
-(2) **JSON 배열 위치**:
-    - (a) URL query 에 partner_key/domain_key/action/shop_id/collect_date,
-          body 에 raw JSON 배열 `[{...},{...}]` — add_sheet_items 패턴
-    - (b) form body 에 `data=[{...},{...}]` 처럼 키로 감싸기
-    - (c) form body 에 `orders=[{...},{...}]` 처럼 다른 키
-    - (d) 그 외
+### 미해결 — 슈퍼무진이 보낸 set_orders 가 등록되지 않음
 
-(3) **sub_domain_seq 전달 필요 여부**: 위 #3 의 sub_domain_seq=20 환경에서
-    set_orders 호출 시 화주 식별을 위해 sub_domain_seq 를 query 에 명시적으로
-    포함해야 하나요? (현재는 shop_id 만 보내고 있음)
+다음 3가지 형식으로 set_orders 호출 → 모두 `{"error":0,"msg":"success"}` 응답
+→ 5초 후 get_order_info (shop_id=10063, sub_domain_seq=62, 동일 order_id
+지정) 로 조회 → **3건 모두 total=0 (등록 안 됨)**.
 
-(4) **셀러 식별자 매핑**: 슈퍼무진은 다수의 셀러가 한국무진유통(shop_id 10063)
-    이라는 단일 판매처로 발주합니다. ONEWMS 측에서 어떤 셀러의 주문인지 구분
-    가능하도록 `cust_id` 에 셀러 username 을 넣으면 운영 화면에서 식별
-    가능한가요? 다른 권장 필드가 있다면 안내 부탁드립니다.
+| order_id 형식 | set_orders 응답 | 조회 결과 |
+|---|---|---|
+| `99996305826` (순수 숫자 11자리) | success | total=0 |
+| `LIVE-20260524-9OXPE` (영숫자) | success | total=0 |
+| `20260524041825` (14자리 timestamp) | success | total=0 |
 
-**참고 — 현재 운영 호출 페이로드**:
+### 한국무진/임찬영님께 확인 요청
+
+**(1) ONEWMS 관리자 화면에서 위 3개 order_id 검색**:
+- `99996305826`, `LIVE-20260524-9OXPE`, `20260524041825`
+- shop_id=10063 / sub_domain_seq=62 영역에 실제로 존재하는지
+- 만약 다른 화주 영역에 있다면 어느 sub_domain 인지
+
+**(2) 우리 partner_key (52bd55d7...bda1) 의 set_orders 쓰기 권한 상태**:
+- 읽기(get_*) 권한은 정상 작동
+- 쓰기(set_orders) 가 silent success 로만 응답하고 실제 등록이 안 되는데,
+  권한 분리가 되어 있는지 확인 필요
+
+**(3) 정상 호출 curl 예시 1건 회신 부탁**:
+- 임찬영님 측에서 set_orders 가 실제 등록 성공하는 호출 예시 (curl 또는
+  Postman) 한 건만 회신 주시면, 우리 호출과 1:1 비교해서 정확한 차이
+  지점 파악 가능합니다.
+
+**(4) 셀러 식별자 매핑 권장 필드**:
+- 슈퍼무진은 다수의 셀러가 한국무진유통(shop_id 10063) 단일 판매처로 발주합니다.
+- ONEWMS 화면에서 셀러별 구분이 필요한데 `cust_id` 에 셀러 username 을 넣으면
+  되나요? 다른 권장 필드가 있다면 안내 부탁드립니다.
+
+### 참고 — 슈퍼무진의 현재 set_orders 호출 페이로드
+
 ```
-URL query: action=set_orders, shop_id=10063, collect_date=26-05-22
-Headers: Content-Type: application/json
-Body: [
+URL query:
+  partner_key=52bd55d7d931cb002c8569099fe9bda1
+  domain_key=eb731e190a51a6364185d7cf11641aa2
+  action=set_orders
+  shop_id=10063
+  collect_date=26-05-22
+
+Headers:
+  Content-Type: application/json
+
+Body:
+[
   {
-    "order_id": "LIVE-20260522-A1B2C",
+    "order_id": "LIVE-20260524-9OXPE",
     "order_id_seq": "1",
-    "shop_product_id": "PROD123",
-    "qty": 2,
-    "recv_name": "홍길동",
-    "recv_mobile": "01012345678",
-    "recv_address": "서울시 ...",
-    "product_name": "테스트상품",
-    "order_date": "2026-05-22",
+    "shop_product_id": "705",
+    "qty": 1,
+    "recv_name": "검증",
+    "recv_mobile": "01000000077",
+    "recv_address": "서울 검증로 7",
+    "product_name": "검증 더미",
+    "order_date": "2026-05-24",
     "order_time": "10:30:00",
     "order_name": "셀러A",
     "order_mobile": "01099998888",
@@ -135,6 +166,9 @@ Body: [
   }
 ]
 ```
+
+위 호출에 대해 ONEWMS 응답: `{"error":0,"msg":"success"}` — 그러나 조회 시
+한국무진유통(sub_domain_seq=62) 영역에 존재하지 않음.
 
 ---
 
