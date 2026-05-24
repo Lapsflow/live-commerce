@@ -52,12 +52,14 @@ export class OnewmsConfigManager {
    * Required: ONEWMS_PARTNER_KEY, ONEWMS_DOMAIN_KEY
    * Optional: ONEWMS_API_URL (defaults to https://api.onewms.co.kr/api.php)
    * P0 Required for set_orders: ONEWMS_SHOP_ID (판매처코드)
+   * P0 Required for get_order_info: ONEWMS_SUB_DOMAIN_SEQ (화주번호) — 한국무진유통 = "62"
    */
   loadFromEnv(): void {
     const partnerKey = process.env.ONEWMS_PARTNER_KEY;
     const domainKey = process.env.ONEWMS_DOMAIN_KEY;
     const apiUrl = process.env.ONEWMS_API_URL;
     const shopId = process.env.ONEWMS_SHOP_ID;
+    const subDomainSeq = process.env.ONEWMS_SUB_DOMAIN_SEQ;
 
     if (!partnerKey || !domainKey) {
       throw new Error(
@@ -71,11 +73,18 @@ export class OnewmsConfigManager {
       );
     }
 
+    if (!subDomainSeq) {
+      console.warn(
+        '⚠️ ONEWMS_SUB_DOMAIN_SEQ not configured. get_order_info will return "invalid sub_domain_seq".'
+      );
+    }
+
     this.setConfig({
       partnerKey,
       domainKey,
       apiUrl,
       shopId,
+      subDomainSeq,
     });
   }
 }

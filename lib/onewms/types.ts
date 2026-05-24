@@ -12,6 +12,7 @@ export interface OnewmsConfig {
   domainKey: string;
   apiUrl?: string;
   shopId?: string;           // P0: 판매처코드 (set_orders 필수 파라미터)
+  subDomainSeq?: string;     // 화주번호 (get_order_info 필수). 운영 검증으로 한국무진유통 = "62" 확정. 미설정 시 "invalid sub_domain_seq" 에러.
 }
 
 export interface OnewmsApiRequest {

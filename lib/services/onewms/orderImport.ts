@@ -114,11 +114,13 @@ export async function importOrdersFromOnewms(params: {
   const client = createOnewmsClient();
 
   // Step 1: Fetch orders from ONEWMS (batch mode with page/limit)
+  // 운영 검증(v6/v7): sub_domain_seq 미지정 시 client.getOrderInfo 가 config.subDomainSeq("62", 한국무진유통)
+  // 자동 적용한다. 과거 hardcode 였던 "20" (테테 화주) 는 한국무진 데이터와 무관 — 제거.
   const orders = await client.getOrderInfo({
     date_type: 'order_date',
     start_date: params.start_date,
     end_date: params.end_date,
-    sub_domain_seq: params.sub_domain_seq || '20',
+    ...(params.sub_domain_seq && { sub_domain_seq: params.sub_domain_seq }),
     page,
     limit,
   });

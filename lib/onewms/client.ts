@@ -230,12 +230,19 @@ export class OnewmsClient {
     product_id?: string;    // 상품코드
     seq?: string;           // 관리번호 (set_trans_no 응답의 seq 사용)
     shop_id?: string;       // 판매처코드
-    sub_domain_seq?: string; // 화주번호 (get_etc_info warehouse의 seq)
+    sub_domain_seq?: string; // 화주번호 — 미지정 시 config.subDomainSeq 자동 적용
     packing_type?: string;  // single_qty, multi_qty, single_product, multi_product, single_product_multi_qty
     page?: number;
     limit?: number;         // 10, 30, 50, 100, 300, 500, 1000
   }): Promise<OrderInfo[]> {
-    const response = await this.request<OrderInfo[]>('get_order_info', params);
+    // 운영 검증(v6/v7) 확정: ONEWMS get_order_info 는 sub_domain_seq 가 누락되면
+    // "invalid sub_domain_seq" 에러를 반환한다. 한국무진유통 = "62".
+    // 호출처가 명시적으로 전달하지 않으면 config 의 subDomainSeq 를 자동 전달.
+    const effectiveParams = {
+      ...params,
+      sub_domain_seq: params.sub_domain_seq ?? this.config.subDomainSeq,
+    };
+    const response = await this.request<OrderInfo[]>('get_order_info', effectiveParams);
     return response.data || [];
   }
 
