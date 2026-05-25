@@ -15,6 +15,7 @@ import {
   Package,
   Radio,
   ShoppingCart,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -152,6 +153,46 @@ export default function CentersPage() {
       toast.success("계정 정보가 복사되었습니다");
     } catch {
       toast.error("복사 실패");
+    }
+  };
+
+  /**
+   * 센터 hard delete — PDF §9 (b) 삭제 버튼
+   * 1) /delete-impact 로 cascade/setNull 영향도 사전 조회
+   * 2) 확인 다이얼로그에 영향 표시
+   * 3) DELETE 호출 (서버에서 영구 삭제 + cascade 자동 실행)
+   */
+  const handleDeleteCenter = async (center: Center) => {
+    try {
+      const impactRes = await fetch(`/api/centers/${center.id}/delete-impact`);
+      if (!impactRes.ok) throw new Error("영향도 조회 실패");
+      const impactJson = await impactRes.json();
+      const { cascade, setNull } = impactJson.data;
+
+      const msg =
+        `${center.name} 센터를 영구 삭제하시겠습니까?\n\n` +
+        `⚠️ 이 작업은 되돌릴 수 없습니다.\n` +
+        `   비활성화만 원하시면 "비활성화" 버튼을 사용하세요.\n\n` +
+        `함께 삭제될 항목:\n` +
+        `  • 센터 재고 매핑: ${cascade.productCenterStocks}건\n\n` +
+        `데이터 보존 (참조만 해제, 이력 유지):\n` +
+        `  • 소속 사용자: ${setNull.users}명\n` +
+        `  • 처리 발주: ${setNull.orders}건\n` +
+        `  • 방송: ${setNull.broadcasts}건\n` +
+        `  • 스캔 이력: ${setNull.scanLogs}건`;
+
+      if (!confirm(msg)) return;
+
+      const res = await fetch(`/api/centers/${center.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error?.message || "삭제 실패");
+      }
+      toast.success(`${center.name} 센터가 영구 삭제되었습니다`);
+      loadCenters();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "삭제 중 오류";
+      toast.error(message);
     }
   };
 
@@ -548,6 +589,7 @@ export default function CentersPage() {
                             size="sm"
                             variant="ghost"
                             onClick={() => setEditingCenter(center)}
+                            title="편집"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -558,6 +600,15 @@ export default function CentersPage() {
                             onClick={() => handleToggleActive(center)}
                           >
                             {center.isActive ? "비활성화" : "활성화"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-red-600 hover:bg-red-50"
+                            onClick={() => handleDeleteCenter(center)}
+                            title="영구 삭제"
+                          >
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </td>
