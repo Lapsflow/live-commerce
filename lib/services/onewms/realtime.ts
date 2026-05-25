@@ -63,20 +63,29 @@ export async function getRealtimeStock(
   }
 
   // 2. Fetch from ONEWMS
+  // 운영 검증 v8 (2026-05-25): include_ready_trans=1 필수.
+  // 가용재고 = stock(총재고) - ready_trans_stock(접수/송장 미출고).
+  // 옵션 미전송 시 총재고만 받아 오버셀 위험.
   try {
     const client = createOnewmsClient();
-    const stockData = await client.getStockInfo('product_id', onewmsCode);
+    const stockData = await client.getStockInfo('product_id', onewmsCode, {
+      include_ready_trans: '1',
+    });
 
     const entry = stockData[onewmsCode];
-    let totalStock = 0;
+    // 총재고 (모든 warehouse 합산)
+    let totalOnewms = 0;
     if (entry?.stock) {
       for (const wh of Object.values(entry.stock)) {
-        totalStock += Number(wh.stock) || 0;
+        totalOnewms += Number(wh.stock) || 0;
       }
     }
+    // 접수/송장 미출고 차감 → 가용재고 (ONEWMS UI 와 동일)
+    const readyTrans = Number(entry?.ready_trans_stock) || 0;
+    const availableStock = totalOnewms - readyTrans;
 
-    setCache(onewmsCode, totalStock);
-    return totalStock;
+    setCache(onewmsCode, availableStock);
+    return availableStock;
   } catch (error) {
     console.error(`[REALTIME] Failed to fetch stock for ${onewmsCode}:`, error);
     return null;

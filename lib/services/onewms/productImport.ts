@@ -215,15 +215,20 @@ export async function syncStockFromOnewms(
     const results = await Promise.all(
       batch.map(async (product) => {
         try {
-          const stockData = await client.getStockInfo('product_id', product.onewmsCode!);
+          // 운영 검증 v8: include_ready_trans=1 + 가용재고 차감 (stockSync.ts 와 동일 패턴)
+          const stockData = await client.getStockInfo('product_id', product.onewmsCode!, {
+            include_ready_trans: '1',
+          });
           const stockEntry = stockData[product.onewmsCode!];
 
-          let totalStock = 0;
+          let totalOnewms = 0;
           if (stockEntry?.stock) {
             for (const wh of Object.values(stockEntry.stock)) {
-              totalStock += Number(wh.stock) || 0;
+              totalOnewms += Number(wh.stock) || 0;
             }
           }
+          const readyTrans = Number(stockEntry?.ready_trans_stock) || 0;
+          const totalStock = totalOnewms - readyTrans;
 
           await prisma.product.update({
             where: { id: product.id },

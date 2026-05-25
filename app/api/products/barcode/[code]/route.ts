@@ -74,26 +74,35 @@ export const GET = withRole(
       const startTime = Date.now();
       try {
         const client = createOnewmsClient();
-        const stockData = await client.getStockInfo("barcode", code);
+        // 운영 검증 v8 (2026-05-25): include_ready_trans=1 필수.
+        // 가용재고 = stock(총재고) - ready_trans_stock(접수/송장 미출고).
+        // 셀러가 바코드 찍을 때 실제 판매 가능 수량을 표시해야 오버셀 방지.
+        const stockData = await client.getStockInfo("barcode", code, {
+          include_ready_trans: '1',
+        });
 
-        // ONEWMS 응답: { [product_id]: { stock: { [wh_seq]: { stock } } } }
+        // ONEWMS 응답: { [product_id]: { stock: {wh: {stock}}, ready_trans_stock? } }
         let totalWmsStock = 0;
+        let readyTransSum = 0;
         for (const entry of Object.values(stockData)) {
+          readyTransSum += Number(entry?.ready_trans_stock) || 0;
           if (entry?.stock && typeof entry.stock === "object") {
             for (const wh of Object.values(entry.stock)) {
               totalWmsStock += Number(wh.stock) || 0;
             }
           }
         }
+        // 가용재고 = 총재고 - 접수/송장 미출고 (ONEWMS UI 와 일치)
+        const availableWmsStock = totalWmsStock - readyTransSum;
 
-        realtimeStock = totalWmsStock;
+        realtimeStock = availableWmsStock;
         lastSyncedAt = new Date().toISOString();
 
-        // 로컬 DB totalStock 업데이트
-        if (totalWmsStock !== cachedStock) {
+        // 로컬 DB totalStock 업데이트 (가용재고 기준)
+        if (availableWmsStock !== cachedStock) {
           await prisma.product.update({
             where: { id: product.id },
-            data: { totalStock: totalWmsStock },
+            data: { totalStock: availableWmsStock },
           });
         }
 
@@ -103,9 +112,11 @@ export const GET = withRole(
             event: "ONEWMS_STOCK_QUERY",
             barcode: code,
             productId: product.id,
-            realtimeStock: totalWmsStock,
+            availableStock: availableWmsStock,
+            totalStock: totalWmsStock,
+            readyTransStock: readyTransSum,
             cachedStock,
-            diff: totalWmsStock - cachedStock,
+            diff: availableWmsStock - cachedStock,
             elapsed_ms: elapsed,
             status: "success",
           })
