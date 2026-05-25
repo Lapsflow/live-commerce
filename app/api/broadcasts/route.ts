@@ -104,6 +104,8 @@ export const POST = withRole(
       });
 
       // LIVE-09: 셀러 요청접수 → 관리자 알림
+      // 운영 검증(#50): Vercel serverless 의 fire-and-forget 은 함수 종료 즉시 Promise kill
+      // 위험 (CLAUDE.md 학습 #8). Promise.allSettled 로 모두 await — 알림 누락 0 보장.
       if (!data.status || data.status === "REQUESTED") {
         try {
           const seller = await prisma.user.findUnique({
@@ -115,22 +117,32 @@ export const POST = withRole(
                 where: { role: { in: ["MASTER", "SUB_MASTER"] }, isActive: true },
                 select: { name: true, phone: true, email: true },
               });
-          for (const r of recipients) {
-            if (r.phone) {
-              sendNotification({
+          const notifPromises = recipients
+            .filter((r): r is typeof r & { phone: string } => !!r.phone)
+            .map(async (r) => {
+              const phoneNormalized = r.phone.replace(/-/g, "").trim();
+              const result = await sendNotification({
                 type: "BROADCAST_REQUESTED",
-                recipient: { name: r.name, phone: r.phone, email: r.email || undefined },
+                recipient: { name: r.name, phone: phoneNormalized, email: r.email || undefined },
                 variables: {
                   sellerName: seller?.name || "-",
                   broadcastTitle: broadcast.title || broadcast.code,
                   scheduledAt: scheduledAt.toLocaleString("ko-KR"),
                 },
                 broadcastId: broadcast.id,
-              }).catch((err) => console.error("[BROADCAST_REQUESTED_NOTIF]", err));
-            }
-          }
+              });
+              if (!result.success) {
+                console.error("[BROADCAST_REQUESTED_NOTIF] failed:", {
+                  recipient: r.name,
+                  phone: phoneNormalized,
+                  error: result.error,
+                });
+              }
+              return result;
+            });
+          await Promise.allSettled(notifPromises);
         } catch (err) {
-          console.error("[BROADCAST_REQUESTED_NOTIF]", err);
+          console.error("[BROADCAST_REQUESTED_NOTIF] exception:", err);
         }
       }
 

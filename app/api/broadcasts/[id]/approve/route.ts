@@ -32,6 +32,19 @@ export const PUT = withRole(
       return errors.badRequest("신청 대기 상태의 방송만 승인할 수 있습니다");
     }
 
+    // 운영 검증(#50): SUB_MASTER 는 본인 센터의 방송만 승인 가능 (PDF §8 권한)
+    // 이전: 어떤 SUB_MASTER 가 어느 센터의 방송이든 승인 가능 → 타 센터 침범 위험
+    if (user.role === "SUB_MASTER") {
+      if (!user.centerId) {
+        return errors.forbidden("센터관리자 계정에 centerId 가 설정되어 있지 않습니다");
+      }
+      if (broadcast.centerId !== user.centerId) {
+        return errors.forbidden(
+          "본인 센터에 신청된 방송만 승인할 수 있습니다. 다른 센터 방송은 해당 센터관리자 또는 마스터가 승인합니다"
+        );
+      }
+    }
+
     const updated = await prisma.broadcast.update({
       where: { id: broadcastId },
       data: { status: "SCHEDULED" },
