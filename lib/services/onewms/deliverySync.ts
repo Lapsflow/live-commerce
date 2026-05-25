@@ -17,16 +17,28 @@ interface SyncResult {
 
 /**
  * Map ONEWMS order status to platform shipping status
+ *
+ * ONEWMS status codes (00-INDEX.md 부록):
+ *   1 : 접수 (Received)
+ *   2-7 : 승인/준비 상태 (Approved/Preparing)
+ *   8 : 송장/배송 (Shipping/Delivered)
+ *
+ * 배송완료(DELIVERED) 판별:
+ *   v7 검증 응답 구조: { status: "8", trans_date: "...", trans_date_pos: "..." }
+ *   trans_date_pos (배송일시) 가 유효한 datetime 이면 DELIVERED.
+ *   trans_date_pos 가 "0000-00-00 00:00:00" 또는 빈값이면 SHIPPED (출고 후 미도착).
+ *
+ * @param transDatePos ONEWMS 응답의 trans_date_pos 값 (배송완료 판별용)
  */
 function mapOnewmsStatusToShippingStatus(
-  onewmsStatus: number
-): 'PENDING' | 'PREPARING' | 'SHIPPED' | 'PARTIAL' {
-  // ONEWMS status codes:
-  // 1: 접수 (Received)
-  // 2-7: 승인/준비 상태 (Approved/Preparing)
-  // 8: 출고완료 (Shipped)
-
+  onewmsStatus: number,
+  transDatePos?: string | null
+): 'PENDING' | 'PREPARING' | 'SHIPPED' | 'DELIVERED' | 'PARTIAL' {
   if (onewmsStatus === 8) {
+    // 배송일시가 유효한 값이면 배송완료
+    if (transDatePos && transDatePos !== '0000-00-00 00:00:00' && !transDatePos.startsWith('0000-')) {
+      return 'DELIVERED';
+    }
     return 'SHIPPED';
   }
 
@@ -107,9 +119,11 @@ export async function syncOrderDeliveryStatus(orderId: string): Promise<{
     const transNo = orderInfo.trans_no || null;
     const csStatus = parseInt(String(orderInfo.order_cs || '0'), 10);
     const holdStatus = parseInt(String(orderInfo.hold || '0'), 10);
+    // trans_date_pos: 배송일시 (DELIVERED 판별용)
+    const transDatePos = (orderInfo as { trans_date_pos?: string }).trans_date_pos ?? null;
 
-    // Determine new shipping status
-    const newShippingStatus = mapOnewmsStatusToShippingStatus(onewmsStatus);
+    // Determine new shipping status (DELIVERED 까지 판별)
+    const newShippingStatus = mapOnewmsStatusToShippingStatus(onewmsStatus, transDatePos);
     const oldShippingStatus = mapping.order.shippingStatus;
 
     let statusChanged = false;
@@ -125,11 +139,11 @@ export async function syncOrderDeliveryStatus(orderId: string): Promise<{
           },
         });
 
-        // Update mapping
+        // Update mapping (SHIPPED/DELIVERED 모두 'shipped' 매핑 — 후속 처리 없으므로)
         await tx.onewmsOrderMapping.update({
           where: { id: mapping.id },
           data: {
-            status: newShippingStatus === 'SHIPPED' ? 'shipped' : 'sent',
+            status: (newShippingStatus === 'SHIPPED' || newShippingStatus === 'DELIVERED') ? 'shipped' : 'sent',
             transNo,
             csStatus,
             holdStatus,
