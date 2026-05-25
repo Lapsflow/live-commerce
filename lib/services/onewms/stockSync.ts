@@ -51,31 +51,39 @@ export async function syncProductStock(productId: string): Promise<{
     }
 
     // Fetch stock info from ONEWMS using product_id type with ids param
+    // 운영 검증 v8 (2026-05-25): include_ready_trans=1 옵션 필수.
+    // ONEWMS UI 가 표시하는 "가용재고" = stock(총재고) - ready_trans_stock(접수/송장 미출고).
+    // 옵션 미전송 시 ready_trans_stock 필드를 못 받아 가용재고 계산 불가 → 오버셀 위험.
     const client = createOnewmsClient();
-    const stockData = await client.getStockInfo('product_id', product.onewmsCode);
+    const stockData = await client.getStockInfo('product_id', product.onewmsCode, {
+      include_ready_trans: '1',
+    });
 
-    // Response is { [product_id]: { product_id, link_id, barcode, stock: { [warehouse_seq]: { warehouse_seq, stock } } } }
+    // Response: { [product_id]: { product_id, ..., stock: {wh1: {stock}}, ready_trans_stock?: string } }
     const stockEntry = stockData[product.onewmsCode];
-    // Sum stock across all warehouses
-    let onewmsAvailableQty = 0;
+    // 총재고 = 모든 warehouse 합산
+    let onewmsTotalQty = 0;
     if (stockEntry?.stock) {
       for (const wh of Object.values(stockEntry.stock)) {
-        onewmsAvailableQty += Number(wh.stock) || 0;
+        onewmsTotalQty += Number(wh.stock) || 0;
       }
     }
-    const onewmsTotalQty = onewmsAvailableQty;
+    // 접수/송장 미출고 재고 (ONEWMS 가 옵션 전송 시에만 응답에 포함)
+    const readyTransQty = Number(stockEntry?.ready_trans_stock) || 0;
+    // 가용재고 = 총재고 - 미출고 (ONEWMS UI 와 동일, 셀러가 실제로 판매 가능한 수량)
+    const onewmsAvailableQty = onewmsTotalQty - readyTransQty;
     const localQty = product.totalStock;
 
-    // Calculate difference
+    // Calculate difference (가용재고 기준)
     const difference = onewmsAvailableQty - localQty;
 
-    // Create sync record
+    // Create sync record (총재고와 가용재고 모두 기록)
     await prisma.onewmsStockSync.create({
       data: {
         productId,
         productCode: product.onewmsCode,
-        availableQty: onewmsAvailableQty,
-        totalQty: onewmsTotalQty,
+        availableQty: onewmsAvailableQty,  // 가용재고 (UI 값)
+        totalQty: onewmsTotalQty,          // 총재고 (창고 합산)
         localQty,
         difference,
         syncStatus: 'synced',
@@ -175,18 +183,23 @@ export async function syncStocksForProducts(productIds: string[]): Promise<SyncS
       const ids = batch.map((p) => p.onewmsCode!).join(',');
 
       try {
-        // ✅ B-2: Batch 호출에 30초 timeout 설정 (기본 10초에서 확장)
-        const stockData = await client.getStockInfo('product_id', ids, undefined, { timeoutMs: 30000 });
+        // 운영 검증 v8: include_ready_trans=1 필수 (가용재고 계산용 ready_trans_stock 응답)
+        const stockData = await client.getStockInfo('product_id', ids, { include_ready_trans: '1' }, { timeoutMs: 30000 });
 
         const applyResults = await Promise.allSettled(
           batch.map(async (product) => {
             const stockEntry = stockData[product.onewmsCode!];
-            let onewmsAvailableQty = 0;
+            // 총재고
+            let onewmsTotalQty = 0;
             if (stockEntry?.stock) {
               for (const wh of Object.values(stockEntry.stock)) {
-                onewmsAvailableQty += Number(wh.stock) || 0;
+                onewmsTotalQty += Number(wh.stock) || 0;
               }
             }
+            // 가용재고 = 총재고 - 접수/송장 미출고 (ONEWMS UI 와 일치)
+            const readyTransQty = Number(stockEntry?.ready_trans_stock) || 0;
+            const onewmsAvailableQty = onewmsTotalQty - readyTransQty;
+
             const dbProduct = await prisma.product.findUnique({
               where: { id: product.id },
               select: { totalStock: true },
@@ -199,7 +212,7 @@ export async function syncStocksForProducts(productIds: string[]): Promise<SyncS
                 productId: product.id,
                 productCode: product.onewmsCode!,
                 availableQty: onewmsAvailableQty,
-                totalQty: onewmsAvailableQty,
+                totalQty: onewmsTotalQty,
                 localQty,
                 difference,
                 syncStatus: 'synced',
@@ -215,7 +228,7 @@ export async function syncStocksForProducts(productIds: string[]): Promise<SyncS
               if (Math.abs(difference) > 5) {
                 console.warn(
                   `[ORDER_PRESYNC_LARGE_DIFF] ${product.code}: ` +
-                    `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (차이 ${difference > 0 ? '+' : ''}${difference})`
+                    `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (총=${onewmsTotalQty} - 미출고=${readyTransQty}) 차이 ${difference > 0 ? '+' : ''}${difference}`
                 );
               }
             }
@@ -294,19 +307,25 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
       const ids = batch.map((p) => p.onewmsCode!).join(',');
 
       try {
-        // 1회 API 호출로 batch 전체 재고 조회
-        const stockData = await client.getStockInfo('product_id', ids);
+        // 운영 검증 v8: include_ready_trans=1 필수
+        // 1회 API 호출로 batch 전체 재고 + 미출고 분리 정보 동시 조회
+        const stockData = await client.getStockInfo('product_id', ids, { include_ready_trans: '1' });
 
-        // 각 상품에 대해 정책 적용 (100% ONEWMS 일치)
+        // 각 상품에 대해 정책 적용 (100% ONEWMS 가용재고 일치)
         const applyResults = await Promise.allSettled(
           batch.map(async (product) => {
             const stockEntry = stockData[product.onewmsCode!];
-            let onewmsAvailableQty = 0;
+            // 총재고
+            let onewmsTotalQty = 0;
             if (stockEntry?.stock) {
               for (const wh of Object.values(stockEntry.stock)) {
-                onewmsAvailableQty += Number(wh.stock) || 0;
+                onewmsTotalQty += Number(wh.stock) || 0;
               }
             }
+            // 가용재고 = 총재고 - 접수/송장 미출고 (ONEWMS UI 와 일치)
+            const readyTransQty = Number(stockEntry?.ready_trans_stock) || 0;
+            const onewmsAvailableQty = onewmsTotalQty - readyTransQty;
+
             // 현재 DB 재고 조회
             const dbProduct = await prisma.product.findUnique({
               where: { id: product.id },
@@ -321,7 +340,7 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
                 productId: product.id,
                 productCode: product.onewmsCode!,
                 availableQty: onewmsAvailableQty,
-                totalQty: onewmsAvailableQty,
+                totalQty: onewmsTotalQty,
                 localQty,
                 difference,
                 syncStatus: 'synced',
@@ -333,7 +352,7 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
               return { success: true, code: product.code };
             }
 
-            // ONEWMS 값으로 자동 적용 (100% 일치 정책)
+            // ONEWMS 가용재고로 자동 적용 (100% 일치 정책)
             await prisma.product.update({
               where: { id: product.id },
               data: { totalStock: onewmsAvailableQty },
@@ -342,7 +361,7 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
             if (Math.abs(difference) > 5) {
               console.warn(
                 `[LARGE_DIFF_AUTO_APPLIED] ${product.code}: ` +
-                  `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (차이 ${difference > 0 ? '+' : ''}${difference})`
+                  `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (총=${onewmsTotalQty} - 미출고=${readyTransQty}) 차이 ${difference > 0 ? '+' : ''}${difference}`
               );
             }
             return { success: true, code: product.code };

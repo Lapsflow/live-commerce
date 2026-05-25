@@ -305,6 +305,14 @@ export interface StockProductEntry {
   barcode?: string;
   supply_code?: string;
   stock?: Record<string, StockWarehouseEntry>;
+  /**
+   * 운영 검증 v8 (2026-05-25) 확정:
+   * include_ready_trans=1 옵션 전송 시 ONEWMS 응답에 포함되는 "접수/송장 발급된 미출고 재고"
+   * 가용재고 = stock(총재고) - ready_trans_stock
+   * ONEWMS 운영 UI 가 표시하는 값과 일치 (실제 셀러가 추가로 판매 가능한 수량)
+   */
+  ready_trans_stock?: string;
+  check_date?: string;
   [key: string]: unknown;
 }
 
