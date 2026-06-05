@@ -74,19 +74,33 @@ export const POST = withRole(
       }
 
       // Row → 매칭 입력 변환
-      const items = rows.map((row) => ({
-        code: String(row["상품코드"] || "").trim() || undefined,
-        barcode: String(row["바코드"] || "").trim() || undefined,
-        productName: String(row["상품명"] || "").trim() || undefined,
-        quantity: parseInt(String(row["수량"] || "0")) || 1,
-        totalAmount: parseInt(String(row["입금액"] || "0")) || 0,
-        // 원본 행 데이터 보존
-        orderNo: String(row["주문번호"] || "").trim(),
-        recipient: String(row["수령자"] || "").trim(),
-        phone: String(row["연락처"] || "").trim(),
-        address: String(row["주소"] || "").trim(),
-        memo: String(row["메모"] || "").trim(),
-      }));
+      // 운영 검증(2026-05-26): 메모 셀에 템플릿의 placeholder "비고 (선택)" 가 그대로
+      //   ONEWMS 로 전송되는 버그 발견. 셀러가 옛 템플릿 사용 중일 수 있으므로
+      //   bulk 파싱 단계에서 placeholder 값 검출하여 빈 값으로 처리.
+      const PLACEHOLDER_MEMO_VALUES = new Set([
+        "비고 (선택)",
+        "비고(선택)",
+        "비고",
+        "메모 (선택)",
+        "메모(선택)",
+      ]);
+      const items = rows.map((row) => {
+        const memoRaw = String(row["메모"] || "").trim();
+        const memo = PLACEHOLDER_MEMO_VALUES.has(memoRaw) ? "" : memoRaw;
+        return {
+          code: String(row["상품코드"] || "").trim() || undefined,
+          barcode: String(row["바코드"] || "").trim() || undefined,
+          productName: String(row["상품명"] || "").trim() || undefined,
+          quantity: parseInt(String(row["수량"] || "0")) || 1,
+          totalAmount: parseInt(String(row["입금액"] || "0")) || 0,
+          // 원본 행 데이터 보존
+          orderNo: String(row["주문번호"] || "").trim(),
+          recipient: String(row["수령자"] || "").trim(),
+          phone: String(row["연락처"] || "").trim(),
+          address: String(row["주소"] || "").trim(),
+          memo,
+        };
+      });
 
       // Stage 1: 상품 매칭
       const matchResults = await matchOrderItems(items);
