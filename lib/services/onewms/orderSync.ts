@@ -118,22 +118,44 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
     const orderDate = createdAtIso.slice(0, 10);              // YYYY-MM-DD
     const orderTime = createdAtIso.slice(11, 19);             // HH:MM:SS
 
-    const orderRows: CreateOrderRow[] = order.items.map((item, idx) => ({
-      order_id: onewmsOrderNo,                                // 주문번호 (필수, varchar(40))
-      order_id_seq: String(idx + 1),                          // 주문상세번호 (item 식별용)
-      shop_product_id: item.product.onewmsCode!,              // 판매처상품코드 (필수)
-      qty: item.quantity,                                     // 주문수량 (필수)
-      recv_name: recipientName,                               // 수령자명 (필수)
-      recv_mobile: recipientPhone,                            // 수령자핸드폰
-      recv_address: recipientAddress,                         // 수령자주소
-      product_name: item.product.name,                        // 판매처상품명
-      order_date: orderDate,                                  // 주문일자 (운영 추적용)
-      order_time: orderTime,                                  // 주문일시 (운영 추적용)
-      ...(sellerName && { order_name: sellerName }),          // 주문자명 = 셀러 이름
-      ...(sellerPhone && { order_mobile: sellerPhone }),      // 주문자핸드폰 = 셀러 전화
-      ...(sellerUsername && { cust_id: sellerUsername }),     // PDF §4.2: 판매처 식별자 = 셀러 username
-      ...(order.memo && { memo: order.memo }),                // 배송메모
-    }));
+    // 운영 검증(2026-05-26): ONEWMS 자동 매칭 표준 형식 적용
+    // 운영진(한국무진) 답변:
+    //   "정상 매칭 건의 판매처상품코드가 'code'로 저장되어 있고, 판매처옵션은
+    //   '<상품명>...<옵션>...' 형태로 저장된 것을 확인"
+    //   "동일한 형식으로 전송하도록 수정하면 자동 매칭이 가능"
+    //
+    // 변경:
+    //   - shop_product_id: ONEWMS product_id → "code" 고정 문자열
+    //   - options: 신규 추가 → "<상품명>cleanName<옵션>originalName" 형식
+    //     cleanName 은 product.name 에서 [숫자] prefix 제거 (예: [901]밀크킥 → 밀크킥)
+    //   - product_name: 그대로 유지 (운영 가시성)
+    //   - varchar(255) 안전망: options 가 길어질 경우 truncate
+    const orderRows: CreateOrderRow[] = order.items.map((item, idx) => {
+      const productName = item.product.name;
+      // [숫자] 또는 [Cxx-xxx] prefix 제거 후 깨끗한 상품명 추출
+      const cleanProductName = productName.replace(/^\[[^\]]+\]\s*/, '').trim() || productName;
+      // ONEWMS 자동 매칭 표준: <상품명>실제상품명<옵션>고유번호포함상품명
+      const optionsRaw = `<상품명>${cleanProductName}<옵션>${productName}`;
+      const options = optionsRaw.length > 255 ? optionsRaw.slice(0, 255) : optionsRaw;
+
+      return {
+        order_id: onewmsOrderNo,                              // 주문번호 (필수, varchar(40))
+        order_id_seq: String(idx + 1),                        // 주문상세번호 (item 식별용)
+        shop_product_id: 'code',                              // ONEWMS 자동 매칭 트리거 (운영진 검증 형식)
+        qty: item.quantity,                                   // 주문수량 (필수)
+        recv_name: recipientName,                             // 수령자명 (필수)
+        recv_mobile: recipientPhone,                          // 수령자핸드폰
+        recv_address: recipientAddress,                       // 수령자주소
+        product_name: productName,                            // 판매처상품명 (운영 가시성 유지)
+        options,                                              // 판매처옵션 (자동 매칭 핵심)
+        order_date: orderDate,                                // 주문일자 (운영 추적용)
+        order_time: orderTime,                                // 주문일시 (운영 추적용)
+        ...(sellerName && { order_name: sellerName }),        // 주문자명 = 셀러 이름
+        ...(sellerPhone && { order_mobile: sellerPhone }),    // 주문자핸드폰 = 셀러 전화
+        ...(sellerUsername && { cust_id: sellerUsername }),   // PDF §4.2: 판매처 식별자 = 셀러 username
+        ...(order.memo && { memo: order.memo }),              // 배송메모
+      };
+    });
 
     // collect_date: 공식 문서 표기는 YY-MM-DD (2자리 연도) 이지만 PHP date 파싱은 4자리도 허용.
     // 보수적으로 공식 표기 그대로 따라 YY-MM-DD 로 전송 (운영 검증 #4 안전망).
