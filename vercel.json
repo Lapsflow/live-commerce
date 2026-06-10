@@ -5,6 +5,14 @@
       "schedule": "* * * * *"
     },
     {
+      "path": "/api/cron/product-sync",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/onewms-maintenance",
+      "schedule": "0 18 * * *"
+    },
+    {
       "path": "/api/cron/delivery-sync",
       "schedule": "*/15 * * * *"
     },

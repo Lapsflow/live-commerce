@@ -34,23 +34,39 @@ export const GET = withRole(
     }
 
     // 최신 재고 동기화 기록 조회
-    const lastSync = await prisma.onewmsStockSync.findFirst({
-      where: { productId },
-      orderBy: { syncedAt: 'desc' },
-      select: {
-        syncedAt: true,
-        availableQty: true,
-        totalQty: true,
-        difference: true,
-        syncStatus: true,
-      },
-    });
+    // 속도 개선(2026-06-10): 이력은 "변동이 있을 때만" 기록되므로
+    // lastSync.syncedAt = 마지막 변동 시각. 동기화 자체의 최신 실행 시각은
+    // cron AuditLog 에서 별도 조회 (변동이 없어도 매 분 갱신됨).
+    const [lastSync, lastCronRun] = await Promise.all([
+      prisma.onewmsStockSync.findFirst({
+        where: { productId },
+        orderBy: { syncedAt: 'desc' },
+        select: {
+          syncedAt: true,
+          availableQty: true,
+          totalQty: true,
+          difference: true,
+          syncStatus: true,
+        },
+      }),
+      prisma.auditLog.findFirst({
+        where: { entityId: 'cron-stock-sync', ipAddress: 'cron' },
+        orderBy: { createdAt: 'desc' },
+        select: { createdAt: true },
+      }),
+    ]);
+
+      // 표시용 동기화 시각 = max(마지막 변동, 마지막 cron 실행)
+      const lastSyncedAt =
+        lastCronRun?.createdAt && (!lastSync || lastCronRun.createdAt > lastSync.syncedAt)
+          ? lastCronRun.createdAt
+          : lastSync?.syncedAt ?? null;
 
       return ok({
         product,
         lastSync: lastSync
           ? {
-              syncedAt: lastSync.syncedAt,
+              syncedAt: lastSyncedAt ?? lastSync.syncedAt,
               onewmsAvailableQty: lastSync.availableQty,
               onewmsTotalQty: lastSync.totalQty,
               difference: lastSync.difference,
@@ -59,7 +75,7 @@ export const GET = withRole(
           : null,
         hasConflict: lastSync?.syncStatus === 'conflict',
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to fetch product stock:', error);
       return errors.internal('재고 정보 조회 실패');
     }

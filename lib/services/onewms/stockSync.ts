@@ -5,6 +5,83 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { createOnewmsClient } from '@/lib/onewms';
+import type { ProductInfo, StockProductEntry } from '@/lib/onewms/types';
+import { fetchAllOnewmsProducts } from './productImport';
+
+/**
+ * get_stock_info 응답 entry → 총재고/가용재고 계산 (공용)
+ * 운영 검증 v8 (2026-05-25): 가용재고 = stock(총재고 합산) - ready_trans_stock(접수/송장 미출고)
+ */
+function extractQty(stockEntry: StockProductEntry | undefined): {
+  availableQty: number;
+  totalQty: number;
+} {
+  let totalQty = 0;
+  if (stockEntry?.stock) {
+    for (const wh of Object.values(stockEntry.stock)) {
+      totalQty += Number(wh.stock) || 0;
+    }
+  }
+  const readyTransQty = Number(stockEntry?.ready_trans_stock) || 0;
+  return { availableQty: totalQty - readyTransQty, totalQty };
+}
+
+/** 변경된 상품 1건의 sync 적용 정보 */
+interface ChangedStock {
+  id: string;
+  code: string;
+  name: string;
+  onewmsCode: string;
+  availableQty: number;
+  totalQty: number;
+  localQty: number;
+  difference: number;
+}
+
+/**
+ * 변경분 일괄 적용: product.totalStock update + 이력 createMany 를 1 트랜잭션으로.
+ *
+ * 속도 개선 (2026-06-10, 운영 측 "반영 속도 우선" 방침):
+ *   기존: 상품마다 findUnique + 이력 create + update = 3N DB 왕복, 이력은 무변경 건도 매 분 기록
+ *   변경: 메모리 비교(이미 조회한 totalStock 재사용) → 변경분만 기록·적용
+ *   이력 테이블 비대(분당 전 상품 수만큼 증가 → 13k 충돌 누적과 동일 패턴) 차단.
+ */
+async function applyChangedStocks(changed: ChangedStock[], logPrefix: string): Promise<void> {
+  if (changed.length === 0) return;
+
+  await prisma.$transaction([
+    ...changed.map((c) =>
+      prisma.product.update({
+        where: { id: c.id },
+        data: { totalStock: c.availableQty },
+      })
+    ),
+    prisma.onewmsStockSync.createMany({
+      data: changed.map((c) => ({
+        productId: c.id,
+        productCode: c.onewmsCode,
+        availableQty: c.availableQty,
+        totalQty: c.totalQty,
+        localQty: c.localQty,
+        difference: c.difference,
+        syncStatus: 'synced',
+        syncedAt: new Date(),
+      })),
+    }),
+  ]);
+
+  for (const c of changed) {
+    if (Math.abs(c.difference) > 5) {
+      console.warn(
+        `[${logPrefix}_LARGE_DIFF] ${c.code} (${c.name}): ` +
+          `Local=${c.localQty} → ONEWMS=${c.availableQty} (총=${c.totalQty}) 차이 ${c.difference > 0 ? '+' : ''}${c.difference}`
+      );
+    }
+    if (c.availableQty < 10) {
+      console.warn(`[LOW STOCK ALERT] ${c.code} (${c.name}): ${c.availableQty} units`);
+    }
+  }
+}
 
 interface SyncStatsResult {
   totalProducts: number;
@@ -169,7 +246,8 @@ export async function syncStocksForProducts(productIds: string[]): Promise<SyncS
         productType: 'HEADQUARTERS',
         onewmsCode: { not: null },
       },
-      select: { id: true, code: true, name: true, onewmsCode: true },
+      // 속도 개선(2026-06-10): totalStock 을 함께 조회 → 루프 안 findUnique 제거
+      select: { id: true, code: true, name: true, onewmsCode: true, totalStock: true },
     });
 
     stats.totalProducts = products.length;
@@ -186,67 +264,27 @@ export async function syncStocksForProducts(productIds: string[]): Promise<SyncS
         // 운영 검증 v8: include_ready_trans=1 필수 (가용재고 계산용 ready_trans_stock 응답)
         const stockData = await client.getStockInfo('product_id', ids, { include_ready_trans: '1' }, { timeoutMs: 30000 });
 
-        const applyResults = await Promise.allSettled(
-          batch.map(async (product) => {
-            const stockEntry = stockData[product.onewmsCode!];
-            // 총재고
-            let onewmsTotalQty = 0;
-            if (stockEntry?.stock) {
-              for (const wh of Object.values(stockEntry.stock)) {
-                onewmsTotalQty += Number(wh.stock) || 0;
-              }
-            }
-            // 가용재고 = 총재고 - 접수/송장 미출고 (ONEWMS UI 와 일치)
-            const readyTransQty = Number(stockEntry?.ready_trans_stock) || 0;
-            const onewmsAvailableQty = onewmsTotalQty - readyTransQty;
-
-            const dbProduct = await prisma.product.findUnique({
-              where: { id: product.id },
-              select: { totalStock: true },
-            });
-            const localQty = dbProduct?.totalStock ?? 0;
-            const difference = onewmsAvailableQty - localQty;
-
-            await prisma.onewmsStockSync.create({
-              data: {
-                productId: product.id,
-                productCode: product.onewmsCode!,
-                availableQty: onewmsAvailableQty,
-                totalQty: onewmsTotalQty,
-                localQty,
-                difference,
-                syncStatus: 'synced',
-                syncedAt: new Date(),
-              },
-            });
-
-            if (difference !== 0) {
-              await prisma.product.update({
-                where: { id: product.id },
-                data: { totalStock: onewmsAvailableQty },
-              });
-              if (Math.abs(difference) > 5) {
-                console.warn(
-                  `[ORDER_PRESYNC_LARGE_DIFF] ${product.code}: ` +
-                    `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (총=${onewmsTotalQty} - 미출고=${readyTransQty}) 차이 ${difference > 0 ? '+' : ''}${difference}`
-                );
-              }
-            }
-            return { success: true };
-          })
-        );
-
-        applyResults.forEach((r, idx) => {
-          if (r.status === 'fulfilled') {
-            stats.synced++;
-          } else {
-            stats.errors++;
-            stats.errorDetails.push({
-              productId: batch[idx].id,
-              error: r.reason instanceof Error ? r.reason.message : String(r.reason),
+        // 메모리 비교 → 변경분만 모아서 1 트랜잭션 적용
+        const changed: ChangedStock[] = [];
+        for (const product of batch) {
+          const { availableQty, totalQty } = extractQty(stockData[product.onewmsCode!]);
+          const difference = availableQty - product.totalStock;
+          if (difference !== 0) {
+            changed.push({
+              id: product.id,
+              code: product.code,
+              name: product.name,
+              onewmsCode: product.onewmsCode!,
+              availableQty,
+              totalQty,
+              localQty: product.totalStock,
+              difference,
             });
           }
-        });
+        }
+
+        await applyChangedStocks(changed, 'ORDER_PRESYNC');
+        stats.synced += batch.length;
       } catch (batchErr) {
         for (const product of batch) {
           stats.errors++;
@@ -285,11 +323,13 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
         isActive: true,
         onewmsCode: { not: null },
       },
+      // 속도 개선(2026-06-10): totalStock 을 함께 조회 → 루프 안 findUnique 제거
       select: {
         id: true,
         code: true,
         name: true,
         onewmsCode: true,
+        totalStock: true,
       },
     });
 
@@ -311,74 +351,27 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
         // 1회 API 호출로 batch 전체 재고 + 미출고 분리 정보 동시 조회
         const stockData = await client.getStockInfo('product_id', ids, { include_ready_trans: '1' });
 
-        // 각 상품에 대해 정책 적용 (100% ONEWMS 가용재고 일치)
-        const applyResults = await Promise.allSettled(
-          batch.map(async (product) => {
-            const stockEntry = stockData[product.onewmsCode!];
-            // 총재고
-            let onewmsTotalQty = 0;
-            if (stockEntry?.stock) {
-              for (const wh of Object.values(stockEntry.stock)) {
-                onewmsTotalQty += Number(wh.stock) || 0;
-              }
-            }
-            // 가용재고 = 총재고 - 접수/송장 미출고 (ONEWMS UI 와 일치)
-            const readyTransQty = Number(stockEntry?.ready_trans_stock) || 0;
-            const onewmsAvailableQty = onewmsTotalQty - readyTransQty;
-
-            // 현재 DB 재고 조회
-            const dbProduct = await prisma.product.findUnique({
-              where: { id: product.id },
-              select: { totalStock: true },
-            });
-            const localQty = dbProduct?.totalStock ?? 0;
-            const difference = onewmsAvailableQty - localQty;
-
-            // sync 이력 기록
-            await prisma.onewmsStockSync.create({
-              data: {
-                productId: product.id,
-                productCode: product.onewmsCode!,
-                availableQty: onewmsAvailableQty,
-                totalQty: onewmsTotalQty,
-                localQty,
-                difference,
-                syncStatus: 'synced',
-                syncedAt: new Date(),
-              },
-            });
-
-            if (difference === 0) {
-              return { success: true, code: product.code };
-            }
-
-            // ONEWMS 가용재고로 자동 적용 (100% 일치 정책)
-            await prisma.product.update({
-              where: { id: product.id },
-              data: { totalStock: onewmsAvailableQty },
-            });
-
-            if (Math.abs(difference) > 5) {
-              console.warn(
-                `[LARGE_DIFF_AUTO_APPLIED] ${product.code}: ` +
-                  `Local=${localQty} → ONEWMS=${onewmsAvailableQty} (총=${onewmsTotalQty} - 미출고=${readyTransQty}) 차이 ${difference > 0 ? '+' : ''}${difference}`
-              );
-            }
-            return { success: true, code: product.code };
-          })
-        );
-
-        applyResults.forEach((r, idx) => {
-          if (r.status === 'fulfilled') {
-            stats.synced++;
-          } else {
-            stats.errors++;
-            stats.errorDetails.push({
-              productId: batch[idx].id,
-              error: r.reason instanceof Error ? r.reason.message : String(r.reason),
+        // 메모리 비교 → 변경분만 모아서 1 트랜잭션 적용 (100% ONEWMS 가용재고 일치 정책 동일)
+        const changed: ChangedStock[] = [];
+        for (const product of batch) {
+          const { availableQty, totalQty } = extractQty(stockData[product.onewmsCode!]);
+          const difference = availableQty - product.totalStock;
+          if (difference !== 0) {
+            changed.push({
+              id: product.id,
+              code: product.code,
+              name: product.name,
+              onewmsCode: product.onewmsCode!,
+              availableQty,
+              totalQty,
+              localQty: product.totalStock,
+              difference,
             });
           }
-        });
+        }
+
+        await applyChangedStocks(changed, 'LARGE_DIFF_AUTO_APPLIED');
+        stats.synced += batch.length;
       } catch (batchErr) {
         console.error('Batch sync failed for batch starting at', i, ':', batchErr);
         // batch 단위 실패 → batch 안의 모든 상품을 error로 기록
@@ -407,7 +400,7 @@ export async function syncAllStocks(): Promise<SyncStatsResult> {
     );
 
     return stats;
-  } catch (error: any) {
+  } catch (error) {
     console.error('Stock sync failed:', error);
     throw error;
   }
@@ -462,7 +455,7 @@ export async function getStockConflicts(): Promise<ConflictInfo[]> {
       difference: conflict.difference,
       syncedAt: conflict.syncedAt,
     }));
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to fetch stock conflicts:', error);
     throw error;
   }
@@ -471,8 +464,10 @@ export async function getStockConflicts(): Promise<ConflictInfo[]> {
 /**
  * Deactivate HEADQUARTERS products not found in ONEWMS, restore those that reappear.
  * CENTER products are NEVER touched.
+ *
+ * @param prefetchedProducts - fetchAllOnewmsProducts() 결과 주입 시 재스캔 생략
  */
-export async function deactivateOrphanProducts(): Promise<{
+export async function deactivateOrphanProducts(prefetchedProducts?: ProductInfo[]): Promise<{
   deactivated: number;
   restored: number;
   alreadyCorrect: number;
@@ -481,16 +476,11 @@ export async function deactivateOrphanProducts(): Promise<{
 }> {
   const result = { deactivated: 0, restored: 0, alreadyCorrect: 0, onewmsTotal: 0, dbTotal: 0 };
 
-  const client = createOnewmsClient();
-
-  // 1. Fetch all ONEWMS product IDs
+  // 1. Fetch all ONEWMS product IDs (속도 개선 2026-06-10: prefetched 공유 가능)
+  const productList = prefetchedProducts ?? (await fetchAllOnewmsProducts());
   const onewmsProductIds = new Set<string>();
-  for (let page = 1; page <= 20; page++) {
-    const { data: products, total } = await client.getProductList(page, 100);
-    for (const p of products) {
-      if (p.product_id) onewmsProductIds.add(p.product_id);
-    }
-    if (page * 100 >= total) break;
+  for (const p of productList) {
+    if (p.product_id) onewmsProductIds.add(p.product_id);
   }
   result.onewmsTotal = onewmsProductIds.size;
 

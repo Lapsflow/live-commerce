@@ -17,7 +17,10 @@ interface CacheEntry {
   fetchedAt: number;
 }
 
-const CACHE_TTL_MS = 180_000; // 3 minutes (발주/바코드 시 skipCache=true로 강제 갱신)
+// 속도 개선(2026-06-10, 운영 측 "반영 속도 우선" 방침): 3분 → 1분.
+// 출고 기준 재고 정책이므로 캐시로 인한 오차 위험보다 표시 신선도 우선.
+// 발주/바코드는 기존대로 skipCache=true 강제 갱신이라 영향 없음.
+const CACHE_TTL_MS = 60_000; // 1 minute
 const CACHE_MAX_SIZE = 2000;
 const stockCache = new Map<string, CacheEntry>();
 
@@ -118,25 +121,39 @@ export async function getRealtimeStockBatch(
 
   if (uncachedCodes.length === 0) return results;
 
-  // Batch fetch — parallel per code (ONEWMS API is per-product_id)
-  const BATCH_SIZE = 20;
+  // 속도 개선(2026-06-10): 상품당 1회 호출(20개 병렬 × 반복) → ids 콤마 구분 1회 호출.
+  // get_stock_info 는 다중 조회를 지원 (stockSync batch 와 동일 패턴, 운영 검증된 방식).
+  // 상품 100개 기준 API 호출 100회 → 1회. 방송 시작·발주 화면 즉시 체감.
+  const client = createOnewmsClient();
+  const BATCH_SIZE = 100;
   for (let i = 0; i < uncachedCodes.length; i += BATCH_SIZE) {
     const batch = uncachedCodes.slice(i, i + BATCH_SIZE);
 
-    const settled = await Promise.allSettled(
-      batch.map(async (code) => {
-        const stock = await getRealtimeStock(code);
-        return { code, stock };
-      })
-    );
+    try {
+      // 운영 검증 v8: include_ready_trans=1 필수 (가용재고 = 총재고 - 접수/송장 미출고)
+      const stockData = await client.getStockInfo('product_id', batch.join(','), {
+        include_ready_trans: '1',
+      });
 
-    for (const result of settled) {
-      if (result.status === 'fulfilled') {
-        results.set(result.value.code, result.value.stock);
-      } else {
-        // Find the code that failed (batch index)
-        const idx = settled.indexOf(result);
-        results.set(batch[idx], null);
+      for (const code of batch) {
+        const entry = stockData[code];
+        let totalOnewms = 0;
+        if (entry?.stock) {
+          for (const wh of Object.values(entry.stock)) {
+            totalOnewms += Number(wh.stock) || 0;
+          }
+        }
+        const readyTrans = Number(entry?.ready_trans_stock) || 0;
+        const availableStock = totalOnewms - readyTrans;
+
+        setCache(code, availableStock);
+        results.set(code, availableStock);
+      }
+    } catch (error) {
+      console.error('[REALTIME] Batch stock fetch failed:', error);
+      // API 실패 시 해당 batch 전체 null (호출자가 DB 폴백 처리)
+      for (const code of batch) {
+        results.set(code, null);
       }
     }
   }

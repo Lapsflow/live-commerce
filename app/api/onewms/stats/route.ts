@@ -54,15 +54,13 @@ export const GET = withRole(
         WHERE "syncStatus" = 'conflict'
       `.then((rows) => Number(rows[0]?.count ?? 0)),
 
-      // Recent stock syncs (last 24 hours)
-      prisma.onewmsStockSync.findMany({
-        where: {
-          syncedAt: {
-            gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
-          },
-        },
-        orderBy: { syncedAt: 'desc' },
-        take: 1,
+      // Last stock sync run — cron 실행 기록(AuditLog) 기준
+      // 속도 개선(2026-06-10): OnewmsStockSync 가 "변경분만 기록" 으로 바뀌어
+      // 변동 없는 날은 이력 row 가 없음. 동기화 실행 여부는 cron AuditLog 가 정확.
+      prisma.auditLog.findFirst({
+        where: { entityId: 'cron-stock-sync', ipAddress: 'cron' },
+        orderBy: { createdAt: 'desc' },
+        select: { createdAt: true },
       }),
     ]);
 
@@ -72,9 +70,8 @@ export const GET = withRole(
         ? ((totalSynced - failedOrders) / totalSynced) * 100
         : 100;
 
-    // Last sync time
-    const lastStockSync =
-      recentSyncs.length > 0 ? recentSyncs[0].syncedAt : null;
+    // Last sync time (cron 실행 기준)
+    const lastStockSync = recentSyncs?.createdAt ?? null;
 
       return ok({
         orders: {

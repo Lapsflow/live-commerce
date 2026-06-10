@@ -261,19 +261,37 @@ export async function syncStockFromOnewms(
 }
 
 /**
- * Auto-import NEW products from ONEWMS that don't exist in DB yet.
- * Called from stock-sync cron to detect and register new ONEWMS products.
- * Only creates products with onewmsCode not yet in DB.
+ * ONEWMS 상품 목록 전체 스캔 (paginated) — 공용.
+ *
+ * 속도 개선(2026-06-10): 기존에는 가격 sync / auto-import / 고아 정리가 각자
+ * 같은 목록을 전체 스캔 (1 cron 회차에 최대 60회 중복 API 호출).
+ * 1회 스캔 결과를 공유하도록 추출. 호출자가 결과를 각 함수에 주입.
  */
-export async function autoImportNewProducts(): Promise<{
+export async function fetchAllOnewmsProducts(): Promise<ProductInfo[]> {
+  const client = createOnewmsClient();
+  const onewmsProducts: ProductInfo[] = [];
+  for (let page = 1; page <= 20; page++) {
+    const { data: products, total } = await client.getProductList(page, 100);
+    onewmsProducts.push(...products);
+    if (page * 100 >= total) break;
+  }
+  return onewmsProducts;
+}
+
+/**
+ * Auto-import NEW products from ONEWMS that don't exist in DB yet.
+ * Called from product-sync cron to detect and register new ONEWMS products.
+ * Only creates products with onewmsCode not yet in DB.
+ *
+ * @param prefetchedProducts - fetchAllOnewmsProducts() 결과 주입 시 재스캔 생략
+ */
+export async function autoImportNewProducts(prefetchedProducts?: ProductInfo[]): Promise<{
   total: number;
   created: number;
   skipped: number;
   errors: number;
 }> {
   const result = { total: 0, created: 0, skipped: 0, errors: 0 };
-
-  const client = createOnewmsClient();
 
   // Get all existing onewmsCodes in DB
   const existingProducts = await prisma.product.findMany({
@@ -283,13 +301,7 @@ export async function autoImportNewProducts(): Promise<{
   const existingOnewmsCodes = new Set(existingProducts.map((p) => p.onewmsCode));
   const existingBarcodes = new Set(existingProducts.map((p) => p.barcode));
 
-  // Fetch all ONEWMS products (paginated)
-  const onewmsProducts: ProductInfo[] = [];
-  for (let page = 1; page <= 20; page++) {
-    const { data: products, total } = await client.getProductList(page, 100);
-    onewmsProducts.push(...products);
-    if (page * 100 >= total) break;
-  }
+  const onewmsProducts = prefetchedProducts ?? (await fetchAllOnewmsProducts());
 
   result.total = onewmsProducts.length;
 
@@ -369,23 +381,18 @@ export async function autoImportNewProducts(): Promise<{
  * Only updates HEADQUARTERS products. CENTER products are never touched.
  * Called from stock-sync cron alongside stock sync.
  */
-export async function syncProductPricesFromOnewms(): Promise<{
+export async function syncProductPricesFromOnewms(prefetchedProducts?: ProductInfo[]): Promise<{
   total: number;
   updated: number;
   errors: number;
 }> {
   const result = { total: 0, updated: 0, errors: 0 };
 
-  const client = createOnewmsClient();
-
-  // Fetch all ONEWMS products (paginated)
+  // 속도 개선(2026-06-10): prefetched 목록 주입 시 재스캔 생략 (1회 스캔 공유)
+  const productList = prefetchedProducts ?? (await fetchAllOnewmsProducts());
   const onewmsProducts = new Map<string, ProductInfo>();
-  for (let page = 1; page <= 20; page++) {
-    const { data: products, total } = await client.getProductList(page, 100);
-    for (const p of products) {
-      if (p.product_id) onewmsProducts.set(p.product_id, p);
-    }
-    if (page * 100 >= total) break;
+  for (const p of productList) {
+    if (p.product_id) onewmsProducts.set(p.product_id, p);
   }
 
   // Get all HEADQUARTERS products with onewmsCode
