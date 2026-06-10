@@ -7,6 +7,7 @@ import { prisma } from '@/lib/db/prisma';
 import { createOnewmsClient } from '@/lib/onewms';
 import { getOnewmsConfig } from '@/lib/onewms/config';
 import type { CreateOrderRequest, CreateOrderRow } from '@/lib/onewms/types';
+import { sanitizeMemo } from '@/lib/utils/memo';
 
 interface SyncResult {
   success: boolean;
@@ -118,6 +119,12 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
     const orderDate = createdAtIso.slice(0, 10);              // YYYY-MM-DD
     const orderTime = createdAtIso.slice(11, 19);             // HH:MM:SS
 
+    // 2026-06-10: 동기화 시점 memo placeholder 방어선.
+    //   bulk 업로드 필터(2026-06-08 배포) 이전에 업로드되어 DB 에 "비고 (선택)" 류
+    //   placeholder 메모가 저장된 발주가 지금 컨펌 → 동기화될 때 ONEWMS 로
+    //   placeholder 가 그대로 전송되는 갭 차단. 빈 값이면 memo 필드 미전송.
+    const orderMemo = sanitizeMemo(order.memo);
+
     // 운영 검증(2026-05-26): ONEWMS 자동 매칭 표준 형식 적용
     // 운영진(한국무진) 답변:
     //   "정상 매칭 건의 판매처상품코드가 'code'로 저장되어 있고, 판매처옵션은
@@ -153,7 +160,7 @@ export async function syncOrderToOnewms(orderId: string): Promise<SyncResult> {
         ...(sellerName && { order_name: sellerName }),        // 주문자명 = 셀러 이름
         ...(sellerPhone && { order_mobile: sellerPhone }),    // 주문자핸드폰 = 셀러 전화
         ...(sellerUsername && { cust_id: sellerUsername }),   // PDF §4.2: 판매처 식별자 = 셀러 username
-        ...(order.memo && { memo: order.memo }),              // 배송메모
+        ...(orderMemo && { memo: orderMemo }),                // 배송메모 (placeholder 필터 적용)
       };
     });
 

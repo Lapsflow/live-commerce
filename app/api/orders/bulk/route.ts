@@ -7,6 +7,7 @@ import * as xlsx from "xlsx";
 import { matchOrderItems, type MatchedItem } from "@/lib/services/orders/productMatching";
 import { matchOrderToBroadcast } from "@/lib/services/broadcast/orderBroadcastMatching";
 import { logAudit } from "@/lib/services/audit";
+import { sanitizeMemo } from "@/lib/utils/memo";
 
 const bulkDeleteSchema = z.object({
   orderIds: z.array(z.string()).min(1, "최소 1개의 주문을 선택해야 합니다"),
@@ -77,15 +78,9 @@ export const POST = withRole(
       // 운영 검증(2026-05-26): 메모 셀에 템플릿의 placeholder "비고 (선택)" 가 그대로
       //   ONEWMS 로 전송되는 버그 발견. 셀러가 옛 템플릿 사용 중일 수 있으므로
       //   bulk 파싱 단계에서 placeholder 값 검출하여 빈 값으로 처리.
-      // 운영 재보고(2026-06-08): Set 완전일치만으로는 공백·전각괄호·"선택사항" 등
-      //   변형을 못 잡음. 정규식으로 보강: "비고/메모/remark/memo (+ 선택/선택사항/optional)"
-      //   형태의 placeholder 는 전부 빈 값 처리. 실제 메모는 placeholder 단어만으로
-      //   구성되지 않으므로 오탐 위험 낮음.
-      const PLACEHOLDER_MEMO_PATTERN =
-        /^[\s]*(비고|메모|remarks?|memo)[\s]*[(（［\[]?[\s]*(선택(\s*사항)?|optional)?[\s]*[)）］\]]?[\s]*$/i;
+      // 2026-06-10: 필터 로직을 lib/utils/memo.ts 로 추출 (orderSync 동기화 시점과 공용)
       const items = rows.map((row) => {
-        const memoRaw = String(row["메모"] || "").trim();
-        const memo = PLACEHOLDER_MEMO_PATTERN.test(memoRaw) ? "" : memoRaw;
+        const memo = sanitizeMemo(String(row["메모"] || ""));
         return {
           code: String(row["상품코드"] || "").trim() || undefined,
           barcode: String(row["바코드"] || "").trim() || undefined,
