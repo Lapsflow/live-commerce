@@ -9,6 +9,7 @@ import { logAudit } from "@/lib/services/audit";
 import { validateProductsForBroadcast } from "@/lib/services/products/canBroadcast";
 import { sendNotification } from "@/lib/services/notifications";
 import { syncStocksForProducts } from "@/lib/services/onewms/stockSync";
+import { sanitizeMemo } from "@/lib/utils/memo";
 
 // Phase 2: Order with Items Schema
 const orderItemSchema = z.object({
@@ -230,7 +231,8 @@ export const POST = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Nex
           status: data.status || "PENDING",
           totalAmount: proportionalTotalAmount,
           totalMargin,
-          memo: data.memo,
+          // 2026-06-10: 모든 발주 생성 입구에 placeholder 메모 필터 적용 (bulk 와 동일)
+          memo: sanitizeMemo(data.memo) || undefined,
           recipient: data.recipient,
           phone: data.phone,
           address: data.address,
