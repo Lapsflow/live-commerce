@@ -292,7 +292,12 @@ node_modules/
     - 해결: `lib/utils/memo.ts` 로 필터 공용화, bulk 파싱 + orderSync 양쪽 적용.
     - 일반화: 입력 검증을 추가할 때 이미 DB 에 들어간 오염 데이터의 출구(외부 API 전송, 화면 표시)도 함께 막았는지 확인.
 
-14. **텍스트 필터는 보이지 않는 문자에 뚫리고, 입구는 하나가 아니다.**
+14. **Prisma CLI 는 인라인 `DATABASE_URL` 보다 `.env` 의 `DIRECT_URL` 을 우선한다 — 테스트 실행 전 env 격리 필수.**
+    - 2026-07-06: 샌드박스에서 로컬 PG 로 테스트하려고 `DATABASE_URL=로컬주소 prisma migrate deploy` 실행 → `prisma.config.ts` 가 `dotenv/config` 로 `.env` 를 로드하고 `DIRECT_URL ?? DATABASE_URL` 순으로 사용 → `.env` 의 DIRECT_URL(운영 Neon)이 이겨서 **마이그레이션이 운영 DB 에 조기 적용됨**. 해당 건은 additive(enum 추가 + 데이터 이관)라 무해했지만 파괴적 마이그레이션이었다면 사고.
+    - 예방: 저장소 사본에서 `.env`/`.env.local` 을 로컬 값으로 통째로 교체 후 실행. `DIRECT_URL` 까지 반드시 덮을 것. 실행 전 `prisma migrate status` 로 대상 DB 를 눈으로 확인.
+    - 부수 발견: 샘플몰 스키마(isSample, SampleStatus 등)는 마이그레이션 파일 없이 `db push` 로 운영 반영되어 있음 → 마이그레이션 히스토리만으로 신규 DB 재현 불가 (기술 부채). 신규 로컬 DB 는 `prisma db push` 로 생성할 것.
+
+15. **텍스트 필터는 보이지 않는 문자에 뚫리고, 입구는 하나가 아니다.**
     - 2026-06-10 (2차 재발): 필터 배포 후에도 "비고(선택)" 이 메모로 저장. 재현 결과 zero-width space 등 보이지 않는 문자가 섞이면 화면상 동일해 보여도 정규식 통과 확인. 또한 `/api/orders` POST 가 `data.memo` 를 무필터 저장하는 별도 입구였음.
     - 보강: ① sanitizeMemo 가 invisible chars 제거 후 검사 ② 장식문자·"입력하세요" 접미 허용 ③ 의심 문자열 통과 시 `[MEMO_SUSPECT]` codepoint 로그 → 재발 시 Vercel 로그로 즉시 원인 식별 ④ 발주 생성 모든 입구(bulk + /api/orders POST)에 필터.
     - 일반화: 사용자 입력 텍스트 비교·필터는 NFC/invisible 정규화 먼저. 같은 필드를 쓰는 API 입구를 전수 grep 해서 필터 누락 입구가 없는지 확인. "재현 안 되는 통과 사례"는 codepoint 진단 로그부터 심을 것.
