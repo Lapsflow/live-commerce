@@ -8,6 +8,11 @@ import { AddToCartButton } from "../components/AddToCartButton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import {
+  SAMPLE_STATUS_LABELS,
+  SAMPLE_STATUS_COLORS,
+  isSampleSoldOut,
+} from "@/lib/constants/sample-labels";
 
 const categoryLabels: Record<string, string> = {
   LIVING: "생활용품",
@@ -51,7 +56,7 @@ export default async function SampleDetailPage({ params }: SampleDetailPageProps
   }
 
   const isFree = product.samplePrice === 0 || product.samplePrice === null;
-  const isSoldOut = product.sampleStatus === "UNTIL_SOLD" && product.totalStock <= 0;
+  const isSoldOut = isSampleSoldOut(product.sampleStatus, product.totalStock);
 
   return (
     <div className="container mx-auto py-6">
@@ -74,14 +79,12 @@ export default async function SampleDetailPage({ params }: SampleDetailPageProps
                     {categoryLabels[product.sampleCategory] || product.sampleCategory}
                   </Badge>
                 )}
-                {product.sampleStatus === "CONTINUOUS" && (
-                  <Badge variant="outline" className="bg-green-100 text-green-700">
-                    꾸준한 제품
-                  </Badge>
-                )}
-                {product.sampleStatus === "UNTIL_SOLD" && (
-                  <Badge variant="outline" className="bg-orange-100 text-orange-700">
-                    소진후 종료
+                {product.sampleStatus && SAMPLE_STATUS_LABELS[product.sampleStatus] && (
+                  <Badge
+                    variant="outline"
+                    className={SAMPLE_STATUS_COLORS[product.sampleStatus]}
+                  >
+                    {SAMPLE_STATUS_LABELS[product.sampleStatus]}
                   </Badge>
                 )}
               </div>
@@ -188,8 +191,8 @@ export default async function SampleDetailPage({ params }: SampleDetailPageProps
                 <li>• 1회 최대 3개까지 요청 가능합니다</li>
                 <li>• 승인 후 2-3일 내 배송됩니다</li>
                 <li>• 재고가 부족한 경우 승인이 거절될 수 있습니다</li>
-                {product.sampleStatus === "UNTIL_SOLD" && (
-                  <li>• 재고 소진 시 샘플 종료 상품입니다</li>
+                {(product.sampleStatus as string | null) === "SOLD_OUT" && (
+                  <li>• 현재 품절된 샘플입니다</li>
                 )}
               </ul>
             </div>

@@ -25,6 +25,7 @@ import { ArrowLeft, Search, Settings, Package } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
+import { SAMPLE_STATUS_LABELS as statusLabels } from "@/lib/constants/sample-labels";
 
 const categoryLabels: Record<string, string> = {
   LIVING: "생활용품",
@@ -38,10 +39,6 @@ const categoryLabels: Record<string, string> = {
   OTHER: "기타",
 };
 
-const statusLabels: Record<string, string> = {
-  CONTINUOUS: "꾸준한 제품",
-  UNTIL_SOLD: "소진후 종료",
-};
 
 interface Product {
   id: string;
@@ -384,17 +381,17 @@ export default function SampleManagePage() {
 
                   {/* 상태 */}
                   <div className="space-y-2">
-                    <Label>상품 상태</Label>
+                    <Label>샘플 상태</Label>
                     <Select
-                      value={editStatus}
+                      value={editStatus === "UNTIL_SOLD" ? "CONTINUOUS" : editStatus}
                       onValueChange={(v) => v && setEditStatus(v)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="상태 선택" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="CONTINUOUS">꾸준한 제품</SelectItem>
-                        <SelectItem value="UNTIL_SOLD">소진후 종료</SelectItem>
+                        <SelectItem value="CONTINUOUS">진행중</SelectItem>
+                        <SelectItem value="SOLD_OUT">품절</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

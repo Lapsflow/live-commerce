@@ -165,8 +165,9 @@ enum SampleCategory {
 }
 
 enum SampleStatus {
-  CONTINUOUS // 꾸준한 제품
-  UNTIL_SOLD // 소진후 종료
+  CONTINUOUS // 진행중 (한국무진 요구 2026-07-03: 진행중/품절 2단계)
+  UNTIL_SOLD // ⚠️ deprecated — SOLD_OUT 도입으로 미사용. 데이터는 마이그레이션으로 CONTINUOUS 이관됨. enum 값 제거는 PG 리스크로 보류.
+  SOLD_OUT   // 품절
 }
 
 // ──────────────────────── Center Management ────────────────────────

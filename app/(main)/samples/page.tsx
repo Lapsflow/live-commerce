@@ -9,6 +9,11 @@ import { ShoppingCart, Search, Settings } from "lucide-react";
 import Link from "next/link";
 import { AddToCartButton } from "./components/AddToCartButton";
 import { useSession } from "next-auth/react";
+import {
+  SAMPLE_STATUS_LABELS,
+  SAMPLE_STATUS_COLORS,
+  isSampleSoldOut,
+} from "@/lib/constants/sample-labels";
 
 const categoryLabels: Record<string, string> = {
   LIVING: "생활용품",
@@ -22,10 +27,12 @@ const categoryLabels: Record<string, string> = {
   OTHER: "기타",
 };
 
-const statusLabels: Record<string, { label: string; color: string }> = {
-  CONTINUOUS: { label: "꾸준한 제품", color: "bg-green-100 text-green-700" },
-  UNTIL_SOLD: { label: "소진후 종료", color: "bg-orange-100 text-orange-700" },
-};
+const statusLabels: Record<string, { label: string; color: string }> = Object.fromEntries(
+  Object.keys(SAMPLE_STATUS_LABELS).map((k) => [
+    k,
+    { label: SAMPLE_STATUS_LABELS[k], color: SAMPLE_STATUS_COLORS[k] },
+  ])
+);
 
 interface SampleProduct {
   id: string;
@@ -180,8 +187,7 @@ export default function SamplesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {products.map((product) => {
-            const isSoldOut =
-              product.sampleStatus === "UNTIL_SOLD" && product.totalStock <= 0;
+            const isSoldOut = isSampleSoldOut(product.sampleStatus, product.totalStock);
 
             return (
               <Card

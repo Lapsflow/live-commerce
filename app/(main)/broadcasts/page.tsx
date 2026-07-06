@@ -22,11 +22,18 @@ import {
   Radio,
   Clock,
   ListFilter,
+  FlaskConical,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 import { StartBroadcastDialog } from "@/components/broadcasts/StartBroadcastDialog";
+import { Input } from "@/components/ui/input";
+import {
+  SAMPLE_STATUS_LABELS,
+  SAMPLE_STATUS_COLORS,
+} from "@/lib/constants/sample-labels";
 
 type Broadcast = {
   id: string;
@@ -38,10 +45,21 @@ type Broadcast = {
   startedAt: string | null;
   endedAt: string | null;
   status: string;
+  title?: string | null;
+  expectedProducts?: string | null;
   memo: string | null;
   requestMemo: string | null;
   rejectionReason: string | null;
   createdAt: string;
+};
+
+type SampleProduct = {
+  id: string;
+  code: string;
+  name: string;
+  barcode: string;
+  totalStock: number;
+  sampleStatus: string | null;
 };
 
 const platformLabels: Record<string, string> = {
@@ -77,6 +95,13 @@ export default function BroadcastsPage() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectTargetId, setRejectTargetId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
+
+  // Approve dialog (한국무진 확정 2026-07-03: 승인 단계에서 샘플 상태 보고 거름)
+  const [approveDialogOpen, setApproveDialogOpen] = useState(false);
+  const [approveTarget, setApproveTarget] = useState<Broadcast | null>(null);
+  const [sampleSearch, setSampleSearch] = useState("");
+  const [sampleResults, setSampleResults] = useState<SampleProduct[]>([]);
+  const [sampleLoading, setSampleLoading] = useState(false);
 
   const userRole = (session?.user as any)?.role;
   const isManagerOrAbove =
@@ -125,6 +150,8 @@ export default function BroadcastsPage() {
         throw new Error(err.error?.message || "승인 실패");
       }
       toast({ title: "승인 완료", description: "방송이 예정 상태로 변경되었습니다." });
+      setApproveDialogOpen(false);
+      setApproveTarget(null);
       loadBroadcasts();
     } catch (err: any) {
       toast({ title: "오류", description: err.message, variant: "destructive" });
@@ -132,6 +159,34 @@ export default function BroadcastsPage() {
       setActionLoading(null);
     }
   };
+
+  // 승인 다이얼로그 열기: 샘플 상태 확인 후 승인 (자동 차단 아님 — 마스터 판단)
+  const openApproveDialog = (id: string) => {
+    const target = broadcasts.find((b) => b.id === id) || null;
+    setApproveTarget(target);
+    setSampleSearch("");
+    setApproveDialogOpen(true);
+  };
+
+  // 샘플 검색 (isSample=true 상품만 반환됨 — 미등록 상품은 결과에 안 나옴)
+  useEffect(() => {
+    if (!approveDialogOpen) return;
+    const timeout = setTimeout(async () => {
+      setSampleLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (sampleSearch.trim()) params.set("search", sampleSearch.trim());
+        const res = await fetch(`/api/samples?${params.toString()}`);
+        const data = await res.json();
+        setSampleResults(res.ok && data.data ? data.data : []);
+      } catch {
+        setSampleResults([]);
+      } finally {
+        setSampleLoading(false);
+      }
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [approveDialogOpen, sampleSearch]);
 
   const handleRejectSubmit = async () => {
     if (!rejectTargetId || !rejectReason.trim()) return;
@@ -224,7 +279,7 @@ export default function BroadcastsPage() {
             broadcasts={broadcasts}
             onStart={handleStart}
             onEnd={handleEnd}
-            onApprove={isManagerOrAbove ? handleApprove : undefined}
+            onApprove={isManagerOrAbove ? openApproveDialog : undefined}
             onReject={
               isManagerOrAbove
                 ? (id) => {
@@ -243,7 +298,7 @@ export default function BroadcastsPage() {
           <TabsContent value="requested">
             <BroadcastTable
               broadcasts={requested}
-              onApprove={handleApprove}
+              onApprove={openApproveDialog}
               onReject={(id) => {
                 setRejectTargetId(id);
                 setRejectReason("");
@@ -283,6 +338,132 @@ export default function BroadcastsPage() {
           onSuccess={() => loadBroadcasts()}
         />
       )}
+
+      {/* Approve Dialog — 샘플 상태 확인 후 승인 */}
+      <Dialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle>방송 승인 검토</DialogTitle>
+          </DialogHeader>
+          {approveTarget && (
+            <div className="space-y-4 py-1">
+              {/* 신청 정보 */}
+              <div className="rounded-md border p-3 text-sm space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-grey-500">판매자</span>
+                  <span>{approveTarget.seller?.name || "-"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-grey-500">플랫폼 / 예정시간</span>
+                  <span>
+                    {platformLabels[approveTarget.platform] || approveTarget.platform}
+                    {" · "}
+                    {new Date(approveTarget.scheduledAt).toLocaleString("ko-KR")}
+                  </span>
+                </div>
+                {approveTarget.title && (
+                  <div className="flex justify-between">
+                    <span className="text-grey-500">제목</span>
+                    <span className="max-w-[340px] truncate">{approveTarget.title}</span>
+                  </div>
+                )}
+                {approveTarget.expectedProducts && (
+                  <div>
+                    <span className="text-grey-500">예상 상품</span>
+                    <p className="mt-0.5 whitespace-pre-wrap break-words">
+                      {approveTarget.expectedProducts}
+                    </p>
+                  </div>
+                )}
+                {approveTarget.requestMemo && (
+                  <div>
+                    <span className="text-grey-500">신청 메모</span>
+                    <p className="mt-0.5 whitespace-pre-wrap break-words">
+                      {approveTarget.requestMemo}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* 샘플 상태 확인 패널 */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-1.5 text-sm font-medium">
+                  <FlaskConical className="h-4 w-4 text-purple-500" />
+                  샘플 상태 확인
+                  <span className="text-xs font-normal text-grey-400">
+                    샘플 미등록 상품은 검색 결과에 나오지 않습니다
+                  </span>
+                </div>
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-grey-400" />
+                  <Input
+                    value={sampleSearch}
+                    onChange={(e) => setSampleSearch(e.target.value)}
+                    placeholder="상품명, 바코드, 상품코드 검색"
+                    className="pl-8"
+                  />
+                </div>
+                <div className="max-h-[180px] overflow-y-auto rounded-md border divide-y">
+                  {sampleLoading ? (
+                    <p className="p-3 text-sm text-grey-400">검색 중...</p>
+                  ) : sampleResults.length === 0 ? (
+                    <p className="p-3 text-sm text-grey-400">
+                      등록된 샘플이 없습니다
+                    </p>
+                  ) : (
+                    sampleResults.map((p) => (
+                      <div
+                        key={p.id}
+                        className="flex items-center justify-between gap-2 px-3 py-2 text-sm"
+                      >
+                        <span className="truncate">
+                          <span className="font-mono text-xs text-grey-400 mr-1.5">
+                            {p.code}
+                          </span>
+                          {p.name}
+                        </span>
+                        <span className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-grey-400">
+                            재고 {p.totalStock}
+                          </span>
+                          {p.sampleStatus && SAMPLE_STATUS_LABELS[p.sampleStatus] && (
+                            <Badge
+                              variant="outline"
+                              className={`text-xs ${SAMPLE_STATUS_COLORS[p.sampleStatus]}`}
+                            >
+                              {SAMPLE_STATUS_LABELS[p.sampleStatus]}
+                            </Badge>
+                          )}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <p className="text-xs text-grey-400">
+                  샘플이 진행중인 상품만 방송 승인 대상입니다. 확인 후 승인해주세요.
+                </p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setApproveDialogOpen(false)}
+              disabled={!!actionLoading}
+            >
+              취소
+            </Button>
+            <Button
+              onClick={() => approveTarget && handleApprove(approveTarget.id)}
+              disabled={!approveTarget || !!actionLoading}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <CheckCircle className="h-4 w-4 mr-1" />
+              {actionLoading ? "처리 중..." : "승인"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Reject Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>

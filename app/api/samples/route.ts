@@ -14,7 +14,7 @@ export const GET = withRole(
     const url = new URL(req.url);
     const category = url.searchParams.get("category");
     const priceType = url.searchParams.get("priceType"); // free | paid
-    const status = url.searchParams.get("status"); // CONTINUOUS | UNTIL_SOLD
+    const status = url.searchParams.get("status"); // CONTINUOUS(진행중) | SOLD_OUT(품절)
     const search = url.searchParams.get("search");
     const sort = url.searchParams.get("sort") || "latest"; // latest | price
 
@@ -77,11 +77,12 @@ export const GET = withRole(
 
 /**
  * PUT /api/samples
- * 상품을 샘플로 지정/해제 (MASTER, SUB_MASTER만)
+ * 상품을 샘플로 지정/해제 (MASTER 전용)
+ * 한국무진 확정 (2026-07-03): 샘플 등록·상태(진행중/품절) 관리는 한국무진(마스터) 직접.
  * Body: { productId, isSample, sampleCategory?, samplePrice?, sampleStatus? }
  */
 export const PUT = withRole(
-  ["MASTER", "SUB_MASTER"],
+  ["MASTER"],
   async (req: NextRequest) => {
     const body = await req.json();
     const { productId, isSample, sampleCategory, samplePrice, sampleStatus } = body;

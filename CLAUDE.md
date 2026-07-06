@@ -202,6 +202,7 @@ OnewmsOrderMapping / OnewmsStockSync → ONEWMS 통합 매핑
 /admin/center-products      → 센터 상품 현황
 /proposals                  → 상품 제안 (쇼핑몰형)
 /samples/requests           → 샘플 요청
+/samples/manage             → 샘플 관리 (한국무진 직접 등록, 상태 진행중/품절 — 2026-07-03 확정)
 /barcode                    → 바코드
 /admin/audit-log            → 변경 이력
 /admin/sync-monitor         → 동기화 모니터
