@@ -77,7 +77,8 @@ export function OnewmsStatusWidget() {
   }
 
   // 연결 상태는 데이터 유무로 판단
-  const isConnected = !!response?.success && !!data;
+  // 2026-07-10 수정: ok() 응답엔 success 필드가 없어 항상 '연결 안 됨'으로 표시됐음
+  const isConnected = !!data;
 
   return (
     <Card>

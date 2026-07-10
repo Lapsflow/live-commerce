@@ -141,9 +141,10 @@ export default function ProductsPage() {
   // Fetch unreviewed auto-created count (MASTER only - 본사 자동 등록은 본사가 검토)
   useEffect(() => {
     if (!canReviewAutoCreated) return;
-    fetch("/api/products/auto-created?reviewed=false&limit=1")
+    // 2026-07-10: API 가 표준 paginated() 로 변경 — totalCount 는 최상위 필드
+    fetch("/api/products/auto-created?reviewed=false&pageSize=1")
       .then((r) => r.json())
-      .then((d) => setAutoCreatedCount(d.data?.totalCount ?? 0))
+      .then((d) => setAutoCreatedCount(d.totalCount ?? 0))
       .catch(() => {});
   }, [canReviewAutoCreated]);
 
@@ -152,8 +153,9 @@ export default function ProductsPage() {
   if (showInactive) params.set("showInactive", "true");
   if (showAutoCreated) params.set("autoCreated", "true");
   const qs = params.toString();
+  // 2026-07-10: limit=50 고정 제거 — DataTable 이 보내는 pageIndex/pageSize 사용
   const apiPath = showAutoCreated
-    ? `/api/products/auto-created?reviewed=false&limit=50`
+    ? `/api/products/auto-created?reviewed=false`
     : `/api/products${qs ? `?${qs}` : ""}`;
   const { dataSource, refresh } = useApiCrud<Product>(apiPath);
 

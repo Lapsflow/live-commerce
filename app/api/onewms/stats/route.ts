@@ -9,7 +9,9 @@ import { prisma } from '@/lib/db/prisma';
 import { ok, errors } from '@/lib/api/response';
 
 export const GET = withRole(
-  ['MASTER', 'SUB_MASTER', 'SELLER'],
+  // 2026-07-10 수정: ONEWMS 는 본사(MASTER) 전용 (CLAUDE.md 학습 #3).
+  // 기존 SELLER/SUB_MASTER 개방은 본사 통계 노출 — UI 호출처는 전부 isMaster 가드라 영향 없음.
+  ['MASTER'],
   async (req: NextRequest) => {
     try {
 

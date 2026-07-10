@@ -1,6 +1,5 @@
 "use client";
 
-import { memo } from "react";
 import type { Table } from "@tanstack/react-table";
 import {
   ChevronLeft,
@@ -22,7 +21,11 @@ interface DataTablePaginationProps<TData> {
   pageSizeOptions?: number[];
 }
 
-function DataTablePaginationInner<TData>({
+// ⚠️ memo() 금지 (2026-07-10 버그 수정): TanStack Table 의 `table` 인스턴스는
+// 참조가 불변이라 memo 가 재렌더를 전부 차단 → 페이지당 select 표시값·페이지
+// 번호·이동 버튼 disabled 상태가 초기 렌더(pageCount=0)에 영구 동결됐음.
+// (다음/마지막 버튼이 항상 비활성, "페이지당 20→50" 눌러도 표시 안 바뀌는 증상)
+export function DataTablePagination<TData>({
   table,
   pageSizeOptions = [20, 30, 50],
 }: DataTablePaginationProps<TData>) {
@@ -109,5 +112,3 @@ function DataTablePaginationInner<TData>({
     </div>
   );
 }
-
-export const DataTablePagination = memo(DataTablePaginationInner) as typeof DataTablePaginationInner;

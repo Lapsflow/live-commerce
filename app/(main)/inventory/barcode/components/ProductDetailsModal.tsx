@@ -644,7 +644,9 @@ export function ProductDetailsModal({
                   <Radio className="mr-2 h-4 w-4" />
                   방송 시작
                 </Button>
-                <Link href={`/admin/products/${product.id}`}>
+                {/* 죽은 링크 수정 (2026-07-10): /admin/products/[id] 라우트 없음 → 404.
+                    실제 상품 상세는 /products/[id] (CLAUDE.md 학습 #1: /admin/... 사용 안 함) */}
+                <Link href={`/products/${product.id}`}>
                   <Button>
                     상세 정보 보기
                     <ExternalLink className="ml-2 h-4 w-4" />

@@ -59,8 +59,9 @@ export function EntityHistory({ entityType, entityId, className }: EntityHistory
         });
         const res = await fetch(`/api/admin/audit-log?${params}`);
         const json = await res.json();
-        if (res.ok && json.success) {
-          setLogs(json.data);
+        // 2026-07-10 수정: paginated() 응답엔 success 필드가 없어 이력이 항상 미표시였음
+        if (res.ok) {
+          setLogs(json.data ?? []);
         }
       } catch (err) {
         console.error("History load error:", err);

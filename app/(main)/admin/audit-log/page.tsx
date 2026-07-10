@@ -97,9 +97,10 @@ export default function AuditLogPage() {
       const res = await fetch(`/api/admin/audit-log?${params}`);
       const json = await res.json();
 
-      if (res.ok && json.success) {
-        setLogs(json.data);
-        setTotal(json.totalCount);
+      // 2026-07-10 수정: paginated() 응답엔 success 필드가 없어 항상 빈 표였음 (학습 #9 계열)
+      if (res.ok) {
+        setLogs(json.data ?? []);
+        setTotal(json.totalCount ?? 0);
       }
     } catch (err) {
       console.error("AuditLog load error:", err);
@@ -142,9 +143,9 @@ export default function AuditLogPage() {
     const res = await fetch(`/api/admin/audit-log?${params}`);
     const json = await res.json();
 
-    if (!res.ok || !json.success) return;
+    if (!res.ok) return; // 2026-07-10: success 필드 없음 (paginated 응답)
 
-    const rows = json.data as AuditLog[];
+    const rows = (json.data ?? []) as AuditLog[];
     const csvHeader = "시각,사용자,역할,액션,대상,엔티티명,설명,IP\n";
     const csvRows = rows.map((log: AuditLog) =>
       [

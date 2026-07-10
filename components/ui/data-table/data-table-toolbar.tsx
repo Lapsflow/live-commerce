@@ -1,6 +1,5 @@
 "use client";
 
-import { memo } from "react";
 import type { Table, Column } from "@tanstack/react-table";
 import { Search, Download, SlidersHorizontal, X, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,7 +34,10 @@ interface DataTableToolbarProps<TData> {
   hideSearch?: boolean;
 }
 
-function DataTableToolbarInner<TData>({
+// ⚠️ memo() 금지 (2026-07-10 버그 수정): `table` 인스턴스는 참조 불변이라 memo 가
+// 재렌더를 차단 → 행 선택 카운트/대량 작업 버튼·필터 칩·컬럼 표시 체크박스가
+// 동결됐음 (data-table-pagination.tsx 동일 버그).
+export function DataTableToolbar<TData>({
   table,
   globalFilter,
   onGlobalFilterChange,
@@ -190,8 +192,6 @@ function DataTableToolbarInner<TData>({
     </div>
   );
 }
-
-export const DataTableToolbar = memo(DataTableToolbarInner) as typeof DataTableToolbarInner;
 
 // --- Filter Dropdown ---
 

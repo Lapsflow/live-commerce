@@ -93,8 +93,9 @@ export default function CenterProductsPage() {
     try {
       const res = await fetch("/api/admin/center-products?mode=summary");
       const json = await res.json();
-      if (res.ok && json.success) {
-        setCenterStats(json.data.centers);
+      // 2026-07-10 수정: ok() 응답엔 success 필드가 없어 요약이 항상 비어 있었음
+      if (res.ok && json.data?.totals) {
+        setCenterStats(json.data.centers ?? []);
         setTotals(json.data.totals);
       }
     } catch (err) {
@@ -117,9 +118,10 @@ export default function CenterProductsPage() {
       const res = await fetch(`/api/admin/center-products?${params}`);
       const json = await res.json();
 
-      if (res.ok && json.success) {
-        setProducts(json.data);
-        setTotal(json.totalCount);
+      // 2026-07-10 수정: paginated() 응답엔 success 필드가 없어 목록이 항상 비어 있었음
+      if (res.ok) {
+        setProducts(json.data ?? []);
+        setTotal(json.totalCount ?? 0);
       }
     } catch (err) {
       console.error("Products load error:", err);
@@ -164,9 +166,9 @@ export default function CenterProductsPage() {
 
     const res = await fetch(`/api/admin/center-products?${params}`);
     const json = await res.json();
-    if (!res.ok || !json.success) return;
+    if (!res.ok) return; // 2026-07-10: success 필드 없음 (paginated 응답)
 
-    const rows = json.data as CenterProduct[];
+    const rows = (json.data ?? []) as CenterProduct[];
     const csvHeader =
       "센터,상품코드,상품명,바코드,판매가,공급가,원가,재고,카테고리,상태,등록일\n";
     const csvRows = rows

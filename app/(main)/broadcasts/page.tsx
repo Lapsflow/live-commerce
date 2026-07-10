@@ -111,7 +111,9 @@ export default function BroadcastsPage() {
   const loadBroadcasts = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/broadcasts?pageSize=100&sort=-scheduledAt");
+      // 2026-07-10 수정: CRUD 팩토리 정렬 형식은 "field:dir" — 기존 "-scheduledAt" 은
+      // 무시되어 createdAt desc 로 폴백되고 있었음 (방송 목록 정렬 안 먹는 원인)
+      const res = await fetch("/api/broadcasts?pageSize=100&sort=scheduledAt:desc");
       const data = await res.json();
       if (res.ok && data.data) {
         setBroadcasts(data.data);

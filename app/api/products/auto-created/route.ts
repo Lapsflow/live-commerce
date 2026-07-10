@@ -6,7 +6,7 @@
 
 import { NextRequest } from 'next/server';
 import { withRole, AuthUser } from '@/lib/api/middleware';
-import { ok } from '@/lib/api/response';
+import { paginated } from '@/lib/api/response';
 import { prisma } from '@/lib/db/prisma';
 
 export const GET = withRole(
@@ -14,8 +14,18 @@ export const GET = withRole(
   async (req: NextRequest, _user: AuthUser) => {
     const { searchParams } = new URL(req.url);
     const reviewed = searchParams.get('reviewed');
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    // 2026-07-10 수정: DataTable(use-api-crud)은 pageIndex(0-base)/pageSize 를 보내는데
+    // 기존엔 page(1-base)/limit 만 읽어 페이지당·페이지 이동이 전부 무시됐음.
+    // pageIndex/pageSize 우선, 구 page/limit 호환 유지.
+    const pageIndexParam = searchParams.get('pageIndex');
+    const pageSizeParam = searchParams.get('pageSize');
+    const page = pageIndexParam !== null
+      ? Math.max(0, parseInt(pageIndexParam, 10)) + 1
+      : Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const limit = Math.min(
+      100,
+      Math.max(1, parseInt(pageSizeParam ?? searchParams.get('limit') ?? '20', 10))
+    );
 
     const where: Record<string, unknown> = {
       autoCreated: true,
@@ -53,10 +63,8 @@ export const GET = withRole(
       prisma.product.count({ where }),
     ]);
 
-    return ok({
-      data,
-      totalCount,
-      pageCount: Math.ceil(totalCount / limit),
-    });
+    // 2026-07-10 수정: ok({data,...}) 는 {data:{data,...}} 로 중첩되어
+    // use-api-crud 가 json.data 를 배열로 읽지 못했음 → 표준 paginated() 사용.
+    return paginated(data, totalCount, limit);
   }
 );

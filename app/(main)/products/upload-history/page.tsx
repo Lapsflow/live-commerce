@@ -79,8 +79,9 @@ export default function UploadHistoryPage() {
       fetch("/api/centers")
         .then((r) => r.json())
         .then((json) => {
-          if (json.success && json.data) {
-            setCenters(json.data);
+          // 2026-07-10 수정: /api/centers 는 ok({centers, count}) — success 없음, 배열은 data.centers
+          if (json.data?.centers) {
+            setCenters(json.data.centers);
           }
         })
         .catch(() => {});
@@ -98,9 +99,10 @@ export default function UploadHistoryPage() {
       const res = await fetch(`/api/products/upload/history?${params}`);
       const json = await res.json();
 
-      if (res.ok && json.success) {
-        setItems(json.data.items);
-        setTotalCount(json.data.totalCount);
+      // 2026-07-10 수정: ok() 응답엔 success 필드가 없어 이력이 항상 빈 목록이었음
+      if (res.ok) {
+        setItems(json.data?.items ?? []);
+        setTotalCount(json.data?.totalCount ?? 0);
       }
     } catch (err) {
       console.error("History load error:", err);
@@ -130,7 +132,7 @@ export default function UploadHistoryPage() {
       });
       const json = await res.json();
 
-      if (res.ok && json.success) {
+      if (res.ok) { // 2026-07-10: success 필드 없음
         toast({
           title: "롤백 완료",
           description: `복원 ${json.data.restored}, 비활성화 ${json.data.deactivated}, 원복 ${json.data.reverted}`,

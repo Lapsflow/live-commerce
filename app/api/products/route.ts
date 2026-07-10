@@ -63,7 +63,8 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
     // 셀러: 본인 센터 CENTER 상품만 (가격 0원 제외)
     // B-7: centerId 없는 셀러는 상품 접근 불가 (프라이버시 보호)
     if (!user.centerId) {
-      return paginated([], 0, 0);
+      // pageSize 0 이면 pageCount = ceil(0/0) = NaN 이 프론트로 내려감 (2026-07-10 수정)
+      return paginated([], 0, pageSize);
     }
     authFilter = {
       productType: "CENTER",
