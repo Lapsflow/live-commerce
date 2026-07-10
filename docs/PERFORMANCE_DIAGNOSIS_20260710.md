@@ -435,3 +435,28 @@ _다른 cowork/개발자 인수인계용. 문의는 박진우 대표에게._
 - `pnpm build` + 운영 도메인(www.supermujin.ai) MASTER 계정 실제 렌더 확인 — CLAUDE.md 학습 #12 배포 체크리스트 준수
 - §8 사용자 확인 사항 여전히 유효 (OnewmsStockSync row 수 확인 → 대량이면 옵션 D 병행 권장)
 - Phase 2/3 (옵션 B/C/D) 미착수
+
+### 2026-07-10 — 2차 진단: 옵션 A 배포 후에도 랜딩 느림 → 근본 원인 실측 (cowork)
+
+**운영 DB 실측 결과** (§8-2 질문에 대한 답):
+
+| 항목 | 실측값 |
+|---|---|
+| `OnewmsStockSync` 행 수 | **55,917,208 행 (10GB, 인덱스 포함 ~13GB)** |
+| 행 분포 (pg_stats) | synced 99.96% / resolved 0.04% / **conflict ≈ 0** |
+| 최근 유입 | 1일 10행, 7일 189행 (6/10 "변경분만 기록" 최적화 이후 미미) |
+| 누적 기간 | 2026-04-22 ~ 현재 (대부분 6/10 이전 매분 전상품 기록의 유산) |
+
+**EXPLAIN 확인 — 풀스캔(Parallel Seq Scan) 쿼리들**:
+1. summary 의 `GROUP BY syncStatus` (옵션 A 에서 추가한 것 포함 — count 통합해도 스캔 비용 동일)
+2. conflicts `findMany WHERE syncStatus='conflict' ... LIMIT 21` — syncStatus 인덱스 부재로 LIMIT 에도 풀스캔
+3. `/api/onewms/stats` 의 `COUNT(DISTINCT productId) WHERE syncStatus='conflict'` — **dashboard ONEWMS 위젯 지연도 동일 원인**
+4. trend 쿼리는 syncedAt 인덱스 사용으로 정상 ✅
+
+**2차 조치 (§11.2)**:
+1. 운영 DB 인덱스 생성: `CREATE INDEX CONCURRENTLY "OnewmsStockSync_syncStatus_syncedAt_idx" ON "OnewmsStockSync" ("syncStatus", "syncedAt" DESC)` — 무중단
+2. `prisma/schema.prisma` 에 `@@index([syncStatus, syncedAt(sort: Desc)])` 반영 (신규 DB 재현용, 운영은 이미 존재하므로 db push 시 no-op)
+3. `summary/route.ts` — GROUP BY 풀스캔 → 인덱스 타는 조건 count 로 변경. **이 테이블에 WHERE 없는 count/GROUP BY 금지**
+4. 데이터 삭제(55.8M synced 이력, 옵션 D)는 **보류** — 한국무진 이력 보존 정책 확인 후 진행. 인덱스만으로 체감 속도는 해결되나 스토리지 ~10GB 비용은 지속
+
+**교훈**: "프론트 fetch 분리 + 페이지네이션" (옵션 A) 은 증상 완화일 뿐, 테이블이 수천만 행이면 인덱스 없는 필터 하나로 모든 endpoint 가 함께 느려진다. 느린 페이지 진단 시 ① 테이블 실측 행수 ② EXPLAIN 을 코드 수정보다 먼저 확인할 것.

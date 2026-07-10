@@ -5,8 +5,13 @@
  *   기존 /api/admin/sync-monitor GET 은 getStockConflicts() 전체 조회를 포함한
  *   Promise.all 6쿼리 — 가장 느린 쿼리가 끝날 때까지 응답 전체가 대기하여
  *   페이지 랜딩 실패 (CLAUDE.md 학습 #10 재현 케이스).
- *   → 가벼운 요약만 이 endpoint 로 분리. count 개별 2회 스캔은 GROUP BY 1회로 통합.
+ *   → 가벼운 요약만 이 endpoint 로 분리.
  *   기존 endpoint 는 호환성 위해 유지 (신규 3개 안정화 후 deprecate).
+ *
+ * 2차 수정 (2026-07-10 §11.2): OnewmsStockSync 는 55.9M 행 — GROUP BY 는
+ *   여전히 풀스캔 (EXPLAIN: Parallel Seq Scan). syncStatus 필터가 인덱스
+ *   (syncStatus, syncedAt DESC) 를 타도록 조건 count 로 변경.
+ *   ⚠️ 이 테이블에 무조건(WHERE 없는) count/GROUP BY 금지.
  */
 
 import { NextRequest } from 'next/server';
@@ -27,27 +32,19 @@ export const GET = withRole(['MASTER'], async (_req: NextRequest, _user: AuthUse
     }
   };
 
-  const [statusCounts, mappingStatusCounts, cronLogs, lastHealthcheck] = await Promise.all([
-    // conflict count — 개별 count 대신 GROUP BY 1회 (단일 테이블 스캔)
+  const [conflictCount, failedOrders, cronLogs, lastHealthcheck] = await Promise.all([
+    // conflict count — (syncStatus, syncedAt) 인덱스 range scan (conflict 행은 극소수)
     safe(
-      'statusCounts',
-      () => prisma.$queryRaw<Array<{ status: string; count: number }>>`
-        SELECT "syncStatus" as status, COUNT(*)::int as count
-        FROM "OnewmsStockSync"
-        GROUP BY "syncStatus"
-      `,
-      []
+      'conflictCount',
+      () => prisma.onewmsStockSync.count({ where: { syncStatus: 'conflict' } }),
+      0
     ),
 
-    // failed order count — GROUP BY 통합
+    // failed order count — OnewmsOrderMapping 은 소규모 + status 인덱스 존재
     safe(
-      'mappingStatusCounts',
-      () => prisma.$queryRaw<Array<{ status: string; count: number }>>`
-        SELECT status, COUNT(*)::int as count
-        FROM "OnewmsOrderMapping"
-        GROUP BY status
-      `,
-      []
+      'failedOrders',
+      () => prisma.onewmsOrderMapping.count({ where: { status: 'failed' } }),
+      0
     ),
 
     // Cron 실행 이력 (최근 10회) — 인덱스 OK, 가벼움
@@ -74,9 +71,6 @@ export const GET = withRole(['MASTER'], async (_req: NextRequest, _user: AuthUse
       null
     ),
   ]);
-
-  const conflictCount = statusCounts.find((s) => s.status === 'conflict')?.count ?? 0;
-  const failedOrders = mappingStatusCounts.find((s) => s.status === 'failed')?.count ?? 0;
 
   const lastSync = cronLogs[0] || null;
   const lastSyncMeta = lastSync?.metadata as Record<string, unknown> | null;

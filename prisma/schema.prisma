@@ -603,6 +603,9 @@ model OnewmsStockSync {
 
   @@index([productId])
   @@index([syncedAt])
+  // 성능 (2026-07-10): 55.9M 행 테이블에서 conflict 필터 풀스캔 방지.
+  // 운영 DB 에는 CREATE INDEX CONCURRENTLY 로 이미 생성됨 — db push 시 no-op.
+  @@index([syncStatus, syncedAt(sort: Desc)])
 }
 
 model OnewmsDeliveryLog {
