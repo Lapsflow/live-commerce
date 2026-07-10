@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { withRole, type AuthUser } from "@/lib/api/middleware";
 import { ok, errors } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
+import { logAudit } from "@/lib/services/audit";
 
 /**
  * GET /api/orders/:id
@@ -76,6 +77,82 @@ export const GET = withRole(
     } catch (err: any) {
       console.error("Order detail error:", err);
       return errors.internal(err.message);
+    }
+  }
+);
+
+/**
+ * DELETE /api/orders/:id
+ *
+ * 발주 영구 삭제 (MASTER 전용)
+ * 관련 Cascade 삭제 대상:
+ *   - OrderItem (line 255 Cascade)
+ *   - OrderSellerMatching (line 381 Cascade)
+ *   - StockReservation (line 403 Cascade)
+ *   - OnewmsOrderMapping (line 567 Cascade)
+ *   - Payment (line 611 Cascade)
+ * SetNull: Sale.orderId (line 804) — 이력 보존
+ */
+export const DELETE = withRole(
+  ["MASTER"],
+  async (req: NextRequest, user: AuthUser) => {
+    try {
+      // URL: /api/orders/{id} → 마지막 segment 가 id
+      const pathname = new URL(req.url).pathname;
+      const segments = pathname.split("/").filter((s) => s);
+      const orderId = segments[segments.length - 1];
+      if (!orderId || orderId === "orders") {
+        return errors.badRequest("Order ID가 필요합니다");
+      }
+
+      const existing = await prisma.order.findUnique({
+        where: { id: orderId },
+        select: {
+          id: true,
+          orderNo: true,
+          status: true,
+          paymentStatus: true,
+          shippingStatus: true,
+          totalAmount: true,
+          seller: { select: { name: true } },
+        },
+      });
+
+      if (!existing) {
+        return errors.notFound("발주를 찾을 수 없습니다");
+      }
+
+      await prisma.order.delete({ where: { id: orderId } });
+
+      logAudit({
+        userId: user.userId,
+        userRole: user.role,
+        userName: user.name,
+        action: "DELETE",
+        entityType: "Order",
+        entityId: orderId,
+        entityName: existing.orderNo,
+        before: {
+          orderNo: existing.orderNo,
+          status: existing.status,
+          paymentStatus: existing.paymentStatus,
+          shippingStatus: existing.shippingStatus,
+          totalAmount: existing.totalAmount,
+        },
+        description: `발주 영구 삭제: ${existing.orderNo} (셀러 ${existing.seller?.name || "-"})`,
+        request: req,
+      });
+
+      return ok({
+        message: "발주가 삭제되었습니다",
+        deleted: { id: existing.id, orderNo: existing.orderNo },
+      });
+    } catch (err: any) {
+      console.error("[ORDER DELETE] error:", err);
+      if (err.code === "P2025") {
+        return errors.notFound("발주를 찾을 수 없습니다");
+      }
+      return errors.internal(err.message || "발주 삭제 실패");
     }
   }
 );

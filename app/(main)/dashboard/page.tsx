@@ -80,25 +80,32 @@ export default function DashboardPage() {
   const fetchDashboard = useCallback(() => {
     setLoading(true);
     setError(null);
-    // ONEWMS 통계는 MASTER 본사 전용 — 다른 권한은 불필요 호출 차단
-    const onewmsPromise = isMaster
-      ? fetch("/api/onewms/stats").then((res) => res.ok ? res.json() : Promise.reject()).catch(() => null)
-      : Promise.resolve(null);
-    Promise.all([
-      fetch(`/api/stats/dashboard?fromDate=${fromDate}&toDate=${toDate}`).then((res) => res.ok ? res.json() : Promise.reject()),
-      onewmsPromise,
-    ])
-      .then(([dashboardData, onewmsData]) => {
+    // 운영 UX 개선(2026-06-XX): 두 API 를 Promise.all 로 묶으면 가장 느린 응답까지
+    //   전체 스켈레톤을 유지해야 함. 각각 독립 호출로 분리하여 먼저 오는 응답부터
+    //   부분 렌더 (dashboard 카드 먼저, ONEWMS 카드는 나중에).
+    // dashboard API — 필수 (실패 시 전체 에러)
+    fetch(`/api/stats/dashboard?fromDate=${fromDate}&toDate=${toDate}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("통계 데이터 로딩 실패"))))
+      .then((dashboardData) => {
         setStats(dashboardData.data);
-        if (onewmsData?.data) {
-          setOnewmsStats(onewmsData.data);
-        }
         setLoading(false);
       })
       .catch((err) => {
         setError(err.message || "Failed to fetch dashboard stats");
         setLoading(false);
       });
+
+    // ONEWMS stats — 선택 (실패해도 dashboard 는 표시). MASTER 만 호출.
+    if (isMaster) {
+      fetch("/api/onewms/stats")
+        .then((res) => (res.ok ? res.json() : Promise.reject()))
+        .then((onewmsData) => {
+          if (onewmsData?.data) setOnewmsStats(onewmsData.data);
+        })
+        .catch(() => {
+          // 부수 통계 실패는 무시 (주 통계 화면은 표시됨)
+        });
+    }
   }, [fromDate, toDate, isMaster]);
 
   useEffect(() => {

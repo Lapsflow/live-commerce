@@ -24,6 +24,7 @@ import {
   ListFilter,
   FlaskConical,
   Search,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -231,6 +232,40 @@ export default function BroadcastsPage() {
     }
   };
 
+  /**
+   * 방송 영구 삭제 (MASTER/SUB_MASTER 전용)
+   * Broadcast cascade 관계:
+   *   - Order.broadcastId (SetNull)  — 이력 보존
+   *   - Sale.broadcastId (SetNull)   — 이력 보존
+   *   - ScanLog.broadcastId (SetNull) — 이력 보존
+   * 즉 삭제해도 발주/매출/스캔 이력은 유지되며 방송 참조만 null 처리.
+   */
+  const handleDeleteBroadcast = async (id: string) => {
+    const target = broadcasts.find((b) => b.id === id);
+    const label = target ? `${target.code} (${target.seller?.name || "-"})` : id;
+    if (!confirm(
+      `방송을 영구 삭제하시겠습니까?\n\n` +
+      `${label}\n\n` +
+      `⚠️ 이 작업은 되돌릴 수 없습니다.\n` +
+      `연결된 발주/매출/스캔 이력은 유지되며 방송 참조만 해제됩니다.`
+    )) return;
+
+    setActionLoading(id);
+    try {
+      const res = await fetch(`/api/broadcasts/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || "방송 삭제 실패");
+      }
+      toast({ title: "방송 삭제 완료" });
+      loadBroadcasts();
+    } catch (err: any) {
+      toast({ title: "오류", description: err.message, variant: "destructive" });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -289,6 +324,7 @@ export default function BroadcastsPage() {
                   }
                 : undefined
             }
+            onDelete={isManagerOrAbove ? handleDeleteBroadcast : undefined}
             actionLoading={actionLoading}
           />
         </TabsContent>
@@ -304,6 +340,7 @@ export default function BroadcastsPage() {
                 setRejectReason("");
                 setRejectDialogOpen(true);
               }}
+              onDelete={handleDeleteBroadcast}
               actionLoading={actionLoading}
               showRequestMemo
             />
@@ -315,6 +352,7 @@ export default function BroadcastsPage() {
           <BroadcastTable
             broadcasts={scheduled}
             onStart={handleStart}
+            onDelete={isManagerOrAbove ? handleDeleteBroadcast : undefined}
             actionLoading={actionLoading}
           />
         </TabsContent>
@@ -324,6 +362,7 @@ export default function BroadcastsPage() {
           <BroadcastTable
             broadcasts={live}
             onEnd={handleEnd}
+            onDelete={isManagerOrAbove ? handleDeleteBroadcast : undefined}
             actionLoading={actionLoading}
           />
         </TabsContent>
@@ -505,6 +544,7 @@ function BroadcastTable({
   onEnd,
   onApprove,
   onReject,
+  onDelete,
   actionLoading,
   showRequestMemo,
 }: {
@@ -513,6 +553,7 @@ function BroadcastTable({
   onEnd?: (id: string) => void;
   onApprove?: (id: string) => void;
   onReject?: (id: string) => void;
+  onDelete?: (id: string) => void;
   actionLoading: string | null;
   showRequestMemo?: boolean;
 }) {
@@ -637,6 +678,18 @@ function BroadcastTable({
                         >
                           <StopCircle className="h-4 w-4 mr-1" />
                           종료
+                        </Button>
+                      )}
+                      {onDelete && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => onDelete(b.id)}
+                          disabled={isLoading}
+                          title="영구 삭제"
+                          className="text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
                     </td>

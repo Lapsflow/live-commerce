@@ -19,6 +19,7 @@ import {
   ThumbsUp,
   ThumbsDown,
   Truck,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -85,6 +86,7 @@ export default function OrdersPage() {
   const isAdmin = ["MASTER", "SUB_MASTER"].includes(userRole);
   const isSubMaster = userRole === "SUB_MASTER";
   const isSeller = userRole === "SELLER";
+  const isMaster = userRole === "MASTER";
 
   const [pipelineFilter, setPipelineFilter] = useState<string | null>(null);
   const [orderTypeTab, setOrderTypeTab] = useState<string>(isSubMaster ? "HEADQUARTERS" : "all");
@@ -94,6 +96,40 @@ export default function OrdersPage() {
   const [rejectReason, setRejectReason] = useState("");
   const extraParams = orderTypeTab !== "all" ? { productType: orderTypeTab } : undefined;
   const { dataSource, refresh } = useApiCrud<Order>("/api/orders", extraParams);
+
+  /**
+   * 발주 영구 삭제 (MASTER 전용)
+   * 테스트 데이터 정리 목적. cascade 로 OrderItem, OnewmsOrderMapping, Payment 등 함께 삭제.
+   */
+  const handleDeleteOrder = async (order: Order, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const orderNo = order.orderNo || order.id.slice(0, 8);
+    const sellerName = order.seller?.name || "-";
+    if (!confirm(
+      `발주를 영구 삭제하시겠습니까?\n\n` +
+      `발주번호: ${orderNo}\n` +
+      `셀러: ${sellerName}\n` +
+      `상태: ${order.status} / ${order.paymentStatus} / ${order.shippingStatus}\n\n` +
+      `⚠️ 이 작업은 되돌릴 수 없습니다.\n` +
+      `발주 항목·결제·ONEWMS 매핑도 함께 삭제됩니다.`
+    )) return;
+
+    setActionLoading(order.id);
+    try {
+      const res = await fetch(`/api/orders/${order.id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`발주 ${orderNo} 삭제 완료`);
+        refresh();
+      } else {
+        toast.error(data.error?.message || "삭제 실패");
+      }
+    } catch {
+      toast.error("서버 오류");
+    } finally {
+      setActionLoading(null);
+    }
+  };
 
   const handleConfirm = async (orderId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -306,8 +342,10 @@ export default function OrdersPage() {
           (order.paymentStatus === "UNPAID" || order.paymentStatus === "PENDING_CONFIRMATION");
         const canShip = isAdmin && order.status === "APPROVED" && order.paymentStatus === "PAID" && order.shippingStatus === "PENDING";
         const canCancel = order.status === "PENDING" && order.paymentStatus === "UNPAID";
+        // MASTER 전용 영구 삭제 — 테스트 데이터 정리 목적. 모든 상태에서 삭제 가능.
+        const canDelete = isMaster;
 
-        if (!canApprove && !canMarkPending && !canPaymentConfirm && !canShip && !canCancel) return null;
+        if (!canApprove && !canMarkPending && !canPaymentConfirm && !canShip && !canCancel && !canDelete) return null;
 
         return (
           <div className="flex gap-1 flex-wrap">
@@ -386,6 +424,18 @@ export default function OrdersPage() {
               >
                 <XCircle className="h-3 w-3 mr-1" />
                 취소
+              </Button>
+            )}
+            {canDelete && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 px-2 text-xs text-red-600 hover:bg-red-50"
+                onClick={(e) => handleDeleteOrder(order, e)}
+                disabled={isLoading}
+                title="영구 삭제 (테스트 데이터 정리)"
+              >
+                <Trash2 className="h-3 w-3" />
               </Button>
             )}
           </div>
