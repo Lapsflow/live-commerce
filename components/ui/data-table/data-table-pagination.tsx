@@ -30,7 +30,9 @@ export function DataTablePagination<TData>({
   pageSizeOptions = [20, 30, 50],
 }: DataTablePaginationProps<TData>) {
   const selectedCount = table.getFilteredSelectedRowModel().rows.length;
-  const totalCount = table.getFilteredRowModel().rows.length;
+  // 2026-07-10: server 모드에서 getFilteredRowModel 은 현재 페이지 행수만 반환 —
+  // getRowCount() 는 rowCount(서버 totalCount) 우선, client 모드는 필터 후 전체.
+  const totalCount = table.getRowCount();
 
   return (
     <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">

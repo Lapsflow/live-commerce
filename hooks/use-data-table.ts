@@ -123,6 +123,7 @@ export function useDataTable<TData, TValue>({
 
   const serverData = serverResult?.data ?? [];
   const serverPageCount = serverResult?.pageCount ?? 0;
+  const serverTotalCount = serverResult?.totalCount ?? 0;
   const isLoading = dataSource.mode === "server" ? swrLoading : false;
   const error = dataSource.mode === "server" ? swrError : undefined;
 
@@ -161,6 +162,9 @@ export function useDataTable<TData, TValue>({
           manualFiltering: true,
           manualPagination: true,
           pageCount: serverPageCount,
+          // 2026-07-10: "총 N건" 이 현재 페이지 행수만 세던 표시 결함 수정 —
+          // 서버 totalCount 를 주입해 table.getRowCount() 로 전체 건수 노출
+          rowCount: serverTotalCount,
         }),
 
     enableColumnResizing,
