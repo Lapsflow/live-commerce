@@ -33,17 +33,18 @@ interface DrilldownModalProps {
   toDate: string;
 }
 
+// 2026-07-10: 데이터 소스 Sale → 승인 발주(Order) 기준 변경에 맞춰 라벨 갱신
 const typeLabels: Record<DrilldownType, string> = {
-  sales: "매출 상세 (셀러별 TOP 5)",
-  count: "판매건수 상세 (상품별 TOP 5)",
-  avgPrice: "평균단가 상세 (상품별 TOP 5)",
+  sales: "발주액 상세 (셀러별 TOP 5)",
+  count: "발주건수 상세 (상품별 TOP 5)",
+  avgPrice: "평균 공급단가 상세 (상품별 TOP 5)",
   margin: "마진 상세 (상품별 TOP 5)",
 };
 
 const valueLabels: Record<DrilldownType, string> = {
-  sales: "매출",
-  count: "판매건수",
-  avgPrice: "평균단가",
+  sales: "발주액",
+  count: "발주건수",
+  avgPrice: "평균 공급단가",
   margin: "마진",
 };
 

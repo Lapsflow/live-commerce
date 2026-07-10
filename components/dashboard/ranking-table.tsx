@@ -57,8 +57,8 @@ export function RankingTable({ data }: RankingTableProps) {
         <TableRow>
           <TableHead className="w-20">순위</TableHead>
           <TableHead>셀러명</TableHead>
-          <TableHead className="text-right">판매건수</TableHead>
-          <TableHead className="text-right">총 매출</TableHead>
+          <TableHead className="text-right">발주건수</TableHead>
+          <TableHead className="text-right">총 발주액</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

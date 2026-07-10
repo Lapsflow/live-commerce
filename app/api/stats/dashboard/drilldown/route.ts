@@ -7,9 +7,12 @@ import { auth } from "@/lib/auth";
 /**
  * GET /api/stats/dashboard/drilldown
  *
- * 통계 카드 드릴다운 데이터
+ * 통계 카드 드릴다운 데이터 (발주 기반)
  * - type: sales | count | avgPrice | margin
  * - fromDate, toDate: YYYY-MM-DD
+ *
+ * 데이터 소스 변경 (2026-07-10): Sale(운영 0행) → Order/OrderItem.
+ * 상세 사유는 app/api/stats/dashboard/route.ts 주석 참고.
  */
 export async function GET(req: NextRequest) {
   try {
@@ -31,20 +34,25 @@ export async function GET(req: NextRequest) {
     const fromDate = fromDateStr
       ? new Date(fromDateStr)
       : new Date(toDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+    // 종료일 당일 포함 (off-by-one 수정)
+    const toDateEnd = new Date(toDate.getTime() + 24 * 60 * 60 * 1000);
 
-    const { where: roleWhere } = await getRoleBasedFilter(session as any, "sale");
-    const dateFilter = {
+    const { where: roleWhere } = await getRoleBasedFilter(session as any, "order");
+    const orderFilter = {
       ...roleWhere,
-      saleDate: { gte: fromDate, lte: toDate },
+      status: "APPROVED" as const,
+      createdAt: { gte: fromDate, lt: toDateEnd },
     };
+    // OrderItem 조회용 — 소속 발주에 동일 필터 적용
+    const itemFilter = { order: orderFilter };
 
     if (type === "sales") {
-      // 셀러별 매출 TOP 5
-      const sellerTop = await prisma.sale.groupBy({
+      // 셀러별 발주액 TOP 5
+      const sellerTop = await prisma.order.groupBy({
         by: ["sellerId"],
-        where: dateFilter,
-        _sum: { totalPrice: true },
-        orderBy: { _sum: { totalPrice: "desc" } },
+        where: orderFilter,
+        _sum: { totalAmount: true },
+        orderBy: { _sum: { totalAmount: "desc" } },
         take: 5,
       });
 
@@ -61,16 +69,16 @@ export async function GET(req: NextRequest) {
         type: "sales",
         topItems: sellerTop.map((s) => ({
           name: s.sellerId ? sellerMap.get(s.sellerId) || "알 수 없음" : "삭제된 셀러",
-          value: s._sum.totalPrice || 0,
+          value: s._sum.totalAmount || 0,
         })),
       });
     }
 
     if (type === "count") {
-      // 상품별 판매 건수 TOP 5
-      const productTop = await prisma.sale.groupBy({
+      // 상품별 발주 건수 TOP 5
+      const productTop = await prisma.orderItem.groupBy({
         by: ["productId"],
-        where: dateFilter,
+        where: itemFilter,
         _count: true,
         orderBy: { _count: { productId: "desc" } },
         take: 5,
@@ -93,13 +101,13 @@ export async function GET(req: NextRequest) {
     }
 
     if (type === "avgPrice") {
-      // 상품별 평균 단가 TOP 5
-      const priceTop = await prisma.sale.groupBy({
+      // 상품별 평균 공급단가 TOP 5
+      const priceTop = await prisma.orderItem.groupBy({
         by: ["productId"],
-        where: dateFilter,
-        _avg: { unitPrice: true },
+        where: itemFilter,
+        _avg: { supplyPrice: true },
         _count: true,
-        orderBy: { _avg: { unitPrice: "desc" } },
+        orderBy: { _avg: { supplyPrice: "desc" } },
         take: 5,
       });
 
@@ -114,36 +122,36 @@ export async function GET(req: NextRequest) {
         type: "avgPrice",
         topItems: priceTop.map((p) => ({
           name: productMap.get(p.productId) || "알 수 없음",
-          value: Math.round(p._avg.unitPrice || 0),
+          value: Math.round(p._avg.supplyPrice || 0),
           count: p._count,
         })),
       });
     }
 
     if (type === "margin") {
-      // 상품별 마진 TOP 5
-      const salesWithProducts = await prisma.sale.findMany({
-        where: dateFilter,
+      // 상품별 마진 TOP 5 — (판매가 - 공급가) × 수량
+      const itemsWithProducts = await prisma.orderItem.findMany({
+        where: itemFilter,
         select: {
           productId: true,
-          unitPrice: true,
+          supplyPrice: true,
           quantity: true,
           product: {
-            select: { id: true, name: true, supplyPrice: true },
+            select: { id: true, name: true, sellPrice: true },
           },
         },
       });
 
       const marginByProduct = new Map<string, { name: string; margin: number; count: number }>();
-      for (const sale of salesWithProducts) {
-        const margin = (sale.unitPrice - sale.product.supplyPrice) * sale.quantity;
-        const existing = marginByProduct.get(sale.productId);
+      for (const item of itemsWithProducts) {
+        const margin = (item.product.sellPrice - item.supplyPrice) * item.quantity;
+        const existing = marginByProduct.get(item.productId);
         if (existing) {
           existing.margin += margin;
           existing.count += 1;
         } else {
-          marginByProduct.set(sale.productId, {
-            name: sale.product.name,
+          marginByProduct.set(item.productId, {
+            name: item.product.name,
             margin,
             count: 1,
           });

@@ -58,12 +58,12 @@ export default function DashboardPage() {
   const isSubMaster = userRole === "SUB_MASTER";
   const isMaster = userRole === "MASTER";
 
-  // 역할별 KPI 레이블
+  // 역할별 KPI 레이블 (2026-07-10: 데이터 소스가 Sale → 승인 발주(Order) 기준으로 변경)
   const kpiLabels = isSeller
-    ? { sales: "내 매출", count: "내 판매 건수", avgPrice: "내 평균 단가", margin: "내 마진" }
+    ? { sales: "내 발주액", count: "내 발주 건수", avgPrice: "평균 발주액", margin: "내 마진" }
     : isSubMaster
-      ? { sales: "센터 매출", count: "센터 판매 건수", avgPrice: "평균 단가", margin: "센터 마진" }
-      : { sales: "총 매출", count: "판매 건수", avgPrice: "평균 단가", margin: "총 마진" };
+      ? { sales: "센터 발주액", count: "센터 발주 건수", avgPrice: "평균 발주액", margin: "센터 마진" }
+      : { sales: "총 발주액", count: "발주 건수", avgPrice: "평균 발주액", margin: "총 마진" };
 
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [onewmsStats, setOnewmsStats] = useState<OnewmsStats | null>(null);
@@ -197,7 +197,7 @@ export default function DashboardPage() {
 
       {/* 매출 추이 차트 */}
       <Card className="p-6">
-        <h2 className="text-xl font-bold mb-4">일별 매출 추이 ({fromDate} ~ {toDate})</h2>
+        <h2 className="text-xl font-bold mb-4">일별 발주 추이 ({fromDate} ~ {toDate})</h2>
         {stats.dailySales.length > 0 ? (
           <SalesChart data={stats.dailySales} />
         ) : (
