@@ -641,7 +641,10 @@ export default function OrdersPage() {
           items-end: DateRangePicker 는 라벨(시작일/종료일) 때문에 키가 크고 내부가
           아래 정렬이므로, 바깥 줄도 아래 정렬해야 "최근 90일"과 같은 바닥선에 맞음 */}
       <div className="flex flex-wrap items-end gap-2 mb-4">
-        <DateRangePicker fromDate={fromDate} toDate={toDate} onDateChange={(f, t) => { setFromDate(f); setToDate(t); }} />
+        {/* key: DateRangePicker 는 내부 local state 를 초기 1회만 props 로 받아서,
+            "이번 달/지난 달" 버튼으로 기간을 바꿔도 입력창 날짜가 안 바뀜 —
+            key 로 강제 리마운트하여 표시 날짜를 항상 실제 조회 기간과 일치시킴 */}
+        <DateRangePicker key={`${fromDate}|${toDate}`} fromDate={fromDate} toDate={toDate} onDateChange={(f, t) => { setFromDate(f); setToDate(t); }} />
         <button
           onClick={setThisMonth}
           className="px-3 py-2 text-sm border border-grey-300 rounded-md hover:bg-grey-50 transition-colors"
