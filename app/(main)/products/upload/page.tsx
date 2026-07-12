@@ -10,7 +10,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   Dialog,
@@ -309,7 +308,17 @@ export default function ProductUploadPage() {
               disabled={loadingCenters || userRole === "SUB_MASTER"}
             >
               <SelectTrigger>
-                <SelectValue placeholder={loadingCenters ? "로딩 중..." : "센터를 선택하세요"} />
+                {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                <span className={selectedCenterId ? "" : "text-grey-500"}>
+                  {selectedCenterId
+                    ? (() => {
+                        const c = centers.find((c) => c.id === selectedCenterId);
+                        return c ? `${c.name} (${c.regionName})` : selectedCenterId;
+                      })()
+                    : loadingCenters
+                      ? "로딩 중..."
+                      : "센터를 선택하세요"}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 {centers.map((c) => (

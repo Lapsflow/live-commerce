@@ -11,7 +11,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   Dialog,
@@ -352,7 +351,12 @@ export default function SampleManagePage() {
                       onValueChange={(v) => v && setEditCategory(v)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="카테고리 선택" />
+                        {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                        <span className={editCategory ? "" : "text-grey-500"}>
+                          {editCategory
+                            ? (categoryLabels[editCategory] ?? editCategory)
+                            : "카테고리 선택"}
+                        </span>
                       </SelectTrigger>
                       <SelectContent>
                         {Object.entries(categoryLabels).map(([key, label]) => (
@@ -387,7 +391,14 @@ export default function SampleManagePage() {
                       onValueChange={(v) => v && setEditStatus(v)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="상태 선택" />
+                        {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                        <span className={editStatus ? "" : "text-grey-500"}>
+                          {editStatus
+                            ? (statusLabels[
+                                editStatus === "UNTIL_SOLD" ? "CONTINUOUS" : editStatus
+                              ] ?? editStatus)
+                            : "상태 선택"}
+                        </span>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="CONTINUOUS">진행중</SelectItem>

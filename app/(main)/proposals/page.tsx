@@ -65,6 +65,16 @@ const CATEGORIES: Record<string, string[]> = {
 
 const ALL_CATEGORIES = ["전체", ...Object.keys(CATEGORIES)];
 
+// base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더용 맵 (2026-07-10)
+const SAMPLE_TYPE_LABELS: Record<string, string> = {
+  FREE: "무료",
+  PAID: "유료",
+};
+const SUPPLY_TYPE_LABELS: Record<string, string> = {
+  RECURRING: "지속발주 가능",
+  SINGLE: "단타성 제품",
+};
+
 function formatKRW(n?: number | null): string {
   if (n === null || n === undefined) return "—";
   return n.toLocaleString("ko-KR") + "원";
@@ -515,7 +525,14 @@ export default function ProposalsPage() {
                 <div>
                   <Label>샘플 유형</Label>
                   <Select value={formData.sampleType} onValueChange={(v) => setFormData({ ...formData, sampleType: v || "" })}>
-                    <SelectTrigger><SelectValue placeholder="선택" /></SelectTrigger>
+                    <SelectTrigger>
+                      {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                      <span className={formData.sampleType ? "" : "text-grey-500"}>
+                        {formData.sampleType
+                          ? (SAMPLE_TYPE_LABELS[formData.sampleType] ?? formData.sampleType)
+                          : "선택"}
+                      </span>
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="FREE">무료</SelectItem>
                       <SelectItem value="PAID">유료</SelectItem>
@@ -531,7 +548,14 @@ export default function ProposalsPage() {
                 <div>
                   <Label>발주 방식</Label>
                   <Select value={formData.supplyType} onValueChange={(v) => setFormData({ ...formData, supplyType: v || "" })}>
-                    <SelectTrigger><SelectValue placeholder="선택" /></SelectTrigger>
+                    <SelectTrigger>
+                      {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                      <span className={formData.supplyType ? "" : "text-grey-500"}>
+                        {formData.supplyType
+                          ? (SUPPLY_TYPE_LABELS[formData.supplyType] ?? formData.supplyType)
+                          : "선택"}
+                      </span>
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="RECURRING">지속발주 가능</SelectItem>
                       <SelectItem value="SINGLE">단타성 제품</SelectItem>

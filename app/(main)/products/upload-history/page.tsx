@@ -18,7 +18,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   History,
@@ -202,7 +201,12 @@ export default function UploadHistoryPage() {
                 }}
               >
                 <SelectTrigger className="w-[240px]">
-                  <SelectValue placeholder="전체 센터" />
+                  {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                  <span className={centerId ? "" : "text-grey-500"}>
+                    {centerId
+                      ? (centers.find((c) => c.id === centerId)?.name ?? centerId)
+                      : "전체 센터"}
+                  </span>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">전체 센터</SelectItem>

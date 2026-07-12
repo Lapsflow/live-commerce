@@ -11,7 +11,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   ClipboardList, Search, CheckCircle, XCircle, Clock,
@@ -239,7 +238,10 @@ export default function SampleRequestsPage() {
         </div>
         <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v === "ALL" ? "" : (v || ""))}>
           <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="상태 필터" />
+            {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+            <span className={statusFilter ? "" : "text-grey-500"}>
+              {statusFilter ? (statusLabels[statusFilter] ?? statusFilter) : "상태 필터"}
+            </span>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">전체</SelectItem>

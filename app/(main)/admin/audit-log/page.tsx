@@ -10,7 +10,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -205,7 +204,14 @@ export default function AuditLogPage() {
             />
             <Select value={actionFilter} onValueChange={(v) => setActionFilter(v || "all")}>
               <SelectTrigger>
-                <SelectValue placeholder="액션" />
+                {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                <span className={actionFilter ? "" : "text-grey-500"}>
+                  {actionFilter
+                    ? actionFilter === "all"
+                      ? "전체"
+                      : (ACTION_LABELS[actionFilter]?.label ?? actionFilter)
+                    : "액션"}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>
@@ -218,7 +224,10 @@ export default function AuditLogPage() {
             </Select>
             <Select value={entityFilter} onValueChange={(v) => setEntityFilter(v || "all")}>
               <SelectTrigger>
-                <SelectValue placeholder="대상" />
+                {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                <span className={entityFilter ? "" : "text-grey-500"}>
+                  {entityFilter ? (entityFilter === "all" ? "전체" : entityFilter) : "대상"}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>

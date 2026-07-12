@@ -23,7 +23,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight, Plus, Filter, X, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -398,7 +397,15 @@ export default function BroadcastCalendarPage() {
                 <Label className="text-xs text-muted-foreground mb-2 block">센터</Label>
                 <Select value={filterCenterId} onValueChange={(v) => setFilterCenterId(v || "")}>
                   <SelectTrigger className="h-8 text-sm">
-                    <SelectValue placeholder="전체 센터" />
+                    {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                    <span className={filterCenterId ? "" : "text-grey-500"}>
+                      {filterCenterId
+                        ? (() => {
+                            const c = centers.find((c) => c.id === filterCenterId);
+                            return c ? `${c.code} - ${c.name}` : filterCenterId;
+                          })()
+                        : "전체 센터"}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">전체 센터</SelectItem>
@@ -522,7 +529,8 @@ export default function BroadcastCalendarPage() {
               <Label>플랫폼</Label>
               <Select value={requestPlatform} onValueChange={(v) => v && setRequestPlatform(v)}>
                 <SelectTrigger>
-                  <SelectValue />
+                  {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                  <span>{platformLabels[requestPlatform] ?? requestPlatform}</span>
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(platformLabels).map(([key, label]) => (
@@ -539,7 +547,15 @@ export default function BroadcastCalendarPage() {
                 <Label>센터 (선택)</Label>
                 <Select value={requestCenterId} onValueChange={(v) => setRequestCenterId(v || "")}>
                   <SelectTrigger>
-                    <SelectValue placeholder="센터를 선택하세요" />
+                    {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                    <span className={requestCenterId ? "" : "text-grey-500"}>
+                      {requestCenterId
+                        ? (() => {
+                            const c = centers.find((c) => c.id === requestCenterId);
+                            return c ? `${c.code} - ${c.name}` : requestCenterId;
+                          })()
+                        : "센터를 선택하세요"}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     {centers.map((c) => (

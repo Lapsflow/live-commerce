@@ -18,7 +18,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { ROLE_LABELS } from "@/lib/constants/role-labels";
 import { SELLER_PAYMENT_METHOD_LABELS } from "@/lib/constants/order-labels";
@@ -181,7 +180,10 @@ export function UserEditDialog({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                  <span>
+                    {ROLE_LABELS[formData.role as keyof typeof ROLE_LABELS] ?? formData.role}
+                  </span>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="MASTER">{ROLE_LABELS["MASTER"]}</SelectItem>
@@ -238,7 +240,12 @@ export function UserEditDialog({
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                      <span>
+                        {SELLER_PAYMENT_METHOD_LABELS[
+                          formData.paymentMethod as keyof typeof SELLER_PAYMENT_METHOD_LABELS
+                        ] ?? formData.paymentMethod}
+                      </span>
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(SELLER_PAYMENT_METHOD_LABELS).map(([value, label]) => (

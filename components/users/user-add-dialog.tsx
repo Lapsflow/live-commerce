@@ -18,7 +18,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { ROLE_LABELS } from "@/lib/constants/role-labels";
 
@@ -224,7 +223,10 @@ export function UserAddDialog({
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                    <span>
+                      {ROLE_LABELS[formData.role as keyof typeof ROLE_LABELS] ?? formData.role}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="SELLER">{ROLE_LABELS["SELLER"]}</SelectItem>
@@ -251,7 +253,15 @@ export function UserAddDialog({
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="센터 선택" />
+                    {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                    <span className={formData.centerId ? "" : "text-grey-500"}>
+                      {formData.centerId
+                        ? (() => {
+                            const c = centers.find((c) => c.id === formData.centerId);
+                            return c ? `${c.name} (${c.code})` : formData.centerId;
+                          })()
+                        : "센터 선택"}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">미배정</SelectItem>

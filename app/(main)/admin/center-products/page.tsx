@@ -11,7 +11,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   Store,
@@ -327,7 +326,12 @@ export default function CenterProductsPage() {
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder="센터" />
+                {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                <span>
+                  {centerId
+                    ? (centerStats.find((c) => c.centerId === centerId)?.centerName ?? centerId)
+                    : "전체 센터"}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체 센터</SelectItem>
@@ -352,7 +356,8 @@ export default function CenterProductsPage() {
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder="카테고리" />
+                {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                <span>{category || "전체"}</span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>

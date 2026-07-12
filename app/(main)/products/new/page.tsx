@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { ArrowLeft, Lock } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -187,7 +187,17 @@ export default function NewProductPage() {
                 <Label htmlFor="managedBy">관리 센터 *</Label>
                 <Select value={managedBy} onValueChange={(value) => setManagedBy(value || "")} disabled={loadingCenters}>
                   <SelectTrigger>
-                    <SelectValue placeholder={loadingCenters ? "로딩 중..." : "센터를 선택하세요"} />
+                    {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                    <span className={managedBy ? "" : "text-grey-500"}>
+                      {managedBy
+                        ? (() => {
+                            const c = centers.find((c) => c.id === managedBy);
+                            return c ? `${c.name} (${c.regionName})` : managedBy;
+                          })()
+                        : loadingCenters
+                          ? "로딩 중..."
+                          : "센터를 선택하세요"}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     {centers.map((center) => (

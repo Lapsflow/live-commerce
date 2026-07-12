@@ -192,7 +192,15 @@ export default function CenterNewProductPage() {
                   onValueChange={(v) => setSelectedCenterId(v ?? "")}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="센터를 선택하세요" />
+                    {/* base-ui SelectValue 는 원시값을 노출 → 라벨 직접 렌더 (2026-07-10) */}
+                    <span className={selectedCenterId ? "" : "text-grey-500"}>
+                      {selectedCenterId
+                        ? (() => {
+                            const c = centers.find((c) => c.id === selectedCenterId);
+                            return c ? `${c.name} (${c.regionName})` : selectedCenterId;
+                          })()
+                        : "센터를 선택하세요"}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     {centers.map((c) => (
