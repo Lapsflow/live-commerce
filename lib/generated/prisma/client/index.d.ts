@@ -201,7 +201,8 @@ export type SampleCategory = (typeof SampleCategory)[keyof typeof SampleCategory
 
 export const SampleStatus: {
   CONTINUOUS: 'CONTINUOUS',
-  UNTIL_SOLD: 'UNTIL_SOLD'
+  UNTIL_SOLD: 'UNTIL_SOLD',
+  SOLD_OUT: 'SOLD_OUT'
 };
 
 export type SampleStatus = (typeof SampleStatus)[keyof typeof SampleStatus]
@@ -221,10 +222,21 @@ export const PaymentStatus: {
   UNPAID: 'UNPAID',
   PENDING_CONFIRMATION: 'PENDING_CONFIRMATION',
   PAID: 'PAID',
-  PAYMENT_FAILED: 'PAYMENT_FAILED'
+  PAYMENT_FAILED: 'PAYMENT_FAILED',
+  ON_HOLD: 'ON_HOLD'
 };
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const SellerPaymentMethod: {
+  PREPAID: 'PREPAID',
+  MONTHLY: 'MONTHLY',
+  DEFERRED: 'DEFERRED',
+  OTHER: 'OTHER'
+};
+
+export type SellerPaymentMethod = (typeof SellerPaymentMethod)[keyof typeof SellerPaymentMethod]
 
 
 export const ShippingStatus: {
@@ -337,6 +349,10 @@ export const OrderStatus: typeof $Enums.OrderStatus
 export type PaymentStatus = $Enums.PaymentStatus
 
 export const PaymentStatus: typeof $Enums.PaymentStatus
+
+export type SellerPaymentMethod = $Enums.SellerPaymentMethod
+
+export const SellerPaymentMethod: typeof $Enums.SellerPaymentMethod
 
 export type ShippingStatus = $Enums.ShippingStatus
 
@@ -479,7 +495,7 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
 
@@ -816,8 +832,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 7.6.0
-   * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
+   * Prisma Client JS version: 7.8.0
+   * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
    */
   export type PrismaVersion = {
     client: string
@@ -4041,6 +4057,8 @@ export namespace Prisma {
     contractRejectionReason: string | null
     isActive: boolean | null
     mustChangePassword: boolean | null
+    paymentMethod: $Enums.SellerPaymentMethod | null
+    paymentNotes: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -4061,6 +4079,8 @@ export namespace Prisma {
     contractRejectionReason: string | null
     isActive: boolean | null
     mustChangePassword: boolean | null
+    paymentMethod: $Enums.SellerPaymentMethod | null
+    paymentNotes: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -4085,6 +4105,8 @@ export namespace Prisma {
     contractRejectionReason: number
     isActive: number
     mustChangePassword: number
+    paymentMethod: number
+    paymentNotes: number
     _all: number
   }
 
@@ -4115,6 +4137,8 @@ export namespace Prisma {
     contractRejectionReason?: true
     isActive?: true
     mustChangePassword?: true
+    paymentMethod?: true
+    paymentNotes?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -4135,6 +4159,8 @@ export namespace Prisma {
     contractRejectionReason?: true
     isActive?: true
     mustChangePassword?: true
+    paymentMethod?: true
+    paymentNotes?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -4159,6 +4185,8 @@ export namespace Prisma {
     contractRejectionReason?: true
     isActive?: true
     mustChangePassword?: true
+    paymentMethod?: true
+    paymentNotes?: true
     _all?: true
   }
 
@@ -4270,6 +4298,8 @@ export namespace Prisma {
     contractRejectionReason: string | null
     isActive: boolean
     mustChangePassword: boolean
+    paymentMethod: $Enums.SellerPaymentMethod
+    paymentNotes: string | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -4313,6 +4343,8 @@ export namespace Prisma {
     contractRejectionReason?: boolean
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: boolean
+    paymentNotes?: boolean
     center?: boolean | User$centerArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
     broadcasts?: boolean | User$broadcastsArgs<ExtArgs>
@@ -4348,6 +4380,8 @@ export namespace Prisma {
     contractRejectionReason?: boolean
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: boolean
+    paymentNotes?: boolean
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4373,6 +4407,8 @@ export namespace Prisma {
     contractRejectionReason?: boolean
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: boolean
+    paymentNotes?: boolean
     center?: boolean | User$centerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4398,9 +4434,11 @@ export namespace Prisma {
     contractRejectionReason?: boolean
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: boolean
+    paymentNotes?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason" | "isActive" | "mustChangePassword", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "name" | "phone" | "role" | "centerId" | "passwordHash" | "createdAt" | "updatedAt" | "channels" | "avgSales" | "categories" | "regions" | "timeSlots" | "contractStatus" | "contractApprovedAt" | "contractApprovedBy" | "contractRejectionReason" | "isActive" | "mustChangePassword" | "paymentMethod" | "paymentNotes", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     center?: boolean | User$centerArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
@@ -4457,6 +4495,8 @@ export namespace Prisma {
       contractRejectionReason: string | null
       isActive: boolean
       mustChangePassword: boolean
+      paymentMethod: $Enums.SellerPaymentMethod
+      paymentNotes: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -4911,6 +4951,8 @@ export namespace Prisma {
     readonly contractRejectionReason: FieldRef<"User", 'String'>
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly mustChangePassword: FieldRef<"User", 'Boolean'>
+    readonly paymentMethod: FieldRef<"User", 'SellerPaymentMethod'>
+    readonly paymentNotes: FieldRef<"User", 'String'>
   }
     
 
@@ -38412,7 +38454,9 @@ export namespace Prisma {
     contractApprovedBy: 'contractApprovedBy',
     contractRejectionReason: 'contractRejectionReason',
     isActive: 'isActive',
-    mustChangePassword: 'mustChangePassword'
+    mustChangePassword: 'mustChangePassword',
+    paymentMethod: 'paymentMethod',
+    paymentNotes: 'paymentNotes'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -39048,6 +39092,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'SellerPaymentMethod'
+   */
+  export type EnumSellerPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SellerPaymentMethod'>
+    
+
+
+  /**
+   * Reference to a field of type 'SellerPaymentMethod[]'
+   */
+  export type ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SellerPaymentMethod[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ProductType'
    */
   export type EnumProductTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductType'>
@@ -39271,6 +39329,8 @@ export namespace Prisma {
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
     mustChangePassword?: BoolFilter<"User"> | boolean
+    paymentMethod?: EnumSellerPaymentMethodFilter<"User"> | $Enums.SellerPaymentMethod
+    paymentNotes?: StringNullableFilter<"User"> | string | null
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     orders?: OrderListRelationFilter
     broadcasts?: BroadcastListRelationFilter
@@ -39305,6 +39365,8 @@ export namespace Prisma {
     contractRejectionReason?: SortOrderInput | SortOrder
     isActive?: SortOrder
     mustChangePassword?: SortOrder
+    paymentMethod?: SortOrder
+    paymentNotes?: SortOrderInput | SortOrder
     center?: CenterOrderByWithRelationInput
     orders?: OrderOrderByRelationAggregateInput
     broadcasts?: BroadcastOrderByRelationAggregateInput
@@ -39342,6 +39404,8 @@ export namespace Prisma {
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
     mustChangePassword?: BoolFilter<"User"> | boolean
+    paymentMethod?: EnumSellerPaymentMethodFilter<"User"> | $Enums.SellerPaymentMethod
+    paymentNotes?: StringNullableFilter<"User"> | string | null
     center?: XOR<CenterNullableScalarRelationFilter, CenterWhereInput> | null
     orders?: OrderListRelationFilter
     broadcasts?: BroadcastListRelationFilter
@@ -39376,6 +39440,8 @@ export namespace Prisma {
     contractRejectionReason?: SortOrderInput | SortOrder
     isActive?: SortOrder
     mustChangePassword?: SortOrder
+    paymentMethod?: SortOrder
+    paymentNotes?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -39408,6 +39474,8 @@ export namespace Prisma {
     contractRejectionReason?: StringNullableWithAggregatesFilter<"User"> | string | null
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     mustChangePassword?: BoolWithAggregatesFilter<"User"> | boolean
+    paymentMethod?: EnumSellerPaymentMethodWithAggregatesFilter<"User"> | $Enums.SellerPaymentMethod
+    paymentNotes?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type ProductWhereInput = {
@@ -42073,6 +42141,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -42107,6 +42177,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -42139,6 +42211,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -42173,6 +42247,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -42206,6 +42282,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -42229,6 +42307,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -42253,6 +42333,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductCreateInput = {
@@ -45344,6 +45426,13 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type EnumSellerPaymentMethodFilter<$PrismaModel = never> = {
+    equals?: $Enums.SellerPaymentMethod | EnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.SellerPaymentMethod[] | ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SellerPaymentMethod[] | ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumSellerPaymentMethodFilter<$PrismaModel> | $Enums.SellerPaymentMethod
+  }
+
   export type CenterNullableScalarRelationFilter = {
     is?: CenterWhereInput | null
     isNot?: CenterWhereInput | null
@@ -45456,6 +45545,8 @@ export namespace Prisma {
     contractRejectionReason?: SortOrder
     isActive?: SortOrder
     mustChangePassword?: SortOrder
+    paymentMethod?: SortOrder
+    paymentNotes?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -45480,6 +45571,8 @@ export namespace Prisma {
     contractRejectionReason?: SortOrder
     isActive?: SortOrder
     mustChangePassword?: SortOrder
+    paymentMethod?: SortOrder
+    paymentNotes?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -45500,6 +45593,8 @@ export namespace Prisma {
     contractRejectionReason?: SortOrder
     isActive?: SortOrder
     mustChangePassword?: SortOrder
+    paymentMethod?: SortOrder
+    paymentNotes?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -45612,6 +45707,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type EnumSellerPaymentMethodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SellerPaymentMethod | EnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.SellerPaymentMethod[] | ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SellerPaymentMethod[] | ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumSellerPaymentMethodWithAggregatesFilter<$PrismaModel> | $Enums.SellerPaymentMethod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSellerPaymentMethodFilter<$PrismaModel>
+    _max?: NestedEnumSellerPaymentMethodFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -47837,6 +47942,10 @@ export namespace Prisma {
     set?: boolean
   }
 
+  export type EnumSellerPaymentMethodFieldUpdateOperationsInput = {
+    set?: $Enums.SellerPaymentMethod
+  }
+
   export type CenterUpdateOneWithoutUsersNestedInput = {
     create?: XOR<CenterCreateWithoutUsersInput, CenterUncheckedCreateWithoutUsersInput>
     connectOrCreate?: CenterCreateOrConnectWithoutUsersInput
@@ -49893,6 +50002,13 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type NestedEnumSellerPaymentMethodFilter<$PrismaModel = never> = {
+    equals?: $Enums.SellerPaymentMethod | EnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.SellerPaymentMethod[] | ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SellerPaymentMethod[] | ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumSellerPaymentMethodFilter<$PrismaModel> | $Enums.SellerPaymentMethod
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -50019,6 +50135,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSellerPaymentMethodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SellerPaymentMethod | EnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.SellerPaymentMethod[] | ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SellerPaymentMethod[] | ListEnumSellerPaymentMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumSellerPaymentMethodWithAggregatesFilter<$PrismaModel> | $Enums.SellerPaymentMethod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSellerPaymentMethodFilter<$PrismaModel>
+    _max?: NestedEnumSellerPaymentMethodFilter<$PrismaModel>
   }
 
   export type NestedEnumProductTypeFilter<$PrismaModel = never> = {
@@ -51893,6 +52019,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
@@ -51925,6 +52053,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -52193,6 +52323,8 @@ export namespace Prisma {
     contractRejectionReason?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
     mustChangePassword?: BoolFilter<"User"> | boolean
+    paymentMethod?: EnumSellerPaymentMethodFilter<"User"> | $Enums.SellerPaymentMethod
+    paymentNotes?: StringNullableFilter<"User"> | string | null
   }
 
   export type ProductCenterStockUpsertWithWhereUniqueWithoutCenterInput = {
@@ -52693,6 +52825,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -52726,6 +52860,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -52969,6 +53105,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -53002,6 +53140,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -53144,6 +53284,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
@@ -53177,6 +53319,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -53497,6 +53641,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
@@ -53530,6 +53676,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -54579,6 +54727,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastCreateNestedManyWithoutRejecterInput
@@ -54612,6 +54762,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -54701,6 +54853,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -54734,6 +54888,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     sales?: SaleUncheckedCreateNestedManyWithoutSellerInput
@@ -54905,6 +55061,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
@@ -54938,6 +55096,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -55039,6 +55199,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -55072,6 +55234,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     sales?: SaleUncheckedUpdateManyWithoutSellerNestedInput
@@ -55135,6 +55299,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -55168,6 +55334,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -55371,6 +55539,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -55404,6 +55574,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -55603,6 +55775,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -55636,6 +55810,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -55683,6 +55859,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -55716,6 +55894,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -55747,6 +55927,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -55780,6 +55962,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -55932,6 +56116,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -55965,6 +56151,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -57815,6 +58003,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -57848,6 +58038,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -58053,6 +58245,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -58086,6 +58280,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -58287,6 +58483,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     center?: CenterCreateNestedOneWithoutUsersInput
     orders?: OrderCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastCreateNestedManyWithoutSellerInput
@@ -58320,6 +58518,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
     orders?: OrderUncheckedCreateNestedManyWithoutSellerInput
     broadcasts?: BroadcastUncheckedCreateNestedManyWithoutSellerInput
     rejectedBroadcasts?: BroadcastUncheckedCreateNestedManyWithoutRejecterInput
@@ -58367,6 +58567,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     center?: CenterUpdateOneWithoutUsersNestedInput
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
@@ -58400,6 +58602,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -59625,6 +59829,8 @@ export namespace Prisma {
     contractRejectionReason?: string | null
     isActive?: boolean
     mustChangePassword?: boolean
+    paymentMethod?: $Enums.SellerPaymentMethod
+    paymentNotes?: string | null
   }
 
   export type ProductCenterStockCreateManyCenterInput = {
@@ -59724,6 +59930,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUpdateManyWithoutRejecterNestedInput
@@ -59756,6 +59964,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
     orders?: OrderUncheckedUpdateManyWithoutSellerNestedInput
     broadcasts?: BroadcastUncheckedUpdateManyWithoutSellerNestedInput
     rejectedBroadcasts?: BroadcastUncheckedUpdateManyWithoutRejecterNestedInput
@@ -59788,6 +59998,8 @@ export namespace Prisma {
     contractRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: EnumSellerPaymentMethodFieldUpdateOperationsInput | $Enums.SellerPaymentMethod
+    paymentNotes?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductCenterStockUpdateWithoutCenterInput = {

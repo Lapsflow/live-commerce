@@ -13,6 +13,9 @@ const userUpdateSchema = z.object({
   channels: z.array(z.string()).optional(),
   avgSales: z.number().nullable().optional(),
   isActive: z.boolean().optional(),
+  // 발주관리 개선(2026-07-10, 요청 5번): 셀러 결제방식·정산 메모
+  paymentMethod: z.enum(["PREPAID", "MONTHLY", "DEFERRED", "OTHER"]).optional(),
+  paymentNotes: z.string().max(200).nullable().optional(),
 });
 
 /**
@@ -109,6 +112,9 @@ export const PUT = withRole(
           ...(data.channels !== undefined && { channels: data.channels }),
           ...(data.avgSales !== undefined && { avgSales: data.avgSales }),
           ...(data.isActive !== undefined && { isActive: data.isActive }),
+          // 발주관리 개선(2026-07-10, 요청 5번): 셀러 결제방식·정산 메모 (Zod enum 검증 완료)
+          ...(data.paymentMethod !== undefined && { paymentMethod: data.paymentMethod }),
+          ...(data.paymentNotes !== undefined && { paymentNotes: data.paymentNotes || null }),
         },
         select: {
           id: true,

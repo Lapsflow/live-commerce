@@ -21,10 +21,6 @@
       "schedule": "30 0 * * *"
     },
     {
-      "path": "/api/cron/order-auto-cancel",
-      "schedule": "30 6 * * *"
-    },
-    {
       "path": "/api/cron/broadcast-reminder",
       "schedule": "0 22 * * *"
     },

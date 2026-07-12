@@ -39,13 +39,55 @@ export const GET = withRole(["MASTER", "SUB_MASTER", "SELLER"], async (req: Next
     const { searchParams } = new URL(req.url);
     const productType = searchParams.get("productType") as "HEADQUARTERS" | "CENTER" | null;
     const search = searchParams.get("search");
-    const pageIndex = parseInt(searchParams.get("pageIndex") || "0");
-    const pageSize = parseInt(searchParams.get("pageSize") || "50");
+    const pageIndex = Math.max(0, parseInt(searchParams.get("pageIndex") || "0"));
+    // 학습 #10: pageSize 상한 100 강제
+    const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") || "50")));
 
-    const where: any = {
+    // ─── 발주관리 개선 (2026-07-10): 상태·기간·셀러 필터 추가 ───
+    // 기존엔 productType/search 만 지원 → 입금관리(/payments) 탭 필터가
+    // 서버에서 무시되던 원인. enum 값은 화이트리스트로 검증.
+    const ORDER_STATUSES = ["PENDING", "APPROVED", "REJECTED", "CANCELLED"];
+    const PAYMENT_STATUSES = ["UNPAID", "PENDING_CONFIRMATION", "PAID", "PAYMENT_FAILED", "ON_HOLD"];
+    const SHIPPING_STATUSES = ["PENDING", "PREPARING", "SHIPPED", "DELIVERED", "PARTIAL"];
+
+    const statusParam = searchParams.get("status");
+    const paymentStatusParam = searchParams.get("paymentStatus");
+    const shippingStatusParam = searchParams.get("shippingStatus");
+    const sellerIdParam = searchParams.get("sellerId");
+    const fromDateParam = searchParams.get("fromDate");
+    const toDateParam = searchParams.get("toDate");
+
+    const where: any = {};
+
+    // status: 명시 지정 시 해당 상태만, 미지정 시 기존 동작(CANCELLED 제외) 유지
+    if (statusParam && ORDER_STATUSES.includes(statusParam)) {
+      where.status = statusParam;
+    } else {
       // CANCELLED 주문은 기본적으로 제외 (soft delete)
-      status: { not: "CANCELLED" },
-    };
+      where.status = { not: "CANCELLED" };
+    }
+
+    if (paymentStatusParam && PAYMENT_STATUSES.includes(paymentStatusParam)) {
+      where.paymentStatus = paymentStatusParam;
+    }
+
+    if (shippingStatusParam && SHIPPING_STATUSES.includes(shippingStatusParam)) {
+      where.shippingStatus = shippingStatusParam;
+    }
+
+    if (sellerIdParam) {
+      where.sellerId = sellerIdParam;
+    }
+
+    // 기간 필터 — 발주일(createdAt) 기준 (고객 확정: 월 조회는 발주일 기준),
+    // 종료일 당일 포함 (lt 익일)
+    if (fromDateParam || toDateParam) {
+      where.createdAt = {};
+      if (fromDateParam) where.createdAt.gte = new Date(fromDateParam);
+      if (toDateParam) {
+        where.createdAt.lt = new Date(new Date(toDateParam).getTime() + 24 * 60 * 60 * 1000);
+      }
+    }
 
     // Phase 2: Filter by productType
     if (productType) {

@@ -39,7 +39,10 @@ export default function PaymentsPage() {
     setLoading(true);
     try {
       // Fetch APPROVED orders (confirmed orders that need payment tracking)
-      const params = new URLSearchParams({ status: "APPROVED", limit: "200" });
+      // 2026-07-10 수정: 기존 limit 파라미터는 API 가 읽지 않아 무시되고,
+      // status/paymentStatus 필터도 서버 미지원이라 탭이 안 먹던 버그 — API 필터
+      // 확장과 함께 pageSize(상한 100) 로 정합.
+      const params = new URLSearchParams({ status: "APPROVED", pageSize: "100" });
       if (filterTab !== "all") {
         params.set("paymentStatus", filterTab);
       }

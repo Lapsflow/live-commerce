@@ -33,7 +33,16 @@ export const POST = withRole(
       const order = await prisma.order.findUnique({
         where: { id: orderId },
         include: {
-          seller: { select: { id: true, name: true, phone: true, email: true, centerId: true } },
+          seller: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              email: true,
+              centerId: true,
+              paymentMethod: true, // 발주관리 개선(2026-07-10): 월결제·후불 → 외상 자동 적용
+            },
+          },
         },
       });
 
@@ -55,6 +64,11 @@ export const POST = withRole(
         return errors.badRequest(`현재 상태(${order.status})에서는 컨펌할 수 없습니다. PENDING 상태만 컨펌 가능합니다.`);
       }
 
+      // 발주관리 개선(2026-07-10, 요청 5번): 월결제·후불 셀러는 승인 시 외상거래
+      // 자동 적용 → 기존 외상 흐름(입금 전 출고 진행)을 그대로 탄다.
+      const isCreditSeller =
+        order.seller?.paymentMethod === "MONTHLY" || order.seller?.paymentMethod === "DEFERRED";
+
       const updated = await prisma.order.update({
         where: { id: orderId },
         data: {
@@ -62,6 +76,7 @@ export const POST = withRole(
           approvedAt: new Date(),
           // ✅ Task 2D: virtualAccountExpiry 저장 (expiresAt 아님!)
           virtualAccountExpiry: expiryAt ? new Date(expiryAt) : null,
+          ...(isCreditSeller && { isCreditTrade: true }),
         },
       });
 

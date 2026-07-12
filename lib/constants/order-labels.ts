@@ -5,6 +5,15 @@ export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   PENDING_CONFIRMATION: "입금확인중",
   PAID: "입금완료",
   PAYMENT_FAILED: "결제실패",
+  ON_HOLD: "보류",
+};
+
+// 셀러 결제방식 라벨 (발주관리 개선 2026-07-10, 요청 5번)
+export const SELLER_PAYMENT_METHOD_LABELS: Record<string, string> = {
+  PREPAID: "선입금",
+  MONTHLY: "월결제",
+  DEFERRED: "후불결제",
+  OTHER: "기타",
 };
 
 export const SHIPPING_STATUS_LABELS: Record<ShippingStatus, string> = {
@@ -22,6 +31,7 @@ export const paymentStatusVariant = (
     case "PAID":
       return "default";
     case "PENDING_CONFIRMATION":
+    case "ON_HOLD":
       return "secondary";
     case "UNPAID":
     case "PAYMENT_FAILED":

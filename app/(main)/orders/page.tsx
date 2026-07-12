@@ -25,7 +25,16 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import OrderPipelineCards from "./components/OrderPipelineCards";
+import OrderSummaryPanel from "./components/OrderSummaryPanel";
 import ExpiryTimer from "./components/ExpiryTimer";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getOrderStatusLabel, getOrderStatusColor } from "@/lib/utils/order-status-label";
 import {
   PAYMENT_STATUS_LABELS,
@@ -94,8 +103,73 @@ export default function OrdersPage() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectOrderId, setRejectOrderId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
-  const extraParams = orderTypeTab !== "all" ? { productType: orderTypeTab } : undefined;
+
+  // ─── 발주관리 개선 (2026-07-10, 한국무진 요청 1·2·4번) ───
+  // 뷰 탭(목록/셀러별), 기간(발주일 기준, 기본 이번 달), 입금·출고상태 필터
+  const today = new Date();
+  const monthStart = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-01`;
+  const todayStr = today.toISOString().split("T")[0];
+
+  const [viewTab, setViewTab] = useState<"list" | "sellers">("list");
+  const [fromDate, setFromDate] = useState(monthStart);
+  const [toDate, setToDate] = useState(todayStr);
+  const [paymentFilter, setPaymentFilter] = useState("all");
+  const [shippingFilter, setShippingFilter] = useState("all");
+  const [sellerFilter, setSellerFilter] = useState<{ id: string; name: string } | null>(null);
+  const [refreshSignal, setRefreshSignal] = useState(0);
+
+  // 파이프라인 카드 클릭 → 필터 매핑 (기존엔 state 만 바뀌고 목록에 미적용되던 死배선 수정)
+  const pipelineParams: Record<string, Record<string, string>> = {
+    pendingUnpaid: { status: "PENDING", paymentStatus: "UNPAID" },
+    approvedPreparing: { status: "APPROVED", paymentStatus: "PAID" },
+    shipped: { shippingStatus: "SHIPPED" },
+    rejected: { status: "REJECTED" },
+  };
+
+  const extraParams: Record<string, string> = {
+    ...(orderTypeTab !== "all" && { productType: orderTypeTab }),
+    ...(fromDate && { fromDate }),
+    ...(toDate && { toDate }),
+    ...(paymentFilter !== "all" && { paymentStatus: paymentFilter }),
+    ...(shippingFilter !== "all" && { shippingStatus: shippingFilter }),
+    ...(sellerFilter && { sellerId: sellerFilter.id }),
+    ...(pipelineFilter ? pipelineParams[pipelineFilter] : {}),
+  };
   const { dataSource, refresh } = useApiCrud<Order>("/api/orders", extraParams);
+
+  /** 목록 + 요약 동시 갱신 (입금확인 등 액션 후) */
+  const refreshAll = () => {
+    refresh();
+    setRefreshSignal((s) => s + 1);
+  };
+
+  // 기간 프리셋
+  const setThisMonth = () => {
+    setFromDate(monthStart);
+    setToDate(todayStr);
+  };
+  const setLastMonth = () => {
+    const first = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const last = new Date(today.getFullYear(), today.getMonth(), 0);
+    const fmt = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    setFromDate(fmt(first));
+    setToDate(fmt(last));
+  };
+  const clearFilters = () => {
+    setFromDate("");
+    setToDate("");
+    setPaymentFilter("all");
+    setShippingFilter("all");
+    setSellerFilter(null);
+    setPipelineFilter(null);
+  };
+
+  // 엑셀 다운로드 — 현재 필터 그대로 (요청 2번)
+  const handleExportFiltered = () => {
+    const params = new URLSearchParams(extraParams);
+    window.open(`/api/orders/export?${params.toString()}`, "_blank");
+  };
 
   /**
    * 발주 영구 삭제 (MASTER 전용)
@@ -120,7 +194,7 @@ export default function OrdersPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success(`발주 ${orderNo} 삭제 완료`);
-        refresh();
+        refreshAll();
       } else {
         toast.error(data.error?.message || "삭제 실패");
       }
@@ -143,7 +217,7 @@ export default function OrdersPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success("발주가 컨펌되었습니다.");
-        refresh();
+        refreshAll();
       } else {
         toast.error(data.error?.message || "컨펌 실패");
       }
@@ -167,7 +241,7 @@ export default function OrdersPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success("발주가 반려되었습니다.");
-        refresh();
+        refreshAll();
       } else {
         toast.error(data.error?.message || "반려 실패");
       }
@@ -193,9 +267,35 @@ export default function OrdersPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success("입금이 확인되었습니다.");
-        refresh();
+        refreshAll();
       } else {
         toast.error(data.error?.message || "입금확인 실패");
+      }
+    } catch {
+      toast.error("서버 오류가 발생했습니다.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // 발주관리 개선(2026-07-10): 입금 보류 지정/해제
+  const handleHold = async (orderId: string, hold: boolean, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm(hold ? "이 발주를 입금 보류로 지정하시겠습니까?" : "보류를 해제하시겠습니까?")) return;
+
+    setActionLoading(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/payment-hold`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hold }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(hold ? "보류로 지정되었습니다." : "보류가 해제되었습니다.");
+        refreshAll();
+      } else {
+        toast.error(data.error?.message || "처리 실패");
       }
     } catch {
       toast.error("서버 오류가 발생했습니다.");
@@ -217,7 +317,7 @@ export default function OrdersPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success("입금 확인 중으로 변경되었습니다.");
-        refresh();
+        refreshAll();
       } else {
         toast.error(data.error?.message || "상태 변경 실패");
       }
@@ -242,7 +342,7 @@ export default function OrdersPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success("출고 처리되었습니다.");
-        refresh();
+        refreshAll();
       } else {
         toast.error(data.error?.message || "출고 처리 실패");
       }
@@ -265,7 +365,7 @@ export default function OrdersPage() {
       const data = await res.json();
       if (res.ok) {
         toast.success("발주가 취소되었습니다.");
-        refresh();
+        refreshAll();
       } else {
         toast.error(data.error?.message || "취소 실패");
       }
@@ -336,10 +436,14 @@ export default function OrdersPage() {
         if (isReadOnly) return null;
 
         const canApprove = isAdmin && order.status === "PENDING";
-        // PDF §5 3단계 입금 흐름: UNPAID → PENDING_CONFIRMATION → PAID
+        // PDF §5 3단계 입금 흐름: UNPAID → PENDING_CONFIRMATION → PAID (+ ON_HOLD 보류)
         const canMarkPending = isAdmin && order.status === "APPROVED" && order.paymentStatus === "UNPAID";
         const canPaymentConfirm = isAdmin && order.status === "APPROVED" &&
+          (order.paymentStatus === "UNPAID" || order.paymentStatus === "PENDING_CONFIRMATION" ||
+            order.paymentStatus === "ON_HOLD");
+        const canHold = isAdmin && order.status === "APPROVED" &&
           (order.paymentStatus === "UNPAID" || order.paymentStatus === "PENDING_CONFIRMATION");
+        const canUnhold = isAdmin && order.paymentStatus === "ON_HOLD";
         const canShip = isAdmin && order.status === "APPROVED" && order.paymentStatus === "PAID" && order.shippingStatus === "PENDING";
         const canCancel = order.status === "PENDING" && order.paymentStatus === "UNPAID";
         // MASTER 전용 영구 삭제 — 테스트 데이터 정리 목적. 모든 상태에서 삭제 가능.
@@ -400,6 +504,28 @@ export default function OrdersPage() {
               >
                 <CheckCircle className="h-3 w-3 mr-1" />
                 입금완료
+              </Button>
+            )}
+            {canHold && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 px-2 text-xs text-orange-700 border-orange-300 hover:bg-orange-50"
+                onClick={(e) => handleHold(order.id, true, e)}
+                disabled={isLoading}
+              >
+                보류
+              </Button>
+            )}
+            {canUnhold && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 px-2 text-xs text-orange-700 border-orange-300 hover:bg-orange-50"
+                onClick={(e) => handleHold(order.id, false, e)}
+                disabled={isLoading}
+              >
+                보류해제
               </Button>
             )}
             {canShip && (
@@ -510,17 +636,86 @@ export default function OrdersPage() {
         </TabsList>
       </Tabs>
 
-      {/* 파이프라인 요약 카드 */}
-      <OrderPipelineCards
-        onFilterChange={setPipelineFilter}
-        activeFilter={pipelineFilter}
+      {/* 기간 · 상태 필터 (요청 4번 — 발주일 기준) */}
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <DateRangePicker fromDate={fromDate} toDate={toDate} onDateChange={(f, t) => { setFromDate(f); setToDate(t); }} />
+        <Button variant="outline" size="sm" onClick={setThisMonth}>이번 달</Button>
+        <Button variant="outline" size="sm" onClick={setLastMonth}>지난 달</Button>
+        <Select value={paymentFilter} onValueChange={(v) => setPaymentFilter(v ?? "all")}>
+          <SelectTrigger className="h-9 w-[130px]">
+            <SelectValue placeholder="입금상태" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">입금상태 전체</SelectItem>
+            <SelectItem value="UNPAID">입금확인전</SelectItem>
+            <SelectItem value="PENDING_CONFIRMATION">입금확인중</SelectItem>
+            <SelectItem value="PAID">입금완료</SelectItem>
+            <SelectItem value="ON_HOLD">보류</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={shippingFilter} onValueChange={(v) => setShippingFilter(v ?? "all")}>
+          <SelectTrigger className="h-9 w-[130px]">
+            <SelectValue placeholder="출고상태" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">출고상태 전체</SelectItem>
+            <SelectItem value="PENDING">배송대기</SelectItem>
+            <SelectItem value="PREPARING">배송준비중</SelectItem>
+            <SelectItem value="SHIPPED">배송중</SelectItem>
+            <SelectItem value="DELIVERED">배송완료</SelectItem>
+            <SelectItem value="PARTIAL">부분배송</SelectItem>
+          </SelectContent>
+        </Select>
+        {sellerFilter && (
+          <Badge variant="secondary" className="cursor-pointer" onClick={() => setSellerFilter(null)}>
+            셀러: {sellerFilter.name} ✕
+          </Badge>
+        )}
+        <Button variant="ghost" size="sm" onClick={clearFilters}>필터 초기화</Button>
+        {!isSeller && (
+          <Button variant="outline" size="sm" className="ml-auto" onClick={handleExportFiltered}>
+            <FileSpreadsheet className="mr-1.5 h-4 w-4" />
+            발주내역 다운로드
+          </Button>
+        )}
+      </div>
+
+      {/* 전체 현황 KPI (요청 1-1) + 셀러별 현황 (요청 1-2) */}
+      <OrderSummaryPanel
+        fromDate={fromDate}
+        toDate={toDate}
+        productType={orderTypeTab !== "all" ? orderTypeTab : null}
+        showSellers={viewTab === "sellers"}
+        refreshSignal={refreshSignal}
+        onSellerClick={(id, name) => {
+          setSellerFilter({ id, name });
+          setViewTab("list");
+        }}
       />
 
-      <DataTable
-        columns={columns}
-        dataSource={dataSource}
-        enableRowSelection={true}
-      />
+      {/* 목록 / 셀러별 현황 뷰 전환 */}
+      <Tabs value={viewTab} onValueChange={(v) => setViewTab(v as "list" | "sellers")} className="mb-4">
+        <TabsList>
+          <TabsTrigger value="list">발주 목록</TabsTrigger>
+          <TabsTrigger value="sellers">셀러별 현황</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {viewTab === "list" && (
+        <>
+          {/* 파이프라인 요약 카드 (클릭 시 목록 필터 적용) */}
+          <OrderPipelineCards
+            onFilterChange={setPipelineFilter}
+            activeFilter={pipelineFilter}
+          />
+
+          <DataTable
+            columns={columns}
+            dataSource={dataSource}
+            enableRowSelection={true}
+          />
+        </>
+      )}
 
       {/* 반려 사유 입력 모달 */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>

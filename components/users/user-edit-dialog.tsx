@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ROLE_LABELS } from "@/lib/constants/role-labels";
+import { SELLER_PAYMENT_METHOD_LABELS } from "@/lib/constants/order-labels";
 
 type User = {
   id: string;
@@ -30,6 +31,8 @@ type User = {
   role: string;
   channels: string[];
   avgSales: number | null;
+  paymentMethod?: string | null;
+  paymentNotes?: string | null;
 };
 
 type UserEditDialogProps = {
@@ -54,6 +57,8 @@ export function UserEditDialog({
     role: "SELLER",
     channels: "",
     avgSales: "",
+    paymentMethod: "PREPAID",
+    paymentNotes: "",
   });
 
   useEffect(() => {
@@ -64,6 +69,8 @@ export function UserEditDialog({
         role: user.role || "SELLER",
         channels: user.channels?.join(", ") || "",
         avgSales: user.avgSales?.toString() || "",
+        paymentMethod: user.paymentMethod || "PREPAID",
+        paymentNotes: user.paymentNotes || "",
       });
     }
   }, [user]);
@@ -85,6 +92,9 @@ export function UserEditDialog({
           .map((c) => c.trim())
           .filter((c) => c),
         avgSales: formData.avgSales ? parseInt(formData.avgSales) : null,
+        // 발주관리 개선(2026-07-10, 요청 5번)
+        paymentMethod: formData.paymentMethod,
+        paymentNotes: formData.paymentNotes || null,
       };
 
       const res = await fetch(`/api/users/${user.id}`, {
@@ -214,6 +224,47 @@ export function UserEditDialog({
                   placeholder="1000000"
                 />
               </div>
+            )}
+
+            {/* 결제방식 (SELLER만 — 발주관리 개선 2026-07-10, 요청 5번) */}
+            {formData.role === "SELLER" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="paymentMethod">결제방식</Label>
+                  <Select
+                    value={formData.paymentMethod}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, paymentMethod: value || "PREPAID" })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(SELLER_PAYMENT_METHOD_LABELS).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-grey-500">
+                    월결제·후불결제 셀러는 발주 승인 시 외상거래(입금 전 출고)로 자동 처리됩니다
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="paymentNotes">정산 메모</Label>
+                  <Input
+                    id="paymentNotes"
+                    type="text"
+                    value={formData.paymentNotes}
+                    onChange={(e) =>
+                      setFormData({ ...formData, paymentNotes: e.target.value })
+                    }
+                    placeholder="예: 매월 말 결제, 익월 10일 결제, 거래처 협의"
+                  />
+                </div>
+              </>
             )}
 
             {/* 에러 메시지 */}

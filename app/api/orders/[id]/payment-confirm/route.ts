@@ -48,18 +48,35 @@ export const POST = withRole(
         return errors.badRequest(`발주가 승인(APPROVED) 상태가 아닙니다. 현재: ${order.status}`);
       }
 
-      // ✅ Task 2F: UNPAID 또는 PENDING_CONFIRMATION 상태 모두 허용
-      if (order.paymentStatus !== "UNPAID" && order.paymentStatus !== "PENDING_CONFIRMATION") {
+      // ✅ Task 2F: UNPAID / PENDING_CONFIRMATION / ON_HOLD(보류 해제 겸) 허용
+      if (
+        order.paymentStatus !== "UNPAID" &&
+        order.paymentStatus !== "PENDING_CONFIRMATION" &&
+        order.paymentStatus !== "ON_HOLD"
+      ) {
         return errors.badRequest(`이미 입금 처리된 발주입니다. 현재: ${order.paymentStatus}`);
       }
 
       const beforePaymentStatus = order.paymentStatus;
 
+      // 발주관리 개선(2026-07-10): 실제 이체일 ≠ 확인일 케이스 대비 — body 로
+      // paidAt(YYYY-MM-DD) 지정 가능. 미지정 시 현재 시각.
+      let paidAtInput: Date | null = null;
+      try {
+        const body = await req.json();
+        if (body?.paidAt) {
+          const d = new Date(body.paidAt);
+          if (!Number.isNaN(d.getTime())) paidAtInput = d;
+        }
+      } catch {
+        // body 없으면 무시
+      }
+
       const updated = await prisma.order.update({
         where: { id: orderId },
         data: {
           paymentStatus: "PAID",
-          paidAt: new Date(),
+          paidAt: paidAtInput ?? new Date(),
         },
       });
 

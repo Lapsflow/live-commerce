@@ -5,7 +5,8 @@ export type PaymentStatus =
   | "UNPAID"
   | "PENDING_CONFIRMATION"
   | "PAID"
-  | "PAYMENT_FAILED";
+  | "PAYMENT_FAILED"
+  | "ON_HOLD"; // 보류 (2026-07-10 발주관리 개선)
 export type ShippingStatus = "PENDING" | "PREPARING" | "SHIPPED" | "DELIVERED" | "PARTIAL";
 
 // Phase 2: Updated OrderItem type with product details and margin fields

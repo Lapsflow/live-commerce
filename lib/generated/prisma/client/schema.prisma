@@ -45,6 +45,10 @@ model User {
   // ✨ 임시 비밀번호 → 첫 로그인 시 변경 강제
   mustChangePassword Boolean @default(false)
 
+  // ✨ 셀러 결제방식 (발주관리 개선 2026-07-10, 요청 5번)
+  paymentMethod SellerPaymentMethod @default(PREPAID)
+  paymentNotes  String? // 정산 메모 (예: "매월 말 결제", "익월 10일 결제")
+
   // Center relation
   center Center? @relation(fields: [centerId], references: [id], onDelete: SetNull)
 
@@ -165,8 +169,9 @@ enum SampleCategory {
 }
 
 enum SampleStatus {
-  CONTINUOUS // 꾸준한 제품
-  UNTIL_SOLD // 소진후 종료
+  CONTINUOUS // 진행중 (한국무진 요구 2026-07-03: 진행중/품절 2단계)
+  UNTIL_SOLD // ⚠️ deprecated — SOLD_OUT 도입으로 미사용. 데이터는 마이그레이션으로 CONTINUOUS 이관됨. enum 값 제거는 PG 리스크로 보류.
+  SOLD_OUT // 품절
 }
 
 // ──────────────────────── Center Management ────────────────────────
@@ -349,6 +354,16 @@ enum PaymentStatus {
   PENDING_CONFIRMATION // 입금확인중
   PAID // 입금완료
   PAYMENT_FAILED // 가상계좌 발급 실패
+  ON_HOLD // 보류 (발주관리 개선 2026-07-10 — 협의중 등 수동 지정, 자동 처리 제외)
+}
+
+// 셀러 결제방식 (발주관리 개선 2026-07-10, 한국무진 요청 5번)
+// MONTHLY/DEFERRED 셀러는 발주 승인 시 isCreditTrade 자동 적용 (입금 전 출고 흐름)
+enum SellerPaymentMethod {
+  PREPAID // 선입금 (기본)
+  MONTHLY // 월결제
+  DEFERRED // 후불결제
+  OTHER // 기타
 }
 
 enum ShippingStatus {
@@ -602,6 +617,9 @@ model OnewmsStockSync {
 
   @@index([productId])
   @@index([syncedAt])
+  // 성능 (2026-07-10): 55.9M 행 테이블에서 conflict 필터 풀스캔 방지.
+  // 운영 DB 에는 CREATE INDEX CONCURRENTLY 로 이미 생성됨 — db push 시 no-op.
+  @@index([syncStatus, syncedAt(sort: Desc)])
 }
 
 model OnewmsDeliveryLog {
