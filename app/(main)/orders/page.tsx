@@ -636,14 +636,30 @@ export default function OrdersPage() {
         </TabsList>
       </Tabs>
 
-      {/* 기간 · 상태 필터 (요청 4번 — 발주일 기준) */}
-      <div className="flex flex-wrap items-center gap-3 mb-4">
+      {/* 기간 · 상태 필터 (요청 4번 — 발주일 기준)
+          스타일: DateRangePicker 프리셋 버튼(최근 7일 등)과 동일 라인·동일 톤으로 통일 */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
         <DateRangePicker fromDate={fromDate} toDate={toDate} onDateChange={(f, t) => { setFromDate(f); setToDate(t); }} />
-        <Button variant="outline" size="sm" onClick={setThisMonth}>이번 달</Button>
-        <Button variant="outline" size="sm" onClick={setLastMonth}>지난 달</Button>
+        <button
+          onClick={setThisMonth}
+          className="px-3 py-2 text-sm border border-grey-300 rounded-md hover:bg-grey-50 transition-colors"
+        >
+          이번 달
+        </button>
+        <button
+          onClick={setLastMonth}
+          className="px-3 py-2 text-sm border border-grey-300 rounded-md hover:bg-grey-50 transition-colors"
+        >
+          지난 달
+        </button>
         <Select value={paymentFilter} onValueChange={(v) => setPaymentFilter(v ?? "all")}>
-          <SelectTrigger className="h-9 w-[130px]">
-            <SelectValue placeholder="입금상태" />
+          <SelectTrigger className="h-[38px] rounded-md border-grey-300 px-3">
+            {/* base-ui SelectValue 는 원시 값("all")을 그대로 노출 → 라벨 직접 렌더 */}
+            <span className={paymentFilter === "all" ? "text-grey-500" : ""}>
+              {paymentFilter === "all"
+                ? "입금상태 전체"
+                : PAYMENT_STATUS_LABELS[paymentFilter as PaymentStatus]}
+            </span>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">입금상태 전체</SelectItem>
@@ -654,8 +670,12 @@ export default function OrdersPage() {
           </SelectContent>
         </Select>
         <Select value={shippingFilter} onValueChange={(v) => setShippingFilter(v ?? "all")}>
-          <SelectTrigger className="h-9 w-[130px]">
-            <SelectValue placeholder="출고상태" />
+          <SelectTrigger className="h-[38px] rounded-md border-grey-300 px-3">
+            <span className={shippingFilter === "all" ? "text-grey-500" : ""}>
+              {shippingFilter === "all"
+                ? "출고상태 전체"
+                : SHIPPING_STATUS_LABELS[shippingFilter as ShippingStatus]}
+            </span>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">출고상태 전체</SelectItem>
@@ -671,12 +691,20 @@ export default function OrdersPage() {
             셀러: {sellerFilter.name} ✕
           </Badge>
         )}
-        <Button variant="ghost" size="sm" onClick={clearFilters}>필터 초기화</Button>
+        <button
+          onClick={clearFilters}
+          className="px-3 py-2 text-sm text-grey-500 rounded-md hover:bg-grey-50 transition-colors"
+        >
+          필터 초기화
+        </button>
         {!isSeller && (
-          <Button variant="outline" size="sm" className="ml-auto" onClick={handleExportFiltered}>
+          <button
+            onClick={handleExportFiltered}
+            className="ml-auto px-3 py-2 text-sm border border-grey-300 rounded-md hover:bg-grey-50 transition-colors inline-flex items-center"
+          >
             <FileSpreadsheet className="mr-1.5 h-4 w-4" />
             발주내역 다운로드
-          </Button>
+          </button>
         )}
       </div>
 
