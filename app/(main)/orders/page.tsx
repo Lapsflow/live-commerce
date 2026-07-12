@@ -637,8 +637,10 @@ export default function OrdersPage() {
       </Tabs>
 
       {/* 기간 · 상태 필터 (요청 4번 — 발주일 기준)
-          스타일: DateRangePicker 프리셋 버튼(최근 7일 등)과 동일 라인·동일 톤으로 통일 */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
+          스타일: DateRangePicker 프리셋 버튼(최근 7일 등)과 동일 라인·동일 톤으로 통일.
+          items-end: DateRangePicker 는 라벨(시작일/종료일) 때문에 키가 크고 내부가
+          아래 정렬이므로, 바깥 줄도 아래 정렬해야 "최근 90일"과 같은 바닥선에 맞음 */}
+      <div className="flex flex-wrap items-end gap-2 mb-4">
         <DateRangePicker fromDate={fromDate} toDate={toDate} onDateChange={(f, t) => { setFromDate(f); setToDate(t); }} />
         <button
           onClick={setThisMonth}
